@@ -1,8 +1,16 @@
 {:deps
- {org.clojure/clojure {:mvn/version "1.9.0"}}
+ {org.clojure/clojure         {:mvn/version "1.9.0"}
+  org.clojure/spec.alpha      {:mvn/version "0.1.143"}
+  org.clojure/tools.cli       {:mvn/version "0.3.5"}
+  org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}
+  org.tcrawley/dynapath       {:mvn/version "1.0.0"}}
 
  :aliases
- {:dev
+ {:test
+  {:extra-paths ["test"]
+   :main-opts   ["-m" "lambdaisland.kaocha.runner"]}
+
+  :dev
   {:extra-paths ["dev"]
    :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
                  ancient-clj                             {:mvn/version "0.6.15"}
