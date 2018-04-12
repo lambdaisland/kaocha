@@ -1,4 +1,5 @@
-{:suites {:id :unit
-          :test-paths ["test"]}
+{:suites      {:id         :unit
+               :test-paths ["test"]}
  :ns-patterns [#"-test$"]
- :color true}}
+ :color       true
+ :reporter    lambdaisland.kaocha.report/progress}}

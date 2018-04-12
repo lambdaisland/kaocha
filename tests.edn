@@ -1,5 +1,4 @@
-{:color false
- :suites [{:id :unit
+{:suites [{:id :unit
            :test-paths ["test/unit"]}
           {:id :integration
            :test-paths ["test/integration"]}]}
