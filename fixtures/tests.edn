@@ -1,0 +1,4 @@
+{:suites [{:id :a
+           :test-paths ["fixtures/a-tests"]}
+          {:id :b
+           :test-paths ["fixtures/b-tests"]}]}

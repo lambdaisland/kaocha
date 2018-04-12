@@ -1,0 +1,4 @@
+{:suites {:id :unit
+          :test-paths ["test"]}
+ :ns-patterns [#"-test$"]
+ :color true}}

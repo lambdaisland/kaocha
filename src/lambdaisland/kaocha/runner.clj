@@ -4,16 +4,32 @@
             [clojure.string :as str]
             [clojure.test]
             [clojure.tools.namespace.find :as ctn.find]
-            [lambdaisland.kaocha.classpath :as cp]))
+            [clojure.java.io :as io]
+            [lambdaisland.kaocha.load :as load]
+            [lambdaisland.kaocha.config :as config]
+            [lambdaisland.kaocha.output :as output]))
 
-(defn run-tests []
-  (cp/maybe-add-dynamic-classloader)
-  (cp/add-classpath "test")
-  (require 'lambdaisland.kaocha.runner-test)
-  (clojure.test/run-tests (find-ns 'lambdaisland.kaocha.runner-test)))
+(defn- run-tests [{:keys [color] :as suite}]
+  (binding [output/*colored-output* color]
+    (apply clojure.test/run-tests (load/load-tests suite))))
 
-(def cli-options
-  [["-H" "--test-help" "Display this help message"]])
+(defn- accumulate [m k v]
+  (update m k (fnil conj #{}) v))
+
+(defn- parse-kw
+  [s]
+  (if (.startsWith s ":") (read-string s) (keyword s)))
+
+(def ^:private cli-options
+  [["-c" "--config-file FILE"   "Config file to read"
+    :default "tests.edn"]
+   [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."
+    :default true]
+   [nil  "--test-path PATH"     "Path to scan for test namespaces"
+    :assoc-fn accumulate]
+   [nil  "--ns-pattern PATTERN" "Regexp pattern to identify test namespaces"
+    :assoc-fn accumulate]
+   ["-H" "--test-help"          "Display this help message"]])
 
 (defn help [summary]
   [""
@@ -31,8 +47,21 @@
 (defn- exit-process! [code]
   (System/exit code))
 
+(defn runner [{:keys [config-file] :as options} suite-ids]
+  (binding [output/*colored-output* (:color options)]
+    (let [config (config/load-config config-file)
+          suites (map #(-> %
+                           (merge (dissoc config :suites))
+                           (config/merge-options options))
+                      (:suites config))]
+      (apply merge-with #(if (int? %1) (+ %1 %2) %2)
+             (map run-tests (if (seq suite-ids)
+                              (filter #(some #{(name (:id %))} suite-ids) suites)
+                              suites))
+             ))))
+
 (defn -main [& args]
-  (let [{:keys [errors options summary]} (cli/parse-opts args cli-options)]
+  (let [{:keys [errors options arguments summary]} (cli/parse-opts args cli-options)]
 
     (if (seq errors)
       (do
@@ -42,4 +71,5 @@
 
       (if (:test-help options)
         (print-help! summary)
-        (run-tests)))))
+        (let [{:keys [fail error]} (runner options arguments)]
+          (exit-process! (mod (+ fail error) 255)))))))

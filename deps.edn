@@ -1,14 +1,18 @@
 {:deps
- {org.clojure/clojure         {:mvn/version "1.9.0"}
-  org.clojure/spec.alpha      {:mvn/version "0.1.143"}
-  org.clojure/tools.cli       {:mvn/version "0.3.5"}
-  org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}
-  org.tcrawley/dynapath       {:mvn/version "1.0.0"}}
+ {org.clojure/clojure          {:mvn/version "1.9.0"}
+  org.clojure/spec.alpha       {:mvn/version "0.1.143"}
+  ;; org.clojure/tools.cli       {:mvn/version "0.3.5"}
+  com.github.clojure/tools.cli {:mvn/version "master-SNAPSHOT"}
+  org.clojure/tools.namespace  {:mvn/version "0.3.0-alpha4"}
+  org.tcrawley/dynapath        {:mvn/version "1.0.0"}}
+
+ :paths
+ ["src"
+  "resources"]
 
  :aliases
  {:test
-  {:extra-paths ["test"]
-   :main-opts   ["-m" "lambdaisland.kaocha.runner"]}
+  {:main-opts ["-m" "lambdaisland.kaocha.runner"]}
 
   :dev
   {:extra-paths ["dev"]
