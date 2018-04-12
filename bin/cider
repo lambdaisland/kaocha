@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set +e
+
+export NREPL_PORT=$(( RANDOM % 1000 + 7000 ))
+echo "Starting nREPL on port" $NREPL_PORT
+
+bash <<EOF &
+  while ! nc -z localhost $NREPL_PORT ; do echo -n '.' ; sleep 1; done
+  emacsclient -e '(cider-connect "localhost" "'${NREPL_PORT}'" "'`pwd`'")'
+EOF
+
+EMACSCLIENT=$!
+
+finish() {
+  [[ -z "$EMACSCLIENT" ]] || kill -TERM "$EMACSCLIENT" 2>/dev/null
+}
+
+trap finish EXIT
+
+CIDER_VERSION=$(emacsclient -e '(upcase cider-version) 2> /dev/null')
+CLJR_VERSION=$(emacsclient -e '(when (package-installed-p (quote clj-refactor))
+                                 (replace-regexp-in-string "snapshot" "-SNAPSHOT"
+                                   (pkg-info-format-version
+                                     (pkg-info-library-version (quote clj-refactor)))))')
+
+
+if [[ -z "$CIDER_VERSION" ]]; then
+    echo "Failed to get CIDER version. Is the Emacs CIDER package installed?"
+    exit 1
+fi
+
+clj                                                                      \
+    -A:dev                                                               \
+    -Sdeps '{:deps {cider/cider-nrepl {:mvn/version '$CIDER_VERSION'}}}' \
+    -m lambdaisland.nrepl.main                                           \
+    --port $NREPL_PORT                                                   \
+    --middleware cider.nrepl/cider-middleware                            \
+    --middleware refactor-nrepl.middleware/wrap-refactor

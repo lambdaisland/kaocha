@@ -1,0 +1,17 @@
+{:deps
+ {org.clojure/clojure {:mvn/version "1.9.0"}}
+
+ :aliases
+ {:dev
+  {:extra-paths ["dev"]
+   :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
+                 ancient-clj                             {:mvn/version "0.6.15"}
+                 org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}
+                 lambdaisland/nrepl                      {:mvn/version "0.2.0"}
+                 ;; temporary: latest master detects deps.edn
+                 com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}}
+
+ :mvn/repos
+ {"central" {:url "https://repo1.maven.org/maven2/"}
+  "clojars" {:url "https://clojars.org/repo"}
+  "jitpack" {:url "https://jitpack.io"}}}
