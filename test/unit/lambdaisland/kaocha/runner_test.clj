@@ -1,10 +1,11 @@
 (ns lambdaisland.kaocha.runner-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :as t :refer :all]
             [lambdaisland.kaocha.runner :as runner]
             [lambdaisland.kaocha.test-util :refer [with-out-err]]))
 
 (defn -main [& args]
-  (with-out-err (apply #'runner/-main* args)))
+  (with-out-err
+    (apply #'runner/-main* args)))
 
 (deftest main-test
   (testing "--test-help"

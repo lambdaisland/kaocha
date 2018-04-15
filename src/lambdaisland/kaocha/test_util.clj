@@ -1,4 +1,5 @@
-(ns lambdaisland.kaocha.test-util)
+(ns lambdaisland.kaocha.test-util
+  (:require [clojure.test :as t]))
 
 (defmacro with-out-err
   "Captures the return value of the expression, as well as anything written on

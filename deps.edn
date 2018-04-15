@@ -1,10 +1,12 @@
 {:deps
- {org.clojure/clojure          {:mvn/version "1.9.0"}
-  org.clojure/spec.alpha       {:mvn/version "0.1.143"}
-  ;; org.clojure/tools.cli       {:mvn/version "0.3.5"}
-  com.github.clojure/tools.cli {:mvn/version "master-SNAPSHOT"}
-  org.clojure/tools.namespace  {:mvn/version "0.3.0-alpha4"}
-  org.tcrawley/dynapath        {:mvn/version "1.0.0"}}
+ {org.clojure/clojure         {:mvn/version "1.9.0"}
+  org.clojure/spec.alpha      {:mvn/version "0.1.143"}
+  org.clojure/tools.cli       {#_#_:mvn/version "0.3.7"
+                               :git/url         "https://github.com/clojure/tools.cli.git"
+                               :sha             "4cba43f65f72d65bcfc8f3eb32e9ff155ce57858"}
+  org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}
+  org.tcrawley/dynapath       {:mvn/version "1.0.0"}
+  slingshot                   {:mvn/version "0.12.2"}}
 
  :paths
  ["src"
@@ -19,13 +21,14 @@
    :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
                  ancient-clj                             {:mvn/version "0.6.15"}
                  org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}
-                 lambdaisland/nrepl                      {:mvn/version "0.2.0"}
+                 lambdaisland/nrepl                      {:mvn/version "0.2.0"
+                                                          :exclusions [org.clojure/tools.cli]}
                  ;; temporary: latest master detects deps.edn
                  com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}
 
   :cloverage
-  {:extra-deps {cloverage                               {:mvn/version "1.0.10"}}
-   :main-opts ["-m" "cloverage.coverage" "--runner" "lambdaisland.kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
+  {:extra-deps {cloverage {:mvn/version "1.0.10"}}
+   :main-opts  ["-m" "cloverage.coverage" "--runner" "lambdaisland.kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
 
  :mvn/repos
  {"central" {:url "https://repo1.maven.org/maven2/"}

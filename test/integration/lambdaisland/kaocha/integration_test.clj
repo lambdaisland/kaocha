@@ -42,4 +42,16 @@
                                 :suites [{:id :empty
                                           :test-paths ["fixtures/a-tests"]
                                           :ns-patterns [#"^foo$"]}]})
-           {:exit 0, :out "\n\n0 test vars, 0 failures.\n", :err ""}))))
+           {:exit 0, :out "\n\n0 test vars, 0 failures.\n", :err ""})))
+
+
+  (testing "--fail-fast"
+    (is (= {:err ""
+            :out (str "..F\n"
+                      "FAIL in (fail-1) (hello_test.clj:11)\n"
+                      "expected: false\n"
+                      "  actual: false\n"
+                      "\n"
+                      "3 test vars, 1 failures.\n")
+            :exit 1}
+           (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast")))))

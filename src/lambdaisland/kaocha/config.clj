@@ -4,7 +4,7 @@
   (:require [clojure.java.io :as io]
             [lambdaisland.kaocha.output :as out]))
 
-(def global-opts #{:reporter :color :suites :only-suites})
+(def global-opts #{:reporter :color :suites :only-suites :fail-fast})
 (def suite-opts #{:id :test-paths :ns-patterns})
 
 (defn default-config []
@@ -36,7 +36,7 @@
     (symbol? reporter)
     (do
       (require (symbol (namespace reporter)))
-      @(resolve reporter))
+      (resolve-reporter @(resolve reporter)))
 
     (seqable? reporter)
     (let [rs (map resolve-reporter reporter)]

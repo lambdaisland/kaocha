@@ -12,17 +12,16 @@
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
-(defn- parse-kw
-  [s]
-  (if (.startsWith s ":") (read-string s) (keyword s)))
 
 (def ^:private cli-options
   [["-c" "--config-file FILE"   "Config file to read"
     :default "tests.edn"]
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
-   [nil  "--print-config" "Print out the fully merged and normalized config, then exit."]
+   [nil  "--print-config"       "Print out the fully merged and normalized config, then exit."]
+   [nil  "--fail-fast"          "Stop testing after the first failure."]
    [nil  "--reporter SYMBOL"
-    :parse-fn symbol]
+    :parse-fn symbol
+    :assoc-fn accumulate]
    [nil  "--test-path PATH"     "Path to scan for test namespaces"
     :assoc-fn accumulate]
    [nil  "--ns-pattern PATTERN" "Regexp pattern to identify test namespaces"
@@ -88,7 +87,3 @@
 
 (defn -main [& args]
   (exit-process! (apply -main* args)))
-
-;; the color setting from the config file isn't honored for the summary
-;; implement our own var finding so we can easily detect if no vars are found, and report that.
-;; override reporter on command line

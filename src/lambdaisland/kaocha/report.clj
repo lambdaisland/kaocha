@@ -1,6 +1,8 @@
 (ns lambdaisland.kaocha.report
   (:require [lambdaisland.kaocha.output :as out :refer [colored]]
-            [clojure.test :as t]))
+            [lambdaisland.kaocha :as k]
+            [clojure.test :as t]
+            [slingshot.slingshot :refer [throw+]]))
 
 (def clojure-test-report t/report)
 
@@ -54,8 +56,18 @@
                              (str error " errors, "))
                            fail " failures.")))))
 
-(defn progress [m]
-  (doto m
-    track
-    dots
-    result))
+(defn fail-fast
+  "Fail fast reporter, add this as a final reporter to interrupt testing as soon
+  as a failure or error is encountered."
+  [m]
+  (when (and (= :end-test-var (:type m)))
+    (let [{:keys [fail error] :as report-counters} @t/*report-counters*]
+      (when (or (> fail 0) (> error 0))
+        (t/report {:type :end-test-ns :ns (-> m :var meta :ns)})
+        (throw+ (assoc m
+                       ::k/fail-fast true
+                       ::k/report-counters report-counters))))))
+
+(def progress
+  "Reporter that prints progress as a sequence of dots and letters."
+  [track dots result])
