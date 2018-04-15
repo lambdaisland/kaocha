@@ -19,7 +19,7 @@
 (deftest command-line-runner-test
   (testing "it lets you specifiy the test suite name"
     (is (= {:exit 0
-            :out ".\n\n1 test vars, 0 failures.\n"
+            :out ".\n1 test vars, 0 failures.\n"
             :err ""}
            (invoke-runner "--no-color" "--config-file" "fixtures/tests.edn" "a"))))
 
@@ -42,16 +42,15 @@
                                 :suites [{:id :empty
                                           :test-paths ["fixtures/a-tests"]
                                           :ns-patterns [#"^foo$"]}]})
-           {:exit 0, :out "\n\n0 test vars, 0 failures.\n", :err ""})))
+           {:exit 0, :out "\n0 test vars, 0 failures.\n", :err ""})))
 
 
   (testing "--fail-fast"
     (is (= {:err ""
-            :out (str "..F\n"
+            :out (str ".\n.F\n\n"
                       "FAIL in (fail-1) (hello_test.clj:11)\n"
                       "expected: false\n"
                       "  actual: false\n"
-                      "\n"
                       "3 test vars, 1 failures.\n")
             :exit 1}
            (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast"))))
@@ -60,4 +59,17 @@
     (is (= {:err ""
             :out "No such suite: :foo, valid options: :a, :b.\n"
             :exit 254}
-           (invoke-runner "--config-file" "fixtures/tests.edn" "--no-color" "foo")))))
+           (invoke-runner "--config-file" "fixtures/tests.edn" "--no-color" "foo"))))
+
+  (testing "Invalid reporter"
+    (is (= {:exit 253
+            :out ""
+            :err "\u001b[31mERROR: \u001b[0mFailed to resolve reporter var: lambdaisland.kaocha/does-not-exist\n"}
+           (invoke-runner "--reporter" "lambdaisland.kaocha/does-not-exist")))
+
+    (is (= {:exit 253
+            :out ""
+            :err "\u001b[31mERROR: \u001b[0mFailed to resolve reporter var: does/not-exist\n"}
+           (invoke-runner "--reporter" "does/not-exist"))) )
+
+  )

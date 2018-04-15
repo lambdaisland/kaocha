@@ -16,6 +16,7 @@
 (defmethod dots :pass [_] (print ".") (flush))
 (defmethod dots :fail [_] (print (colored :red "F")) (flush))
 (defmethod dots :error [_] (print (colored :red "E")) (flush))
+(defmethod dots :end-test-suite [_] (println) (flush))
 
 (def ^:dynamic *results* nil)
 
@@ -50,7 +51,6 @@
         passed? (pos-int? (+ fail error))]
     (println (out/colored (if passed? :red :green)
                           (str
-                           (if passed? "\n" "\n\n")
                            (+ pass fail error) " test vars, "
                            (when (pos-int? error)
                              (str error " errors, "))
@@ -68,6 +68,38 @@
                        ::k/fail-fast true
                        ::k/report-counters report-counters))))))
 
+(def doc-printed-contexts (atom nil))
+
+(defn doc-print-contexts [contexts]
+  (let [printed-contexts @doc-printed-contexts]
+    (when (> (count contexts) (count printed-contexts))
+      (doseq [[c1 c2] (map vector (concat printed-contexts
+                                          (repeat nil)) contexts)]
+        (print (if (= c1 c2)
+                 "  "
+                 (str "    " c2 "\n")))))
+    (reset! doc-printed-contexts contexts)))
+
+(defmulti doc :type)
+(defmethod doc :default [_])
+
+(defmethod doc :begin-test-ns [m]
+  (reset! doc-printed-contexts (list))
+  (println "Testing" (str (:ns m))))
+
+(defmethod doc :end-test-ns [m]
+  (println))
+
+(defmethod doc :begin-test-var [m]
+  (let [{:keys [name]} (-> m :var meta)]
+    (println (str "  " name))))
+
+(defmethod doc :pass [m] (doc-print-contexts t/*testing-contexts*))
+(defmethod doc :error [m] (doc-print-contexts t/*testing-contexts*))
+
 (def progress
   "Reporter that prints progress as a sequence of dots and letters."
   [track dots result])
+
+(def documentation
+  [track doc result])

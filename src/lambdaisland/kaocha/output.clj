@@ -21,3 +21,7 @@
 (defn warn [& args]
   (binding [*out* *err*]
     (println (apply str (colored :red "WARNING: ") args))))
+
+(defn error [& args]
+  (binding [*out* *err*]
+    (println (apply str (colored :red "ERROR: ") args))))

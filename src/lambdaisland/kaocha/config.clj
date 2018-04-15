@@ -3,7 +3,9 @@
   through command line options."
   (:require [clojure.java.io :as io]
             [lambdaisland.kaocha.output :as out]
-            [lambdaisland.kaocha.report :as report]))
+            [lambdaisland.kaocha.report :as report]
+            [slingshot.slingshot :refer [throw+]]
+            [lambdaisland.kaocha :as k]))
 
 (def global-opts #{:reporter :color :suites :only-suites :fail-fast})
 (def suite-opts #{:id :test-paths :ns-patterns})
@@ -39,8 +41,13 @@
 
     (symbol? reporter)
     (do
-      (require (symbol (namespace reporter)))
-      (resolve-reporter @(resolve reporter)))
+      (try
+        (require (symbol (namespace reporter)))
+        (catch java.io.FileNotFoundException e
+          (throw+ {::k/reporter-not-found reporter})))
+      (if-let [resolved (resolve reporter)]
+        (resolve-reporter @resolved)
+        (throw+ {::k/reporter-not-found reporter})))
 
     (seqable? reporter)
     (let [rs (map resolve-reporter reporter)]
@@ -50,8 +57,9 @@
     reporter))
 
 (defn normalize [config]
-  (let [global    (select-keys config global-opts)
-        suite     (select-keys config suite-opts)]
+  (let [config (merge (default-config) config)
+        global (select-keys config global-opts)
+        suite  (select-keys config suite-opts)]
     (-> global
         (update :suites (fn [suites]
                           (->> suites

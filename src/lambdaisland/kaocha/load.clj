@@ -3,8 +3,16 @@
             [clojure.java.io :as io]
             [clojure.tools.namespace.find :as ctn.find]))
 
+(defn regex? [r]
+  (instance? java.util.regex.Pattern r))
+
+(defn regex [r]
+  (if (regex? r)
+    r
+    (java.util.regex.Pattern/compile r)))
+
 (defn- ns-match? [patterns ns-sym]
-  (some #(re-find % (name ns-sym)) patterns))
+  (some #(re-find (regex %) (name ns-sym)) patterns))
 
 (defn- find-test-nss [test-paths ns-patterns]
   (sequence (comp

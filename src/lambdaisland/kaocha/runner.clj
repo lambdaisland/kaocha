@@ -1,15 +1,15 @@
 (ns lambdaisland.kaocha.runner
   "Main entry point for command line use."
   (:gen-class)
-  (:require [clojure.tools.cli :as cli]
+  (:require [clojure.pprint :as pprint]
+            [clojure.set :as set]
             [clojure.string :as str]
-            [clojure.test]
-            [clojure.pprint :as pprint]
-            [clojure.java.io :as io]
+            [clojure.tools.cli :as cli]
+            [lambdaisland.kaocha :as k]
             [lambdaisland.kaocha.config :as config]
             [lambdaisland.kaocha.output :as output]
             [lambdaisland.kaocha.test :as test]
-            [clojure.set :as set]))
+            [slingshot.slingshot :refer [try+]]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -46,10 +46,7 @@
 (defn config [options]
   (let [{:keys [config-file] :as options} (config/normalize-cli-opts options)
         config (config/load-config (or config-file "tests.edn"))]
-    (merge
-     (config/default-config)
-     config
-     options)))
+    (merge config options)))
 
 (defn- -main* [& args]
   (let [{:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
@@ -95,4 +92,8 @@
   (System/exit code))
 
 (defn -main [& args]
-  (exit-process! (apply -main* args)))
+  (try+
+   (exit-process! (apply -main* args))
+   (catch ::k/reporter-not-found {::k/keys [reporter-not-found]}
+     (output/error "Failed to resolve reporter var: " reporter-not-found)
+     (exit-process! -3))))

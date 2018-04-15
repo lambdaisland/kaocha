@@ -57,12 +57,17 @@
 
 (deftest normalize-test
   (testing "it merges suite-config given at the top level into suites"
-    (= (config/normalize {:suites [{:id :unit}
+    (= {:suites [{:ns-patterns ["-test$"] :test-paths ["test"] :id :unit}
+                 {:ns-patterns ["-test$"] :test-paths ["test"] :id :integration}]
+        :color true
+        :reporter lambdaisland.kaocha.report/progress}
+       (config/normalize {:suites [{:id :unit}
                                    {:id :integration}]
-                          :test-paths ["test"]})
-       {:suites [{:test-paths ["test"], :id :unit}
-                 {:test-paths ["test"], :id :integration}]}))
+                          :test-paths ["test"]})))
 
   (testing "it filters unknown keys"
-    (is (= {:suites []}
+    (is (= {:suites [{:ns-patterns ["-test$"] :id :unit}
+                     {:ns-patterns ["-test$"] :test-paths ["test"]}]
+            :color true
+            :reporter 'lambdaisland.kaocha.report/progress}
            (config/normalize {:foo :bar})))))
