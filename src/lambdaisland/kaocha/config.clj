@@ -1,8 +1,9 @@
 (ns lambdaisland.kaocha.config
+  "Read,validate, normalize configuration as found in tests.edn or passed in
+  through command line options."
   (:require [clojure.java.io :as io]
             [lambdaisland.kaocha.output :as out]))
 
-(def default-config-file "tests.edn")
 (def global-opts #{:reporter :color :suites :only-suites})
 (def suite-opts #{:id :test-paths :ns-patterns})
 
@@ -37,7 +38,7 @@
       (require (symbol (namespace reporter)))
       @(resolve reporter))
 
-    (seq? reporter)
+    (seqable? reporter)
     (let [rs (map resolve-reporter reporter)]
       (fn [m] (run! #(% m) rs)))
 

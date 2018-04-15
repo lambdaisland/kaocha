@@ -8,8 +8,7 @@
             [clojure.java.io :as io]
             [lambdaisland.kaocha.config :as config]
             [lambdaisland.kaocha.output :as output]
-            [lambdaisland.kaocha.test :as test]
-            [lambdaisland.kaocha.output :as out]))
+            [lambdaisland.kaocha.test :as test]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
