@@ -8,7 +8,8 @@
             [clojure.java.io :as io]
             [lambdaisland.kaocha.config :as config]
             [lambdaisland.kaocha.output :as output]
-            [lambdaisland.kaocha.test :as test]))
+            [lambdaisland.kaocha.test :as test]
+            [clojure.set :as set]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -42,9 +43,6 @@
 (defn print-help! [summary]
   (println (str/join "\n" (help summary))))
 
-(defn- exit-process! [code]
-  (System/exit code))
-
 (defn config [options]
   (let [{:keys [config-file] :as options} (config/normalize-cli-opts options)
         config (config/load-config (or config-file "tests.edn"))]
@@ -55,35 +53,46 @@
 
 (defn- -main* [& args]
   (let [{:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
-        options (cond-> options
-                  (seq arguments)
-                  (assoc :only-suites arguments))]
+        options                                    (cond-> options
+                                                     (seq arguments)
+                                                     (assoc :only-suites (into #{} (map keyword) arguments)))]
 
     (cond
       (seq errors)
       (do
         (run! println errors)
         (print-help! summary)
-        1)
+        -1)
 
       (:test-help options)
       (do
         (print-help! summary)
         0)
 
-      (:print-config options)
-      (do
-        (-> options
-            config
-            config/normalize
-            pprint/pprint)
-        0)
-
       :else
-      (let [{:keys [fail error] :or {fail 0 error 0}} (-> options
-                                                          config
-                                                          test/run-suites)]
-        (mod (+ fail error) 255)))))
+      (let [config         (config options)
+            normalized     (config/normalize config)
+            valid-suites   (into #{} (map :id) (:suites normalized))
+            unknown-suites (set/difference (:only-suites options) valid-suites)]
+        (cond
+          (:print-config options)
+          (do
+            (pprint/pprint normalized)
+            0)
+
+          (seq unknown-suites)
+          (do
+            (println (format "No such suite: %s, valid options: %s."
+                             (str/join ", " (sort unknown-suites))
+                             (str/join ", " (sort valid-suites))))
+            -2)
+
+          :else
+          (let [{:keys [fail error] :or {fail 0 error 0}} (test/run config)]
+            (mod (+ fail error) 255)))))))
+
+(defn- exit-process! [code]
+  (System/exit code))
 
 (defn -main [& args]
   (exit-process! (apply -main* args)))

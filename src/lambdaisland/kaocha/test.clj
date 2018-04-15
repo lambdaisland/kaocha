@@ -7,14 +7,16 @@
             [slingshot.slingshot :refer [try+]]
             [lambdaisland.kaocha :as k]))
 
-(defmacro with-reporter [r & body]
+(defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report (config/resolve-reporter ~r)]
      ~@body))
 
-(defn merge-report [r1 r2]
-  (merge-with #(if (int? %1) (+ %1 %2) %2) r1 r2))
+(def ^:private empty-report {:pass 0 :fail 0 :error 0})
 
-(defn try-test-ns [ns]
+(defn- merge-report [r1 r2]
+  (merge-with #(if (int? %1) (+ %1 %2) %2) empty-report r1 r2))
+
+(defn- try-test-ns [ns]
   (try+
    (t/test-ns ns)
    (catch ::k/fail-fast m
@@ -22,7 +24,7 @@
 
 (defn- run-suite [{:keys [color] :as suite}]
   (t/do-report (assoc suite :type :begin-test-suite))
-  (loop [[ns & nss] (:test-nss suite)
+  (loop [[ns & nss] (:nss suite)
          report {}]
     (if ns
       (let [ns-report (try-test-ns ns)]
@@ -36,7 +38,7 @@
         (t/do-report (assoc suite :type :end-test-suite))
         report))))
 
-(defn run-suites [config]
+(defn run [config]
   (let [{:keys [reporter
                 color
                 suites
@@ -46,19 +48,19 @@
         reporter            (if fail-fast
                               [reporter report/fail-fast]
                               reporter)]
-    (binding [output/*colored-output* color]
-      (with-reporter reporter
-        (binding [report/*results* (atom {})]
-          (let [suites (map #(assoc % :test-nss (load/load-tests %)) suites)]
-            (loop [[suite & suites] suites
-                   report           {}]
-              (if suite
-                (let [report (merge-report report (run-suite suite))]
-                  (if (::k/fail-fast report)
-                    (do
-                      (t/do-report (assoc report :type :summary))
-                      report)
-                    (recur suites report)))
-                (do
-                  (t/do-report (assoc report :type :summary))
-                  report)))))))))
+    (with-reporter reporter
+      (binding [output/*colored-output* color
+                report/*results* (atom {})]
+        (let [suites (map load/find-tests suites)]
+          (loop [[suite & suites] suites
+                 report           {}]
+            (if suite
+              (let [report (merge-report report (run-suite suite))]
+                (if (::k/fail-fast report)
+                  (do
+                    (t/do-report (assoc report :type :summary))
+                    report)
+                  (recur suites report)))
+              (do
+                (t/do-report (assoc report :type :summary))
+                report))))))))

@@ -2,7 +2,8 @@
   "Read,validate, normalize configuration as found in tests.edn or passed in
   through command line options."
   (:require [clojure.java.io :as io]
-            [lambdaisland.kaocha.output :as out]))
+            [lambdaisland.kaocha.output :as out]
+            [lambdaisland.kaocha.report :as report]))
 
 (def global-opts #{:reporter :color :suites :only-suites :fail-fast})
 (def suite-opts #{:id :test-paths :ns-patterns})
@@ -28,11 +29,14 @@
 
 (defn filter-suites [suite-ids suites]
   (if (seq suite-ids)
-    (filter #(some #{(name (:id %))} suite-ids) suites)
+    (filter #(some #{(:id %)} suite-ids) suites)
     suites))
 
 (defn resolve-reporter [reporter]
   (cond
+    (= 'clojure.test/report reporter)
+    report/clojure-test-report
+
     (symbol? reporter)
     (do
       (require (symbol (namespace reporter)))

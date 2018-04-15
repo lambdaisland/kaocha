@@ -20,3 +20,11 @@
   (let [test-nss (find-test-nss test-paths ns-patterns)]
     (run! require test-nss)
     test-nss))
+
+(defn test-vars [ns]
+  (filter (comp :test meta) (vals (ns-interns (find-ns ns)))))
+
+(defn find-tests [suite]
+  (let [nss (load-tests suite)
+        vars (mapcat test-vars nss)]
+    (assoc suite :nss nss :vars vars)))

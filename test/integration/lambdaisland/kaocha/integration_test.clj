@@ -54,4 +54,10 @@
                       "\n"
                       "3 test vars, 1 failures.\n")
             :exit 1}
-           (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast")))))
+           (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast"))))
+
+  (testing "Invalid suite"
+    (is (= {:err ""
+            :out "No such suite: :foo, valid options: :a, :b.\n"
+            :exit 254}
+           (invoke-runner "--config-file" "fixtures/tests.edn" "--no-color" "foo")))))

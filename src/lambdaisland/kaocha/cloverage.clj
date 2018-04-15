@@ -6,4 +6,4 @@
 (defmethod c/runner-fn :lambdaisland.kaocha [_]
   (fn [_]
     (merge {:errors 0}
-           (t/run-suites (runner/config {})))))
+           (t/run (runner/config {})))))

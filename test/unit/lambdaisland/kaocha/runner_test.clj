@@ -15,7 +15,7 @@
 
   (testing "unknown command line options"
     (let [{:keys [out err result]} (-main "--foo")]
-      (is (= 1 result))
+      (is (= -1 result))
       (is (re-find #"Unknown option: \"--foo\"\n" out))
       (is (re-find #"USAGE:" out)))))
 
