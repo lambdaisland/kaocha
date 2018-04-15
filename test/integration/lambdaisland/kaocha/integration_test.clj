@@ -16,7 +16,6 @@
            "--config-file" (str tmpfile)
            args)))
 
-
 (deftest command-line-runner-test
   (testing "it lets you specifiy the test suite name"
     (is (= {:exit 0
@@ -25,18 +24,19 @@
            (invoke-runner "--no-color" "--config-file" "fixtures/tests.edn" "a"))))
 
   (testing "it can print the config"
-    (is (= (invoke-with-config {:suites [{:id :empty
+    (is (= (invoke-with-config {:suites [{:id :aaa
                                           :test-paths ["fixtures/a-tests"]
                                           :ns-patterns [#"^foo$"]}]}
-                               "--print-config" "empty")
+                               "--print-config")
            {:exit 0,
-            :out (str/join "\n" ["{:ns-patterns [#\"^foo$\"],"
-                                 " :color true,"
-                                 " :reporter lambdaisland.kaocha.report/progress,"
-                                 " :id :empty,"
-                                 " :test-paths [\"fixtures/a-tests\"]}"
-                                 ""]),
+            :out (str "{:suites\n"
+                      " [{:ns-patterns [#\"^foo$\"],\n"
+                      "   :id :aaa,\n"
+                      "   :test-paths [\"fixtures/a-tests\"]}],\n"
+                      " :color true,\n"
+                      " :reporter lambdaisland.kaocha.report/progress}\n")
             :err ""})))
+
   (testing "it elegantly reports when no tests are found"
     (is (= (invoke-with-config {:color false
                                 :suites [{:id :empty

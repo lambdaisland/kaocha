@@ -1,19 +1,22 @@
 (ns lambdaisland.kaocha.runner-test
   (:require [clojure.test :refer :all]
-            [lambdaisland.kaocha.runner :as runner]))
+            [lambdaisland.kaocha.runner :as runner]
+            [lambdaisland.kaocha.test-util :refer [with-out-err]]))
+
+(defn -main [& args]
+  (with-out-err (apply #'runner/-main* args)))
 
 (deftest main-test
-  (let [main-out (fn [& args] (with-out-str (apply runner/-main args)))]
-    (testing "it prints help when asked"
-      (is (re-find #"USAGE:" (main-out "--test-help"))))
+  (testing "--test-help"
+    (let [{:keys [out err result]} (-main "--test-help")]
+      (is (re-find #"USAGE:" out))
+      (is (= 0 result))))
 
-    (testing "it reports unknown command line options"
-      (let [exit-code (atom nil)
-            err-out (with-redefs [runner/exit-process! #(reset! exit-code %)]
-                      (main-out "--foo"))]
-        (is (= 1 @exit-code))
-        (is (re-find #"Unknown option: \"--foo\"\n" err-out))
-        (is (re-find #"USAGE:" err-out))))))
+  (testing "unknown command line options"
+    (let [{:keys [out err result]} (-main "--foo")]
+      (is (= 1 result))
+      (is (re-find #"Unknown option: \"--foo\"\n" out))
+      (is (re-find #"USAGE:" out)))))
 
 (deftest help-test
   (is (= ["" "USAGE:"
