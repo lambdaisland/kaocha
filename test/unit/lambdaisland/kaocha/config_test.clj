@@ -53,7 +53,12 @@
 
       (is (function? reporter))
       (reporter :ok)
-      (is (= @fx {:x :ok :y :ok})))))
+      (is (= @fx {:x :ok :y :ok}))))
+
+  (testing "it throws when a reporter couldn't be resolved"
+    (is (thrown? clojure.lang.ExceptionInfo (config/resolve-reporter 'no-ns-symbol)))
+    (is (thrown? clojure.lang.ExceptionInfo (config/resolve-reporter 'clojure.core/no-such-var)))
+    (is (thrown? clojure.lang.ExceptionInfo (config/resolve-reporter 'bar/no-such-ns)))))
 
 (deftest normalize-test
   (testing "it merges suite-config given at the top level into suites"

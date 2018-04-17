@@ -28,10 +28,8 @@
 
 (deftest find-tests-test
   (is (= {:test-paths ["fixtures/a-tests"]
-          :ns-patterns '("-test$")
+          :ns-patterns ["-test$"]
           :nss '(foo.bar-test)
           :vars [(resolve 'foo.bar-test/a-test)]}
-         (-> (load/find-tests {:test-paths ["fixtures/a-tests"]
-                               :ns-patterns #{#"-test$"}})
-             ;; java.util.regex.Pattern does not have value sematics
-             (update :ns-patterns #(map str %))))))
+         (load/find-tests {:test-paths ["fixtures/a-tests"]
+                           :ns-patterns ["-test$"]}))))

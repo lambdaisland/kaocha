@@ -42,7 +42,9 @@
     (symbol? reporter)
     (do
       (try
-        (require (symbol (namespace reporter)))
+        (if-let [ns (namespace reporter)]
+          (require (symbol ns))
+          (throw+ {::k/reporter-not-found reporter}))
         (catch java.io.FileNotFoundException e
           (throw+ {::k/reporter-not-found reporter})))
       (if-let [resolved (resolve reporter)]
