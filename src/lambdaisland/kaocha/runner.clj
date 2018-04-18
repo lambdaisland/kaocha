@@ -15,20 +15,26 @@
   (update m k (fnil conj []) v))
 
 (def ^:private cli-options
-  [["-c" "--config-file FILE"   "Config file to read"
+  [["-c" "--config-file FILE"   "Config file to read."
     :default "tests.edn"]
-   [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    [nil  "--print-config"       "Print out the fully merged and normalized config, then exit."]
    [nil  "--fail-fast"          "Stop testing after the first failure."]
-   [nil  "--reporter SYMBOL"
+   [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
+   [nil  "--[no-]randomize"     "Run test namespaces and vars in random order."]
+   [nil  "--seed SEED"          "Provide a seed to determine the random order of tests."
+    :parse-fn #(Integer/parseInt %)]
+   [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
     :parse-fn symbol
-    :assoc-fn accumulate]
-   [nil  "--test-path PATH"     "Path to scan for test namespaces"
-    :assoc-fn accumulate]
-   [nil  "--ns-pattern PATTERN" "Regexp pattern to identify test namespaces"
     :assoc-fn accumulate
-    :parse-fn #(java.util.regex.Pattern/compile %)]
-   ["-H" "--test-help"          "Display this help message"]])
+    :default-desc (str (:reporter (config/default-config)))]
+   [nil  "--test-path PATH"     "Path to scan for test namespaces."
+    :assoc-fn accumulate
+    :default-desc (str (first (:test-paths (config/default-config))))]
+   [nil  "--ns-pattern PATTERN" "Regexp pattern to identify test namespaces."
+    :assoc-fn accumulate
+    :parse-fn #(java.util.regex.Pattern/compile %)
+    :default-desc (str (first (:ns-patterns (config/default-config))))]
+   ["-H" "--test-help"          "Display this help message."]])
 
 (defn help [summary]
   [""

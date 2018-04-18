@@ -1,6 +1,8 @@
 (ns lambdaisland.kaocha.load-test
   (:require [clojure.test :refer :all]
-            [lambdaisland.kaocha.load :as load]))
+            [lambdaisland.kaocha.classpath :as cp]
+            [lambdaisland.kaocha.load :as load]
+            [clojure.java.io :as io]))
 
 (def ns-match? @#'load/ns-match?)
 
@@ -27,9 +29,10 @@
          [(resolve 'foo.bar-test/a-test)])))
 
 (deftest find-tests-test
-  (is (= {:test-paths ["fixtures/a-tests"]
-          :ns-patterns ["-test$"]
-          :nss '(foo.bar-test)
-          :vars [(resolve 'foo.bar-test/a-test)]}
-         (load/find-tests {:test-paths ["fixtures/a-tests"]
-                           :ns-patterns ["-test$"]}))))
+  ;; call find-tests first, or the var in the result won't resolve
+  (let [result (load/find-tests {:test-paths ["fixtures/a-tests"]
+                                 :ns-patterns ["-test$"]})]
+    (is (= {:test-paths ["fixtures/a-tests"]
+            :ns-patterns ["-test$"]
+            :tests {'foo.bar-test
+                    [(resolve 'foo.bar-test/a-test)]}}))))

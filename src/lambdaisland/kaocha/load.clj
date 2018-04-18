@@ -33,6 +33,6 @@
   (filter (comp :test meta) (vals (ns-interns (find-ns ns)))))
 
 (defn find-tests [suite]
-  (let [nss (load-tests suite)
-        vars (mapcat test-vars nss)]
-    (assoc suite :nss nss :vars vars)))
+  (assoc suite :tests (into {}
+                            (map (juxt identity test-vars))
+                            (load-tests suite))))

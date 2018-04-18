@@ -4,7 +4,7 @@
             [clojure.string :as str]))
 
 (defn invoke-runner [& args]
-  (apply shell/sh "clj" "-m" "lambdaisland.kaocha.runner" args))
+  (apply shell/sh "clj" "-m" "lambdaisland.kaocha.runner" "--no-randomize" args))
 
 (defn invoke-with-config [config & args]
   (let [tmpfile (java.io.File/createTempFile "tests" ".edn")]
@@ -14,6 +14,7 @@
     (apply shell/sh
            "clj" "-m" "lambdaisland.kaocha.runner"
            "--config-file" (str tmpfile)
+           "--no-randomize"
            args)))
 
 (deftest command-line-runner-test
@@ -24,17 +25,18 @@
            (invoke-runner "--no-color" "--config-file" "fixtures/tests.edn" "a"))))
 
   (testing "it can print the config"
-    (is (= (invoke-with-config {:suites [{:id :aaa
-                                          :test-paths ["fixtures/a-tests"]
-                                          :ns-patterns [#"^foo$"]}]}
-                               "--print-config")
+    (is (= (-> (invoke-with-config {:suites [{:id :aaa
+                                              :test-paths ["fixtures/a-tests"]
+                                              :ns-patterns ["^foo$"]}]}
+                                   "--print-config")
+               (update :out read-string))
            {:exit 0,
-            :out (str "{:suites\n"
-                      " [{:ns-patterns [#\"^foo$\"],\n"
-                      "   :id :aaa,\n"
-                      "   :test-paths [\"fixtures/a-tests\"]}],\n"
-                      " :color true,\n"
-                      " :reporter lambdaisland.kaocha.report/progress}\n")
+            :out {:color true
+                  :randomize false
+                  :suites [{:ns-patterns ["^foo$"]
+                            :test-paths ["fixtures/a-tests"]
+                            :id :aaa}]
+                  :reporter 'lambdaisland.kaocha.report/progress}
             :err ""})))
 
   (testing "it elegantly reports when no tests are found"

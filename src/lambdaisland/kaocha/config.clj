@@ -7,7 +7,7 @@
             [slingshot.slingshot :refer [throw+]]
             [lambdaisland.kaocha :as k]))
 
-(def global-opts #{:reporter :color :suites :only-suites :fail-fast})
+(def global-opts #{:reporter :color :randomize :seed :suites :only-suites :fail-fast})
 (def suite-opts #{:id :test-paths :ns-patterns})
 
 (defn default-config []
@@ -16,7 +16,10 @@
 (defn load-config [path]
   (let [file (io/file path)]
     (if (.exists file)
-      (read-string (slurp file))
+      (let [body (slurp file)]
+        (if (seq body)
+          (read-string body)
+          nil))
       (out/warn "Config file not found: " path ", using default values."))))
 
 (defn- rename-key [m old-key new-key]
@@ -52,7 +55,7 @@
         (throw+ {::k/reporter-not-found reporter})))
 
     (seqable? reporter)
-    (let [rs (map resolve-reporter reporter)]
+    (let [rs (doall (map resolve-reporter reporter))]
       (fn [m] (run! #(% m) rs)))
 
     :else

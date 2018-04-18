@@ -3,6 +3,7 @@
             [lambdaisland.kaocha.report :as report]
             [lambdaisland.kaocha.load :as load]
             [lambdaisland.kaocha.output :as output]
+            [lambdaisland.kaocha.random :as random]
             [lambdaisland.kaocha.config :as config]
             [slingshot.slingshot :refer [try+ throw+]]
             [lambdaisland.kaocha :as k]
@@ -76,20 +77,7 @@
            (when (:test (meta v))
              (each-fixture-fn (fn [] (test-var v))))))))))
 
-(defn test-all-vars
-  "Calls test-vars on every var interned in the namespace, with fixtures."
-  [ns]
-  (test-vars (vals (ns-interns ns))))
-
-(defn test-ns
-  "If the namespace defines a function named test-ns-hook, calls that.
-  Otherwise, calls test-all-vars on the namespace.  'ns' is a
-  namespace object or a symbol.
-
-  Internally binds *report-counters* to a ref initialized to
-  *initial-report-counters*.  Returns the final, dereferenced state of
-  *report-counters*."
-  [ns]
+(defn test-ns [ns vars]
   (binding [t/*report-counters* (ref t/*initial-report-counters*)]
     (let [ns-obj (the-ns ns)]
       (t/do-report {:type :begin-test-ns, :ns ns-obj})
@@ -97,50 +85,34 @@
       (if-let [v (find-var (symbol (str (ns-name ns-obj)) "test-ns-hook"))]
 	      ((var-get v))
         ;; Otherwise, just test every var in the namespace.
-        (test-all-vars ns-obj))
+        (test-vars vars))
       (t/do-report {:type :end-test-ns, :ns ns-obj}))
     @t/*report-counters*))
 
-(defn try-test-ns [ns]
+(defn try-test-ns [ns+vars]
   (try+
-   (test-ns ns)
+   (apply test-ns ns+vars)
    (catch ::k/fail-fast m
      m)))
 
-(defn run-tests
-  "Runs all tests in the given namespaces; prints results.
-  Defaults to current namespace if none given.  Returns a map
-  summarizing test results."
-  ([]
-   (run-tests *ns*))
-  ([& namespaces]
-   (loop [[ns & nss] namespaces
-          report {}]
-     (if ns
-       (let [ns-report (try-test-ns ns)]
-         (if (::k/fail-fast ns-report)
-           (recur [] (merge-report report ns-report))
-           (recur nss (merge-report report ns-report))))
-       report))))
-
-(defn run-all-tests
-  "Runs all tests in all namespaces; prints results.
-  Optional argument is a regular expression; only namespaces with
-  names matching the regular expression (with re-matches) will be
-  tested."
-  ([] (apply run-tests (all-ns)))
-  ([re] (apply run-tests (filter #(re-matches re (name (ns-name %))) (all-ns)))))
+(defn run-tests [namespaces]
+  (loop [[ns+vars & nss] namespaces
+         report {}]
+    (if ns+vars
+      (let [ns-report (try-test-ns ns+vars)]
+        (if (::k/fail-fast ns-report)
+          (recur [] (merge-report report ns-report))
+          (recur nss (merge-report report ns-report))))
+      report)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defmacro ^:private with-reporter [r & body]
-  `(with-redefs [t/report (config/resolve-reporter ~r)]
+  `(with-redefs [t/report ~r]
      ~@body))
 
-
-(defn- run-suite [{:keys [nss] :as suite}]
+(defn- run-suite [{:keys [tests] :as suite}]
   (t/do-report (assoc suite :type :begin-test-suite))
-  (let [report (apply run-tests nss)]
+  (let [report (run-tests tests)]
     (t/do-report (assoc suite :type :end-test-suite))
     report))
 
@@ -158,11 +130,15 @@
                 color
                 suites
                 only-suites
-                fail-fast]} (config/normalize config)
+                fail-fast
+                seed
+                randomize]} (config/normalize config)
+        seed                (or seed (rand-int Integer/MAX_VALUE))
         suites              (config/filter-suites only-suites suites)
-        reporter            (if fail-fast
-                              [reporter report/fail-fast]
-                              reporter)
+        reporter            (config/resolve-reporter
+                             (if fail-fast
+                               [reporter report/fail-fast]
+                               reporter))
         results             (atom [])
         runtime             (java.lang.Runtime/getRuntime)
         main-thread         (Thread/currentThread)
@@ -176,11 +152,14 @@
                               (.removeShutdownHook runtime on-shutdown)
                               report)]
     (.addShutdownHook runtime on-shutdown)
+    (when randomize
+      (println "Running with --seed" seed))
     (try
       (with-reporter reporter
         (binding [output/*colored-output* color
                   report/*results*        results]
-          (let [suites (map load/find-tests suites)]
+          (let [suites (cond->> (map load/find-tests suites)
+                         randomize (map #(update % :tests (partial random/randomize-tests seed))))]
             (loop [[suite & suites] suites
                    report           {}]
               (if suite
