@@ -4,7 +4,7 @@
             [clojure.string :as str]))
 
 (defn invoke-runner [& args]
-  (apply shell/sh "clj" "-m" "lambdaisland.kaocha.runner" "--no-randomize" args))
+  (apply shell/sh "clojure" "-m" "lambdaisland.kaocha.runner" "--no-randomize" args))
 
 (defn invoke-with-config [config & args]
   (let [tmpfile (java.io.File/createTempFile "tests" ".edn")]
@@ -12,7 +12,7 @@
       (.deleteOnExit)
       (spit (prn-str config)))
     (apply shell/sh
-           "clj" "-m" "lambdaisland.kaocha.runner"
+           "clojure" "-m" "lambdaisland.kaocha.runner"
            "--config-file" (str tmpfile)
            "--no-randomize"
            args)))
