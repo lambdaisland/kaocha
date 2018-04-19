@@ -1,4 +1,4 @@
-# Kaocha
+# Kaocha [![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha)
 
 Full featured next gen Clojure test runner.
 
