@@ -7,8 +7,8 @@
             [slingshot.slingshot :refer [throw+]]
             [lambdaisland.kaocha :as k]))
 
-(def global-opts #{:reporter :color :randomize :seed :suites :only-suites :fail-fast})
-(def suite-opts #{:id :test-paths :ns-patterns})
+(def global-opts #{:reporter :color :randomize :seed :suites :only-suites :fail-fast :watch})
+(def suite-opts #{:id :source-paths :test-paths :ns-patterns})
 
 (defn default-config []
   (read-string (slurp (io/resource "lambdaisland/kaocha/default_config.edn"))))

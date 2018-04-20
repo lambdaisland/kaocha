@@ -7,6 +7,7 @@
             [clojure.tools.cli :as cli]
             [lambdaisland.kaocha :as k]
             [lambdaisland.kaocha.config :as config]
+            [lambdaisland.kaocha.watch :as watch]
             [lambdaisland.kaocha.output :as output]
             [lambdaisland.kaocha.test :as test]
             [slingshot.slingshot :refer [try+]]))
@@ -20,6 +21,7 @@
    [nil  "--print-config"       "Print out the fully merged and normalized config, then exit."]
    [nil  "--fail-fast"          "Stop testing after the first failure."]
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
+   [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
    [nil  "--[no-]randomize"     "Run test namespaces and vars in random order."]
    [nil  "--seed SEED"          "Provide a seed to determine the random order of tests."
     :parse-fn #(Integer/parseInt %)]
@@ -27,6 +29,9 @@
     :parse-fn symbol
     :assoc-fn accumulate
     :default-desc (str (:reporter (config/default-config)))]
+   [nil  "--source-path PATH"   "Path containing code under test."
+    :assoc-fn accumulate
+    :default-desc (str (first (:source-paths (config/default-config))))]
    [nil  "--test-path PATH"     "Path to scan for test namespaces."
     :assoc-fn accumulate
     :default-desc (str (first (:test-paths (config/default-config))))]
@@ -91,8 +96,10 @@
             -2)
 
           :else
-          (let [{:keys [fail error] :or {fail 0 error 0}} (test/run config)]
-            (mod (+ fail error) 255)))))))
+          (if (:watch normalized)
+            (watch/run config)
+            (let [{:keys [fail error] :or {fail 0 error 0}} (test/run config)]
+              (mod (+ fail error) 255))))))))
 
 (defn- exit-process! [code]
   (System/exit code))

@@ -71,8 +71,13 @@
                           :test-paths ["test"]})))
 
   (testing "it filters unknown keys"
-    (is (= {:suites    [{:ns-patterns ["-test$"] :test-paths ["test"] :id :unit}]
+    (is (= {:suites    [{:id           :unit
+                         :source-paths ["src"]
+                         :ns-patterns  ["-test$"]
+                         :test-paths   ["test"]
+                         }]
             :color     true
             :randomize true
+            :watch     false
             :reporter  'lambdaisland.kaocha.report/progress}
            (config/normalize {:foo :bar})))))

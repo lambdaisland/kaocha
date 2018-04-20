@@ -1,6 +1,8 @@
-{:suites      [{:id         :unit}]
- :test-paths  ["test"]
- :ns-patterns ["-test$"]
- :color       true
- :randomize   true
- :reporter    lambdaisland.kaocha.report/progress}}
+{:suites       [{:id :unit}]
+ :source-paths ["src"]
+ :test-paths   ["test"]
+ :ns-patterns  ["-test$"]
+ :color        true
+ :randomize    true
+ :watch        false
+ :reporter     lambdaisland.kaocha.report/progress}}

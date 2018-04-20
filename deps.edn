@@ -6,11 +6,11 @@
                                :sha             "4cba43f65f72d65bcfc8f3eb32e9ff155ce57858"}
   org.clojure/tools.namespace {:mvn/version "0.3.0-alpha4"}
   org.tcrawley/dynapath       {:mvn/version "1.0.0"}
-  slingshot                   {:mvn/version "0.12.2"}}
+  slingshot                   {:mvn/version "0.12.2"}
+  hawk                        {:mvn/version "0.2.11"}
+  org.clojure/core.async      {:mvn/version "0.4.474"}}
 
- :paths
- ["src"
-  "resources"]
+ :paths ["src" "resources"]
 
  :aliases
  {:test
@@ -21,8 +21,7 @@
    :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
                  ancient-clj                             {:mvn/version "0.6.15"}
                  org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}
-                 lambdaisland/nrepl                      {:mvn/version "0.2.0"
-                                                          :exclusions [org.clojure/tools.cli]}
+                 lambdaisland/nrepl                      {:mvn/version "0.2.0" :exclusions [org.clojure/tools.cli]}
                  ;; temporary: latest master detects deps.edn
                  com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}
 
@@ -33,4 +32,5 @@
  :mvn/repos
  {"central" {:url "https://repo1.maven.org/maven2/"}
   "clojars" {:url "https://clojars.org/repo"}
-  "jitpack" {:url "https://jitpack.io"}}}
+  "jitpack" {:url "https://jitpack.io"} ;; for refactor-nrepl
+  }}
