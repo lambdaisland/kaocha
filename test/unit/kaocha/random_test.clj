@@ -1,6 +1,6 @@
-(ns lambdaisland.kaocha.random-test
+(ns kaocha.random-test
   (:require [clojure.test :refer :all]
-            [lambdaisland.kaocha.random :refer :all]))
+            [kaocha.random :refer :all]))
 
 (deftest rand-ints-test
   (is (= (take 10 (repeatedly (rng 321098)))

@@ -50,7 +50,7 @@ Before running tests with Kaocha, you should create a `tests.edn` in the root of
  ;; will make sure are loaded. When providing a vector of symbols, or pointing
  ;; at a var containing a vector, then kaocha will call all referenced functions
  ;; for reporting.
- :reporter    lambdaisland.kaocha.report/progress
+ :reporter    kaocha.report/progress
 
  ;; Run with a specific random seed. Picked at random by default.
  :seed        151346}}
@@ -75,7 +75,7 @@ A reporter is a function which takes a single map as argument, with the map havi
 Kaocha contains fine-grained reporters, which you can combine, or mix with your own to get the desired output. A reporter can be either a function, or a sequence of reporters, which will all be called in turn. For instance, the default Kaocha reporter is defined as such:
 
 ``` clojure
-(ns lambdaisland.kaocha.report)
+(ns kaocha.report)
 
 (def progress
   "Reporter that prints progress as a sequence of dots and letters."
@@ -86,16 +86,16 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
 
 Other reporters currently implemented include
 
-- `lambdaisland.kaocha.report/documentation`
+- `kaocha.report/documentation`
 
 ## Usage
 
-The main entry point for Kaocha is the `lambdaisland.kaocha.runner` namespace, which you can run with `clojure -m lambdaisland.kaocha.runner`, followed by Kaocha command line options, and the names of suites to run.
+The main entry point for Kaocha is the `kaocha.runner` namespace, which you can run with `clojure -m kaocha.runner`, followed by Kaocha command line options, and the names of suites to run.
 
 ```
 USAGE:
 
-clj -m lambdaisland.kaocha.runner [OPTIONS]... [TEST-SUITE]...
+clj -m kaocha.runner [OPTIONS]... [TEST-SUITE]...
 
   -c, --config-file FILE    tests.edn                            Config file to read.
       --print-config                                             Print out the fully merged and normalized config, then exit.
@@ -104,7 +104,7 @@ clj -m lambdaisland.kaocha.runner [OPTIONS]... [TEST-SUITE]...
       --[no-]watch                                               Watch filesystem for changes and re-run tests.
       --[no-]randomize                                           Run test namespaces and vars in random order.
       --seed SEED                                                Provide a seed to determine the random order of tests.
-      --reporter SYMBOL     lambdaisland.kaocha.report/progress  Change the test reporter, can be specified multiple times.
+      --reporter SYMBOL     kaocha.report/progress  Change the test reporter, can be specified multiple times.
       --source-path PATH    src                                  Path containing code under test.
       --test-path PATH      test                                 Path to scan for test namespaces.
       --ns-pattern PATTERN  -test$                               Regexp pattern to identify test namespaces.
@@ -121,7 +121,7 @@ It is recommended to create a `:test` alias in `deps.edn`, which adds the Kaocha
 {:aliases
  {:test
   :extra-deps {lambdaisland/kaocha {:mvn/version "VERSION"}}
-  :main-opts ["-m" "lambdaisland.kaocha.runner"]}}
+  :main-opts ["-m" "kaocha.runner"]}}
 ```
 
 Now you can run your tests with

@@ -1,5 +1,5 @@
-(ns lambdaisland.kaocha.load
-  (:require [lambdaisland.kaocha.classpath :as cp]
+(ns kaocha.load
+  (:require [kaocha.classpath :as cp]
             [clojure.java.io :as io]
             [clojure.tools.namespace.find :as ctn.find]))
 

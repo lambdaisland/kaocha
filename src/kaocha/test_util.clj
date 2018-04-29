@@ -1,4 +1,4 @@
-(ns lambdaisland.kaocha.test-util
+(ns kaocha.test-util
   (:require [clojure.test :as t]))
 
 (defmacro with-out-err

@@ -5,4 +5,4 @@
  :color        true
  :randomize    true
  :watch        false
- :reporter     lambdaisland.kaocha.report/progress}}
+ :reporter     kaocha.report/progress}}

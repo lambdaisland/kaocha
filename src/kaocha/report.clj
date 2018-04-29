@@ -1,6 +1,6 @@
-(ns lambdaisland.kaocha.report
-  (:require [lambdaisland.kaocha.output :as out :refer [colored]]
-            [lambdaisland.kaocha :as k]
+(ns kaocha.report
+  (:require [kaocha.output :as out :refer [colored]]
+            [kaocha :as k]
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]))
 

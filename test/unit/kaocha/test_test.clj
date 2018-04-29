@@ -1,7 +1,7 @@
-(ns lambdaisland.kaocha.test-test
+(ns kaocha.test-test
   (:require [clojure.test :refer [deftest testing is are]]
-            [lambdaisland.kaocha.test :refer :all]
-            [lambdaisland.kaocha.test-util :refer [with-out-err]]))
+            [kaocha.test :refer :all]
+            [kaocha.test-util :refer [with-out-err]]))
 
 (deftest run-test
   (testing "allows API usage"

@@ -1,6 +1,6 @@
-(ns lambdaisland.kaocha.config-test
-  (:require [lambdaisland.kaocha.config :as config]
-            [lambdaisland.kaocha.test-util :refer [with-out-err]]
+(ns kaocha.config-test
+  (:require [kaocha.config :as config]
+            [kaocha.test-util :refer [with-out-err]]
             [clojure.test :refer :all]))
 
 (def rename-key @#'config/rename-key)
@@ -65,7 +65,7 @@
     (= {:suites   [{:ns-patterns ["-test$"] :test-paths ["test"] :id :unit}
                    {:ns-patterns ["-test$"] :test-paths ["test"] :id :integration}]
         :color    true
-        :reporter lambdaisland.kaocha.report/progress}
+        :reporter kaocha.report/progress}
        (config/normalize {:suites     [{:id :unit}
                                        {:id :integration}]
                           :test-paths ["test"]})))
@@ -79,5 +79,5 @@
             :color     true
             :randomize true
             :watch     false
-            :reporter  'lambdaisland.kaocha.report/progress}
+            :reporter  'kaocha.report/progress}
            (config/normalize {:foo :bar})))))

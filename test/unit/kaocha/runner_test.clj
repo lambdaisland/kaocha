@@ -1,7 +1,7 @@
-(ns lambdaisland.kaocha.runner-test
+(ns kaocha.runner-test
   (:require [clojure.test :as t :refer :all]
-            [lambdaisland.kaocha.runner :as runner]
-            [lambdaisland.kaocha.test-util :refer [with-out-err]]))
+            [kaocha.runner :as runner]
+            [kaocha.test-util :refer [with-out-err]]))
 
 (defn -main [& args]
   (with-out-err
@@ -21,7 +21,7 @@
 
 (deftest help-test
   (is (= ["" "USAGE:"
-          "" "clj -m lambdaisland.kaocha.runner [OPTIONS]... [TEST-SUITE]..."
+          "" "clj -m kaocha.runner [OPTIONS]... [TEST-SUITE]..."
           "" "SUMMARY"
           "" "Options may be repeated multiple times for a logical OR effect."]
          (runner/help "SUMMARY"))))

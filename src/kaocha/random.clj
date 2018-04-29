@@ -1,4 +1,4 @@
-(ns lambdaisland.kaocha.random)
+(ns kaocha.random)
 
 (defn rng [seed]
   (let [rng (java.util.Random. seed)]

@@ -1,0 +1,15 @@
+- [X] Watch source paths
+- [ ] skip / focus by metadata
+  :skip-meta
+  :exclude-meta
+  :focus-meta
+- [ ] skip / focus nss/vars
+  :skip-meta
+  :exclude-meta
+  :focus-meta
+- [ ] profiling
+- [ ] capture output
+- [ ] main namespace for cloverage
+- [ ] wrapper for eftest reporter
+- [ ] TAP reporter
+- [ ] multithread

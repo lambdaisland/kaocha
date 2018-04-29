@@ -1,8 +1,8 @@
-(ns lambdaisland.kaocha.watch
+(ns kaocha.watch
   (:require [hawk.core :as hawk]
-            [lambdaisland.kaocha.config :as config]
+            [kaocha.config :as config]
             [clojure.core.async :refer [chan <!! put! poll!]]
-            [lambdaisland.kaocha.test :as test]
+            [kaocha.test :as test]
             [clojure.java.io :as io]
             [clojure.tools.namespace.file :as ctn.file]
             [clojure.tools.namespace.parse :as ctn.parse]

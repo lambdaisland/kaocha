@@ -1,4 +1,4 @@
-(ns lambdaisland.kaocha.output)
+(ns kaocha.output)
 
 (def ^:dynamic *colored-output* true)
 

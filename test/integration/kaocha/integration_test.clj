@@ -1,10 +1,10 @@
-(ns lambdaisland.kaocha.integration-test
+(ns kaocha.integration-test
   (:require [clojure.test :refer :all]
             [clojure.java.shell :as shell]
             [clojure.string :as str]))
 
 (defn invoke-runner [& args]
-  (apply shell/sh "clojure" "-m" "lambdaisland.kaocha.runner" "--no-randomize" args))
+  (apply shell/sh "clojure" "-m" "kaocha.runner" "--no-randomize" args))
 
 (defn invoke-with-config [config & args]
   (let [tmpfile (java.io.File/createTempFile "tests" ".edn")]
@@ -12,7 +12,7 @@
       (.deleteOnExit)
       (spit (prn-str config)))
     (apply shell/sh
-           "clojure" "-m" "lambdaisland.kaocha.runner"
+           "clojure" "-m" "kaocha.runner"
            "--config-file" (str tmpfile)
            "--no-randomize"
            args)))
@@ -38,7 +38,7 @@
                                 :source-paths ["src"]
                                 :test-paths   ["fixtures/a-tests"]
                                 :id           :aaa}]
-                   :reporter  'lambdaisland.kaocha.report/progress}
+                   :reporter  'kaocha.report/progress}
             :err  ""})))
 
   (testing "it elegantly reports when no tests are found"
@@ -68,8 +68,8 @@
   (testing "Invalid reporter"
     (is (= {:exit 253
             :out  ""
-            :err  "\u001b[31mERROR: \u001b[0mFailed to resolve reporter var: lambdaisland.kaocha/does-not-exist\n"}
-           (invoke-runner "--reporter" "lambdaisland.kaocha/does-not-exist")))
+            :err  "\u001b[31mERROR: \u001b[0mFailed to resolve reporter var: kaocha/does-not-exist\n"}
+           (invoke-runner "--reporter" "kaocha/does-not-exist")))
 
     (is (= {:exit 253
             :out  ""

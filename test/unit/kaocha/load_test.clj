@@ -1,7 +1,7 @@
-(ns lambdaisland.kaocha.load-test
+(ns kaocha.load-test
   (:require [clojure.test :refer :all]
-            [lambdaisland.kaocha.classpath :as cp]
-            [lambdaisland.kaocha.load :as load]
+            [kaocha.classpath :as cp]
+            [kaocha.load :as load]
             [clojure.java.io :as io]))
 
 (def ns-match? @#'load/ns-match?)

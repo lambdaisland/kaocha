@@ -14,7 +14,7 @@
 
  :aliases
  {:test
-  {:main-opts ["-m" "lambdaisland.kaocha.runner"]}
+  {:main-opts ["-m" "kaocha.runner"]}
 
   :dev
   {:extra-paths ["dev"]
@@ -27,7 +27,7 @@
 
   :cloverage
   {:extra-deps {cloverage {:mvn/version "1.0.10"}}
-   :main-opts  ["-m" "cloverage.coverage" "--runner" "lambdaisland.kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
+   :main-opts  ["-m" "cloverage.coverage" "--runner" "kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
 
  :mvn/repos
  {"central" {:url "https://repo1.maven.org/maven2/"}

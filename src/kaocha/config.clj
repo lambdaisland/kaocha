@@ -1,17 +1,17 @@
-(ns lambdaisland.kaocha.config
+(ns kaocha.config
   "Read,validate, normalize configuration as found in tests.edn or passed in
   through command line options."
   (:require [clojure.java.io :as io]
-            [lambdaisland.kaocha.output :as out]
-            [lambdaisland.kaocha.report :as report]
+            [kaocha.output :as out]
+            [kaocha.report :as report]
             [slingshot.slingshot :refer [throw+]]
-            [lambdaisland.kaocha :as k]))
+            [kaocha :as k]))
 
 (def global-opts #{:reporter :color :randomize :seed :suites :only-suites :fail-fast :watch})
 (def suite-opts #{:id :source-paths :test-paths :ns-patterns})
 
 (defn default-config []
-  (read-string (slurp (io/resource "lambdaisland/kaocha/default_config.edn"))))
+  (read-string (slurp (io/resource "kaocha/default_config.edn"))))
 
 (defn load-config [path]
   (let [file (io/file path)]

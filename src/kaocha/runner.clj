@@ -1,15 +1,15 @@
-(ns lambdaisland.kaocha.runner
+(ns kaocha.runner
   "Main entry point for command line use."
   (:gen-class)
   (:require [clojure.pprint :as pprint]
             [clojure.set :as set]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [lambdaisland.kaocha :as k]
-            [lambdaisland.kaocha.config :as config]
-            [lambdaisland.kaocha.watch :as watch]
-            [lambdaisland.kaocha.output :as output]
-            [lambdaisland.kaocha.test :as test]
+            [kaocha :as k]
+            [kaocha.config :as config]
+            [kaocha.watch :as watch]
+            [kaocha.output :as output]
+            [kaocha.test :as test]
             [slingshot.slingshot :refer [try+]]))
 
 (defn- accumulate [m k v]

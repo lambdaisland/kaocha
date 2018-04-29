@@ -1,12 +1,12 @@
-(ns lambdaisland.kaocha.test
+(ns kaocha.test
   (:require [clojure.test :as t]
-            [lambdaisland.kaocha.report :as report]
-            [lambdaisland.kaocha.load :as load]
-            [lambdaisland.kaocha.output :as output]
-            [lambdaisland.kaocha.random :as random]
-            [lambdaisland.kaocha.config :as config]
+            [kaocha.report :as report]
+            [kaocha.load :as load]
+            [kaocha.output :as output]
+            [kaocha.random :as random]
+            [kaocha.config :as config]
             [slingshot.slingshot :refer [try+ throw+]]
-            [lambdaisland.kaocha :as k]
+            [kaocha :as k]
             [clojure.string :as str]))
 
 (def ^:private empty-report {:test 0 :pass 0 :fail 0 :error 0})
@@ -38,7 +38,7 @@
                                                          #(let [cl-name (.getClassName ^StackTraceElement %)]
                                                             (or (str/starts-with? cl-name "java.lang.")
                                                                 (str/starts-with? cl-name "clojure.test$")
-                                                                (str/starts-with? cl-name "lambdaisland.kaocha.test$")))
+                                                                (str/starts-with? cl-name "kaocha.test$")))
                                                          (.getStackTrace (Thread/currentThread)))) m)
                        :error
                        (if (-> m :actual ex-data ::k/fail-fast)
