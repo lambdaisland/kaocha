@@ -1,6 +1,5 @@
 (ns kaocha.report
   (:require [kaocha.output :as out :refer [colored]]
-            [kaocha :as k]
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]))
 
@@ -71,7 +70,7 @@
   as a failure or error is encountered."
   [m]
   (when (contains? #{:fail :error} (:type m))
-    (throw+ (assoc @t/*report-counters* ::k/fail-fast true))))
+    (throw+ (assoc @t/*report-counters* :kaocha/fail-fast true))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -4,8 +4,7 @@
   (:require [clojure.java.io :as io]
             [kaocha.output :as out]
             [kaocha.report :as report]
-            [slingshot.slingshot :refer [throw+]]
-            [kaocha :as k]))
+            [slingshot.slingshot :refer [throw+]]))
 
 (def global-opts #{:reporter :color :randomize :seed :suites :only-suites :fail-fast :watch})
 (def suite-opts #{:id :source-paths :test-paths :ns-patterns})
@@ -47,12 +46,12 @@
       (try
         (if-let [ns (namespace reporter)]
           (require (symbol ns))
-          (throw+ {::k/reporter-not-found reporter}))
+          (throw+ {:kaocha/reporter-not-found reporter}))
         (catch java.io.FileNotFoundException e
-          (throw+ {::k/reporter-not-found reporter})))
+          (throw+ {:kaocha/reporter-not-found reporter})))
       (if-let [resolved (resolve reporter)]
         (resolve-reporter @resolved)
-        (throw+ {::k/reporter-not-found reporter})))
+        (throw+ {:kaocha/reporter-not-found reporter})))
 
     (seqable? reporter)
     (let [rs (doall (map resolve-reporter reporter))]

@@ -5,7 +5,6 @@
             [clojure.set :as set]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [kaocha :as k]
             [kaocha.config :as config]
             [kaocha.watch :as watch]
             [kaocha.output :as output]
@@ -107,6 +106,6 @@
 (defn -main [& args]
   (try+
    (exit-process! (apply -main* args))
-   (catch ::k/reporter-not-found {::k/keys [reporter-not-found]}
+   (catch :kaocha/reporter-not-found {:kaocha/keys [reporter-not-found]}
      (output/error "Failed to resolve reporter var: " reporter-not-found)
      (exit-process! -3))))

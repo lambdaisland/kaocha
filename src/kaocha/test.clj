@@ -6,7 +6,6 @@
             [kaocha.random :as random]
             [kaocha.config :as config]
             [slingshot.slingshot :refer [try+ throw+]]
-            [kaocha :as k]
             [clojure.string :as str]))
 
 (def ^:private empty-report {:test 0 :pass 0 :fail 0 :error 0})
@@ -41,7 +40,7 @@
                                                                 (str/starts-with? cl-name "kaocha.test$")))
                                                          (.getStackTrace (Thread/currentThread)))) m)
                        :error
-                       (if (-> m :actual ex-data ::k/fail-fast)
+                       (if (-> m :actual ex-data :kaocha/fail-fast)
                          (throw (:actual m))
                          (merge (stacktrace-file-and-line (.getStackTrace ^Throwable (:actual m))) m))
                        m)))))
@@ -56,7 +55,7 @@
       (t/inc-report-counter :test)
       (try+
        (t)
-       (catch ::k/fail-fast m
+       (catch :kaocha/fail-fast m
          (t/do-report {:type :end-test-var, :var v})
          (throw+ m))
        (catch Throwable e
@@ -92,7 +91,7 @@
 (defn try-test-ns [ns+vars]
   (try+
    (apply test-ns ns+vars)
-   (catch ::k/fail-fast m
+   (catch :kaocha/fail-fast m
      m)))
 
 (defn run-tests [namespaces]
@@ -100,7 +99,7 @@
          report {}]
     (if ns+vars
       (let [ns-report (try-test-ns ns+vars)]
-        (if (::k/fail-fast ns-report)
+        (if (:kaocha/fail-fast ns-report)
           (recur [] (merge-report report ns-report))
           (recur nss (merge-report report ns-report))))
       report)))
@@ -164,7 +163,7 @@
                    report           {}]
               (if suite
                 (let [report (merge-report report (run-suite suite))]
-                  (if (::k/fail-fast report)
+                  (if (:kaocha/fail-fast report)
                     (do
                       (recur [] report))
                     (recur suites report)))
