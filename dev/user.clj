@@ -4,6 +4,13 @@
             [clojure.string :as str]
             [clojure.java.io :as io]))
 
+(defn add-dependency [dep-vec]
+  (require 'cemerick.pomegranate)
+  ((resolve 'cemerick.pomegranate/add-dependencies)
+   :coordinates [dep-vec]
+   :repositories (merge @(resolve 'cemerick.pomegranate.aether/maven-central)
+                        {"clojars" "https://clojars.org/repo"})))
+
 (defn read-deps-edn
   "Read deps.edn and canonicalize."
   []

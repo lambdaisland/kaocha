@@ -79,7 +79,7 @@
       :else
       (let [config         (config options)
             normalized     (config/normalize config)
-            valid-suites   (into #{} (map :id) (:suites normalized))
+            valid-suites   (into #{} (map :kaocha/id) (:kaocha/suites normalized))
             unknown-suites (set/difference (:only-suites options) valid-suites)]
         (cond
           (:print-config options)
@@ -95,7 +95,7 @@
             -2)
 
           :else
-          (if (:watch normalized)
+          (if (:kaocha/watch? normalized)
             (watch/run config)
             (let [{:keys [fail error] :or {fail 0 error 0}} (test/run config)]
               (mod (+ fail error) 255))))))))

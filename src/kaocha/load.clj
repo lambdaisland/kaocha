@@ -22,7 +22,7 @@
              (filter (partial ns-match? ns-patterns)))
             test-paths))
 
-(defn load-tests [{:keys [test-paths ns-patterns]}]
+(defn load-tests [{:kaocha/keys [test-paths ns-patterns]}]
   (cp/maybe-add-dynamic-classloader)
   (run! cp/add-classpath test-paths)
   (let [test-nss (find-test-nss test-paths ns-patterns)]
@@ -33,6 +33,6 @@
   (filter (comp :test meta) (vals (ns-interns (find-ns ns)))))
 
 (defn find-tests [suite]
-  (assoc suite :tests (into {}
-                            (map (juxt identity test-vars))
-                            (load-tests suite))))
+  (assoc suite :kaocha/tests (into {}
+                                   (map (juxt identity test-vars))
+                                   (load-tests suite))))

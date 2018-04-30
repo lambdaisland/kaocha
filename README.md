@@ -17,8 +17,10 @@ Kaocha is currently under active development, expect things to change. It's alre
 Before running tests with Kaocha, you should create a `tests.edn` in the root of the project, where you configure your test suites. You can use Kaocha without a `tests.edn`, but adding one is generally considered a Good Idea™.
 
 ``` clojure
+#:kaocha
 {;; Configure one or more test suites, like "unit", "integration", "acceptance", etc.
- :suites      [{;; Every suite must have an :id
+ :suites      [#:kaocha
+               {;; Every suite must have an :id
                 :id :unit
 
                 ;; Directories containing files under test. This is used to
@@ -37,13 +39,13 @@ Before running tests with Kaocha, you should create a `tests.edn` in the root of
                 }]
 
  ;; Colorize output (use ANSI escape sequences).
- :color       true
+ :color?      true
 
  ;; Randomize test order.
- :randomize   true
+ :randomize?  true
 
  ;; Watch the file system for changes and re-run.
- :watch       false
+ :watch?      false
 
  ;; Specifiy the reporter function that generates output. Must be a namespaced
  ;; symbol, or a vector of symbols. The symbols must refer to vars, which Kaocha
@@ -53,6 +55,7 @@ Before running tests with Kaocha, you should create a `tests.edn` in the root of
  :reporter    kaocha.report/progress
 
  ;; Run with a specific random seed. Picked at random by default.
+ ;; More commonly you'll specify this one at the command line to recreate a failure.
  :seed        151346}}
 ```
 

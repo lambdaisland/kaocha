@@ -1,8 +1,11 @@
-{:suites       [{:id :unit}]
+#:kaocha
+{:suites       [#:kaocha{:id :unit
+                         :test-paths   ["test"]
+                         :ns-patterns  ["-test$"]}]
  :source-paths ["src"]
  :test-paths   ["test"]
  :ns-patterns  ["-test$"]
- :color        true
- :randomize    true
- :watch        false
+ :color?       true
+ :randomize?   true
+ :watch?       false
  :reporter     kaocha.report/progress}}

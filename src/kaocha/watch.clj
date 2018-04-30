@@ -32,11 +32,11 @@
       (.printStackTrace t))))
 
 (defn run [config]
-  (let [{:keys [suites only-suites]
+  (let [{:kaocha/keys [suites only-suites]
          :as   config} (config/normalize config)
         suites         (config/filter-suites only-suites suites)
         watch-paths    (into #{} (comp
-                                  (map (juxt :test-paths :source-paths))
+                                  (map (juxt :kaocha/test-paths :kaocha/source-paths))
                                   cat
                                   cat
                                   (map io/file))

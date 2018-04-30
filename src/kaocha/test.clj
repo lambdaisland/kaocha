@@ -105,11 +105,12 @@
       report)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]
      ~@body))
 
-(defn- run-suite [{:keys [tests] :as suite}]
+(defn- run-suite [{:kaocha/keys [tests] :as suite}]
   (t/do-report (assoc suite :type :begin-test-suite))
   (let [report (run-tests tests)]
     (t/do-report (assoc suite :type :end-test-suite))
@@ -125,17 +126,17 @@
           results))
 
 (defn run [config]
-  (let [{:keys [reporter
-                color
-                suites
-                only-suites
-                fail-fast
-                seed
-                randomize]} (config/normalize config)
+  (let [{:kaocha/keys [reporter
+                       color?
+                       suites
+                       only-suites
+                       fail-fast?
+                       seed
+                       randomize?]} (config/normalize config)
         seed                (or seed (rand-int Integer/MAX_VALUE))
         suites              (config/filter-suites only-suites suites)
         reporter            (config/resolve-reporter
-                             (if fail-fast
+                             (if fail-fast?
                                [reporter report/fail-fast]
                                reporter))
         results             (atom [])
@@ -151,14 +152,15 @@
                               (.removeShutdownHook runtime on-shutdown)
                               report)]
     (.addShutdownHook runtime on-shutdown)
-    (when randomize
+    (when randomize?
       (println "Running with --seed" seed))
     (try
-      (with-reporter reporter
-        (binding [output/*colored-output* color
-                  report/*results*        results]
-          (let [suites (cond->> (map load/find-tests suites)
-                         randomize (map #(update % :tests (partial random/randomize-tests seed))))]
+      (binding [output/*colored-output* color?
+                report/*results*        results]
+        (let [suites (doall
+                      (cond->> (map load/find-tests suites)
+                        randomize? (map #(update % :kaocha/tests (partial random/randomize-tests seed)))))]
+          (with-reporter reporter
             (loop [[suite & suites] suites
                    report           {}]
               (if suite

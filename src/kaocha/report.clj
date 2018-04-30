@@ -10,6 +10,25 @@
 
 (defmethod t/report :end-test-suite [_])
 
+(defn dispatch-extra-keys
+  "Call the original clojure.test/report multimethod when dispatching an unknown
+  key. This is to support libraries like nubank/matcher-combinators that extend
+  clojure.test/assert-expr, as well as clojure.test/report, to signal special
+  conditions."
+  [m]
+  (when-not (contains? #{:pass
+                         :fail
+                         :error
+                         :begin-test-suite
+                         :end-test-suite
+                         :begin-test-ns
+                         :end-test-ns
+                         :begin-test-var
+                         :end-test-var
+                         :summary}
+                       (:type m))
+    (clojure-test-report m)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmulti dots :type)
@@ -107,7 +126,7 @@
 
 (def progress
   "Reporter that prints progress as a sequence of dots and letters."
-  [track dots result])
+  [track dispatch-extra-keys dots result])
 
 (def documentation
-  [track doc result])
+  [track dispatch-extra-keys doc result])

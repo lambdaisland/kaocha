@@ -18,21 +18,21 @@
 (deftest load-tests-test
   (testing "it returns namespace names"
     (is (= '[foo.bar-test]
-           (load/load-tests {:test-paths ["fixtures/a-tests"]
-                             :ns-patterns #{#"-test$"}}))) )
+           (load/load-tests {:kaocha/test-paths ["fixtures/a-tests"]
+                             :kaocha/ns-patterns #{#"-test$"}}))) )
   (testing "it loads namespaces"
     (is (= :ok @(resolve 'foo.bar-test/a-var)))))
 
 (deftest test-vars-test
-  (load/load-tests {:test-paths ["fixtures/a-tests"] :ns-patterns #{#"-test$"}})
+  (load/load-tests #:kaocha{:test-paths ["fixtures/a-tests"] :ns-patterns #{#"-test$"}})
   (is (= (load/test-vars 'foo.bar-test)
          [(resolve 'foo.bar-test/a-test)])))
 
 (deftest find-tests-test
   ;; call find-tests first, or the var in the result won't resolve
-  (let [result (load/find-tests {:test-paths ["fixtures/a-tests"]
-                                 :ns-patterns ["-test$"]})]
-    (is (= {:test-paths ["fixtures/a-tests"]
-            :ns-patterns ["-test$"]
-            :tests {'foo.bar-test
-                    [(resolve 'foo.bar-test/a-test)]}}))))
+  (let [result (load/find-tests #:kaocha{:test-paths ["fixtures/a-tests"]
+                                         :ns-patterns ["-test$"]})]
+    (is (= #:kaocha{:test-paths ["fixtures/a-tests"]
+                    :ns-patterns ["-test$"]
+                    :tests {'foo.bar-test
+                            [(resolve 'foo.bar-test/a-test)]}}))))

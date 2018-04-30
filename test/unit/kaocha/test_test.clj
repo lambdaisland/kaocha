@@ -5,8 +5,8 @@
 
 (deftest run-test
   (testing "allows API usage"
-    (let [config {:suites [{:id :unit
-                            :test-paths ["fixtures/a-tests"]}]}]
+    (let [config {:kaocha/suites [{:kaocha/id :unit
+                                   :kaocha/test-paths ["fixtures/a-tests"]}]}]
       (is (= {:pass 1, :fail 0, :error 0, :test 1}
              (:result (with-out-err (run config))))))))
 

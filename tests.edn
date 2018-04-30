@@ -1,4 +1,8 @@
-{:suites [{:id :unit
+#:kaocha
+{:suites [#:kaocha
+          {:id :unit
            :test-paths ["test/unit"]}
+
+          #:kaocha
           {:id :integration
            :test-paths ["test/integration"]}]}

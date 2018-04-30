@@ -1,4 +1,5 @@
-{:suites [{:id :a
-           :test-paths ["fixtures/a-tests"]}
-          {:id :b
-           :test-paths ["fixtures/b-tests"]}]}
+#:kaocha
+{:suites [#:kaocha{:id :a
+                   :test-paths ["fixtures/a-tests"]}
+          #:kaocha{:id :b
+                   :test-paths ["fixtures/b-tests"]}]}

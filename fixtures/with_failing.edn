@@ -1,6 +1,12 @@
-{:suites [{:id :a
+#:kaocha
+{:suites [#:kaocha
+          {:id :a
            :test-paths ["fixtures/a-tests"]}
+
+          #:kaocha
           {:id :c
            :test-paths ["fixtures/c-tests"]}
+
+          #:kaocha
           {:id :b
            :test-paths ["fixtures/b-tests"]}]}
