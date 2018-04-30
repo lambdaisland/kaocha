@@ -8,11 +8,7 @@
   slingshot                   {:mvn/version "0.12.2"}
   hawk                        {:mvn/version "0.2.11"}
   expound                     {:mvn/version "0.6.0"}
-  nubank/matcher-combinators  {:git/url "https://github.com/plexus/matcher-combinators"
-                               :sha     "609a5bbd0fee7a58c45cb7d39c4680e16f5a928d"
-                               ;; waiting for support for Integer/Float to land
-                               #_#_:mvn/version "0.2.4"
-                               #_#_:local/root "/home/arne/github/matcher-combinators"}}
+  nubank/matcher-combinators  {:mvn/version "0.2.5"}}
 
  :paths ["src" "resources"]
 
