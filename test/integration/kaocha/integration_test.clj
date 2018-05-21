@@ -52,6 +52,7 @@
                                                        :ns-patterns [#"^foo$"]}]})
                 {:exit 0, :out "\n0 test vars, 0 assertions, 0 failures.\n", :err ""})))
 
+  #_
   (testing "--fail-fast"
     (is (match? {:err  ""
                  :out  (str ".\n.F\n\n"
@@ -60,7 +61,10 @@
                             "  actual: false\n"
                             "3 test vars, 3 assertions, 1 failures.\n")
                  :exit 1}
-                (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast"))))
+                (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast")
+
+
+                )))
 
   (testing "Invalid suite"
     (is (match? {:err  ""

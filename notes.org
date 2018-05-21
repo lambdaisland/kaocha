@@ -13,3 +13,15 @@
 - [ ] wrapper for eftest reporter
 - [ ] TAP reporter
 - [ ] multithread
+- [ ] watch/api mode: undef removed vars
+- [ ] signal load/parse errors as test failures
+
+#+BEGIN_SRC clojure
+  ;; config
+
+  {:kaocha/tests [{:kaocha.suite/id :unit
+                   :kaocha.suite/source-paths ["src"]}]}
+
+
+  {:kaocha.result/tests []}
+#+END_SRC

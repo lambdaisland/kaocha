@@ -3,7 +3,23 @@
 set +e
 
 export NREPL_PORT=$(( RANDOM % 1000 + 7000 ))
-echo "Starting nREPL on port" $NREPL_PORT
+
+CIDER_VERSION=${CIDER_VERSION:-$(emacsclient -e '(upcase cider-version) 2> /dev/null')}
+CLJR_VERSION=$(emacsclient -e '(when (package-installed-p (quote clj-refactor))
+                                 (replace-regexp-in-string "snapshot" "-SNAPSHOT"
+                                   (pkg-info-format-version
+                                     (pkg-info-library-version (quote clj-refactor)))))')
+
+if [[ ! $CIDER_VERSION = *'"' ]]; then
+    CIDER_VERSION='"'$CIDER_VERSION'"'
+fi
+
+if [[ -z "$CIDER_VERSION" ]]; then
+    echo "Failed to get CIDER version. Is the Emacs CIDER package installed?"
+    exit 1
+fi
+
+echo "Starting cider/cider-nrepl $CIDER_VERSION on port $NREPL_PORT"
 
 bash <<EOF &
   while ! nc -z localhost $NREPL_PORT ; do echo -n '.' ; sleep 1; done
@@ -13,22 +29,10 @@ EOF
 EMACSCLIENT=$!
 
 finish() {
-  [[ -z "$EMACSCLIENT" ]] || kill -TERM "$EMACSCLIENT" 2>/dev/null
+    [[ -z "$EMACSCLIENT" ]] || kill -TERM "$EMACSCLIENT" 2>/dev/null
 }
 
 trap finish EXIT
-
-CIDER_VERSION=$(emacsclient -e '(upcase cider-version) 2> /dev/null')
-CLJR_VERSION=$(emacsclient -e '(when (package-installed-p (quote clj-refactor))
-                                 (replace-regexp-in-string "snapshot" "-SNAPSHOT"
-                                   (pkg-info-format-version
-                                     (pkg-info-library-version (quote clj-refactor)))))')
-
-
-if [[ -z "$CIDER_VERSION" ]]; then
-    echo "Failed to get CIDER version. Is the Emacs CIDER package installed?"
-    exit 1
-fi
 
 clj                                                                      \
     -A:dev                                                               \

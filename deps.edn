@@ -8,17 +8,18 @@
   slingshot                   {:mvn/version "0.12.2"}
   hawk                        {:mvn/version "0.2.11"}
   expound                     {:mvn/version "0.6.0"}
-  nubank/matcher-combinators  {:mvn/version "0.2.5"}}
+  nubank/matcher-combinators  {:mvn/version "0.2.5"}
+  #_#_metosin/spec-tools          {:mvn/version "0.7.0"}}
 
  :paths ["src" "resources"]
 
  :aliases
  {:test
-  {:main-opts ["-m" "kaocha.runner"]
+  {:main-opts  ["-m" "kaocha.runner"]
    :extra-deps {}}
 
   :dev
-  {:extra-paths ["dev"]
+  {:extra-paths ["dev" "test/api"]
    :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
                  ancient-clj                             {:mvn/version "0.6.15"}
                  org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}

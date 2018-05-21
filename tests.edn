@@ -1,8 +1,12 @@
 #:kaocha
 {:suites [#:kaocha
           {:id :unit
-           :test-paths ["test/unit"]}
+           :test-paths ["test/shared" "test/unit"]}
+
+          #:kaocha
+          {:id :api
+           :test-paths ["test/shared" "test/api"]}
 
           #:kaocha
           {:id :integration
-           :test-paths ["test/integration"]}]}
+           :test-paths ["test/shared" "test/integration"]}]}

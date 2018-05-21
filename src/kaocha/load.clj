@@ -25,8 +25,13 @@
 (defn load-tests [{:kaocha/keys [test-paths ns-patterns]}]
   (cp/maybe-add-dynamic-classloader)
   (run! cp/add-classpath test-paths)
-  (let [test-nss (find-test-nss test-paths ns-patterns)]
-    (run! require test-nss)
+  (let [test-nss (find-test-nss test-paths ns-patterns)
+        test-nss (doall (filter #(try
+                                   (require %)
+                                   true
+                                   (catch Throwable t
+                                     (println "WARN: failed to load" % "," t)))
+                                test-nss))]
     test-nss))
 
 (defn test-vars [ns]

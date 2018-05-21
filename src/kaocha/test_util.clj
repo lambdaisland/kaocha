@@ -22,19 +22,6 @@
 
 ;; This is a bit of an experiment: provide some better assert-expr out of the box
 
-(defmethod t/assert-expr 'spec? [msg form]
-  `(let [[spec# value#] (list ~@(rest form))]
-     (t/do-report
-      (if (s/valid? spec# value#)
-        {:type :pass
-         :message ~msg
-         :expected '~form
-         :actual '~form}
-        {:type :fail
-         :message (or ~msg (expound/expound-str spec# value#))
-         :expected '~form
-         :actual (list '~'not '~form)}))))
-
 #_
 (defmethod t/assert-expr '= [msg form]
   `(let [[expected# actual#] (list ~@(rest form))

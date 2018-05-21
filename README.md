@@ -145,6 +145,26 @@ clojure -A:test
 - API usage
 - Custom, composable reporters
 
+## Tests as data
+
+Kaocha's architecture is based on three types of data: the configuration, then
+test plan, and the test result.
+
+The test configuration is what you specify in `tests.edn`, after expansion and
+normalization. A `load` operation takes this configuration, finds and loads all
+tests therein and returns a test plan. This test plan looks similar to the
+configuration, but with more detail. It contains an overview of exactly which
+namespaces and vars will be tested.
+
+When this test plan is run you get a test result, this looks similar to the test
+plan, but contains detailed information about which tests passed, failed,
+whether they threw exceptions, and what they wrote on standard err and out.
+
+How tests are loaded and run is governed by two multimethods, `load-testable`
+and `run-testable`, based on the type of the testable. The default type is
+`:kaocha.type/suite`, a test suite with a test-path, namespaces and clojure.test
+style test vars.
+
 ## License
 
 &copy; Arne Brasseur 2018

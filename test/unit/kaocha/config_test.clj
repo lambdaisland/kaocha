@@ -4,12 +4,13 @@
             [clojure.test :refer :all]
             [matcher-combinators.test]
             [matcher-combinators.matchers :as m]
+            [kaocha.test-helper]
             [kaocha.specs]))
 
 (def rename-key @#'config/rename-key)
 
 (deftest default-config-test
-  (is (spec? :kaocha/config (config/default-config))))
+  (is (spec-valid? :kaocha/config (config/default-config))))
 
 (deftest load-config-test
   (testing "it warns when no such file is found"

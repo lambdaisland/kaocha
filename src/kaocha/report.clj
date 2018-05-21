@@ -40,23 +40,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defmulti report-counters :type)
+
+(defmethod report-counters :default [_])
+
+(defmethod report-counters :pass [m]
+  (t/inc-report-counter :pass))
+
+(defmethod report-counters :fail [m]
+  (t/inc-report-counter :fail))
+
+(defmethod report-counters :error [m]
+  (t/inc-report-counter :error))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 (def ^:dynamic *results* nil)
 
 (defmulti track :type)
+
 (defmethod track :default [m] (swap! *results* conj m))
 
 (defmethod track :pass [m]
-  (t/inc-report-counter :pass)
   (swap! *results* conj m))
 
 (defmethod track :fail [m]
-  (t/inc-report-counter :fail)
   (swap! *results* conj (assoc m
                                :testing-contexts t/*testing-contexts*
                                :testing-vars t/*testing-vars*)) )
 
 (defmethod track :error [m]
-  (t/inc-report-counter :error)
   (swap! *results* conj (assoc m
                                :testing-contexts t/*testing-contexts*
                                :testing-vars t/*testing-vars*)))
@@ -88,8 +102,8 @@
   "Fail fast reporter, add this as a final reporter to interrupt testing as soon
   as a failure or error is encountered."
   [m]
-  (when (contains? #{:fail :error} (:type m))
-    (throw+ (assoc @t/*report-counters* :kaocha/fail-fast true))))
+  (when (= :fail (:type m))
+    (throw+ {:kaocha/fail-fast true})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -126,7 +140,7 @@
 
 (def progress
   "Reporter that prints progress as a sequence of dots and letters."
-  [track dispatch-extra-keys dots result])
+  [report-counters track dispatch-extra-keys dots result])
 
 (def documentation
-  [track dispatch-extra-keys doc result])
+  [report-counters track dispatch-extra-keys doc result])
