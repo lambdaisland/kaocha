@@ -1,8 +1,8 @@
-(ns kaocha.api-test
+(ns kaocha.testable-test
   (:require [clojure.test :as t :refer :all]
             [kaocha.test-helper :refer :all]
             [kaocha.core-ext :refer :all]
-            [kaocha.api :as api]
+            [kaocha.testable :as testable]
             [kaocha.specs]
             [clojure.spec.alpha :as s]
             [kaocha.report :as report]
@@ -34,23 +34,23 @@
 
 (s/def :kaocha.type/unknown map?)
 
-(deftest load-testable--default
-  (is (thrown-ex-data?  "No implementation of kaocha.api/load-testable for :kaocha.type/unknown"
+(deftest load--default
+  (is (thrown-ex-data?  "No implementation of kaocha.testable/load for :kaocha.type/unknown"
                         {:kaocha.error/reason         :kaocha.error/missing-method,
-                         :kaocha.error/missing-method 'kaocha.api/load-testable,
+                         :kaocha.error/missing-method 'kaocha.testable/load,
                          :kaocha/testable             {:kaocha.testable/type :kaocha.type/unknown
                                                        :kaocha.testable/id   :foo}}
-                        (api/load-testable {:kaocha.testable/type :kaocha.type/unknown
-                                            :kaocha.testable/id   :foo}))))
+                        (testable/load {:kaocha.testable/type :kaocha.type/unknown
+                                        :kaocha.testable/id   :foo}))))
 
-(deftest load-testable--ns
+(deftest load--ns
   (let [ns-name (doto (gensym "test.ns")
                   create-ns
                   (intern (with-meta 'test-1 {:test :test-1}) nil)
                   (intern (with-meta 'test-2 {:test :test-2}) nil))
-        testable (api/load-testable {:kaocha.testable/type :kaocha.type/ns
-                                     :kaocha.testable/id   (keyword ns-name)
-                                     :kaocha.ns/name       ns-name})]
+        testable (testable/load {:kaocha.testable/type :kaocha.type/ns
+                                 :kaocha.testable/id   (keyword ns-name)
+                                 :kaocha.ns/name       ns-name})]
 
     (is (match? {:kaocha.testable/type :kaocha.type/ns
                  :kaocha.ns/name       ns-name
@@ -68,29 +68,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(deftest run-testable--default
-  (is (thrown-ex-data?  "No implementation of kaocha.api/run-testable for :kaocha.type/unknown"
+(deftest run--default
+  (is (thrown-ex-data?  "No implementation of kaocha.testable/run for :kaocha.type/unknown"
                         {:kaocha.error/reason         :kaocha.error/missing-method,
-                         :kaocha.error/missing-method 'kaocha.api/run-testable,
+                         :kaocha.error/missing-method 'kaocha.testable/run,
                          :kaocha/testable             #:kaocha.testable{:type :kaocha.type/unknown
                                                                         :id   :foo}}
-                        (api/run-testable #:kaocha.testable{:type :kaocha.type/unknown
-                                                            :id   :foo}))))
+                        (testable/run #:kaocha.testable{:type :kaocha.type/unknown
+                                                        :id   :foo}))))
 
 
 
 
-(deftest run-testable--var
+(deftest run--var
   (testing "a passing test var"
     (kaocha.classpath/add-classpath "fixtures/a-tests")
     (require 'foo.bar-test)
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
-            (api/run-testable {:kaocha.testable/type :kaocha.type/var
-                               :kaocha.testable/id   :foo.bar-test/a-test,
-                               :kaocha.var/name      'foo.bar-test/a-test
-                               :kaocha.var/var       (resolve 'foo.bar-test/a-test)
-                               :kaocha.var/test      (-> (resolve 'foo.bar-test/a-test) meta :test)}))]
+            (testable/run {:kaocha.testable/type :kaocha.type/var
+                           :kaocha.testable/id   :foo.bar-test/a-test,
+                           :kaocha.var/name      'foo.bar-test/a-test
+                           :kaocha.var/var       (resolve 'foo.bar-test/a-test)
+                           :kaocha.var/test      (-> (resolve 'foo.bar-test/a-test) meta :test)}))]
 
       (is (match? {:kaocha.testable/type :kaocha.type/var
                    :kaocha.testable/id   :foo.bar-test/a-test
@@ -111,8 +111,8 @@
   (testing "a failing test var"
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
-            (api/run-testable
-             (f/var-testable {:kaocha.var/test (fn [] (is false))})))]
+            (testable/run
+              (f/var-testable {:kaocha.var/test (fn [] (is false))})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   0
@@ -128,8 +128,8 @@
   (testing "an erroring test var"
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
-            (api/run-testable
-             (f/var-testable {:kaocha.var/test (fn [] (throw (ex-info "ERROR!" {})))})))]
+            (testable/run
+              (f/var-testable {:kaocha.var/test (fn [] (throw (ex-info "ERROR!" {})))})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   0
@@ -150,12 +150,12 @@
   (testing "multiple assertions"
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? false}
-            (api/run-testable
-             (f/var-testable {:kaocha.var/test (fn []
-                                                 (is true)
-                                                 (is true)
-                                                 (is false)
-                                                 (is true))})))]
+            (testable/run
+              (f/var-testable {:kaocha.var/test (fn []
+                                                  (is true)
+                                                  (is true)
+                                                  (is false)
+                                                  (is true))})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   3
@@ -174,12 +174,12 @@
   (testing "early exit"
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
-            (api/run-testable
-             (f/var-testable {:kaocha.var/test (fn []
-                                                 (is true)
-                                                 (is true)
-                                                 (is false)
-                                                 (is true))})))]
+            (testable/run
+              (f/var-testable {:kaocha.var/test (fn []
+                                                  (is true)
+                                                  (is true)
+                                                  (is false)
+                                                  (is true))})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   2
@@ -197,12 +197,12 @@
     (testing "early exit - exception"
       (let [{:keys [result report]}
             (with-test-ctx {:fail-fast? true}
-              (api/run-testable
-               (f/var-testable {:kaocha.var/test (fn []
-                                                   (is true)
-                                                   (is true)
-                                                   (throw (Exception. "ERROR!"))
-                                                   (is true))})))]
+              (testable/run
+                (f/var-testable {:kaocha.var/test (fn []
+                                                    (is true)
+                                                    (is true)
+                                                    (throw (Exception. "ERROR!"))
+                                                    (is true))})))]
 
         (is (match? {:kaocha.result/count  1
                      :kaocha.result/pass   2

@@ -39,7 +39,8 @@
 (s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
                                      :kaocha.testable/id
                                      :kaocha.ns/name]
-                               :opt [:kaocha.test-plan/tests]))
+                               :opt [:kaocha.ns/ns
+                                     :kaocha.test-plan/tests]))
 
 
 (s/def :kaocha.ns/name simple-symbol?)
