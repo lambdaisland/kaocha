@@ -14,7 +14,7 @@
    ::fail  (apply + (map ::fail rs))})
 
 (s/fdef sum
-        :args (s/cat (s/* ::testable))
+        :args (s/cat :testables (s/* ::testable))
         :ret (s/keys :req [::count ::pass ::error ::fail]))
 
 
@@ -24,7 +24,7 @@
     testable))
 
 (s/fdef test-totals
-        :args (s/cat (s/* ::testable))
+        :args (s/cat :testables (s/* ::testable))
         :ret (s/keys :req [::count ::pass ::error ::fail]))
 
 

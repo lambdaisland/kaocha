@@ -19,7 +19,7 @@
    :extra-deps {}}
 
   :dev
-  {:extra-paths ["dev" "test/api"]
+  {:extra-paths ["dev" "test/api" "test/shared"]
    :extra-deps  {com.cemerick/pomegranate                {:mvn/version "1.0.0"}
                  ancient-clj                             {:mvn/version "0.6.15"}
                  org.clojure/tools.deps.alpha            {:mvn/version "0.5.417"}

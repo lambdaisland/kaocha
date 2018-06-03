@@ -1,4 +1,5 @@
 (ns kaocha.testable
+  (:refer-clojure :exclude [load])
   (:require [clojure.spec.alpha :as s]
             [kaocha.specs :refer [assert-spec]]
             [kaocha.result :as result]))
@@ -11,8 +12,9 @@
     (assert-spec type testable)
     type))
 
-
-(defmulti load testable-type)
+(defmulti load
+  "Given a testable, load the specified tests, producing a test-plan."
+  testable-type)
 
 (defmethod load :default [testable]
   (throw (ex-info (str "No implementation of "
@@ -27,8 +29,9 @@
         :args (s/cat :testable :kaocha/testable)
         :ret :kaocha.test-plan/testable)
 
-
-(defmulti run testable-type)
+(defmulti run
+  "Given a test-plan, perform the tests, returning the test results."
+  testable-type)
 
 (defmethod run :default [testable]
   (throw (ex-info (str "No implementation of "
@@ -43,8 +46,9 @@
         :args (s/cat :testable :kaocha.test-plan/testable)
         :ret :kaocha.result/testable)
 
-
-(defn run-testables [testables]
+(defn run-testables
+  "Run a collection of testables, returning a result collection."
+  [testables]
   (loop [result []
          [test & testables] testables]
     (if test
@@ -53,4 +57,3 @@
           (reduce into [result [r] testables])
           (recur (conj result r) testables)))
       result)))
-
