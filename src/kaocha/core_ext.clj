@@ -14,6 +14,9 @@
 (defn throwable? [x]
   (instance? java.lang.Throwable x))
 
+(defn ns? [x]
+  (instance? clojure.lang.Namespace x))
+
 (defn regex [x]
   (cond
     (regex? x)  x

@@ -1,5 +1,6 @@
 (ns kaocha.testable.ns-test
   (:require [clojure.test :as t :refer :all]
+            [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
             [kaocha.testable.ns]
             [kaocha.testable.var]
@@ -34,13 +35,33 @@
                                            :kaocha.var/test      :test-2}]}
                 testable))))
 
+(deftest run-test
+  (is (match? {:kaocha.testable/type :kaocha.type/ns
+               :kaocha.testable/id :test
+               :kaocha.ns/name 'kaocha.testable-test
+               :kaocha.ns/ns ns?
+               :kaocha.result/tests [{:kaocha.testable/type :kaocha.type/var
+                                      :kaocha.testable/id :kaocha.testable-test/load--default
+                                      :kaocha.var/name 'kaocha.testable-test/load--default
+                                      :kaocha.var/var var?
+                                      :kaocha.var/test fn?
+                                      :kaocha.result/count 1
+                                      :kaocha.result/pass 1
+                                      :kaocha.result/error 0
+                                      :kaocha.result/fail 0}
+                                     {:kaocha.testable/type :kaocha.type/var
+                                      :kaocha.testable/id :kaocha.testable-test/run--default
+                                      :kaocha.var/name 'kaocha.testable-test/run--default
+                                      :kaocha.var/var var?
+                                      :kaocha.var/test fn?
+                                      :kaocha.result/count 1
+                                      :kaocha.result/pass 1
+                                      :kaocha.result/error 0
+                                      :kaocha.result/fail 0}]}
 
-(binding [testable/*fail-fast?* true]
-  (testable/run
-    (testable/load
-     #:kaocha.testable{:type :kaocha.type/ns
-                       :id :test
-                       :kaocha.ns/name 'kaocha.testable-test})
-
-
-    ))
+              (binding [testable/*fail-fast?* true]
+                (-> #:kaocha.testable{:type :kaocha.type/ns
+                                      :id :test
+                                      :kaocha.ns/name 'kaocha.testable-test}
+                    testable/load
+                    testable/run)))))
