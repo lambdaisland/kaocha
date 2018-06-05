@@ -1,8 +1,7 @@
-(ns kaocha.testable.var-test
+(ns kaocha.type.var-test
   (:require [clojure.test :as t :refer :all]
             [kaocha.test-factories :as f]
             [kaocha.testable :as testable]
-            [kaocha.testable.var]
             [kaocha.report :as report]
             [kaocha.classpath]
             [kaocha.test-helper]

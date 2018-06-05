@@ -1,9 +1,7 @@
-(ns kaocha.testable.ns-test
+(ns kaocha.type.ns-test
   (:require [clojure.test :as t :refer :all]
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
-            [kaocha.testable.ns]
-            [kaocha.testable.var]
             [kaocha.test-helper]))
 
 (defn var-name?

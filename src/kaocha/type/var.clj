@@ -1,9 +1,9 @@
-(ns kaocha.testable.var
+(ns kaocha.type.var
   (:require [clojure.test :as t]
             [kaocha.testable :as testable]
             [kaocha.result :as result]))
 
-(defmethod testable/run :kaocha.type/var [{:kaocha.var/keys [var test] :as testable}]
+(defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test] :as testable}]
   (let [initial-report @t/*report-counters*]
     (binding [t/*testing-vars* (conj t/*testing-vars* var)]
       (t/do-report {:type :begin-test-var, :var var})

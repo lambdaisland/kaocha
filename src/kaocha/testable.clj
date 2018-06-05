@@ -4,19 +4,39 @@
             [kaocha.specs :refer [assert-spec]]
             [kaocha.result :as result]))
 
-(def ^:dynamic *fail-fast?* nil)
+(def ^:dynamic *fail-fast?*
+  "Should testing terminate immediately upon failure or error?"
+  nil)
 
-(defn- testable-type [testable]
+(defn- try-require [n]
+  (try
+    (require n)
+    true
+    (catch java.io.FileNotFoundException e
+      false)))
+
+(defn- load-type+validate
+  "Try to load a testable type, and validate it both to be a valid generic testable, and a valid instance given the type.
+
+  Implementing a new type means creating a namespace based on type's name, e.g.
+  `:my.new/testable` should be in `my.new` or `my.new.testable`.
+
+  This file should implement the multimethods `-load` and `-run`, as well as a
+  spec for this type of testable."
+  [testable]
   (assert-spec :kaocha/testable testable)
-  (let [type (:kaocha.testable/type testable)]
-    (assert-spec type testable)
-    type))
+  (let [type (::type testable)]
+    (if (qualified-keyword? type)
+      (when-not (try-require (symbol (str (namespace type) "." (name type))))
+        (try-require (symbol (namespace type))))
+      (try-require (symbol (name type))))
+    (assert-spec type testable)))
 
-(defmulti load
+(defmulti -load
   "Given a testable, load the specified tests, producing a test-plan."
-  testable-type)
+  ::type)
 
-(defmethod load :default [testable]
+(defmethod -load :default [testable]
   (throw (ex-info (str "No implementation of "
                        `load
                        " for "
@@ -25,15 +45,24 @@
                    :kaocha.error/missing-method `load
                    :kaocha/testable             testable})))
 
+(defn load
+  "Given a testable, load the specified tests, producing a test-plan.
+
+  Also performs validation, and lazy loading of the testable type's
+  implementation."
+  [testable]
+  (load-type+validate testable)
+  (-load testable))
+
 (s/fdef load
-        :args (s/cat :testable :kaocha/testable)
-        :ret :kaocha.test-plan/testable)
+  :args (s/cat :testable :kaocha/testable)
+  :ret :kaocha.test-plan/testable)
 
-(defmulti run
+(defmulti -run
   "Given a test-plan, perform the tests, returning the test results."
-  testable-type)
+  ::type)
 
-(defmethod run :default [testable]
+(defmethod -run :default [testable]
   (throw (ex-info (str "No implementation of "
                        `run
                        " for "
@@ -42,9 +71,18 @@
                    :kaocha.error/missing-method `run
                    :kaocha/testable             testable})))
 
+(defn run
+  "Given a test-plan, perform the tests, returning the test results.
+
+  Also performs validation, and lazy loading of the testable type's
+  implementation."
+  [testable]
+  (load-type+validate testable)
+  (-run testable))
+
 (s/fdef run
-        :args (s/cat :testable :kaocha.test-plan/testable)
-        :ret :kaocha.result/testable)
+  :args (s/cat :testable :kaocha.test-plan/testable)
+  :ret :kaocha.result/testable)
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."

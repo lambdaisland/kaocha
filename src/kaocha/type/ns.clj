@@ -1,8 +1,8 @@
-(ns kaocha.testable.ns
+(ns kaocha.type.ns
   (:require [clojure.test :as t]
             [kaocha.testable :as testable]))
 
-(defmethod testable/load :kaocha.type/ns [testable]
+(defmethod testable/-load :kaocha.type/ns [testable]
   ;; TODO If the namespace has a test-ns-hook function, call that:
   ;; if-let [v (find-var (symbol (:kaocha.ns/name testable) "test-ns-hook"))]
 
@@ -28,7 +28,7 @@
         (assoc testable
                :kaocha.test-plan/load-error t)))))
 
-(defmethod testable/run :kaocha.type/ns [testable]
+(defmethod testable/-run :kaocha.type/ns [testable]
   (binding [t/*report-counters* (ref t/*initial-report-counters*)]
     (t/do-report {:type :begin-test-ns, :ns (:kaocha.ns/ns testable)})
     (let [tests    (-> testable
@@ -39,17 +39,3 @@
                         tests)]
       (t/do-report {:type :end-test-ns, :ns (:kaocha.ns/ns testable)})
       result)))
-
-(comment
-  (binding [testable/*fail-fast?* true]
-    (testable/run
-      (testable/load
-       #:kaocha.testable{:type :kaocha.type/ns
-                         :id :test
-                         :kaocha.ns/name 'kaocha.testable-test})
-
-
-      ))
-
-
-  )
