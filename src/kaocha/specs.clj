@@ -2,8 +2,7 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.test :as t]
-            [expound.alpha :as expound])
-  (:import [clojure.lang Var]))
+            [expound.alpha :as expound]))
 
 (def global-opts [:kaocha/reporter
                   :kaocha/color?
@@ -37,29 +36,7 @@
                                          (s/keys :opt [:kaocha.test-plan/tests
                                                        :kaacha.test-plan/load-error])))
 
-(s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
-                                     :kaocha.testable/id
-                                     :kaocha.ns/name]
-                               :opt [:kaocha.ns/ns
-                                     :kaocha.test-plan/tests]))
 
-
-(s/def :kaocha.ns/name simple-symbol?)
-
-(s/def :kaocha.type/var (s/keys :req [:kaocha.testable/type
-                                      :kaocha.testable/id
-                                      :kaocha.var/name
-                                      :kaocha.var/var
-                                      :kaocha.var/test]))
-
-(s/def :kaocha.var/name qualified-symbol?)
-(s/def :kaocha.var/test (s/spec ifn?
-                                :gen (fn []
-                                       (gen/one-of [(gen/return (fn [] (t/is true)))
-                                                    (gen/return (fn [] (t/is false)))]))))
-(s/def :kaocha.var/var (s/spec var?
-                               :gen (fn []
-                                      (gen/return (.setDynamic (Var/create))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; suite (old)

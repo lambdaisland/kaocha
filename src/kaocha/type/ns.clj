@@ -1,6 +1,13 @@
 (ns kaocha.type.ns
   (:require [clojure.test :as t]
-            [kaocha.testable :as testable]))
+            [kaocha.core-ext :refer :all]
+            [kaocha.testable :as testable]
+            [clojure.spec.alpha :as s]))
+
+(defn ->testable [ns-name]
+  {:kaocha.testable/type :kaocha.type/ns
+   :kaocha.testable/id   (keyword (str ns-name))
+   :kaocha.ns/name       ns-name})
 
 (defmethod testable/-load :kaocha.type/ns [testable]
   ;; TODO If the namespace has a test-ns-hook function, call that:
@@ -39,3 +46,12 @@
                         tests)]
       (t/do-report {:type :end-test-ns, :ns (:kaocha.ns/ns testable)})
       result)))
+
+(s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
+                                     :kaocha.testable/id
+                                     :kaocha.ns/name]
+                               :opt [:kaocha.ns/ns
+                                     :kaocha.test-plan/tests]))
+
+(s/def :kaocha.ns/name simple-symbol?)
+(s/def :kaocha.ns/ns   ns?)

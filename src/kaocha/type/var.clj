@@ -1,7 +1,10 @@
 (ns kaocha.type.var
   (:require [clojure.test :as t]
             [kaocha.testable :as testable]
-            [kaocha.result :as result]))
+            [kaocha.result :as result]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen])
+  (:import [clojure.lang Var]))
 
 (defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test] :as testable}]
   (let [initial-report @t/*report-counters*]
@@ -20,3 +23,18 @@
     (merge testable
            {:kaocha.result/count 1}
            (result/diff-test-result initial-report @t/*report-counters*))))
+
+(s/def :kaocha.type/var (s/keys :req [:kaocha.testable/type
+                                      :kaocha.testable/id
+                                      :kaocha.var/name
+                                      :kaocha.var/var
+                                      :kaocha.var/test]))
+
+(s/def :kaocha.var/name qualified-symbol?)
+(s/def :kaocha.var/test (s/spec ifn?
+                                :gen (fn []
+                                       (gen/one-of [(gen/return (fn [] (t/is true)))
+                                                    (gen/return (fn [] (t/is false)))]))))
+(s/def :kaocha.var/var (s/spec var?
+                               :gen (fn []
+                                      (gen/return (.setDynamic (Var/create))))))
