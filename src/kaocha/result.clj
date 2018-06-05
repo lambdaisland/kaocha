@@ -18,7 +18,9 @@
         :ret (s/keys :req [::count ::pass ::error ::fail]))
 
 
-(defn test-totals [testable]
+(defn test-totals
+  "Recursively sum up the test result numbers."
+  [testable]
   (if-let [ts (::tests testable)]
     (apply sum (map test-totals ts))
     testable))
@@ -26,7 +28,6 @@
 (s/fdef test-totals
         :args (s/cat :testables (s/* ::testable))
         :ret (s/keys :req [::count ::pass ::error ::fail]))
-
 
 (defn failed? [testable]
   (let [{::keys [error fail]} (test-totals testable)]

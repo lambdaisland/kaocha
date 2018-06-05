@@ -6,11 +6,9 @@
 
 (def global-opts [:kaocha/reporter
                   :kaocha/color?
-                  :kaocha/randomize?
-                  :kaocha/seed
-                  :kaocha/only-suites
                   :kaocha/fail-fast?
-                  :kaocha/watch? ])
+                  :kaocha/watch?
+                  :kaocha/plugins])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; config
@@ -23,6 +21,7 @@
                                       :kaocha.testable/id]))
 
 (s/def :kaocha.testable/type qualified-keyword?)
+
 (s/def :kaocha.testable/id keyword?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

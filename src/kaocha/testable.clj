@@ -15,6 +15,12 @@
     (catch java.io.FileNotFoundException e
       false)))
 
+(defn try-load-third-party-lib [type]
+  (if (qualified-keyword? type)
+    (when-not (try-require (symbol (str (namespace type) "." (name type))))
+      (try-require (symbol (namespace type))))
+    (try-require (symbol (name type)))))
+
 (defn- load-type+validate
   "Try to load a testable type, and validate it both to be a valid generic testable, and a valid instance given the type.
 
@@ -26,10 +32,7 @@
   [testable]
   (assert-spec :kaocha/testable testable)
   (let [type (::type testable)]
-    (if (qualified-keyword? type)
-      (when-not (try-require (symbol (str (namespace type) "." (name type))))
-        (try-require (symbol (namespace type))))
-      (try-require (symbol (name type))))
+    (try-load-third-party-lib type)
     (assert-spec type testable)))
 
 (defmulti -load
@@ -111,6 +114,11 @@
           stack  (pop stack)]
       (conj stack (assoc-result parent child)))
     (pop stack)))
+
+(defn load-testables
+  "Load a collection of testables, returing a test-plan collection"
+  [testables]
+  (doall (map load testables)))
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."

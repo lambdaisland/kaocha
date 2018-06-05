@@ -5,7 +5,8 @@
             [kaocha.testable :as testable]
             [kaocha.classpath :as classpath]
             [clojure.tools.namespace.find :as ctn.find]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.test :as t]))
 
 (defn- ns-match? [ns-patterns ns-sym]
   (some #(re-find % (name ns-sym)) ns-patterns))
@@ -29,7 +30,13 @@
              (doall (map testable/load testables))))))
 
 (defmethod testable/-run :kaocha.type/suite [testable]
-  testable)
+  (t/do-report (assoc testable :type :begin-test-suite))
+  (let [results (testable/run-testables (:kaocha.test-plan/tests testable))
+        testable (-> testable
+                     (dissoc :kaocha.test-plan/tests)
+                     (assoc :kaocha.result/tests results))]
+    (t/do-report (assoc testable :type :end-test-suite))
+    testable))
 
 (s/def :kaocha.type/suite (s/keys :req [:kaocha.suite/source-paths
                                         :kaocha.suite/test-paths
