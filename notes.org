@@ -18,6 +18,7 @@
 - [ ] signal load/parse errors as test failures
 - [ ] print config / test plan / test result
 - [ ] make stack trace filtering configurable
+- [ ] provide #kaocha convenience reader literal for config file
 
 #+BEGIN_SRC clojure
   ;; config

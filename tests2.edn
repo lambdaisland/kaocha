@@ -5,11 +5,11 @@
  :kaocha/fail-fast? false
  :kaocha/watch?     false
  :kaocha/plugins    []
- :kaocha/tests      [#_{:kaocha.testable/type      :kaocha.type/suite
-                        :kaocha.testable/id        :unit
-                        :kaocha.suite/source-paths ["src"]
-                        :kaocha.suite/ns-patterns  ["-test$"]
-                        :kaocha.suite/test-paths   ["test/shared" "test/unit"]}
+ :kaocha/tests      [{:kaocha.testable/type      :kaocha.type/suite
+                      :kaocha.testable/id        :unit
+                      :kaocha.suite/source-paths ["src"]
+                      :kaocha.suite/ns-patterns  ["-test$"]
+                      :kaocha.suite/test-paths   ["test/shared" "test/unit"]}
 
                      {:kaocha.testable/type      :kaocha.type/suite
                       :kaocha.testable/id        :api
