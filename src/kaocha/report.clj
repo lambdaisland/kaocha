@@ -6,7 +6,7 @@
 (def clojure-test-report t/report)
 
 (defmethod t/report :begin-test-suite [m]
-  (println "Test suite" (:id m)))
+  (println "Test suite" (:kaocha.testable/id m)))
 
 (defmethod t/report :end-test-suite [_])
 
@@ -54,7 +54,6 @@
   (t/inc-report-counter :error))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (def ^:dynamic *results* nil)
 
@@ -135,6 +134,10 @@
 
 (defmethod doc :pass [m] (doc-print-contexts t/*testing-contexts*))
 (defmethod doc :error [m] (doc-print-contexts t/*testing-contexts*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn null [m])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -15,6 +15,9 @@
 - [ ] multithread
 - [ ] watch/api mode: undef removed vars
 - [ ] signal load/parse errors as test failures
+- [ ] print config / test plan / test result
+
+
 
 #+BEGIN_SRC clojure
   ;; config

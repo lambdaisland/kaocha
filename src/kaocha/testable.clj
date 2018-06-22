@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [load])
   (:require [clojure.spec.alpha :as s]
             [kaocha.specs :refer [assert-spec]]
-            [kaocha.result :as result]))
+            [kaocha.result :as result]
+            [clojure.pprint :as pprint]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -126,11 +127,14 @@
   (loop [result []
          [test & testables] testables]
     (if test
-      (do
-        (swap! *stack* conj test)
-        (let [r (run test)]
-          (swap! *stack* unwind-stack)
-          (if (and *fail-fast?* (result/failed? r))
-            (reduce into [result [r] testables])
-            (recur (conj result r) testables))))
+      (if (:kaocha.test-plan/load-error test)
+        (recur (conj result test) testables)
+        (do
+          (swap! *stack* conj test)
+          (let [r (run test)]
+            (swap! *stack* unwind-stack)
+            #_(pprint/pprint r)
+            (if (and *fail-fast?* (result/failed? r))
+              (reduce into [result [r] testables])
+              (recur (conj result r) testables)))))
       result)))

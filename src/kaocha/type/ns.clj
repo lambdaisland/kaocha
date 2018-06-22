@@ -15,7 +15,7 @@
 
   (let [ns-name (:kaocha.ns/name testable)]
     (try
-      (require ns-name)
+      (require ns-name :reload)
       (let [ns-obj (the-ns ns-name)]
         (->> ns-obj
              ns-publics

@@ -58,8 +58,9 @@
 (s/def :kaocha.result/tests (s/coll-of :kaocha.result/testable))
 
 (s/def :kaocha.result/testable (s/and :kaocha/testable
-                                      (s/keys :req [:kaocha.result/count]
-                                              :opt [:kaocha.result/tests
+                                      (s/keys #_#_:req [:kaocha.result/count]
+                                              :opt [:kaocha.result/count
+                                                    :kaocha.result/tests
                                                     :kaocha.result/pass
                                                     :kaocha.result/error
                                                     :kaocha.result/fail

@@ -1,49 +1,41 @@
 (ns kaocha.api
   "Programmable test runner interface."
-  (:require [kaocha.monkey-patch]
+  (:require [clojure.test :as t]
+            [kaocha.monkey-patch]
             [kaocha.testable :as testable]
             [kaocha.result :as result]
-            [kaocha.plugin :as plugin]))
+            [kaocha.plugin :as plugin]
+            [kaocha.report :as report]))
 
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]
      ~@body))
 
-(defn run* [config]
-  (let [{:kaocha/keys [reporter
-                       color?
-                       suites
-                       tests
-                       fail-fast?
-                       plugins]} config
-        plugins                  (plugin/load-all (:plugins config))
-        config                   (plugin/run-step plugins :kaocha.hooks/config config)
+(defn api [config]
+  (let [fail-fast? (:kaocha/fail-fast? config)]
+    (binding [testable/*fail-fast?* fail-fast?]
+      (let [result (-> config
+                       :kaocha/tests
+                       testable/load-testables
+                       testable/run-testables)]
+        (t/do-report (result/totals->clojure-test-summary (result/totals result)))))))
+
+#_
+(with-redefs [t/report report/report-counters]
+  (-> {:kaocha/fail-fast? true
+       :kaocha/tests [{:kaocha.testable/type :kaocha.type/suite,
+                       :kaocha.testable/id :api,
+                       :kaocha.suite/source-paths ["src"],
+                       :kaocha.suite/ns-patterns ["-test$"],
+                       :kaocha.suite/test-paths ["fixtures/d-tests"]}]}
+      api))
 
 
-        reporter                 (config/resolve-reporter
-                                  (if fail-fast?
-                                    [reporter report/fail-fast]
-                                    reporter))
-        stack                    (atom [config])
-        runtime                  (java.lang.Runtime/getRuntime)
-        main-thread              (Thread/currentThread)
-        on-shutdown              (Thread. (fn []
-                                            (println "^C")
-                                            #_(binding [report/*results* results]
-                                                (t/do-report (assoc (result->report @results)
-                                                                    :type :summary)))))
-        do-finish                (fn [report]
-                                   (t/do-report (assoc report :type :summary))
-                                   (.removeShutdownHook runtime on-shutdown)
-                                   report)]
-    (.addShutdownHook runtime on-shutdown)
-    (try
-      (binding [output/*colored-output* color?
-                testable/*stack*        stack
-                report/*results*        results]
-        (with-reporter reporter
-          (-> tests testable/load-testables testable/run-testables)))
-      (finally
-        (.removeShutdownHook runtime on-shutdown)))))
+(comment
+  (require '[aero.core :refer (read-config)])
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  (clojure.spec.alpha/valid?
+   :kaocha/config
+   (read-config "tests2.edn"))
+
+  (api (read-config "tests2.edn")))

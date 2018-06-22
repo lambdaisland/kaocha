@@ -6,29 +6,39 @@
    ::error (apply - (map :error [after before]))
    ::fail (apply - (map :fail [after before]))})
 
-
 (defn sum [& rs]
-  {::count (apply + (map ::count rs))
-   ::pass  (apply + (map ::pass rs))
-   ::error (apply + (map ::error rs))
-   ::fail  (apply + (map ::fail rs))})
+  {::count (apply + (map #(::count % 0) rs))
+   ::pass  (apply + (map #(::pass % 0) rs))
+   ::error (apply + (map #(::error % 0) rs))
+   ::fail  (apply + (map #(::fail % 0) rs))})
 
 (s/fdef sum
         :args (s/cat :testables (s/* ::testable))
         :ret (s/keys :req [::count ::pass ::error ::fail]))
 
+(declare testable-totals)
 
-(defn test-totals
+(defn totals [testables]
+  (apply sum (map testable-totals testables)))
+
+(defn testable-totals
   "Recursively sum up the test result numbers."
   [testable]
-  (if-let [ts (::tests testable)]
-    (apply sum (map test-totals ts))
+  (if-let [testables (::tests testable)]
+    (merge testable (totals testables))
     testable))
 
-(s/fdef test-totals
+(s/fdef testable-totals
         :args (s/cat :testables (s/* ::testable))
         :ret (s/keys :req [::count ::pass ::error ::fail]))
 
 (defn failed? [testable]
-  (let [{::keys [error fail]} (test-totals testable)]
+  (let [{::keys [error fail]} (testable-totals testable)]
     (or (> error 0) (> fail 0))))
+
+(defn totals->clojure-test-summary [totals]
+  {:type :summary
+   :test (::count totals)
+   :pass (::pass totals)
+   :fail (::fail totals)
+   :error (::error totals)})

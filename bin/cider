@@ -36,8 +36,13 @@ trap finish EXIT
 
 clj                                                                      \
     -A:dev                                                               \
-    -Sdeps '{:deps {cider/cider-nrepl {:mvn/version '$CIDER_VERSION'}}}' \
+    -Sdeps '{:deps {lambdaisland/nrepl {:mvn/version "0.2.0"}
+                    cider/cider-nrepl {:mvn/version '$CIDER_VERSION'}
+                    refactor-nrepl {:mvn/version '$CLJR_VERSION'}}}' \
     -m lambdaisland.nrepl.main                                           \
     --port $NREPL_PORT                                                   \
     --middleware cider.nrepl/cider-middleware                            \
     --middleware refactor-nrepl.middleware/wrap-refactor
+
+
+#-Sdeps '{:deps {cider/cider-nrepl {:mvn/version '$CIDER_VERSION'}}}' \
