@@ -1,4 +1,6 @@
-{:kaocha/reporter   kaocha.report/progress
+{:kaocha/reporter   [#_clojure.core/prn
+                     #_kaocha.report/debug
+                     kaocha.report/documentation]
  :kaocha/color?     true
  :kaocha/fail-fast? false
  :kaocha/watch?     false

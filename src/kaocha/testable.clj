@@ -127,14 +127,11 @@
   (loop [result []
          [test & testables] testables]
     (if test
-      (if (:kaocha.test-plan/load-error test)
-        (recur (conj result test) testables)
-        (do
-          (swap! *stack* conj test)
-          (let [r (run test)]
-            (swap! *stack* unwind-stack)
-            #_(pprint/pprint r)
-            (if (and *fail-fast?* (result/failed? r))
-              (reduce into [result [r] testables])
-              (recur (conj result r) testables)))))
+      (do
+        (swap! *stack* conj test)
+        (let [r (run test)]
+          (swap! *stack* unwind-stack)
+          (if (and *fail-fast?* (result/failed? r))
+            (reduce into [result [r] testables])
+            (recur (conj result r) testables))))
       result)))

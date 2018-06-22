@@ -78,7 +78,7 @@
 
       :else
       (let [config (config options)
-            result (api/api config)
+            result (api/run config)
             totals (result/totals result)]
         (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)))))
 

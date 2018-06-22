@@ -9,6 +9,7 @@
   :focus-meta
 - [ ] profiling
 - [ ] capture output
+- [ ] wrap reporters in t/with-test-out
 - [ ] main namespace for cloverage
 - [ ] wrapper for eftest reporter
 - [ ] TAP reporter
@@ -16,8 +17,7 @@
 - [ ] watch/api mode: undef removed vars
 - [ ] signal load/parse errors as test failures
 - [ ] print config / test plan / test result
-
-
+- [ ] make stack trace filtering configurable
 
 #+BEGIN_SRC clojure
   ;; config

@@ -33,19 +33,31 @@
                     :kaocha.test-plan/tests)))
       (catch Throwable t
         (assoc testable
-               :kaocha.test-plan/load-error t)))))
+               :kaocha.test-plan/load-error t
+               :kaocha.result/error 1)))))
 
 (defmethod testable/-run :kaocha.type/ns [testable]
-  (binding [t/*report-counters* (ref t/*initial-report-counters*)]
-    (t/do-report {:type :begin-test-ns, :ns (:kaocha.ns/ns testable)})
-    (let [tests    (-> testable
-                       :kaocha.test-plan/tests
-                       testable/run-testables)
-          result (assoc (dissoc testable :kaocha.test-plan/tests)
-                        :kaocha.result/tests
-                        tests)]
-      (t/do-report {:type :end-test-ns, :ns (:kaocha.ns/ns testable)})
-      result)))
+  (let [do-report #(t/do-report (merge {:ns              (:kaocha.ns/ns testable)
+                                        :kaocha/testable testable}
+                                       %))]
+    (binding [t/*report-counters* (ref t/*initial-report-counters*)]
+      (do-report {:type :begin-test-ns})
+      (if-let [load-error (:kaocha.test-plan/load-error testable)]
+        (do
+          (do-report {:type     :error
+                      :message  "Failed to load namespace."
+                      :expected nil
+                      :actual   load-error})
+          (do-report {:type :end-test-ns})
+          testable)
+        (let [tests  (-> testable
+                         :kaocha.test-plan/tests
+                         testable/run-testables)
+              result (assoc (dissoc testable :kaocha.test-plan/tests)
+                            :kaocha.result/tests
+                            tests)]
+          (do-report {:type :end-test-ns})
+          result)))))
 
 (s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
                                      :kaocha.testable/id

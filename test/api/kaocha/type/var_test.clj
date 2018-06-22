@@ -5,23 +5,9 @@
             [kaocha.report :as report]
             [kaocha.classpath]
             [kaocha.test-helper]
-            [kaocha.core-ext :refer :all]))
-
-(def ^:dynamic *report-history* nil)
-
-(defmacro with-test-ctx
-  "When testing lower level functions, make sure the necessary shared state is set up."
-  [opts & body]
-  `(binding [t/*report-counters* (ref t/*initial-report-counters*)
-             t/*testing-vars* (list)
-             *report-history* (atom [])]
-     (with-redefs [t/report (fn [m#]
-                              (swap! *report-history* conj m#)
-                              (report/report-counters m#)
-                              (when (:fail-fast? ~opts) (report/fail-fast m#)))]
-       (let [result# (do ~@body)]
-         {:result result#
-          :report @*report-history*}))))
+            [kaocha.core-ext :refer :all]
+            [kaocha.config2 :as config]
+            [kaocha.test-util :refer [with-test-ctx]]))
 
 (deftest run-test
   (testing "a passing test var"
@@ -89,7 +75,6 @@
                     :message "Uncaught exception, not in assertion."}
                    {:type :end-test-var, :var var?}]
                   report))))
-
   (testing "multiple assertions"
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? false}

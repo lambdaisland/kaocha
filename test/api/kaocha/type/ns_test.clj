@@ -2,7 +2,9 @@
   (:require [clojure.test :as t :refer :all]
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
-            [kaocha.test-helper]))
+            [kaocha.test-helper]
+            [kaocha.classpath :as classpath]
+            [kaocha.test-util :refer [with-test-ctx]]))
 
 (defn var-name?
   "Predicate for the name of a var, for use in matchers."
@@ -10,56 +12,59 @@
   (and (var? v) (= (:name (meta v)) n)))
 
 (deftest load-test
-  (let [ns-name  (doto (gensym "test.ns")
-                   create-ns
-                   (intern (with-meta 'test-1 {:test :test-1}) nil)
-                   (intern (with-meta 'test-2 {:test :test-2}) nil))
-        _        (dosync (commute @#'clojure.core/*loaded-libs* conj ns-name))
-        testable (testable/load {:kaocha.testable/type :kaocha.type/ns
-                                 :kaocha.testable/id   (keyword ns-name)
-                                 :kaocha.ns/name       ns-name})]
+  (classpath/add-classpath "fixtures/a-tests")
 
-    (is (match? {:kaocha.testable/type   :kaocha.type/ns
-                 :kaocha.ns/name         ns-name
-                 :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/var,
-                                           :kaocha.testable/id   (keyword (str ns-name) "test-1")
-                                           :kaocha.var/name      (symbol (str ns-name) "test-1")
-                                           :kaocha.var/var       #(var-name? % 'test-1)
-                                           :kaocha.var/test      :test-1}
-                                          {:kaocha.testable/type :kaocha.type/var
-                                           :kaocha.testable/id   (keyword (str ns-name) "test-2")
-                                           :kaocha.var/name      (symbol (str ns-name) "test-2")
-                                           :kaocha.var/var       #(var-name? % 'test-2)
-                                           :kaocha.var/test      :test-2}]}
-                testable))))
+  (let [test-plan (testable/load {:kaocha.testable/type :kaocha.type/ns
+                                  :kaocha.testable/id   :foo.bar-test
+                                  :kaocha.ns/name       'foo.bar-test})]
+
+    (is (= test-plan
+           {:kaocha.testable/type :kaocha.type/ns
+            :kaocha.testable/id   :foo.bar-test
+            :kaocha.ns/name       'foo.bar-test
+            :kaocha.ns/ns         (the-ns 'foo.bar-test)
+            :kaocha.test-plan/tests
+            [{:kaocha.testable/type :kaocha.type/var
+              :kaocha.testable/id   :foo.bar-test/a-test
+              :kaocha.var/name      'foo.bar-test/a-test
+              :kaocha.var/var       (resolve 'foo.bar-test/a-test)
+              :kaocha.var/test      (:test (meta (resolve 'foo.bar-test/a-test)))}]})))
+
+  (is (match? {:kaocha.testable/type :kaocha.type/ns
+               :kaocha.testable/id   :foo.unknown-test
+               :kaocha.ns/name       'foo.unknown-test
+               :kaocha.test-plan/load-error #(instance? java.io.FileNotFoundException %)}
+
+              (testable/load {:kaocha.testable/type :kaocha.type/ns
+                              :kaocha.testable/id   :foo.unknown-test
+                              :kaocha.ns/name       'foo.unknown-test}))))
 
 (deftest run-test
-  (is (match? {:kaocha.testable/type :kaocha.type/ns
-               :kaocha.testable/id :test
-               :kaocha.ns/name 'kaocha.testable-test
-               :kaocha.ns/ns ns?
-               :kaocha.result/tests [{:kaocha.testable/type :kaocha.type/var
-                                      :kaocha.testable/id :kaocha.testable-test/load--default
-                                      :kaocha.var/name 'kaocha.testable-test/load--default
-                                      :kaocha.var/var var?
-                                      :kaocha.var/test fn?
-                                      :kaocha.result/count 1
-                                      :kaocha.result/pass 1
-                                      :kaocha.result/error 0
-                                      :kaocha.result/fail 0}
-                                     {:kaocha.testable/type :kaocha.type/var
-                                      :kaocha.testable/id :kaocha.testable-test/run--default
-                                      :kaocha.var/name 'kaocha.testable-test/run--default
-                                      :kaocha.var/var var?
-                                      :kaocha.var/test fn?
-                                      :kaocha.result/count 1
-                                      :kaocha.result/pass 1
-                                      :kaocha.result/error 0
-                                      :kaocha.result/fail 0}]}
-
-              (binding [testable/*fail-fast?* true]
-                (-> #:kaocha.testable{:type :kaocha.type/ns
-                                      :id :test
-                                      :kaocha.ns/name 'kaocha.testable-test}
-                    testable/load
-                    testable/run)))))
+  (let [testable (testable/load #:kaocha.testable{:type           :kaocha.type/ns
+                                                  :id             :test
+                                                  :kaocha.ns/name 'kaocha.testable-test})]
+    (is (match? {:kaocha.testable/type :kaocha.type/ns
+                 :kaocha.testable/id   :test
+                 :kaocha.ns/name       'kaocha.testable-test
+                 :kaocha.ns/ns         ns?
+                 :kaocha.result/tests  [{:kaocha.testable/type :kaocha.type/var
+                                         :kaocha.testable/id   :kaocha.testable-test/load--default
+                                         :kaocha.var/name      'kaocha.testable-test/load--default
+                                         :kaocha.var/var       var?
+                                         :kaocha.var/test      fn?
+                                         :kaocha.result/count  1
+                                         :kaocha.result/pass   1
+                                         :kaocha.result/error  0
+                                         :kaocha.result/fail   0}
+                                        {:kaocha.testable/type :kaocha.type/var
+                                         :kaocha.testable/id   :kaocha.testable-test/run--default
+                                         :kaocha.var/name      'kaocha.testable-test/run--default
+                                         :kaocha.var/var       var?
+                                         :kaocha.var/test      fn?
+                                         :kaocha.result/count  1
+                                         :kaocha.result/pass   1
+                                         :kaocha.result/error  0
+                                         :kaocha.result/fail   0}]}
+                (:result
+                 (with-test-ctx {:fail-fast? true}
+                   (testable/run testable)))))))

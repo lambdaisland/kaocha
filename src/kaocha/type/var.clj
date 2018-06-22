@@ -14,11 +14,17 @@
         (test)
         (catch clojure.lang.ExceptionInfo e
           (when-not (:kaocha/fail-fast (ex-data e))
-            (t/do-report {:type :error, :message "Uncaught exception, not in assertion."
-                          :expected nil, :actual e})))
+            (t/do-report {:type :error
+                          :message "Uncaught exception, not in assertion."
+                          :expected nil
+                          :actual e
+                          :kaocha/testable testable})))
         (catch Throwable e
-          (t/do-report {:type :error, :message "Uncaught exception, not in assertion."
-                        :expected nil, :actual e})))
+          (t/do-report {:type :error
+                        :message "Uncaught exception, not in assertion."
+                        :expected nil
+                        :actual e
+                        :kaocha/testable testable})))
       (t/do-report {:type :end-test-var, :var var}))
     (merge testable
            {:kaocha.result/count 1}

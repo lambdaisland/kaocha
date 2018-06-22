@@ -1,7 +1,9 @@
 (ns kaocha.report
   (:require [kaocha.output :as out :refer [colored]]
+            [kaocha.stacktrace :as stack]
             [clojure.test :as t]
-            [slingshot.slingshot :refer [throw+]]))
+            [slingshot.slingshot :refer [throw+]]
+            [clojure.string :as str]))
 
 (def clojure-test-report t/report)
 
@@ -79,12 +81,50 @@
 (defmulti result :type)
 (defmethod result :default [_])
 
+(defn- testing-vars-str
+  "Returns a string representation of the current test. Renders names
+  in :testing-vars as a list, then the source file and line of current
+  assertion."
+  [{:keys [file line testing-vars kaocha/testable] :as m}]
+  (str
+   ;; Uncomment to include namespace in failure report:
+   ;;(ns-name (:ns (meta (first *testing-vars*)))) "/ "
+   (if (seq testing-vars)
+     (reverse (map #(:name (meta %)) testing-vars))
+     (name (:kaocha.testable/id testable)))
+   " (" file ":" line ")"))
+
+(defn- summary-fail [{:keys [testing-contexts testing-vars] :as m}]
+  (t/with-test-out
+    (println "\nFAIL in" (testing-vars-str m))
+    (when (seq testing-contexts)
+      (println (str/join " " testing-contexts)))
+    (when-let [message (:message m)]
+      (println message))
+    (println "expected:" (pr-str (:expected m)))
+    (println "  actual:" (pr-str (:actual m)))))
+
+(defn- summary-error [{:keys [testing-contexts testing-vars] :as m}]
+  (t/with-test-out
+    (println "\nERROR in" (testing-vars-str m))
+    (when (seq testing-contexts)
+      (println (str/join " " testing-contexts)))
+    (when-let [message (:message m)]
+      (println message))
+    (print "Exception: ")
+    (let [actual (:actual m)]
+      (if (instance? Throwable actual)
+        (stack/print-cause-trace actual t/*stack-trace-depth*)
+        (prn actual)))))
+
 (defmethod result :summary [m]
   (let [failures (filter (comp #{:fail :error} :type) @*results*)]
     (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
       (binding [t/*testing-contexts* testing-contexts
                 t/*testing-vars* testing-vars]
-        (clojure-test-report m))))
+        (case (:type m)
+          :fail (summary-fail m)
+          :error (summary-error m)))))
 
   (let [{:keys [test pass fail error] :or {pass 0 fail 0 error 0}} m
         passed? (pos-int? (+ fail error))]
@@ -101,7 +141,7 @@
   "Fail fast reporter, add this as a final reporter to interrupt testing as soon
   as a failure or error is encountered."
   [m]
-  (when (= :fail (:type m))
+  (when (some #{(:type m)} [:fail :mismatch])
     (throw+ {:kaocha/fail-fast true})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -122,22 +162,30 @@
 (defmethod doc :default [_])
 
 (defmethod doc :begin-test-ns [m]
-  (reset! doc-printed-contexts (list))
-  (println "Testing" (str (:ns m))))
+  (t/with-test-out
+    (reset! doc-printed-contexts (list))
+    (println "Testing" (-> m :kaocha/testable :kaocha.ns/name))))
 
 (defmethod doc :end-test-ns [m]
-  (println))
+  (t/with-test-out
+    (println)))
 
 (defmethod doc :begin-test-var [m]
-  (let [{:keys [name]} (-> m :var meta)]
-    (println (str "  " name))))
+  (t/with-test-out
+    (let [{:keys [name]} (-> m :var meta)]
+      (println (str "  " name)))))
 
-(defmethod doc :pass [m] (doc-print-contexts t/*testing-contexts*))
-(defmethod doc :error [m] (doc-print-contexts t/*testing-contexts*))
+(defmethod doc :pass [m]
+  (t/with-test-out
+    (doc-print-contexts t/*testing-contexts*)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod doc :error [m]
+  (t/with-test-out
+    (doc-print-contexts t/*testing-contexts*)))
 
-(defn null [m])
+(defn debug [m]
+  (prn (cond-> (select-keys m [:type :var :ns])
+         (:kaocha/testable m) (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
