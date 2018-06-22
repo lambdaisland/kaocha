@@ -119,7 +119,7 @@
 (defn load-testables
   "Load a collection of testables, returing a test-plan collection"
   [testables]
-  (doall (map load testables)))
+  (doall (map #(cond-> % (not (::skip %)) load) testables)))
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."
@@ -129,7 +129,7 @@
     (if test
       (do
         (swap! *stack* conj test)
-        (let [r (run test)]
+        (let [r (cond-> test (not (::skip test)) run)]
           (swap! *stack* unwind-stack)
           (if (and *fail-fast?* (result/failed? r))
             (reduce into [result [r] testables])

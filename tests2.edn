@@ -4,7 +4,7 @@
  :kaocha/color?     true
  :kaocha/fail-fast? false
  :kaocha/watch?     false
- :kaocha/plugins    []
+ :kaocha/plugins    [:kaocha.plugin/randomize]
  :kaocha/tests      [{:kaocha.testable/type      :kaocha.type/suite
                       :kaocha.testable/id        :unit
                       :kaocha.suite/source-paths ["src"]
@@ -17,8 +17,8 @@
                       :kaocha.suite/ns-patterns  ["-test$"]
                       :kaocha.suite/test-paths   ["test/shared" "test/api"]}
 
-                     #_{:kaocha.testable/type      :kaocha.type/suite
-                        :kaocha.testable/id        :integration
-                        :kaocha.suite/source-paths ["src"]
-                        :kaocha.suite/ns-patterns  ["-test$"]
-                        :kaocha.suite/test-paths   ["test/shared" "test/integration"]}]}
+                     {:kaocha.testable/type      :kaocha.type/suite
+                      :kaocha.testable/id        :integration
+                      :kaocha.suite/source-paths ["src"]
+                      :kaocha.suite/ns-patterns  ["-test$"]
+                      :kaocha.suite/test-paths   ["test/shared" "test/integration"]}]}

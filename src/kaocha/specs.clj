@@ -68,7 +68,7 @@
                                                     :kaocha.result/err
                                                     :kaocha.result/time])))
 
-(s/def :kaocha.result/count pos-int?)
+(s/def :kaocha.result/count nat-int?)
 (s/def :kaocha.result/pass nat-int?)
 (s/def :kaocha.result/fail nat-int?)
 (s/def :kaocha.result/error nat-int?)

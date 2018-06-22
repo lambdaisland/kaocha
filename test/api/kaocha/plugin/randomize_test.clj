@@ -14,8 +14,9 @@
                  :kaocha.suite/ns-patterns     [".*"]})
 
 (deftest randomize-test
-  (is (match? {:kaocha.plugin.randomize/seed number?}
-              (plugin/run-step plugin-chain :kaocha.hooks/config {})))
+  (is (match? {:kaocha.plugin.randomize/randomize? true
+               :kaocha.plugin.randomize/seed       number?}
+              (plugin/run-hook plugin-chain :kaocha.hooks/config {})))
 
   (is (match? {:kaocha.testable/type   :kaocha.type/suite
                :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
@@ -26,9 +27,10 @@
                                           {:kaocha.testable/id :foo.hello-test/pass-1}
                                           {:kaocha.testable/id :foo.hello-test/fail-1}]}]}
 
-              (plugin/run-step plugin-chain :kaocha.hooks/post-load
+              (plugin/run-hook plugin-chain :kaocha.hooks/post-load
                                (-> test-suite
-                                   (assoc :kaocha.plugin.randomize/seed 123)
+                                   (assoc :kaocha.plugin.randomize/seed 123
+                                          :kaocha.plugin.randomize/randomize? true)
                                    testable/load))))
 
   (is (match? {:kaocha.testable/type   :kaocha.type/suite
@@ -40,7 +42,8 @@
                                           {:kaocha.testable/id :foo.hello-test/pass-3}
                                           {:kaocha.testable/id :foo.hello-test/fail-1}]}]}
 
-              (plugin/run-step plugin-chain :kaocha.hooks/post-load
+              (plugin/run-hook plugin-chain :kaocha.hooks/post-load
                                (-> test-suite
-                                   (assoc :kaocha.plugin.randomize/seed 456)
+                                   (assoc :kaocha.plugin.randomize/seed 456
+                                          :kaocha.plugin.randomize/randomize? true)
                                    testable/load)))))

@@ -11,7 +11,8 @@
             [kaocha.test :as test]
             [kaocha.api :as api]
             [slingshot.slingshot :refer [try+]]
-            [kaocha.result :as result]))
+            [kaocha.result :as result]
+            [kaocha.plugin :as plugin]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -55,14 +56,15 @@
 (defn print-help! [summary]
   (println (str/join "\n" (help summary))))
 
-
-(defn config [options]
-  (let [{:keys [config-file] :as options} options
-        config                            (config/load-config (or config-file "tests.edn"))]
-    (config/apply-cli-opts config options)))
-
 (defn- -main* [& args]
-  (let [{:keys [errors options arguments summary]} (cli/parse-opts args cli-options)]
+  (let [{{:keys [config-file]} :options}           (cli/parse-opts args cli-options)
+        config                                     (config/load-config (or config-file "tests.edn"))
+        plugin-chain                               (plugin/load-all (:kaocha/plugins config))
+        cli-options                                (plugin/run-hook plugin-chain :kaocha.hooks/cli-options cli-options)
+        {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
+        config                                     (-> config
+                                                       (config/apply-cli-opts options)
+                                                       (config/apply-cli-args arguments))]
 
     (cond
       (seq errors)
@@ -77,8 +79,7 @@
         0)
 
       :else
-      (let [config (config options)
-            result (api/run config)
+      (let [result (api/run config)
             totals (result/totals result)]
         (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)))))
 

@@ -28,15 +28,39 @@
   (conj plugins
         {:kaocha.plugin/id :kaocha.plugin/randomize
 
+         :kaocha.hooks/cli-options
+         (fn [opts]
+           (conj opts
+                 [nil  "--[no-]randomize"     "Run test namespaces and vars in random order."]
+                 [nil  "--seed SEED"          "Provide a seed to determine the random order of tests."
+                  :parse-fn #(Integer/parseInt %)]))
+
          :kaocha.hooks/config
          (fn [config]
-           (if (::seed config)
-             config
-             (assoc config ::seed (rand-int Integer/MAX_VALUE))))
+           (let [randomize? (get-in config [:kaocha/cli-options :randomize])]
+             (merge {::randomize? true}
+                    (cond
+                      (::seed config)
+                      config
+
+                      (get-in config [:kaocha/cli-options :seed])
+                      (assoc config ::seed (get-in config [:kaocha/cli-options :seed]))
+
+                      :else
+                      (assoc config ::seed (rand-int Integer/MAX_VALUE)))
+                    (when (false? randomize?)
+                      {::randomize? false}))))
 
          :kaocha.hooks/post-load
          (fn [test-plan]
-           (let [rng (rng (::seed test-plan))]
-             (->> test-plan
-                  straight-sort
-                  (rng-sort rng))))}))
+           (if (::randomize? test-plan)
+             (let [rng (rng (::seed test-plan))]
+               (->> test-plan
+                    straight-sort
+                    (rng-sort rng)))
+             test-plan))
+
+         :kaocha.hooks/pre-run
+         (fn [test-plan]
+           (if (::randomize? test-plan)
+             (println "Running with --seed" (::seed test-plan))))}))

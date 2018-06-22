@@ -24,9 +24,17 @@
 (defn load-all [names]
   (reduce #(register %2 %1) [] names))
 
-(defn run-step [plugins step value]
+(defn run-hook [plugins step value]
   (reduce #(%2 %1) value (keep step plugins)))
 
 (comment
-  (= (run-step [{:foo inc} {:foo inc}] :foo 2)
+  (= (run-hook [{:foo inc} {:foo inc}] :foo 2)
      4))
+
+
+;; HOOKS
+;; :config
+;; :pre-load
+;; :post-load
+;; :pre-run
+;; :post-run

@@ -19,6 +19,17 @@
     (:fail-fast options) (assoc :kaocha/fail-fast? true)
     true                 (assoc :kaocha/cli-options options)))
 
+(defn apply-cli-args [config args]
+  (if (seq args)
+    (update config
+            :kaocha/tests
+            (fn [tests]
+              (map #(if (contains? (set args) (name (:kaocha.testable/id %)))
+                      %
+                      (assoc % :kaocha.testable/skip true))
+                   tests)))
+    config))
+
 (defn resolve-reporter [reporter]
   (cond
     (= 'clojure.test/report reporter)
