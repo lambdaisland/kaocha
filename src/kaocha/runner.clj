@@ -24,9 +24,6 @@
    [nil  "--fail-fast"          "Stop testing after the first failure."]
    #_[nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    #_[nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
-   #_[nil  "--[no-]randomize"     "Run test namespaces and vars in random order."]
-   #_[nil  "--seed SEED"          "Provide a seed to determine the random order of tests."
-      :parse-fn #(Integer/parseInt %)]
    #_[nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
       :parse-fn symbol
       :assoc-fn accumulate
