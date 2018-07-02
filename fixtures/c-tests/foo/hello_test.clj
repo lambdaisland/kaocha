@@ -8,7 +8,9 @@
   (t/is true))
 
 (t/deftest fail-1
-  (t/is false))
+  (t/is true)
+  (t/is false)
+  (t/is true))
 
 (t/deftest pass-3
   (t/is true))

@@ -6,7 +6,7 @@
             [kaocha.classpath]
             [kaocha.test-helper]
             [kaocha.core-ext :refer :all]
-            [kaocha.config2 :as config]
+            [kaocha.config :as config]
             [kaocha.test-util :refer [with-test-ctx]]))
 
 (deftest run-test

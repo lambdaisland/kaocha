@@ -1,4 +1,4 @@
-(ns kaocha.config2
+(ns kaocha.config
   (:require [aero.core :as aero]
             [clojure.java.io :as io]
             [kaocha.output :as out]
@@ -13,32 +13,33 @@
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
-
-(defmethod aero/reader 'kaocha [opts tag value]
-  (let [default-config (default-config)
+(defn normalize [value]
+  (let [default-config   (default-config)
         {:keys [tests
                 plugins
                 reporter
                 color?
                 fail-fast?
                 watch?]} value
-        tests (seq
-               (map (fn [m]
-                      (-> m
-                          (rename-key :type :kaocha.testable/type)
-                          (rename-key :id :kaocha.testable/id)
-                          (rename-key :test-paths :kaocha.suite/test-paths)
-                          (rename-key :source-paths :kaocha.suite/source-paths)
-                          (rename-key :ns-patterns :kaocha.suite/ns-patterns)
-                          (cond->> (not (:type m)) (merge (first (:kaocha/tests default-config))))))
-                    tests))]
+        tests            (some->> tests
+                                  (mapv (fn [m]
+                                          (-> m
+                                              (rename-key :type :kaocha.testable/type)
+                                              (rename-key :id :kaocha.testable/id)
+                                              (rename-key :test-paths :kaocha.suite/test-paths)
+                                              (rename-key :source-paths :kaocha.suite/source-paths)
+                                              (rename-key :ns-patterns :kaocha.suite/ns-patterns)
+                                              (cond->> (not (:type m)) (merge (first (:kaocha/tests default-config))))))))]
     (cond-> default-config
-      tests      (assoc :kaocha/tests tests)
-      plugins    (update :kaocha/plugins into plugins)
-      reporter   (assoc :kaocha/reporter reporter)
-      color?     (assoc :kaocha/color? color?)
-      fail-fast? (assoc :kaocha/fail-fast? fail-fast?)
-      watch?     (assoc :kaocha/watch? watch?))))
+      tests              (assoc :kaocha/tests tests)
+      plugins            (update :kaocha/plugins into plugins)
+      reporter           (assoc :kaocha/reporter reporter)
+      (some? color?)     (assoc :kaocha/color? color?)
+      (some? fail-fast?) (assoc :kaocha/fail-fast? fail-fast?)
+      (some? watch?)     (assoc :kaocha/watch? watch?))))
+
+(defmethod aero/reader 'kaocha [opts tag value]
+  (normalize value))
 
 (defn load-config
   ([]
@@ -51,20 +52,21 @@
 
 (defn apply-cli-opts [config options]
   (cond-> config
-    (:fail-fast options) (assoc :kaocha/fail-fast? true)
-    (:reporter options)  (assoc :kaocha/reporter (:reporter options))
-    (:watch options)     (assoc :kaocha/watch? (:watch options))
-    true                 (assoc :kaocha/cli-options options)))
+    (some? (:fail-fast options)) (assoc :kaocha/fail-fast? true)
+    (:reporter options)          (assoc :kaocha/reporter (:reporter options))
+    (:watch options)             (assoc :kaocha/watch? (:watch options))
+    (some? (:color options))     (assoc :kaocha/color? (:color options))
+    true                         (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
   (if (seq args)
     (update config
             :kaocha/tests
             (fn [tests]
-              (map #(if (contains? (set args) (name (:kaocha.testable/id %)))
-                      %
-                      (assoc % :kaocha.testable/skip true))
-                   tests)))
+              (mapv #(if (contains? (set args) (name (:kaocha.testable/id %)))
+                       %
+                       (assoc % :kaocha.testable/skip true))
+                    tests)))
     config))
 #_
 (defn add-built-ints [config]

@@ -7,7 +7,8 @@
             [kaocha.plugin :as plugin]
             [kaocha.report :as report]
             [kaocha.history :as history]
-            [kaocha.config2 :as config]))
+            [kaocha.config :as config]
+            [kaocha.output :as output]))
 
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]
@@ -35,11 +36,11 @@
   (let [fail-fast? (:kaocha/fail-fast? config)
         reporter   (-> config
                        :kaocha/reporter
-                       (cond-> (not (vector? reporter)) vector
-                               fail-fast? (conj 'kaocha.report/fail-fast))
+                       (cond-> (not (vector? reporter)) vector)
                        (conj 'kaocha.report/report-counters
                              'kaocha.history/track
-                             'kaocha.report/dispatch-extra-keys))]
+                             'kaocha.report/dispatch-extra-keys)
+                       (cond-> fail-fast? (conj 'kaocha.report/fail-fast)))]
     (config/resolve-reporter reporter)))
 
 (defn run [config]
@@ -49,11 +50,13 @@
 
         config     (run-hook config :kaocha.hooks/config)
         fail-fast? (:kaocha/fail-fast? config)
+        color?     (:kaocha/color? config)
         test-plan  (test-plan config plugin-chain)
         reporter   (reporter config)
         history    (atom [])]
-    (binding [testable/*fail-fast?* fail-fast?
-              history/*history*     history]
+    (binding [testable/*fail-fast?*   fail-fast?
+              history/*history*       history
+              output/*colored-output* color?]
       (with-reporter reporter
         (with-shutdown-hook (fn []
                               (println "^C")

@@ -3,17 +3,19 @@
             [clojure.test :refer :all]
             [clojure.java.shell :as shell]
             [clojure.string :as str]
+            [kaocha.config]
             [matcher-combinators.test]
-            [matcher-combinators.matchers :as m]))
+            [matcher-combinators.matchers :as m]
+            [kaocha.config :as config]))
 
 (defn invoke-runner [& args]
-  (apply shell/sh "clojure" "-m" "kaocha.runner" "--no-randomize" args))
+  (apply shell/sh "clojure" "-m" "kaocha.runner" "--no-color" "--no-randomize" args))
 
 (defn invoke-with-config [config & args]
   (let [tmpfile (java.io.File/createTempFile "tests" ".edn")]
     (doto tmpfile
       (.deleteOnExit)
-      (spit (prn-str config)))
+      (spit (str "#kaocha" (prn-str config))))
     (apply shell/sh
            "clojure" "-m" "kaocha.runner"
            "--config-file" (str tmpfile)
@@ -25,46 +27,45 @@
     (is (match? {:exit 0
                  :out  ".\n1 test vars, 1 assertions, 0 failures.\n"
                  :err  ""}
-                (invoke-runner "--no-color" "--config-file" "fixtures/tests.edn" "a"))))
+                (invoke-runner "--config-file" "fixtures/tests.edn" "a"))))
 
   (testing "it can print the config"
-    (is (match? (-> (invoke-with-config #:kaocha{:suites [#:kaocha{:id          :aaa
-                                                                   :test-paths  ["fixtures/a-tests"]
-                                                                   :ns-patterns ["^foo$"]}]}
+    (is (match? {:exit 0
+                 :out  '{:kaocha.plugin.randomize/randomize? false
+                         :kaocha/reporter                    [kaocha.report/dots]
+                         :kaocha/color?                      true
+                         :kaocha/fail-fast?                  false
+                         :kaocha/plugins                     [:kaocha.plugin/randomize]
+                         :kaocha/tests
+                         [{:kaocha.testable/type      :kaocha.type/suite
+                           :kaocha.testable/id        :aaa
+                           :kaocha.suite/ns-patterns  ["^foo$"]
+                           :kaocha.suite/source-paths ["src"]
+                           :kaocha.suite/test-paths   ["fixtures/a-tests"]}]}
+                 :err  ""}
+                (-> (invoke-with-config {:tests [{:id          :aaa
+                                                  :test-paths  ["fixtures/a-tests"]
+                                                  :ns-patterns ["^foo$"]}]}
                                         "--print-config")
-                    (update :out read-string))
-                {:exit 0,
-                 :out  #:kaocha{:color?     true
-                                :randomize? false
-                                :watch?     false
-                                :suites     [#:kaocha{:ns-patterns  ["^foo$"]
-                                                      :source-paths ["src"]
-                                                      :test-paths   ["fixtures/a-tests"]
-                                                      :id           :aaa}]
-                                :reporter   'kaocha.report/progress}
-                 :err  ""})))
+
+                    (update :out read-string)))))
 
   (testing "it elegantly reports when no tests are found"
-    (is (match? (invoke-with-config #:kaocha{:color?  false
-                                             :suites
-                                             [#:kaocha{:id          :empty
-                                                       :test-paths  ["fixtures/a-tests"]
-                                                       :ns-patterns [#"^foo$"]}]})
+    (is (match? (invoke-with-config {:color? false
+                                     :tests  [{:id          :empty
+                                               :test-paths  ["fixtures/a-tests"]
+                                               :ns-patterns ["^foo$"]}]})
                 {:exit 0, :out "\n0 test vars, 0 assertions, 0 failures.\n", :err ""})))
 
-  #_
   (testing "--fail-fast"
     (is (match? {:err  ""
-                 :out  (str ".\n.F\n\n"
-                            "FAIL in (fail-1) (hello_test.clj:11)\n"
+                 :out  (str ".\n..F\n\n"
+                            "FAIL in (fail-1) (hello_test.clj:12)\n"
                             "expected: false\n"
                             "  actual: false\n"
-                            "3 test vars, 3 assertions, 1 failures.\n")
+                            "3 test vars, 4 assertions, 1 failures.\n")
                  :exit 1}
-                (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast")
-
-
-                )))
+                (invoke-runner "--config-file" "fixtures/with_failing.edn" "--no-color" "--fail-fast"))))
 
   (testing "Invalid suite"
     (is (match? {:err  ""
