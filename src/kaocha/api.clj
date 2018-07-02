@@ -33,11 +33,14 @@
 
 (defn- reporter [config]
   (let [fail-fast? (:kaocha/fail-fast? config)
-        reporter   (:kaocha/reporter config)]
-    (config/resolve-reporter
-     (if fail-fast?
-       [reporter report/fail-fast]
-       reporter))))
+        reporter   (-> config
+                       :kaocha/reporter
+                       (cond-> (not (vector? reporter)) vector
+                               fail-fast? (conj 'kaocha.report/fail-fast))
+                       (conj 'kaocha.report/report-counters
+                             'kaocha.history/track
+                             'kaocha.report/dispatch-extra-keys))]
+    (config/resolve-reporter reporter)))
 
 (defn run [config]
   (let [plugins      (:kaocha/plugins config)

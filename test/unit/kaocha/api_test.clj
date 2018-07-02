@@ -25,7 +25,7 @@
                   :kaocha.testable/id   :foo.bar-test/a-test
                   :kaocha.var/name      'foo.bar-test/a-test
                   :kaocha.result/count  1
-                  :kaocha.result/pass   0
+                  :kaocha.result/pass   1
                   :kaocha.result/error  0
                   :kaocha.result/fail   0}]}]}]}
            (:result (with-out-err (run config))))))))

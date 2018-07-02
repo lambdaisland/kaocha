@@ -34,12 +34,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmulti dots :type)
-(defmethod dots :default [_])
-(defmethod dots :pass [_] (print ".") (flush))
-(defmethod dots :fail [_] (print (colored :red "F")) (flush))
-(defmethod dots :error [_] (print (colored :red "E")) (flush))
-(defmethod dots :end-test-suite [_] (println) (flush))
+(defmulti dots* :type)
+(defmethod dots* :default [_])
+(defmethod dots* :pass [_] (print ".") (flush))
+(defmethod dots* :fail [_] (print (colored :red "F")) (flush))
+(defmethod dots* :error [_] (print (colored :red "E")) (flush))
+(defmethod dots* :end-test-suite [_] (println) (flush))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -170,9 +170,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def progress
+(def dots
   "Reporter that prints progress as a sequence of dots and letters."
-  [report-counters history/track dispatch-extra-keys dots result])
+  [dots* result])
 
 (def documentation
-  [report-counters history/track dispatch-extra-keys doc result])
+  [doc result])

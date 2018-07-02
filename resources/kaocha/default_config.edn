@@ -1,4 +1,4 @@
-{:kaocha/reporter   [kaocha.report/progress]
+{:kaocha/reporter   [kaocha.report/dots]
  :kaocha/color?     true
  :kaocha/fail-fast? false
  :kaocha/plugins    [:kaocha.plugin/randomize]
