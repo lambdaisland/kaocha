@@ -1,11 +1,9 @@
-#:kaocha
-{:suites       [#:kaocha{:id :unit
-                         :test-paths   ["test"]
-                         :ns-patterns  ["-test$"]}]
- :source-paths ["src"]
- :test-paths   ["test"]
- :ns-patterns  ["-test$"]
- :color?       true
- :randomize?   true
- :watch?       false
- :reporter     kaocha.report/progress}}
+{:kaocha/reporter   [kaocha.report/progress]
+ :kaocha/color?     true
+ :kaocha/fail-fast? false
+ :kaocha/plugins    [:kaocha.plugin/randomize]
+ :kaocha/tests      [{:kaocha.testable/type      :kaocha.type/suite
+                      :kaocha.testable/id        :unit
+                      :kaocha.suite/ns-patterns  ["-test$"]
+                      :kaocha.suite/source-paths ["src"]
+                      :kaocha.suite/test-paths   ["test"]}]}}

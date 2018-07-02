@@ -8,7 +8,6 @@
             [kaocha.config2 :as config]
             [kaocha.watch :as watch]
             [kaocha.output :as output]
-            [kaocha.test :as test]
             [kaocha.api :as api]
             [slingshot.slingshot :refer [try+]]
             [kaocha.result :as result]
@@ -20,14 +19,15 @@
 (def ^:private cli-options
   [["-c" "--config-file FILE"   "Config file to read."
     :default "tests.edn"]
-   #_[nil  "--print-config"       "Print out the fully merged and normalized config, then exit."]
+   [nil  "--print-config"       "Print out the fully merged and normalized config, then exit."]
+   [nil  "--print-test-plan"    "Load tests, build up a test plan, then print out the test plan and exit."]
    [nil  "--fail-fast"          "Stop testing after the first failure."]
    #_[nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
-   #_[nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
-   #_[nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
-      :parse-fn symbol
-      :assoc-fn accumulate
-      :default-desc (str (:reporter (config/default-config)))]
+   [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
+   [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
+    :parse-fn symbol
+    :assoc-fn accumulate
+    :default-desc "kaocha.report/progress"]
    #_[nil  "--source-path PATH"   "Path containing code under test."
       :assoc-fn accumulate
       :default-desc (str (first (:source-paths (config/default-config))))]
@@ -71,9 +71,16 @@
         -1)
 
       (:test-help options)
-      (do
-        (print-help! summary)
-        0)
+      (do (print-help! summary) 0)
+
+      (:print-config options)
+      (do (pprint/pprint config) 0)
+
+      (:print-test-plan options)
+      (do (pprint/pprint (api/test-plan config plugin-chain)) 0)
+
+      (:kaocha/watch? config)
+      (do (watch/run config) 1) ; exit 1 because only an anomaly would break this loop
 
       :else
       (let [result (api/run config)
@@ -89,29 +96,3 @@
    (catch :kaocha/reporter-not-found {:kaocha/keys [reporter-not-found]}
      (output/error "Failed to resolve reporter var: " reporter-not-found)
      (exit-process! -3))))
-
-
-
-#_
-(let [config         (config options)
-      normalized     config #_(config/normalize config)
-      valid-suites   (into #{} (map :kaocha/id) (:kaocha/suites normalized))
-      unknown-suites (set/difference (:only-suites options) valid-suites)]
-  (cond
-    (:print-config options)
-    (do
-      (pprint/pprint normalized)
-      0)
-
-    (seq unknown-suites)
-    (do
-      (println (format "No such suite: %s, valid options: %s."
-                       (str/join ", " (sort unknown-suites))
-                       (str/join ", " (sort valid-suites))))
-      -2)
-
-    :else
-    (if (:kaocha/watch? normalized)
-      (watch/run config)
-      (let [{:keys [fail error] :or {fail 0 error 0}} (test/run config)]
-        (mod (+ fail error) 255)))))

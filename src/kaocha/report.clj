@@ -3,7 +3,8 @@
             [kaocha.stacktrace :as stack]
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [kaocha.history :as history]))
 
 (def clojure-test-report t/report)
 
@@ -55,26 +56,6 @@
 (defmethod report-counters :error [m]
   (t/inc-report-counter :error))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def ^:dynamic *results* nil)
-
-(defmulti track :type)
-
-(defmethod track :default [m] (swap! *results* conj m))
-
-(defmethod track :pass [m]
-  (swap! *results* conj m))
-
-(defmethod track :fail [m]
-  (swap! *results* conj (assoc m
-                               :testing-contexts t/*testing-contexts*
-                               :testing-vars t/*testing-vars*)) )
-
-(defmethod track :error [m]
-  (swap! *results* conj (assoc m
-                               :testing-contexts t/*testing-contexts*
-                               :testing-vars t/*testing-vars*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -118,7 +99,7 @@
         (prn actual)))))
 
 (defmethod result :summary [m]
-  (let [failures (filter (comp #{:fail :error} :type) @*results*)]
+  (let [failures (filter (comp #{:fail :error} :type) @history/*history*)]
     (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
       (binding [t/*testing-contexts* testing-contexts
                 t/*testing-vars* testing-vars]
@@ -191,7 +172,7 @@
 
 (def progress
   "Reporter that prints progress as a sequence of dots and letters."
-  [report-counters track dispatch-extra-keys dots result])
+  [report-counters history/track dispatch-extra-keys dots result])
 
 (def documentation
-  [report-counters track dispatch-extra-keys doc result])
+  [report-counters history/track dispatch-extra-keys doc result])

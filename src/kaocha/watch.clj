@@ -1,8 +1,7 @@
 (ns kaocha.watch
   (:require [hawk.core :as hawk]
-            [kaocha.config :as config]
+            [kaocha.api :as api]
             [clojure.core.async :refer [chan <!! put! poll!]]
-            [kaocha.test :as test]
             [clojure.java.io :as io]
             [clojure.tools.namespace.file :as ctn.file]
             [clojure.tools.namespace.parse :as ctn.parse]
@@ -32,22 +31,19 @@
       (.printStackTrace t))))
 
 (defn run [config]
-  (let [{:kaocha/keys [suites only-suites]
-         :as   config} (config/normalize config)
-        suites         (config/filter-suites only-suites suites)
-        watch-paths    (into #{} (comp
-                                  (map (juxt :kaocha/test-paths :kaocha/source-paths))
-                                  cat
-                                  cat
-                                  (map io/file))
-                             suites)
-        watch-chan     (chan)]
+  (let [watch-paths (into #{} (comp (remove :kaocha.testable/skip)
+                                    (map (juxt :kaocha.suite/test-paths :kaocha.suite/source-paths))
+                                    cat
+                                    cat
+                                    (map io/file))
+                          (:kaocha/tests config))
+        watch-chan  (chan)]
     (future
       (try
         (loop [reload []]
           (run! reload-file! reload)
           (try
-            (test/run config)
+            (api/run config)
             (catch Throwable t
               (println "Fatal error in test run" t)))
           (let [f (<!! watch-chan)]
@@ -56,7 +52,7 @@
           (.printStackTrace t))
         (finally
           (println "loop broken"))))
-    (hawk/watch! [{:paths watch-paths
+    (hawk/watch! [{:paths   watch-paths
                    :handler (fn [ctx event]
                               (when (= (:kind event) :modify)
                                 (put! watch-chan (:file event))))}])

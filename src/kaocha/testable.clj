@@ -85,36 +85,8 @@
   (-run testable))
 
 (s/fdef run
-  :args (s/cat :testable :kaocha.test-plan/testable)
-  :ret :kaocha.result/testable)
-
-;; This stack stuff is still untested. The idea is that we "save" the test results
-;; as they become available, because when the thread gets interrupted (Ctrl-C), we
-;; need them to render a result.
-;;
-;; It's a bit of a pickle, we have this wonderful, functional API, but in the end
-;; keeping track of progress is a very imperative thing to do, so we need to
-;; hopscotch around that.
-
-(def ^:dynamic *stack* (atom []))
-
-(defn- assoc-result [parent child]
-  (update parent
-          :kaocha.test-plan/tests
-          (fn [tests]
-            (map #(if (= (:kaocha.testable/id %) (:kaocha.testable/id child))
-                    child
-                    %)
-                 tests))))
-
-(defn- unwind-stack [stack]
-  (if (>= (count stack) 2)
-    (let [child  (last stack)
-          stack  (pop stack)
-          parent (last stack)
-          stack  (pop stack)]
-      (conj stack (assoc-result parent child)))
-    (pop stack)))
+        :args (s/cat :testable :kaocha.test-plan/testable)
+        :ret :kaocha.result/testable)
 
 (defn load-testables
   "Load a collection of testables, returing a test-plan collection"
@@ -127,11 +99,8 @@
   (loop [result []
          [test & testables] testables]
     (if test
-      (do
-        (swap! *stack* conj test)
-        (let [r (cond-> test (not (::skip test)) run)]
-          (swap! *stack* unwind-stack)
-          (if (and *fail-fast?* (result/failed? r))
-            (reduce into [result [r] testables])
-            (recur (conj result r) testables))))
+      (let [r (cond-> test (not (::skip test)) run)]
+        (if (and *fail-fast?* (result/failed? r))
+          (reduce into [result [r] testables])
+          (recur (conj result r) testables)))
       result)))
