@@ -1,9 +1,9 @@
 - [X] Watch source paths
-- [ ] skip / focus by metadata
+- [X] skip / focus by metadata
   :skip-meta
   :exclude-meta
   :focus-meta
-- [ ] skip / focus nss/vars
+- [X] skip / focus nss/vars
   :skip-meta
   :exclude-meta
   :focus-meta
@@ -15,10 +15,13 @@
 - [ ] TAP reporter
 - [ ] multithread
 - [ ] watch/api mode: undef removed vars
-- [ ] signal load/parse errors as test failures
-- [ ] print config / test plan / test result
+- [X] signal load/parse errors as test failures
+- [X] print config / test plan / test result
 - [ ] make stack trace filtering configurable
-- [ ] provide #kaocha convenience reader literal for config file
+- [X] provide #kaocha convenience reader literal for config file
+- [ ] ClojureScript type
+- [ ] Midje type
+- [ ] Expectations type
 
 #+BEGIN_SRC clojure
   ;; config

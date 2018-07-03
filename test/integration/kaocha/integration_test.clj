@@ -35,7 +35,8 @@
                          :kaocha/reporter                    [kaocha.report/dots]
                          :kaocha/color?                      true
                          :kaocha/fail-fast?                  false
-                         :kaocha/plugins                     [:kaocha.plugin/randomize]
+                         :kaocha/plugins                     [:kaocha.plugin/randomize
+                                                              :kaocha.plugin/filter]
                          :kaocha/tests
                          [{:kaocha.testable/type      :kaocha.type/suite
                            :kaocha.testable/id        :aaa

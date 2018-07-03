@@ -26,10 +26,12 @@
                           test-name (symbol (str nsname) (str sym))]
                       {:kaocha.testable/type :kaocha.type/var
                        :kaocha.testable/id   (keyword test-name)
+                       :kaocha.testable/meta (meta var)
                        :kaocha.var/name      test-name
                        :kaocha.var/var       var
                        :kaocha.var/test      (:test (meta var))})))
              (assoc testable
+                    :kaocha.testable/meta (meta ns-obj)
                     :kaocha.ns/ns ns-obj
                     :kaocha.test-plan/tests)))
       (catch Throwable t

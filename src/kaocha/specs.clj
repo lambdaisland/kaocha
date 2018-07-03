@@ -18,7 +18,8 @@
 (s/def :kaocha/tests (s/coll-of :kaocha/testable))
 
 (s/def :kaocha/testable (s/keys :req [:kaocha.testable/type
-                                      :kaocha.testable/id]))
+                                      :kaocha.testable/id]
+                                :opt [:kaocha.testable/meta]))
 
 (s/def :kaocha.testable/type qualified-keyword?)
 

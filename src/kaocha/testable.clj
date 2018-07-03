@@ -104,3 +104,8 @@
           (reduce into [result [r] testables])
           (recur (conj result r) testables)))
       result)))
+
+(defn test-seq [testable]
+  (cons testable (mapcat test-seq (or (:kaocha/tests testable)
+                                      (:kaocha.test-plan/tests testable)
+                                      (:kaocha.result/tests testable)))))

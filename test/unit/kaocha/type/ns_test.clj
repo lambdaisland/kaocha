@@ -23,16 +23,18 @@
             :kaocha.testable/id   :foo.bar-test
             :kaocha.ns/name       'foo.bar-test
             :kaocha.ns/ns         (the-ns 'foo.bar-test)
+            :kaocha.testable/meta nil
             :kaocha.test-plan/tests
             [{:kaocha.testable/type :kaocha.type/var
               :kaocha.testable/id   :foo.bar-test/a-test
               :kaocha.var/name      'foo.bar-test/a-test
               :kaocha.var/var       (resolve 'foo.bar-test/a-test)
-              :kaocha.var/test      (:test (meta (resolve 'foo.bar-test/a-test)))}]})))
+              :kaocha.var/test      (:test (meta (resolve 'foo.bar-test/a-test)))
+              :kaocha.testable/meta (meta (resolve 'foo.bar-test/a-test))}]})))
 
-  (is (match? {:kaocha.testable/type :kaocha.type/ns
-               :kaocha.testable/id   :foo.unknown-test
-               :kaocha.ns/name       'foo.unknown-test
+  (is (match? {:kaocha.testable/type        :kaocha.type/ns
+               :kaocha.testable/id          :foo.unknown-test
+               :kaocha.ns/name              'foo.unknown-test
                :kaocha.test-plan/load-error #(instance? java.io.FileNotFoundException %)}
 
               (testable/load {:kaocha.testable/type :kaocha.type/ns
@@ -40,25 +42,18 @@
                               :kaocha.ns/name       'foo.unknown-test}))))
 
 (deftest run-test
-  (let [testable (testable/load #:kaocha.testable{:type           :kaocha.type/ns
-                                                  :id             :test
-                                                  :kaocha.ns/name 'kaocha.testable-test})]
+  (classpath/add-classpath "fixtures/a-tests")
+
+  (let [testable (testable/load {:kaocha.testable/type :kaocha.type/ns
+                                 :kaocha.testable/id   :foo.bar-test
+                                 :kaocha.ns/name       'foo.bar-test})]
     (is (match? {:kaocha.testable/type :kaocha.type/ns
-                 :kaocha.testable/id   :test
-                 :kaocha.ns/name       'kaocha.testable-test
+                 :kaocha.testable/id   :foo.bar-test
+                 :kaocha.ns/name       'foo.bar-test
                  :kaocha.ns/ns         ns?
                  :kaocha.result/tests  [{:kaocha.testable/type :kaocha.type/var
-                                         :kaocha.testable/id   :kaocha.testable-test/load--default
-                                         :kaocha.var/name      'kaocha.testable-test/load--default
-                                         :kaocha.var/var       var?
-                                         :kaocha.var/test      fn?
-                                         :kaocha.result/count  1
-                                         :kaocha.result/pass   1
-                                         :kaocha.result/error  0
-                                         :kaocha.result/fail   0}
-                                        {:kaocha.testable/type :kaocha.type/var
-                                         :kaocha.testable/id   :kaocha.testable-test/run--default
-                                         :kaocha.var/name      'kaocha.testable-test/run--default
+                                         :kaocha.testable/id   :foo.bar-test/a-test
+                                         :kaocha.var/name      'foo.bar-test/a-test
                                          :kaocha.var/var       var?
                                          :kaocha.var/test      fn?
                                          :kaocha.result/count  1
