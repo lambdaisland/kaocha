@@ -23,10 +23,9 @@
        (finally
          (.removeShutdownHook runtime# on-shutdown#)))))
 
-(defn test-plan [config plugin-chain]
+(defn test-plan [config]
   (let [tests (:kaocha/tests config)]
     (plugin/run-hook
-     plugin-chain
      :kaocha.hooks/post-load
      (-> config
          (dissoc :kaocha/tests)
@@ -46,31 +45,31 @@
 (defn run [config]
   (let [plugins      (:kaocha/plugins config)
         plugin-chain (plugin/load-all plugins)
-        run-hook     #(plugin/run-hook plugin-chain %2 %1)
-
-        config     (run-hook config :kaocha.hooks/config)
-        fail-fast? (:kaocha/fail-fast? config)
-        color?     (:kaocha/color? config)
-        test-plan  (test-plan config plugin-chain)
-        reporter   (reporter config)
-        history    (atom [])]
-    (binding [testable/*fail-fast?*   fail-fast?
-              history/*history*       history
-              output/*colored-output* color?]
-      (with-reporter reporter
-        (with-shutdown-hook (fn []
-                              (println "^C")
-                              (binding [history/*history* history]
-                                (t/do-report (history/clojure-test-summary))))
-          (let [test-plan (run-hook test-plan :pre-run)
-                tests     (:kaocha.test-plan/tests test-plan)
-                result    (-> test-plan
-                              (run-hook :kaocha.hooks/pre-run)
-                              (dissoc :kaocha.test-plan/tests)
-                              (assoc :kaocha.result/tests (testable/run-testables tests))
-                              (run-hook :kaocha.hooks/post-run))]
-            (-> result
-                result/testable-totals
-                result/totals->clojure-test-summary
-                t/do-report)
-            result))))))
+        run-hook     #(plugin/run-hook plugin-chain %2 %1)]
+    (binding [plugin/*current-chain* plugin-chain]
+      (let [config     (run-hook config :kaocha.hooks/config)
+            fail-fast? (:kaocha/fail-fast? config)
+            color?     (:kaocha/color? config)
+            test-plan  (test-plan config)
+            reporter   (reporter config)
+            history    (atom [])]
+        (binding [testable/*fail-fast?*   fail-fast?
+                  history/*history*       history
+                  output/*colored-output* color?]
+          (with-reporter reporter
+            (with-shutdown-hook (fn []
+                                  (println "^C")
+                                  (binding [history/*history* history]
+                                    (t/do-report (history/clojure-test-summary))))
+              (let [test-plan (run-hook test-plan :pre-run)
+                    tests     (:kaocha.test-plan/tests test-plan)
+                    result    (-> test-plan
+                                  (run-hook :kaocha.hooks/pre-run)
+                                  (dissoc :kaocha.test-plan/tests)
+                                  (assoc :kaocha.result/tests (testable/run-testables tests))
+                                  (run-hook :kaocha.hooks/post-run))]
+                (-> result
+                    result/testable-totals
+                    result/totals->clojure-test-summary
+                    t/do-report)
+                result))))))))

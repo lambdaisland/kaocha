@@ -59,7 +59,7 @@
 
          :kaocha.hooks/cli-options
          (fn [opts]
-           (let [parse #(symbol (if (= ":" (first %)) (subs % 1) %))]
+           (let [parse #(symbol (if (= \: (first %)) (subs % 1) %))]
              (conj opts
                    [nil "--skip SYM" "Skip tests with this ID and their children."
                     :parse-fn parse

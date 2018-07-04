@@ -3,6 +3,7 @@
   (:require [clojure.spec.alpha :as s]
             [kaocha.specs :refer [assert-spec]]
             [kaocha.result :as result]
+            [kaocha.plugin :as plugin]
             [clojure.pprint :as pprint]))
 
 (def ^:dynamic *fail-fast?*
@@ -99,7 +100,11 @@
   (loop [result []
          [test & testables] testables]
     (if test
-      (let [r (cond-> test (not (::skip test)) run)]
+      (let [r (cond-> test
+                (not (::skip test))
+                (->> (plugin/run-hook :kaocha.hooks/pre-test)
+                     run
+                     (plugin/run-hook :kaocha.hooks/post-test)))]
         (if (and *fail-fast?* (result/failed? r))
           (reduce into [result [r] testables])
           (recur (conj result r) testables)))

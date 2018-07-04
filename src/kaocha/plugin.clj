@@ -1,5 +1,7 @@
 (ns kaocha.plugin)
 
+(def ^:dynamic *current-chain*)
+
 ;; TODO: duplicated from testable, not sure yet where to put it.
 (defn- try-require [n]
   (try
@@ -24,8 +26,11 @@
 (defn load-all [names]
   (reduce #(register %2 %1) [] names))
 
-(defn run-hook [plugins step value]
-  (reduce #(%2 %1) value (keep step plugins)))
+(defn run-hook
+  ([step value]
+   (run-hook *current-chain* step value))
+  ([plugins step value]
+   (reduce #(%2 %1) value (keep step plugins))))
 
 (comment
   (= (run-hook [{:foo inc} {:foo inc}] :foo 2)

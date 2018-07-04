@@ -56,6 +56,7 @@
     (:reporter options)          (assoc :kaocha/reporter (:reporter options))
     (:watch options)             (assoc :kaocha/watch? (:watch options))
     (some? (:color options))     (assoc :kaocha/color? (:color options))
+    (:plugin options)            (update :kaocha/plugins into (:plugin options))
     true                         (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
@@ -68,15 +69,6 @@
                        (assoc % :kaocha.testable/skip true))
                     tests)))
     config))
-#_
-(defn add-built-ints [config]
-  (-> config
-      (update :kaocha/plugins #(into [:kaocha.plugin.randomize] %))
-      (update :kaocha/reporter #((if (seqable? %) into conj)
-                                 '[kaocha.report/report-counters
-                                   kaocha.history/track
-                                   kaocha.report/dispatch-extra-keys]
-                                 %))))
 
 (defn resolve-reporter [reporter]
   (cond
