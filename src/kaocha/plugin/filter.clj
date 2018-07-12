@@ -76,7 +76,7 @@
 
          :kaocha.hooks/config
          (fn [config]
-           (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha.hooks/cli-options config)]
+           (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha/cli-options config)]
              (cond-> config
                skip       (assoc :kaocha.filter/skip skip)
                focus      (assoc :kaocha.filter/focus focus)

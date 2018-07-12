@@ -39,7 +39,8 @@
 (defmethod dots* :pass [_] (print ".") (flush))
 (defmethod dots* :fail [_] (print (colored :red "F")) (flush))
 (defmethod dots* :error [_] (print (colored :red "E")) (flush))
-(defmethod dots* :end-test-suite [_] (println) (flush))
+(defmethod dots* :begin-test-suite [_] (print "<") (flush))
+(defmethod dots* :end-test-suite [_] (print "> ") (flush))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

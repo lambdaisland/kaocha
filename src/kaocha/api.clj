@@ -64,7 +64,6 @@
               (let [test-plan (run-hook test-plan :pre-run)
                     tests     (:kaocha.test-plan/tests test-plan)
                     result    (-> test-plan
-                                  (run-hook :kaocha.hooks/pre-run)
                                   (dissoc :kaocha.test-plan/tests)
                                   (assoc :kaocha.result/tests (testable/run-testables tests))
                                   (run-hook :kaocha.hooks/post-run))]
@@ -72,4 +71,4 @@
                     result/testable-totals
                     result/totals->clojure-test-summary
                     t/do-report)
-                result))))))))
+                (run-hook result :kaocha.hooks/post-summary)))))))))
