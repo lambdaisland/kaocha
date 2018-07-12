@@ -122,7 +122,8 @@
   "Fail fast reporter, add this as a final reporter to interrupt testing as soon
   as a failure or error is encountered."
   [m]
-  (when (some #{(:type m)} [:error :fail :mismatch])
+  (when (and (some #{(:type m)} [:error :fail :mismatch])
+             (not (:kaocha.result/exception m))) ;; prevent handled exceptions from being re-thrown
     (throw+ {:kaocha/fail-fast true})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

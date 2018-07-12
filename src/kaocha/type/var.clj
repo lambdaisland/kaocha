@@ -18,12 +18,14 @@
                           :message "Uncaught exception, not in assertion."
                           :expected nil
                           :actual e
+                          :kaocha.result/exception e
                           :kaocha/testable testable})))
         (catch Throwable e
           (t/do-report {:type :error
                         :message "Uncaught exception, not in assertion."
                         :expected nil
                         :actual e
+                        :kaocha.result/exception e
                         :kaocha/testable testable})))
       (t/do-report {:type :end-test-var, :var var}))
     (merge testable
