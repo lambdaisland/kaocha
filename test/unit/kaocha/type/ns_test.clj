@@ -18,19 +18,19 @@
                                   :kaocha.testable/id   :foo.bar-test
                                   :kaocha.ns/name       'foo.bar-test})]
 
-    (is (= test-plan
-           {:kaocha.testable/type :kaocha.type/ns
-            :kaocha.testable/id   :foo.bar-test
-            :kaocha.ns/name       'foo.bar-test
-            :kaocha.ns/ns         (the-ns 'foo.bar-test)
-            :kaocha.testable/meta nil
-            :kaocha.test-plan/tests
-            [{:kaocha.testable/type :kaocha.type/var
-              :kaocha.testable/id   :foo.bar-test/a-test
-              :kaocha.var/name      'foo.bar-test/a-test
-              :kaocha.var/var       (resolve 'foo.bar-test/a-test)
-              :kaocha.var/test      (:test (meta (resolve 'foo.bar-test/a-test)))
-              :kaocha.testable/meta (meta (resolve 'foo.bar-test/a-test))}]})))
+    (is (match? {:kaocha.testable/type :kaocha.type/ns
+                 :kaocha.testable/id   :foo.bar-test
+                 :kaocha.ns/name       'foo.bar-test
+                 :kaocha.ns/ns         #(= % (the-ns 'foo.bar-test))
+                 :kaocha.testable/meta nil
+                 :kaocha.test-plan/tests
+                 [{:kaocha.testable/type :kaocha.type/var
+                   :kaocha.testable/id   :foo.bar-test/a-test
+                   :kaocha.var/name      'foo.bar-test/a-test
+                   :kaocha.var/var       #(= % (resolve 'foo.bar-test/a-test))
+                   :kaocha.var/test      #(true? (%))
+                   :kaocha.testable/meta #(= % (meta (resolve 'foo.bar-test/a-test)))}]}
+                test-plan)))
 
   (is (match? {:kaocha.testable/type        :kaocha.type/ns
                :kaocha.testable/id          :foo.unknown-test

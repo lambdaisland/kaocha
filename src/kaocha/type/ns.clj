@@ -17,7 +17,9 @@
     (try
       ;; TODO, unload first
       (require ns-name :reload)
-      (let [ns-obj (the-ns ns-name)]
+      (let [ns-obj          (the-ns ns-name)
+            ns-meta         (meta ns-obj)
+            each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]
         (->> ns-obj
              ns-publics
              (filter (comp :test meta val))
@@ -29,7 +31,7 @@
                        :kaocha.testable/meta (meta var)
                        :kaocha.var/name      test-name
                        :kaocha.var/var       var
-                       :kaocha.var/test      (:test (meta var))})))
+                       :kaocha.var/test      #(each-fixture-fn (:test (meta var)))})))
              (assoc testable
                     :kaocha.testable/meta (meta ns-obj)
                     :kaocha.ns/ns ns-obj
@@ -53,12 +55,14 @@
                       :actual   load-error})
           (do-report {:type :end-test-ns})
           testable)
-        (let [tests  (-> testable
-                         :kaocha.test-plan/tests
-                         testable/run-testables)
-              result (assoc (dissoc testable :kaocha.test-plan/tests)
-                            :kaocha.result/tests
-                            tests)]
+        (let [ns-meta         (:kaocha.testable/meta testable)
+              once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
+              tests           (once-fixture-fn #(-> testable
+                                                    :kaocha.test-plan/tests
+                                                    testable/run-testables))
+              result          (assoc (dissoc testable :kaocha.test-plan/tests)
+                                     :kaocha.result/tests
+                                     tests)]
           (do-report {:type :end-test-ns})
           result)))))
 
