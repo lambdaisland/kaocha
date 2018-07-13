@@ -31,7 +31,10 @@
                        :kaocha.testable/meta (meta var)
                        :kaocha.var/name      test-name
                        :kaocha.var/var       var
-                       :kaocha.var/test      #(each-fixture-fn (:test (meta var)))})))
+                       :kaocha.var/test      (:test (meta var))
+                       :kaocha.var/wrap      (if (::t/each-fixtures ns-meta)
+                                               [(fn [t] #(each-fixture-fn t))]
+                                               [])})))
              (assoc testable
                     :kaocha.testable/meta (meta ns-obj)
                     :kaocha.ns/ns ns-obj
@@ -40,6 +43,13 @@
         (assoc testable
                :kaocha.test-plan/load-error t
                :kaocha.result/error 1)))))
+
+(defn run-tests [testable test-plan fixture-fn]
+  ;; It's not guaranteed the the fixture-fn returns the result of calling the
+  ;; tests function, so we need to put it in a box for reference.
+  (let [result (atom (:kaocha.test-plan/tests testable))]
+    (fixture-fn #(swap! result testable/run-testables test-plan))
+    @result))
 
 (defmethod testable/-run :kaocha.type/ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns              (:kaocha.ns/ns testable)
@@ -57,9 +67,7 @@
           testable)
         (let [ns-meta         (:kaocha.testable/meta testable)
               once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
-              tests           (once-fixture-fn #(-> testable
-                                                    :kaocha.test-plan/tests
-                                                    (testable/run-testables test-plan)))
+              tests           (run-tests testable test-plan once-fixture-fn)
               result          (assoc (dissoc testable :kaocha.test-plan/tests)
                                      :kaocha.result/tests
                                      tests)]

@@ -25,7 +25,7 @@
 (deftest command-line-runner-test
   (testing "it lets you specifiy the test suite name"
     (is (match? {:exit 0
-                 :out  ".\n1 test vars, 1 assertions, 0 failures.\n"
+                 :out  "[(.)]\n1 test vars, 1 assertions, 0 failures.\n"
                  :err  ""}
                 (invoke-runner "--config-file" "fixtures/tests.edn" "a"))))
 
@@ -56,11 +56,11 @@
                                      :tests  [{:id          :empty
                                                :test-paths  ["fixtures/a-tests"]
                                                :ns-patterns ["^foo$"]}]})
-                {:exit 0, :out "\n0 test vars, 0 assertions, 0 failures.\n", :err ""})))
+                {:exit 0, :out "[]\n0 test vars, 0 assertions, 0 failures.\n", :err ""})))
 
   (testing "--fail-fast"
     (is (match? {:err  ""
-                 :out  (str ".\n..F\n\n"
+                 :out  (str "[(.)][(..F)]\n\n"
                             "FAIL in (fail-1) (hello_test.clj:12)\n"
                             "expected: false\n"
                             "  actual: false\n"
@@ -88,9 +88,9 @@
   (testing "Exception outside `is` with fail-fast"
     (let [result (invoke-runner "--config-file" "fixtures/with_exception.edn" "outside-is" "--fail-fast")]
       (is (match? {:exit 1 :err ""} result))
-      (is (re-seq #"E
+      (is (re-seq #"\[\(E\)\]
 
-ERROR in (exception-outside-is-test) (exception_outside_is.clj:4)
+ERROR in \(exception-outside-is-test\) \(exception_outside_is.clj:4\)
 Uncaught exception, not in assertion.
-Exception: java.lang.Exception: booo"))
-      (is (re-seq #"1 test vars, 1 assertions, 1 errors, 0 failures.")))))
+Exception: java.lang.Exception: booo" (:out result)))
+      (is (re-seq #"1 test vars, 1 assertions, 1 errors, 0 failures\." (:out result))))))
