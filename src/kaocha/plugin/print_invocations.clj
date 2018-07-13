@@ -26,7 +26,8 @@
                                        (if (vector? v)
                                          (mapcat (fn [v] [(str "--" (name k)) v]) v)
                                          [(str "--" (name k))  v]))
-                                     (:kaocha/cli-options results)))
+                                     (dissoc (:kaocha/cli-options results) :focus)))
                             "--focus"
-                            (cond-> id (= (first id) \:) (subs 1)))))))
+                            (str
+                             "'" (cond-> id (= (first id) \:) (subs 1)) "'"))))))
            results)}))
