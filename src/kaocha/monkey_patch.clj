@@ -38,7 +38,8 @@
                                                                 (str/starts-with? cl-name "clojure.lang.")
                                                                 (str/starts-with? cl-name "sun.reflect.")
                                                                 (str/starts-with? cl-name "clojure.core")
-                                                                (str/starts-with? cl-name "kaocha.monkey_patch$")))
+                                                                (str/starts-with? cl-name "kaocha.monkey_patch$")
+                                                                (str/starts-with? cl-name "kaocha.type.")))
                                                          stacktrace)))]
                       (t/report
                        (case (:type m)
