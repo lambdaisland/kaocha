@@ -85,4 +85,4 @@
 
          :kaocha.hooks/post-load
          (fn [test-plan]
-           (filter-testable (assoc test-plan :kaocha.testable/id (keyword (gensym))) {}))}))
+           (update test-plan :kaocha.test-plan/tests (partial map #(filter-testable % (filters test-plan)))))}))

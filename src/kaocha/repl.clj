@@ -14,7 +14,7 @@
       (plugin/run-hook plugin-chain :kaocha.hooks/config config))))
 
 (defn test-plan [& args]
-  (let [config       (apply load-config args)
+  (let [config       (apply config args)
         plugin-chain (plugin/load-all (:kaocha/plugins config))]
     (binding [plugin/*current-chain* plugin-chain]
       (api/test-plan config))))
