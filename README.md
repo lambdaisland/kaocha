@@ -83,7 +83,7 @@ Here's a more full-fledged example, still using `#kaocha {}`.
  ;; will make sure are loaded. When providing a vector of symbols, or pointing
  ;; at a var containing a vector, then kaocha will call all referenced functions
  ;; for reporting.
- :reporter    kaocha.report/progress}}
+ :reporter    kaocha.report/documentation}}
 ```
 
 All these configuration keys have default values, shown above, so you can omit most of them, including `:tests`.
@@ -135,6 +135,7 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
 
 Other reporters currently implemented include
 
+- `kaocha.report/dots`
 - `kaocha.report/documentation`
 
 ## Usage
