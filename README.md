@@ -2,47 +2,65 @@
 
 Full featured next generation test runner for Clojure.
 
-## Version information
+## Rationale
 
-Kaocha is currently under active development, expect things to change. It's already Useful Software though, and you are welcome to try it out.
+Kaocha is written for end users to provide all the features that people have come to know and love from testing tools in other languages.
+
+Kaocha is written for tooling authors to provide an extensible, data-driven interface to tests.
+
+These two go hand in hand, by providing a solid and extensible foundation it is easy to provide extra features, different output formats, support for other frameworks, and have these things work together instead of living in their own world.
+
+## Current status
+
+Kaocha is a work in progress. Focus so far has been on internal APIs, and on the data formats for configuration, test plan, and test results. These things are not expected to significantly change any more.
+
+There is still more work to be done for framework support, output formats, and provided plugins, and default behavior when no explicit configuration is provided will still change.
+
+Kaocha is not officially released yet, but it is being used in production, and you can use it too if you're willing to take a moment to learn how it works, and to keep up with changes as we iron things out. Keep an eye on the CHANGELOG to learn about breaking changes.
+
+## Getting Started
+
+Currently the standard way of using Kaocha is through a `:test` alias that adds the dependency, and invokes the Kaocha runner.
 
 ``` clojure
 ;; deps.edn
-{:deps {lambdaisland/kaocha {:git/url "https://github.com/lambdaisland/kaocha.git"
-                             :sha "..."}}}
+{:aliases
+ {:test
+  {:extra-deps {lambdaisland/kaocha
+                {:git/url "https://github.com/lambdaisland/kaocha.git"
+                 :sha "..."}}
+   :main-opts ["-m" "kaocha.runner"]}}}
 ```
+
+This lets you invoke Kaocha with `clj -A:test`.
 
 ## Configuration
 
 Before running tests with Kaocha, you should create a `tests.edn` in the root of the project, where you configure your test suites. You can use Kaocha without a `tests.edn`, but adding one is generally considered a Good Idea™.
 
 ``` clojure
-#:kaocha
-{;; Configure one or more test suites, like "unit", "integration", "acceptance", etc.
- :suites      [#:kaocha
-               {;; Every suite must have an :id
-                :id :unit
+#kaocha
+{:tests [{;; Every suite must have an :id
+          :id :unit
 
-                ;; Directories containing files under test. This is used to
-                ;; watch for changes, and when doing code coverage analysis
-                ;; through Cloverage. These directories are *not* automatically
-                ;; added to the classpath.
-                :source-paths ["src"]
+          ;; Directories containing files under test. This is used to
+          ;; watch for changes, and when doing code coverage analysis
+          ;; through Cloverage. These directories are *not* automatically
+          ;; added to the classpath.
+          :source-paths ["src"]
 
-                ;; Directories containing tests. These will automatically be
-                ;; added to the classpath when running this suite.
-                :test-paths ["test"]
+          ;; Directories containing tests. These will automatically be
+          ;; added to the classpath when running this suite.
+          :test-paths ["test"]
 
-                ;; Regex patterns to determine whether a namespace contains
-                ;; tests.
-                :ns-patterns [#"-test$"]
-                }]
+          ;; Regex patterns to determine whether a namespace contains
+          ;; tests.
+          :ns-patterns [#"-test$"]}]
+
+ :plugins [:kaocha.plugin/print-invocations]
 
  ;; Colorize output (use ANSI escape sequences).
  :color?      true
-
- ;; Randomize test order.
- :randomize?  true
 
  ;; Watch the file system for changes and re-run.
  :watch?      false
@@ -52,26 +70,22 @@ Before running tests with Kaocha, you should create a `tests.edn` in the root of
  ;; will make sure are loaded. When providing a vector of symbols, or pointing
  ;; at a var containing a vector, then kaocha will call all referenced functions
  ;; for reporting.
- :reporter    kaocha.report/progress
-
- ;; Run with a specific random seed. Picked at random by default.
- ;; More commonly you'll specify this one at the command line to recreate a failure.
- :seed        151346}}
+ :reporter    kaocha.report/progress}}
 ```
 
-All these configuration keys have default values, shown above, so you can omit most of them, including `:suites`.
+All these configuration keys have default values, shown above, so you can omit most of them, including `:tests`.
 
-Suite-level configuration lke `:test-paths` or `:ns-patterns` can also be specified at the top level of `tests.edn`, these will be used unless a suite specifies its own value for that key.
+All configuration keys can be overridden with command line flags. Use `--test-help` to see all options. Use `--print-config` to see the final result.
 
-All configuration keys can be overridden with command line flags. Use `--print-config` to see the final result.
+## Extending Kaocha
 
-In other words, conceptually configuration is merged like so:
+Kaocha can be extended in three ways
 
-``` clojure
-(merge kaocha-defaults tests.edn suite-config command-line-flags)
-```
+* `clojure.test` style extensions (custom report message types, custom reporters, extending `is`)
+* New test types (implement load + run)
+* Plugins
 
-## Reporter
+### Reporter
 
 A reporter is a function which takes a single map as argument, with the map having a `:type` key. Kaocha uses the same types as `clojure.test`, but adds `:begin-test-suite` and `:end-test-suite`.
 
@@ -100,37 +114,22 @@ USAGE:
 
 clj -m kaocha.runner [OPTIONS]... [TEST-SUITE]...
 
-  -c, --config-file FILE    tests.edn                            Config file to read.
-      --print-config                                             Print out the fully merged and normalized config, then exit.
-      --fail-fast                                                Stop testing after the first failure.
-      --[no-]color                                               Enable/disable ANSI color codes in output. Defaults to true.
-      --[no-]watch                                               Watch filesystem for changes and re-run tests.
-      --[no-]randomize                                           Run test namespaces and vars in random order.
-      --seed SEED                                                Provide a seed to determine the random order of tests.
-      --reporter SYMBOL     kaocha.report/progress  Change the test reporter, can be specified multiple times.
-      --source-path PATH    src                                  Path containing code under test.
-      --test-path PATH      test                                 Path to scan for test namespaces.
-      --ns-pattern PATTERN  -test$                               Regexp pattern to identify test namespaces.
-  -H, --test-help                                                Display this help message.
-
-Options may be repeated multiple times for a logical OR effect.
-```
-
-It is recommended to create a `:test` alias in `deps.edn`, which adds the Kaocha dependency, and invokes the runner namespace.
-
-
-``` clojure
-;; deps.edn
-{:aliases
- {:test
-  :extra-deps {lambdaisland/kaocha {:mvn/version "VERSION"}}
-  :main-opts ["-m" "kaocha.runner"]}}
-```
-
-Now you can run your tests with
-
-``` shell
-clojure -A:test
+  -c, --config-file FILE  tests.edn               Config file to read.
+      --print-config                              Print out the fully merged and normalized config, then exit.
+      --print-test-plan                           Load tests, build up a test plan, then print out the test plan and exit.
+      --print-result                              Print the test result map as returned by the Kaocha API.
+      --fail-fast                                 Stop testing after the first failure.
+      --[no-]color                                Enable/disable ANSI color codes in output. Defaults to true.
+      --[no-]watch                                Watch filesystem for changes and re-run tests.
+      --reporter SYMBOL   kaocha.report/progress  Change the test reporter, can be specified multiple times.
+      --plugin KEYWORD                            Load the given plugin.
+  -H, --test-help                                 Display this help message.
+      --[no-]randomize                            Run test namespaces and vars in random order.
+      --seed SEED                                 Provide a seed to determine the random order of tests.
+      --skip SYM                                  Skip tests with this ID and their children.
+      --focus SYM                                 Only run this test, skip others.
+      --skip-meta SYM                             Skip tests where this metadata key is truthy.
+      --focus-meta SYM                            Only run tests where this metadata key is truthy.
 ```
 
 ## Features
@@ -141,7 +140,6 @@ clojure -A:test
 - Watch mode: watch the file system for changes and re-run tests
 - Detect when interrupted with ctrl-C and print report
 - Randomize order of tests to detect ordering dependencies
-- Cloverage support
 - API usage
 - Custom, composable reporters
 
