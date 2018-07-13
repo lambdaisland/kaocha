@@ -92,6 +92,63 @@ All configuration keys can be overridden with command line flags. Use `--test-he
 
 Configuration is read with [Aero](https://github.com/juxt/aero), meaning you have access to reader literals like `#env`, `#merge`, `#ref`, and `#include`.
 
+## Focusing and Skipping
+
+You can "focus" on specific tests, only running the ones that match your criteria, or skip specific tests. This is done either based on the test ID (the namespace of var name), or on metadata (on the namespace or var).
+
+```
+# Run a specific var
+clj -A:test --focus com.my-app.foo-test/bar-test
+
+# Run all vars in a namespace
+clj -A:test --focus com.my-app.foo-test
+
+# Run all vars or namespaces with the :slow-test metadata
+clj -A:test --focus-meta :slow-test
+
+# Skip vars or namespaces with this metadata
+clj -A:test --skip-meta :slow-test
+```
+
+In the test configuration you can also provide these settings, either at the top level, or for a specific suite.
+
+```clojure
+#kaocha
+{:kaocha.filter/skip-meta [:test/pending]
+ :tests [{:id :unit
+          :kaocha.filter/skip-meta [:test/slow]}
+         {:id :slow-tests
+          :kaocha.filter/focus [:test/slow]}]}
+```
+
+## Usage
+
+`clj -A:test` can be followed by arguments and flags, e.g.
+
+```
+clj -A:test unit --fail-fast --watch
+```
+
+`unit` in this case is the id of a test suite, as configured under `:tests`. (If you don't have a `:tests` key in your configuration, it defaults to a single suite called `unit`). In this case Kaocha will only run the tests from the `unit` suite. If you don't provide a test id it will run all tests.
+
+`--fail-fast` and `--watch` are option flags, their usage is explained below.
+
+### Watching for changes
+
+With `--watch` or the `:watch?` configuration key Kaocha will keep running, and
+re-run your tests each time a source or test file changes.
+
+### Fail fast
+
+You can make Kaocha stop at the first error or failure with `--fail-fast` /
+`:fail-fast?`. This works well in combination with `--watch`.
+
+### Interrupting
+
+When you hit Ctrl-C in the middle of a long test run, Kaocha will gracefully
+exit, after first printing an overview of all failures so far, and a test
+summary.
+
 ## Test plan and test results
 
 Kaocha works in two phases, a load step and a run step. The load step takes the configuration and returns a test plan, the run step takes the test plan and returns a test result. Through various hooks plugins can operate on these data structures to change Kaocha's behavior.
@@ -118,6 +175,40 @@ Kaocha currently provides three test types
 
 These are nested, you use suite at the top level, the load step will find
 namespaces and vars.
+
+### Plugins
+
+Plugins can hook into the test process at various points
+
+- cli-options
+- config
+- pre-load
+- post-load
+- pre-run
+- pre-test
+- post-test
+- post-run
+- post-summary
+
+Kaocha currently ships with these plugins
+
+- `:kaocha.plugin/profiling` Show statistics about the slowest tests.
+- `:kaocha.plugin/print-invocations` (experimental) Print out command line invocations that run specific failing tests
+- `:kaocha.plugin/randomize` (on by default) Randomize the test order
+- `:kaocha.plugin/filter` (on by default) Provide support for filtering and focusing
+
+You can enable a plugin in your `tests.edn`
+
+``` clojure
+#kaocha
+{:plugins [:kaocha.plugin/profiling]}
+```
+
+Or from the command line
+
+```
+clj -A:test --plugin :kaocha.plugin/profiling
+```
 
 ### Reporter
 
