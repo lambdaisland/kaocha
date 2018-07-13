@@ -30,8 +30,7 @@
    [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
    [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
     :parse-fn symbol
-    :assoc-fn accumulate
-    :default-desc "kaocha.report/progress"]
+    :assoc-fn accumulate]
    [nil "--plugin KEYWORD"      "Load the given plugin."
     :parse-fn parse-kw
     :assoc-fn accumulate]
