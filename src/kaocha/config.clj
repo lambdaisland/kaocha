@@ -56,7 +56,7 @@
     (:reporter options)          (assoc :kaocha/reporter (:reporter options))
     (:watch options)             (assoc :kaocha/watch? (:watch options))
     (some? (:color options))     (assoc :kaocha/color? (:color options))
-    (:plugin options)            (update :kaocha/plugins into (:plugin options))
+    (:plugin options)            (update :kaocha/plugins #(distinct (concat % (:plugin options))))
     true                         (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
