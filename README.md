@@ -36,7 +36,20 @@ This lets you invoke Kaocha with `clj -A:test`.
 
 ## Configuration
 
-Before running tests with Kaocha, you should create a `tests.edn` in the root of the project, where you configure your test suites. You can use Kaocha without a `tests.edn`, but adding one is generally considered a Good Idea™.
+Before running tests with Kaocha, you should create a `tests.edn` in the root of the project, where you configure your test suites. `tests.edn` defines your *test configuration*, the first type of data structure used by Kaocha. You can define your configuration in full, but it's recommended to start with the `#kaocha {}` reader literal to provide defaults.
+
+```
+;; tests.edn
+#kaocha {}
+```
+
+This sets up a number of defaults, and configures a single test suite, with tests in `test`, and source files in `src`. To get a sense of what the actual configuration looks like, you can run kaocha with `--print-config`.
+
+```
+clj -A:test --print-config
+```
+
+Here's a more full-fledged example, still using `#kaocha {}`.
 
 ``` clojure
 #kaocha
@@ -77,13 +90,32 @@ All these configuration keys have default values, shown above, so you can omit m
 
 All configuration keys can be overridden with command line flags. Use `--test-help` to see all options. Use `--print-config` to see the final result.
 
+## Test plan and test results
+
+Kaocha works in two phases, a load step and a run step. The load step takes the configuration and returns a test plan, the run step takes the test plan and returns a test result. Through various hooks plugins can operate on these data structures to change Kaocha's behavior.
+
+You can see the test plan and test result with `--print-test-plan` and
+`--print-result`. These are invaluable tools for better understanding Kaocha's
+behavior.
+
 ## Extending Kaocha
 
 Kaocha can be extended in three ways
 
-* `clojure.test` style extensions (custom report message types, custom reporters, extending `is`)
 * New test types (implement load + run)
 * Plugins
+* `clojure.test` style extensions (custom report message types, custom reporters, extending `is`)
+
+### Test types
+
+Kaocha currently provides three test types
+
+* `:kaocha.type/suite`
+* `:kaocha.type/ns`
+* `:kaocha.type/var`
+
+These are nested, you use suite at the top level, the load step will find
+namespaces and vars.
 
 ### Reporter
 
