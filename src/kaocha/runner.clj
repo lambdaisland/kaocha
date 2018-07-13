@@ -53,9 +53,8 @@
   (let [{{:keys [config-file plugin]} :options}    (cli/parse-opts args cli-options)
         config                                     (-> config-file
                                                        (or "tests.edn")
-                                                       config/load-config
-                                                       (update :kaocha/plugins into plugin))
-        plugin-chain                               (plugin/load-all (:kaocha/plugins config))
+                                                       config/load-config)
+        plugin-chain                               (plugin/load-all (concat (:kaocha/plugins config) plugin))
         cli-options                                (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
         {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
         config                                     (-> config
