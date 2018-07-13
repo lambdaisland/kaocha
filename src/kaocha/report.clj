@@ -39,8 +39,10 @@
 (defmethod dots* :pass [_] (print ".") (flush))
 (defmethod dots* :fail [_] (print (colored :red "F")) (flush))
 (defmethod dots* :error [_] (print (colored :red "E")) (flush))
-(defmethod dots* :begin-test-suite [_] (print "<") (flush))
-(defmethod dots* :end-test-suite [_] (print "> ") (flush))
+(defmethod dots* :begin-test-ns [_] (print "(") (flush))
+(defmethod dots* :end-test-ns [_] (print ")") (flush))
+(defmethod dots* :begin-test-suite [_] (print "[") (flush))
+(defmethod dots* :end-test-suite [_] (print "]") (flush))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -100,6 +102,7 @@
         (prn actual)))))
 
 (defmethod result :summary [m]
+  (println)
   (let [failures (filter (comp #{:fail :error} :type) @history/*history*)]
     (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
       (binding [t/*testing-contexts* testing-contexts
@@ -147,11 +150,7 @@
 (defmethod doc :begin-test-ns [m]
   (t/with-test-out
     (reset! doc-printed-contexts (list))
-    (println "Testing" (-> m :kaocha/testable :kaocha.ns/name))))
-
-(defmethod doc :end-test-ns [m]
-  (t/with-test-out
-    (println)))
+    (println "\nTesting" (-> m :kaocha/testable :kaocha.ns/name))))
 
 (defmethod doc :begin-test-var [m]
   (t/with-test-out
