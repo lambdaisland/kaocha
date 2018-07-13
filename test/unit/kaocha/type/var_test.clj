@@ -100,7 +100,10 @@
       (is (match? [{:type :begin-test-var, :var var?}
                    {:type :pass}
                    {:type :pass}
-                   {:type :fail, :file string?, :line pos-int?}
+                   {:type :fail,
+                    ;;:file string?,
+                    ;;:line pos-int?
+                    }
                    {:type :pass}
                    {:type :end-test-var, :var var?}]
                   report))))
@@ -125,7 +128,10 @@
       (is (match? [{:type :begin-test-var, :var var?}
                    {:type :pass}
                    {:type :pass}
-                   {:type :fail, :file string?, :line pos-int?}
+                   {:type :fail
+                    ;;:file string?,
+                    ;;:line pos-int?
+                    }
                    {:type :end-test-var, :var var?}]
                   report)))
 
