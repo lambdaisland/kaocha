@@ -32,6 +32,18 @@
   ([plugins step value]
    (reduce #(%2 %1) value (keep step plugins))))
 
+(defmacro defplugin
+  {:style/indent [1 :form [1]]}
+  [id & hooks]
+  (let [plugin-id (keyword id)]
+    `(defmethod -register ~plugin-id [_# plugins#]
+       (conj plugins#
+             ~(into {:kaocha.plugin/id plugin-id}
+                    (map (fn [[hook & fn-tail]]
+                           [(keyword "kaocha.hooks" (str hook))
+                            `(fn ~@fn-tail)]))
+                    hooks)))))
+
 (comment
   (= (run-hook [{:foo inc} {:foo inc}] :foo 2)
      4))
