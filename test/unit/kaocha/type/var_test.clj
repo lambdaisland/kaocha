@@ -19,7 +19,8 @@
                            :kaocha.testable/id   :foo.bar-test/a-test,
                            :kaocha.var/name      'foo.bar-test/a-test
                            :kaocha.var/var       (resolve 'foo.bar-test/a-test)
-                           :kaocha.var/test      (-> (resolve 'foo.bar-test/a-test) meta :test)}))]
+                           :kaocha.var/test      (-> (resolve 'foo.bar-test/a-test) meta :test)}
+              (f/test-plan {})))]
 
       (is (match? {:kaocha.testable/type :kaocha.type/var
                    :kaocha.testable/id   :foo.bar-test/a-test
@@ -41,7 +42,8 @@
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run
-              (f/var-testable {:kaocha.var/test (fn [] (is false))})))]
+              (f/var-testable {:kaocha.var/test (fn [] (is false))})
+              (f/test-plan {})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   0
@@ -58,7 +60,8 @@
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run
-              (f/var-testable {:kaocha.var/test (fn [] (throw (ex-info "ERROR!" {})))})))]
+              (f/var-testable {:kaocha.var/test (fn [] (throw (ex-info "ERROR!" {})))})
+              (f/test-plan {})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   0
@@ -75,6 +78,7 @@
                     :message "Uncaught exception, not in assertion."}
                    {:type :end-test-var, :var var?}]
                   report))))
+
   (testing "multiple assertions"
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? false}
@@ -83,7 +87,8 @@
                                                   (is true)
                                                   (is true)
                                                   (is false)
-                                                  (is true))})))]
+                                                  (is true))})
+              (f/test-plan {})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   3
@@ -107,7 +112,8 @@
                                                   (is true)
                                                   (is true)
                                                   (is false)
-                                                  (is true))})))]
+                                                  (is true))})
+              (f/test-plan {})))]
 
       (is (match? {:kaocha.result/count  1
                    :kaocha.result/pass   2
@@ -130,7 +136,8 @@
                                                     (is true)
                                                     (is true)
                                                     (throw (Exception. "ERROR!"))
-                                                    (is true))})))]
+                                                    (is true))})
+                (f/test-plan {})))]
 
         (is (match? {:kaocha.result/count  1
                      :kaocha.result/pass   2

@@ -51,10 +51,13 @@
   (println (str/join "\n" (help summary))))
 
 (defn- -main* [& args]
-  (let [{{:keys [config-file]} :options}           (cli/parse-opts args cli-options)
-        config                                     (config/load-config (or config-file "tests.edn"))
+  (let [{{:keys [config-file plugin]} :options}    (cli/parse-opts args cli-options)
+        config                                     (-> config-file
+                                                       (or "tests.edn")
+                                                       config/load-config
+                                                       (update :kaocha/plugins into plugin))
         plugin-chain                               (plugin/load-all (:kaocha/plugins config))
-        cli-options                                (plugin/run-hook plugin-chain :kaocha.hooks/cli-options cli-options)
+        cli-options                                (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
         {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
         config                                     (-> config
                                                        (config/apply-cli-opts options)
@@ -62,7 +65,7 @@
         suites                                     (into #{} (map :kaocha.testable/id) (:kaocha/tests config))
         unknown-suites                             (set/difference (into #{} (map keyword) arguments) (set suites))]
 
-    (binding [plugin/*current-chain* plugin-chain]
+    (plugin/with-plugins plugin-chain
       (cond
         (seq errors)
         (do
@@ -75,7 +78,7 @@
 
         (:print-config options)
         (binding [clojure.core/*print-namespace-maps* false]
-          (pprint/pprint (plugin/run-hook plugin-chain :kaocha.hooks/config config))
+          (pprint/pprint (plugin/run-hook :kaocha.hooks/config config))
           0)
 
         (:print-test-plan options)

@@ -6,8 +6,9 @@
             [clojure.spec.gen.alpha :as gen])
   (:import [clojure.lang Var]))
 
-(defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test] :as testable}]
-  (let [initial-report @t/*report-counters*]
+(defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test wrap] :as testable} test-plan]
+  (let [initial-report @t/*report-counters*
+        test (reduce #(%2 %1) test wrap)]
     (binding [t/*testing-vars* (conj t/*testing-vars* var)]
       (t/do-report {:type :begin-test-var, :var var})
       (try

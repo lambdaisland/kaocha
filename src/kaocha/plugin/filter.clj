@@ -1,5 +1,5 @@
 (ns kaocha.plugin.filter
-  (:require [kaocha.plugin :as plugin]
+  (:require [kaocha.plugin :as plugin :refer [defplugin]]
             [kaocha.testable :as testable]))
 
 (defn- accumulate [m k v]
@@ -53,36 +53,30 @@
       :else
       testable)))
 
-(defmethod plugin/-register :kaocha.plugin/filter [_ plugins]
-  (conj plugins
-        {:kaocha.plugin/id :kaocha.plugin/filter
+(defplugin kaocha.plugin/filter
+  (cli-options [opts]
+    (let [parse #(symbol (if (= \: (first %)) (subs % 1) %))]
+      (conj opts
+            [nil "--skip SYM" "Skip tests with this ID and their children."
+             :parse-fn parse
+             :assoc-fn accumulate]
+            [nil "--focus SYM" "Only run this test, skip others."
+             :parse-fn parse
+             :assoc-fn accumulate]
+            [nil "--skip-meta SYM" "Skip tests where this metadata key is truthy."
+             :parse-fn parse
+             :assoc-fn accumulate]
+            [nil "--focus-meta SYM" "Only run tests where this metadata key is truthy."
+             :parse-fn parse
+             :assoc-fn accumulate])))
 
-         :kaocha.hooks/cli-options
-         (fn [opts]
-           (let [parse #(symbol (if (= \: (first %)) (subs % 1) %))]
-             (conj opts
-                   [nil "--skip SYM" "Skip tests with this ID and their children."
-                    :parse-fn parse
-                    :assoc-fn accumulate]
-                   [nil "--focus SYM" "Only run this test, skip others."
-                    :parse-fn parse
-                    :assoc-fn accumulate]
-                   [nil "--skip-meta SYM" "Skip tests where this metadata key is truthy."
-                    :parse-fn parse
-                    :assoc-fn accumulate]
-                   [nil "--focus-meta SYM" "Only run tests where this metadata key is truthy."
-                    :parse-fn parse
-                    :assoc-fn accumulate])))
+  (config [config]
+    (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha/cli-options config)]
+      (cond-> config
+        skip       (assoc :kaocha.filter/skip skip)
+        focus      (assoc :kaocha.filter/focus focus)
+        skip-meta  (assoc :kaocha.filter/skip-meta skip-meta)
+        focus-meta (assoc :kaocha.filter/focus-meta focus-meta))))
 
-         :kaocha.hooks/config
-         (fn [config]
-           (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha/cli-options config)]
-             (cond-> config
-               skip       (assoc :kaocha.filter/skip skip)
-               focus      (assoc :kaocha.filter/focus focus)
-               skip-meta  (assoc :kaocha.filter/skip-meta skip-meta)
-               focus-meta (assoc :kaocha.filter/focus-meta focus-meta))))
-
-         :kaocha.hooks/post-load
-         (fn [test-plan]
-           (update test-plan :kaocha.test-plan/tests (partial map #(filter-testable % (filters test-plan)))))}))
+  (post-load [test-plan]
+    (update test-plan :kaocha.test-plan/tests (partial map #(filter-testable % (filters test-plan))))))

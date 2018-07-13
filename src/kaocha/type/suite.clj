@@ -29,9 +29,9 @@
       (assoc testable :kaocha.test-plan/tests
              (doall (map testable/load testables))))))
 
-(defmethod testable/-run :kaocha.type/suite [testable]
+(defmethod testable/-run :kaocha.type/suite [testable test-plan]
   (t/do-report (assoc testable :type :begin-test-suite))
-  (let [results (testable/run-testables (:kaocha.test-plan/tests testable))
+  (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
         testable (-> testable
                      (dissoc :kaocha.test-plan/tests)
                      (assoc :kaocha.result/tests results))]

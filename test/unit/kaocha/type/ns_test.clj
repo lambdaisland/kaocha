@@ -62,4 +62,4 @@
                                          :kaocha.result/fail   0}]}
                 (:result
                  (with-test-ctx {:fail-fast? true}
-                   (testable/run testable)))))))
+                   (testable/run testable testable)))))))

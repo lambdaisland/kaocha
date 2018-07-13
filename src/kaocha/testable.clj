@@ -65,9 +65,10 @@
 
 (defmulti -run
   "Given a test-plan, perform the tests, returning the test results."
-  ::type)
+  (fn [testable test-plan]
+    (::type testable)))
 
-(defmethod -run :default [testable]
+(defmethod -run :default [testable test-plan]
   (throw (ex-info (str "No implementation of "
                        `run
                        " for "
@@ -81,12 +82,13 @@
 
   Also performs validation, and lazy loading of the testable type's
   implementation."
-  [testable]
+  [testable test-plan]
   (load-type+validate testable)
-  (-run testable))
+  (-run testable test-plan))
 
 (s/fdef run
-        :args (s/cat :testable :kaocha.test-plan/testable)
+        :args (s/cat :testable :kaocha.test-plan/testable
+                     :test-plan :kaocha/test-plan)
         :ret :kaocha.result/testable)
 
 (defn load-testables
@@ -96,15 +98,16 @@
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."
-  [testables]
+  [testables test-plan]
   (loop [result []
          [test & testables] testables]
     (if test
-      (let [r (cond-> test
-                (not (::skip test))
-                (->> (plugin/run-hook :kaocha.hooks/pre-test)
-                     run
-                     (plugin/run-hook :kaocha.hooks/post-test)))]
+      (let [r (if (::skip test)
+                test
+                (as-> test %
+                  (plugin/run-hook :kaocha.hooks/pre-test % test-plan)
+                  (run % test-plan)
+                  (plugin/run-hook :kaocha.hooks/post-test % test-plan)))]
         (if (and *fail-fast?* (result/failed? r))
           (reduce into [result [r] testables])
           (recur (conj result r) testables)))

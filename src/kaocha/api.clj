@@ -44,10 +44,9 @@
 
 (defn run [config]
   (let [plugins      (:kaocha/plugins config)
-        plugin-chain (plugin/load-all plugins)
-        run-hook     #(plugin/run-hook plugin-chain %2 %1)]
-    (binding [plugin/*current-chain* plugin-chain]
-      (let [config     (run-hook config :kaocha.hooks/config)
+        plugin-chain (plugin/load-all plugins)]
+    (plugin/with-plugins plugin-chain
+      (let [config     (plugin/run-hook :kaocha.hooks/config config)
             fail-fast? (:kaocha/fail-fast? config)
             color?     (:kaocha/color? config)
             test-plan  (test-plan config)
@@ -61,14 +60,16 @@
                                   (println "^C")
                                   (binding [history/*history* history]
                                     (t/do-report (history/clojure-test-summary))))
-              (let [test-plan (run-hook test-plan :pre-run)
-                    tests     (:kaocha.test-plan/tests test-plan)
-                    result    (-> test-plan
-                                  (dissoc :kaocha.test-plan/tests)
-                                  (assoc :kaocha.result/tests (testable/run-testables tests))
-                                  (run-hook :kaocha.hooks/post-run))]
+              (let [test-plan       (plugin/run-hook :kaocha.hooks/pre-run test-plan)
+                    test-plan-tests (:kaocha.test-plan/tests test-plan)
+                    result-tests    (testable/run-testables test-plan-tests test-plan)
+                    result          (plugin/run-hook :kaocha.hooks/post-run
+                                                     (-> test-plan
+                                                         (dissoc :kaocha.test-plan/tests)
+                                                         (assoc :kaocha.result/tests result-tests)))]
+                (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
                 (-> result
                     result/testable-totals
                     result/totals->clojure-test-summary
                     t/do-report)
-                (run-hook result :kaocha.hooks/post-summary)))))))))
+                (plugin/run-hook :kaocha.hooks/post-summary result)))))))))

@@ -2,6 +2,9 @@
 
 (def ^:dynamic *current-chain*)
 
+(defmacro with-plugins [chain & body]
+  `(binding [*current-chain* ~chain] ~@body))
+
 ;; TODO: duplicated from testable, not sure yet where to put it.
 (defn- try-require [n]
   (try
@@ -26,11 +29,11 @@
 (defn load-all [names]
   (reduce #(register %2 %1) [] names))
 
-(defn run-hook
-  ([step value]
-   (run-hook *current-chain* step value))
-  ([plugins step value]
-   (reduce #(%2 %1) value (keep step plugins))))
+(defn run-hook* [plugins step value & extra-args]
+  (reduce #(apply %2 %1 extra-args) value (keep step plugins)))
+
+(defn run-hook [step value & extra-args]
+  (apply run-hook* *current-chain* step value extra-args))
 
 (defmacro defplugin
   {:style/indent [1 :form [1]]}

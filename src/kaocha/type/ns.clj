@@ -41,7 +41,7 @@
                :kaocha.test-plan/load-error t
                :kaocha.result/error 1)))))
 
-(defmethod testable/-run :kaocha.type/ns [testable]
+(defmethod testable/-run :kaocha.type/ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns              (:kaocha.ns/ns testable)
                                         :kaocha/testable testable}
                                        %))]
@@ -59,7 +59,7 @@
               once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
               tests           (once-fixture-fn #(-> testable
                                                     :kaocha.test-plan/tests
-                                                    testable/run-testables))
+                                                    (testable/run-testables test-plan)))
               result          (assoc (dissoc testable :kaocha.test-plan/tests)
                                      :kaocha.result/tests
                                      tests)]

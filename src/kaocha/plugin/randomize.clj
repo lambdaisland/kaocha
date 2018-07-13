@@ -1,5 +1,5 @@
 (ns kaocha.plugin.randomize
-  (:require [kaocha.plugin :as plugin])
+  (:require [kaocha.plugin :as plugin :refer [defplugin]])
   (:import [java.util Random]))
 
 (defn rng [seed]
@@ -24,43 +24,37 @@
                 (map (partial rng-sort rng))))
     test-plan))
 
-(defmethod plugin/-register :kaocha.plugin/randomize [_ plugins]
-  (conj plugins
-        {:kaocha.plugin/id :kaocha.plugin/randomize
+(defplugin kaocha.plugin/randomize
+  (cli-options [opts]
+    (conj opts
+          [nil  "--[no-]randomize"     "Run test namespaces and vars in random order."]
+          [nil  "--seed SEED"          "Provide a seed to determine the random order of tests."
+           :parse-fn #(Integer/parseInt %)]))
 
-         :kaocha.hooks/cli-options
-         (fn [opts]
-           (conj opts
-                 [nil  "--[no-]randomize"     "Run test namespaces and vars in random order."]
-                 [nil  "--seed SEED"          "Provide a seed to determine the random order of tests."
-                  :parse-fn #(Integer/parseInt %)]))
+  (config [config]
+    (let [randomize? (get-in config [:kaocha/cli-options :randomize])]
+      (merge {::randomize? true}
+             (cond
+               (::seed config)
+               config
 
-         :kaocha.hooks/config
-         (fn [config]
-           (let [randomize? (get-in config [:kaocha/cli-options :randomize])]
-             (merge {::randomize? true}
-                    (cond
-                      (::seed config)
-                      config
+               (get-in config [:kaocha/cli-options :seed])
+               (assoc config ::seed (get-in config [:kaocha/cli-options :seed]))
 
-                      (get-in config [:kaocha/cli-options :seed])
-                      (assoc config ::seed (get-in config [:kaocha/cli-options :seed]))
+               :else
+               (assoc config ::seed (rand-int Integer/MAX_VALUE)))
+             (when (false? randomize?)
+               {::randomize? false}))))
 
-                      :else
-                      (assoc config ::seed (rand-int Integer/MAX_VALUE)))
-                    (when (false? randomize?)
-                      {::randomize? false}))))
+  (post-load [test-plan]
+    (if (::randomize? test-plan)
+      (let [rng (rng (::seed test-plan))]
+        (->> test-plan
+             straight-sort
+             (rng-sort rng)))
+      test-plan))
 
-         :kaocha.hooks/post-load
-         (fn [test-plan]
-           (if (::randomize? test-plan)
-             (let [rng (rng (::seed test-plan))]
-               (->> test-plan
-                    straight-sort
-                    (rng-sort rng)))
-             test-plan))
-
-         :kaocha.hooks/pre-run
-         (fn [test-plan]
-           (if (::randomize? test-plan)
-             (println "Running with --seed" (::seed test-plan))))}))
+  (pre-run [test-plan]
+    (if (::randomize? test-plan)
+      (println "Running with --seed" (::seed test-plan)))
+    test-plan))

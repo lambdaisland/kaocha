@@ -2,7 +2,8 @@
   (:require [clojure.test :as t :refer :all]
             [kaocha.result :as result]
             [kaocha.testable :as testable]
-            [kaocha.report :as report]))
+            [kaocha.report :as report]
+            [kaocha.test-factories :as f]))
 
 (deftest totals-test
   (= #:kaocha.result{:count 5, :pass 3, :error 1, :fail 1}
@@ -14,4 +15,4 @@
               :kaocha.suite/ns-patterns ["-test$"],
               :kaocha.suite/test-paths ["fixtures/d-tests"]}]
             testable/load-testables
-            testable/run-testables)))))
+            (testable/run-testables (f/test-plan {})))))))

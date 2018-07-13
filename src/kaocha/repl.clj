@@ -10,11 +10,11 @@
         config             (-> (config/load-config config-file)
                                (config/apply-cli-opts opts))
         plugin-chain       (plugin/load-all (:kaocha/plugins config))]
-    (binding [plugin/*current-chain* plugin-chain]
-      (plugin/run-hook plugin-chain :kaocha.hooks/config config))))
+    (plugin/with-plugins plugin-chain
+      (plugin/run-hook :kaocha.hooks/config config))))
 
 (defn test-plan [& args]
   (let [config       (apply config args)
         plugin-chain (plugin/load-all (:kaocha/plugins config))]
-    (binding [plugin/*current-chain* plugin-chain]
+    (plugin/with-plugins plugin-chain
       (api/test-plan config))))

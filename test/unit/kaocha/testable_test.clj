@@ -3,7 +3,8 @@
             [clojure.test :as t :refer :all]
             [kaocha.report :as report]
             [kaocha.testable :as testable]
-            [kaocha.test-helper]))
+            [kaocha.test-helper]
+            [kaocha.test-factories :as f]))
 
 (s/def :kaocha.type/unknown map?)
 
@@ -24,8 +25,10 @@
                          :kaocha.error/missing-method 'kaocha.testable/run,
                          :kaocha/testable             #:kaocha.testable{:type :kaocha.type/unknown
                                                                         :id   :foo}}
-                        (testable/run #:kaocha.testable{:type :kaocha.type/unknown
-                                                        :id   :foo}))))
+                        (testable/run
+                          #:kaocha.testable{:type :kaocha.type/unknown
+                                            :id   :foo}
+                          (f/test-plan {})))))
 
 
 (deftest test-seq-test

@@ -48,4 +48,4 @@
                                                                       :kaocha.result/error  0
                                                                       :kaocha.result/fail   0}]}]}
 
-                (:result (with-test-ctx {} (testable/run test-plan)))))))
+                (:result (with-test-ctx {} (testable/run test-plan test-plan)))))))
