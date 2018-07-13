@@ -43,7 +43,7 @@ Before running tests with Kaocha, you should create a `tests.edn` in the root of
 #kaocha {}
 ```
 
-This sets up a number of defaults, and configures a single test suite, with tests in `test`, and source files in `src`. To get a sense of what the actual configuration looks like, you can run kaocha with `--print-config`.
+Chances are this is all the configuration you need. This sets up a number of defaults, and configures a single test suite, with tests in `test`, and source files in `src`. To get a sense of what the actual configuration looks like, you can run kaocha with `--print-config`.
 
 ```
 clj -A:test --print-config
@@ -89,6 +89,8 @@ Here's a more full-fledged example, still using `#kaocha {}`.
 All these configuration keys have default values, shown above, so you can omit most of them, including `:tests`.
 
 All configuration keys can be overridden with command line flags. Use `--test-help` to see all options. Use `--print-config` to see the final result.
+
+Configuration is read with [Aero](https://github.com/juxt/aero), meaning you have access to reader literals like `#env`, `#merge`, `#ref`, and `#include`.
 
 ## Test plan and test results
 

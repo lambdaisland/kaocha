@@ -25,6 +25,7 @@
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
 - [ ] Provide inspect plugin with e.g. --print-test-ids
+- [ ] Watch changes to tests.edn
 
 #+BEGIN_SRC clojure
   ;; config
