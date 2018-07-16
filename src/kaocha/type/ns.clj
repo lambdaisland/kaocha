@@ -2,7 +2,8 @@
   (:require [clojure.test :as t]
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as s]
+            [kaocha.output :as out]))
 
 (defn ->testable [ns-name]
   {:kaocha.testable/type :kaocha.type/ns
@@ -40,9 +41,8 @@
                     :kaocha.ns/ns ns-obj
                     :kaocha.test-plan/tests)))
       (catch Throwable t
-        (assoc testable
-               :kaocha.test-plan/load-error t
-               :kaocha.result/error 1)))))
+        (out/warn "Failed loading " ns-name " " (.getMessage t))
+        (assoc testable :kaocha.test-plan/load-error t)))))
 
 (defn run-tests [testable test-plan fixture-fn]
   ;; It's not guaranteed the the fixture-fn returns the result of calling the
@@ -64,7 +64,7 @@
                       :expected nil
                       :actual   load-error})
           (do-report {:type :end-test-ns})
-          testable)
+          assoc testable :kaocha.result/error 1)
         (let [ns-meta         (:kaocha.testable/meta testable)
               once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
               tests           (run-tests testable test-plan once-fixture-fn)
