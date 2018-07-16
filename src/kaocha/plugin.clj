@@ -1,4 +1,5 @@
-(ns kaocha.plugin)
+(ns kaocha.plugin
+  (:require [kaocha.output :as out]))
 
 (def ^:dynamic *current-chain*)
 
@@ -30,7 +31,15 @@
   (reduce #(register %2 %1) [] names))
 
 (defn run-hook* [plugins step value & extra-args]
-  (reduce #(apply %2 %1 extra-args) value (keep step plugins)))
+  (reduce (fn [value plugin]
+            (if-let [step-fn (get plugin step)]
+              (let [value (apply step-fn value extra-args)]
+                (when (nil? value)
+                  (out/warn "Plugin " (:id plugin) " hook " step " returned nil."))
+                value)
+              value))
+          value
+          plugins))
 
 (defn run-hook [step value & extra-args]
   (apply run-hook* *current-chain* step value extra-args))
