@@ -36,7 +36,8 @@
       reporter           (assoc :kaocha/reporter reporter)
       (some? color?)     (assoc :kaocha/color? color?)
       (some? fail-fast?) (assoc :kaocha/fail-fast? fail-fast?)
-      (some? watch?)     (assoc :kaocha/watch? watch?))))
+      (some? watch?)     (assoc :kaocha/watch? watch?)
+      :->                (merge (dissoc value :tests :plugins :reporter :color? :fail-fast? :watch?)))))
 
 (defmethod aero/reader 'kaocha [opts tag value]
   (normalize value))
