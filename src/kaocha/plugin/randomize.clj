@@ -20,7 +20,8 @@
     (assoc test-plan
            :kaocha.test-plan/tests
            (->> tests
-                (sort-by rng)
+                (map #(assoc % ::sort-key (rng)))
+                (sort-by ::sort-key)
                 (map (partial rng-sort rng))))
     test-plan))
 

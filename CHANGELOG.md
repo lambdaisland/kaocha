@@ -1,3 +1,11 @@
+# master
+
+## Fixed
+
+- The randomize plugin could cause an exception because the
+  sort-by-random-number-generator wasn't stable (it violated the contract of a
+  comparator). Instead assign each testable a sort key first, then sort by those.
+
 # 7b79fad92d (2018-06-16)
 
 ## Added
