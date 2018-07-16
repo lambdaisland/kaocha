@@ -33,7 +33,10 @@
     (assoc config ::limit (::limit config 3)))
 
   (post-summary [result]
-    (let [tests (remove :kaocha.test-plan/load-error (testable/test-seq result))
+    (let [tests (->> result
+                     testable/test-seq
+                     (remove :kaocha.test-plan/load-error)
+                     (remove ::testable/skip))
           types (group-by :kaocha.testable/type tests)
           total-dur (::duration result)
           limit (::limit result)]
@@ -48,7 +51,7 @@
                       (float (* (/ slow-test-dur total-dur) 100)))
               (for [test slowest
                     :let [duration (::duration test)
-                          cnt (count (:kaocha.result/tests test))]
+                          cnt (count (remove ::testable/skip (:kaocha.result/tests test)))]
                     :when duration]
                 (if (> cnt 0)
                   (format "  %s\n    \033[1m%.5f seconds\033[0m average (%.5f seconds / %d tests)\n"
