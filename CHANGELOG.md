@@ -1,5 +1,11 @@
 #  (2018-06-16)
 
+## Added
+
+- The profiling plugin can now be configured on the command line and from
+  tests.edn, with `--[no-]profiling`, `--profiling-count`,
+  `:kaocha.plugin.profiling/profiling?`, `:kaocha.plugin.profiling/count`
+
 ## Changed
 
 - `--focus` and `--focus-meta` override config-level `:focus`/`:focus-meta`,
