@@ -71,4 +71,5 @@
                 (-> result
                     result/testable-totals
                     result/totals->clojure-test-summary
-                    t/do-report)))))))))
+                    t/do-report)
+                result))))))))
