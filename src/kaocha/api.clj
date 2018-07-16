@@ -71,5 +71,4 @@
                 (-> result
                     result/testable-totals
                     result/totals->clojure-test-summary
-                    t/do-report)
-                (plugin/run-hook :kaocha.hooks/post-summary result)))))))))
+                    t/do-report)))))))))

@@ -104,7 +104,7 @@
           (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))
 
         :else
-        (let [result (api/run config)
+        (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
               totals (result/totals (:kaocha.result/tests result))]
           (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))))))
 
