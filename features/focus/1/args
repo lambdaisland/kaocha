@@ -1,0 +1,1 @@
+--focus finn.finn-test --reporter kaocha.report/documentation --no-randomize

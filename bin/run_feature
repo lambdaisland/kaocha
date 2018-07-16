@@ -1,0 +1,3 @@
+#!/bin/bash
+
+clj -A:dev:test --config-file features/$1/tests.edn `cat features/$1/args` "${@:2}"

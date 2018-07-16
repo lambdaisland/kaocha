@@ -19,9 +19,19 @@
    :skip-meta skip-meta
    :focus-meta focus-meta})
 
+(defn merge-filters [f1 f2]
+  {:skip       (concat (:skip f1) (:skip f2))
+   :skip-meta  (concat (:skip-meta f1) (:skip-meta f2))
+   :focus      (if (seq (:focus f2))
+                 (:focus f2)
+                 (:focus f1))
+   :focus-meta (if (seq (:focus-meta f2))
+                 (:focus-meta f2)
+                 (:focus-meta f1))})
+
 (defn filter-testable [testable opts]
   (let [{:as opts
-         :keys [skip focus skip-meta focus-meta]} (merge-with concat opts (filters testable))
+         :keys [skip focus skip-meta focus-meta]} (merge-filters opts (filters testable))
         recurse   (fn recurse
                     ([]
                      (recurse opts))
@@ -73,10 +83,17 @@
   (config [config]
     (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha/cli-options config)]
       (cond-> config
-        skip       (assoc :kaocha.filter/skip skip)
-        focus      (assoc :kaocha.filter/focus focus)
-        skip-meta  (assoc :kaocha.filter/skip-meta skip-meta)
-        focus-meta (assoc :kaocha.filter/focus-meta focus-meta))))
+        (seq skip)       (assoc :kaocha.filter/skip skip)
+        (seq focus)      (assoc :kaocha.filter/focus focus)
+        (seq skip-meta)  (assoc :kaocha.filter/skip-meta skip-meta)
+        (seq focus-meta) (assoc :kaocha.filter/focus-meta focus-meta))))
 
   (post-load [test-plan]
-    (update test-plan :kaocha.test-plan/tests (partial map #(filter-testable % (filters test-plan))))))
+    (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)
+          filter-suite (fn [suite]
+                         (filter-testable
+                          (cond-> suite
+                            (or (seq focus) (seq focus-meta))
+                            (dissoc :kaocha.filter/focus :kaocha.filter/focus-meta))
+                          (filters test-plan)))]
+      (update test-plan :kaocha.test-plan/tests (partial map filter-suite)))))

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for feature in $(find features -maxdepth 2 -mindepth 2 -printf "%P\n" | sort)
+do
+  echo $feature
+  bin/check_feature $feature
+done

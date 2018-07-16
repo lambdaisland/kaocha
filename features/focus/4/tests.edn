@@ -1,0 +1,6 @@
+#kaocha
+{:kaocha.filter/focus [foo.bar-test/a-test]
+ :tests               [{:id         :a
+                        :test-paths ["fixtures/a-tests"]}
+                       {:id         :b
+                        :test-paths ["fixtures/b-tests"]}]}

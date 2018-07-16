@@ -1,0 +1,3 @@
+#!/bin/bash
+
+colordiff -u <(cat features/$1/out) <(clj -A:dev:test --config-file features/$1/tests.edn `cat features/$1/args`)
