@@ -1,4 +1,4 @@
-#  (2018-06-16)
+# 7b79fad92d (2018-06-16)
 
 ## Added
 
@@ -17,6 +17,30 @@
 ## Fixed
 
 - Don't count filtered tests in profiling results.
+
+# 8eeff5b340 (2018-06-13)
+
+## Added
+
+- Testable now has an optional `:kaocha.var/wrap` key, which can contain a seq
+  of functions that will be used to "wrap" the actual test function, useful e.g.
+  for providing bindings. clojure.test style :each fixtures are also handled
+  through this key, so plugins can choose to add wrapping functions at the start
+  or the end of this seq to wrap "inside" or "around" the fixtures.
+
+# 9a920204bc (2018-06-13)
+
+## Changed
+
+- Make the test-plan available in `pre-test` and `post-test` plugin hooks, so
+  that they have access to top level configuration items.
+
+# 3319ed6f81 (2018-06-13)
+
+## Added
+
+- Added the `kaocha.plugin/defplugin` macro, making plugins look more like a
+  deftype.
 
 # 9a6fa32592 (2018-06-02)
 

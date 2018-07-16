@@ -9,7 +9,7 @@
             [kaocha.config :as config]))
 
 (defn invoke-runner [& args]
-  (apply shell/sh "clojure" "-m" "kaocha.runner" "--no-color" "--no-randomize" args))
+  (apply shell/sh "clojure" "-A:dev" "-m" "kaocha.runner" "--no-color" "--no-randomize" args))
 
 (defn invoke-with-config [config & args]
   (let [tmpfile (java.io.File/createTempFile "tests" ".edn")]
@@ -17,7 +17,7 @@
       (.deleteOnExit)
       (spit (str "#kaocha" (prn-str config))))
     (apply shell/sh
-           "clojure" "-m" "kaocha.runner"
+           "clojure" "-A:dev" "-m" "kaocha.runner"
            "--config-file" (str tmpfile)
            "--no-randomize"
            args)))
