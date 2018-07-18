@@ -7,14 +7,14 @@
   :skip-meta
   :exclude-meta
   :focus-meta
-- [ ] profiling
-- [ ] capture output
-- [ ] wrap reporters in t/with-test-out
+- [X] profiling
+- [X] capture output
+- [X] wrap reporters in t/with-test-out
 - [ ] main namespace for cloverage
-- [ ] wrapper for eftest reporter
 - [ ] TAP reporter
-- [ ] multithread
+- [ ] parallelism
 - [ ] watch/api mode: undef removed vars
+- [ ] watch: re-run failed tests first
 - [X] signal load/parse errors as test failures
 - [X] print config / test plan / test result
 - [ ] make stack trace filtering configurable
@@ -27,13 +27,5 @@
 - [ ] Provide inspect plugin with e.g. --print-test-ids
 - [ ] Watch changes to tests.edn
 - [ ] Improve matcher-combinator support, maybe as a separate package/plugin?
-
-#+BEGIN_SRC clojure
-  ;; config
-
-  {:kaocha/tests [{:kaocha.suite/id :unit
-                   :kaocha.suite/source-paths ["src"]}]}
-
-
-  {:kaocha.result/tests []}
-#+END_SRC
+- [ ] Clean output when progress bar used without output capturing
+- [ ] Colored diffs in report failures
