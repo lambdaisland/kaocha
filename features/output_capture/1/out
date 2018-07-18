@@ -1,4 +1,3 @@
-Running with --seed 860726677
 [([31mF[m.)]
 
 FAIL in (stdout-fail-test) (has_output_test.clj:10)
