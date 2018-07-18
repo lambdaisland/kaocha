@@ -26,7 +26,8 @@
 (alter-var-root #'t/do-report
                 (fn [_]
                   (fn [m]
-                    (let [m          (merge {:kaocha/testable testable/*current-testable*} m)
+                    (let [m          (merge {:kaocha/testable testable/*current-testable*
+                                             :kaocha/test-plan testable/*test-plan*} m)
                           test-fn    (:kaocha.var/test (:kaocha/testable m))
                           stacktrace (.getStackTrace (if (exception? (:actual m))
                                                        (:actual m)
@@ -41,6 +42,7 @@
                                                                 (str/starts-with? cl-name "sun.reflect.")
                                                                 (str/starts-with? cl-name "clojure.core")
                                                                 (str/starts-with? cl-name "kaocha.monkey_patch$")
+                                                                (str/starts-with? cl-name "kaocha.testable")
                                                                 (str/starts-with? cl-name "kaocha.type.")))
                                                          stacktrace)))]
                       (t/report

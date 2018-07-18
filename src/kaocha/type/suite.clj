@@ -30,12 +30,13 @@
              (doall (map testable/load testables))))))
 
 (defmethod testable/-run :kaocha.type/suite [testable test-plan]
-  (t/do-report (assoc testable :type :begin-test-suite))
+  (t/do-report {:type :begin-test-suite})
   (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
         testable (-> testable
                      (dissoc :kaocha.test-plan/tests)
                      (assoc :kaocha.result/tests results))]
-    (t/do-report (assoc testable :type :end-test-suite))
+    (t/do-report {:type :end-test-suite
+                  :kaocha/testable testable})
     testable))
 
 (s/def :kaocha.type/suite (s/keys :req [:kaocha.suite/source-paths

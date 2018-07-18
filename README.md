@@ -219,17 +219,68 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
 ``` clojure
 (ns kaocha.report)
 
-(def progress
+(def dots
   "Reporter that prints progress as a sequence of dots and letters."
-  [track
-   dots
-   result])
+  [dots* result])
 ```
 
 Other reporters currently implemented include
 
-- `kaocha.report/dots`
-- `kaocha.report/documentation`
+### `kaocha.report/dots`
+
+CLI: `--reporter kaocha.report/dots`
+Config: `{:kaocha/reporter [kaocha.report/dots]}`
+
+Outputs a dot for each passing test var. Failures and errors are presented as
+`E` and `F`. Square brackets show test suites, parentheses show namespaces.
+
+This is a great all around reporter, it's concise but still rich in information.
+
+```
+[(.)(..F)(....)(..E..E)(...)(....)(.)(..)(............)(...)(...........)][(.....)]
+19 test vars, 55 assertions, 2 errors, 1 failures.
+```
+
+### `kaocha.report/documentation`
+
+CLI: `--reporter kaocha.report/documentation`
+Config: `{:kaocha/reporter [kaocha.report/documentation]}`
+
+Provides detailed output of test namespaces, vars, and testing blocks. If you
+make good use of `clojure.test`'s facilities this can be very informative.
+
+```
+--- :unit ---------------------------
+kaocha.type.var-test
+  run-test
+    a passing test var
+    a failing test var
+    an erroring test var
+    multiple assertions
+    early exit FAIL
+      early exit - exception ERROR
+```
+
+### `kaocha.report/progress`
+
+CLI: `--reporter kaocha.report.progress/report`
+Config: `{:kaocha/reporter [kaocha.report.progress/report]}`
+
+For people who like it fancy. The least information rich of the bunch, but it looks great!
+
+Prints a separate progress bar for each test suite, with progress percentage,
+and the completed/total number of test vars.
+
+Turns red when a test has failed.
+
+``` clojure
+integration:   100% [==================================================] 1/1
+       unit:   100% [==================================================] 18/18
+
+19 test vars, 55 assertions, 0 failures.
+```
+
+
 
 ## Usage
 

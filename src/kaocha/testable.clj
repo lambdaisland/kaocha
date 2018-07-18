@@ -64,6 +64,7 @@
   :ret :kaocha.test-plan/testable)
 
 (def ^:dynamic *current-testable* nil)
+(def ^:dynamic *test-plan* nil)
 
 (defmulti -run
   "Given a test-plan, perform the tests, returning the test results."

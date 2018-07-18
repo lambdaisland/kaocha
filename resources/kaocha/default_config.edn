@@ -8,4 +8,5 @@
                       :kaocha.testable/id        :unit
                       :kaocha.suite/ns-patterns  ["-test$"]
                       :kaocha.suite/source-paths ["src"]
-                      :kaocha.suite/test-paths   ["test"]}]}}
+                      :kaocha.suite/test-paths   ["test"]}]
+ :kaocha/leaf-types [:kaocha.type/var]}}

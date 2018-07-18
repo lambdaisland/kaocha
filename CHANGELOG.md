@@ -7,6 +7,8 @@
   to decorate `run-testables` for doing things like adding bindings.
 - Reporters now always get the current testable in their clojure.test reporting
   event.
+- Added a progress bar reporter
+- Documentation reporter: show in the documentation output which tests fail.
 
 ## Fixed
 

@@ -12,6 +12,7 @@
    :kaocha.suite/ns-patterns ["^foo$"],
    :kaocha.suite/source-paths ["src"],
    :kaocha.suite/test-paths ["fixtures/a-tests"]}],
+ :kaocha/leaf-types [:kaocha.type/var],
  :kaocha/cli-options
  {:config-file "features/print_config/1/tests.edn",
   :print-config true,

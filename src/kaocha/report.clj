@@ -9,11 +9,6 @@
 
 (def clojure-test-report t/report)
 
-(defmethod t/report :begin-test-suite [m]
-  (println "Test suite" (:kaocha.testable/id m)))
-
-(defmethod t/report :end-test-suite [_])
-
 (defn dispatch-extra-keys
   "Call the original clojure.test/report multimethod when dispatching an unknown
   key. This is to support libraries like nubank/matcher-combinators that extend
@@ -78,6 +73,10 @@
   (t/with-test-out
     (print "]")
     (flush)))
+
+(defmethod dots* :summary [_]
+  (t/with-test-out
+    (println)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -149,7 +148,6 @@
 
 (defmethod result :summary [m]
   (t/with-test-out
-    (println)
     (let [failures (filter (comp #{:fail :error} :type) @history/*history*)]
       (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
         (binding [t/*testing-contexts* testing-contexts
@@ -181,28 +179,57 @@
 
 (def doc-printed-contexts (atom nil))
 
-(defn doc-print-contexts [contexts]
+(defn doc-print-contexts [contexts & [suffix]]
   (let [printed-contexts @doc-printed-contexts]
-    (when (> (count contexts) (count printed-contexts))
+    (let [contexts     (reverse contexts)
+          printed      (reverse printed-contexts)
+          pairwise     (map vector (concat printed (repeat nil)) contexts)
+          nesting      (->> pairwise (take-while (fn [[x y]] (= x y))) count)
+          new-contexts (->> pairwise (drop-while (fn [[x y]] (= x y))) (map last))]
+      (when (seq new-contexts)
+        (doseq [[ctx idx] (map vector new-contexts (range))
+                :let [nesting (+ nesting idx)]]
+          (print (str "\n"
+                      "    "
+                      (apply str (repeat nesting "  "))
+                      ctx))
+          (flush))))
+
+    #_(when (> (count contexts) (count printed-contexts))
+
+
+      (println)
       (doseq [[c1 c2] (map vector (concat printed-contexts
                                           (repeat nil)) contexts)]
         (print (if (= c1 c2)
                  "  "
-                 (str "    " c2 "\n")))))
+                 (str "    " c2)))))
     (reset! doc-printed-contexts contexts)))
 
 (defmulti doc :type)
 (defmethod doc :default [_])
 
+(defmethod doc :begin-test-suite [m]
+  (t/with-test-out
+    (reset! doc-printed-contexts (list))
+    (print "---" (-> m :kaocha/testable :kaocha.testable/id) "---------------------------")
+    (flush)))
+
 (defmethod doc :begin-test-ns [m]
   (t/with-test-out
     (reset! doc-printed-contexts (list))
-    (println "\nTesting" (-> m :kaocha/testable :kaocha.ns/name))))
+    (print (str "\n" (-> m :kaocha/testable :kaocha.ns/name)))
+    (flush)))
+
+(defmethod doc :end-test-ns [m]
+  (t/with-test-out
+    (println)))
 
 (defmethod doc :begin-test-var [m]
   (t/with-test-out
     (let [{:keys [name]} (-> m :var meta)]
-      (println (str "  " name)))))
+      (print (str "\n  " name))
+      (flush))))
 
 (defmethod doc :pass [m]
   (t/with-test-out
@@ -210,7 +237,17 @@
 
 (defmethod doc :error [m]
   (t/with-test-out
-    (doc-print-contexts t/*testing-contexts*)))
+    (doc-print-contexts t/*testing-contexts*)
+    (print (out/colored :red " ERROR"))))
+
+(defmethod doc :fail [m]
+  (t/with-test-out
+    (doc-print-contexts t/*testing-contexts*)
+    (print (out/colored :red " FAIL"))))
+
+(defmethod doc :summary [m]
+  (t/with-test-out
+    (println)))
 
 (defn debug [m]
   (prn (cond-> (select-keys m [:type :var :ns])

@@ -8,6 +8,7 @@
 
 (defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test wrap] :as testable} test-plan]
   (let [initial-report @t/*report-counters*
+        get-result #(result/diff-test-result initial-report @t/*report-counters*)
         test (reduce #(%2 %1) test wrap)]
     (binding [t/*testing-vars* (conj t/*testing-vars* var)]
       (t/do-report {:type :begin-test-var, :var var})
@@ -19,19 +20,21 @@
                           :message "Uncaught exception, not in assertion."
                           :expected nil
                           :actual e
-                          :kaocha.result/exception e
-                          :kaocha/testable testable})))
+                          :kaocha.result/exception e})))
         (catch Throwable e
           (t/do-report {:type :error
                         :message "Uncaught exception, not in assertion."
                         :expected nil
                         :actual e
-                        :kaocha.result/exception e
-                        :kaocha/testable testable})))
-      (t/do-report {:type :end-test-var, :var var}))
-    (merge testable
-           {:kaocha.result/count 1}
-           (result/diff-test-result initial-report @t/*report-counters*))))
+                        :kaocha.result/exception e}))))
+    (let [{::result/keys [pass error fail] :as result} (get-result)]
+      (when (= pass error fail 0)
+        (t/do-report {:type :fail
+                      :message "Test ran without assertions."
+                      :expected '(is ...)
+                      :actual nil}))
+      (t/do-report {:type :end-test-var, :var var})
+      (merge testable {:kaocha.result/count 1} (get-result)))))
 
 (s/def :kaocha.type/var (s/keys :req [:kaocha.testable/type
                                       :kaocha.testable/id
