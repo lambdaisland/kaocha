@@ -5,7 +5,8 @@
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]
             [clojure.string :as str]
-            [kaocha.history :as history]))
+            [kaocha.history :as history]
+            [kaocha.testable :as testable]))
 
 (def clojure-test-report t/report)
 
@@ -107,13 +108,15 @@
   in :testing-vars as a list, then the source file and line of current
   assertion."
   [{:keys [file line testing-vars kaocha/testable] :as m}]
-  (str
-   ;; Uncomment to include namespace in failure report:
-   ;;(ns-name (:ns (meta (first *testing-vars*)))) "/ "
-   (if (seq testing-vars)
-     (reverse (map #(:name (meta %)) testing-vars))
-     (name (:kaocha.testable/id testable)))
-   " (" file ":" line ")"))
+  (let [file (or (some-> testable ::testable/meta :file) file)
+        line (or (some-> testable ::testable/meta :line) line)]
+    (str
+     ;; Uncomment to include namespace in failure report:
+     ;;(ns-name (:ns (meta (first *testing-vars*)))) "/ "
+     (if (seq testing-vars)
+       (reverse (map #(:name (meta %)) testing-vars))
+       (name (:kaocha.testable/id testable)))
+     " (" file ":" line ")")))
 
 (defn- print-output [m]
   (let [buffer (get-in m [:kaocha/testable ::capture/buffer])

@@ -118,6 +118,6 @@
       result)))
 
 (defn test-seq [testable]
-  (cons testable (mapcat test-seq (or (:kaocha/tests testable)
-                                      (:kaocha.test-plan/tests testable)
-                                      (:kaocha.result/tests testable)))))
+  (cons testable (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
+                                                     (:kaocha.test-plan/tests testable)
+                                                     (:kaocha.result/tests testable))))))

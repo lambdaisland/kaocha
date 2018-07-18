@@ -52,7 +52,7 @@
       (is (match? {:exit 1 :err ""} result))
       (is (re-seq #"\[\(E\)\]
 
-ERROR in \(exception-outside-is-test\) \(exception_outside_is.clj:4\)
+ERROR in \(exception-outside-is-test\) \(ddd/exception_outside_is.clj:4\)
 Uncaught exception, not in assertion.
 Exception: java.lang.Exception: booo" (:out result)))
       (is (re-seq #"1 test vars, 1 assertions, 1 errors, 0 failures\." (:out result))))))
