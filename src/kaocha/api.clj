@@ -49,8 +49,8 @@
       (let [config     (plugin/run-hook :kaocha.hooks/config config)
             fail-fast? (:kaocha/fail-fast? config)
             color?     (:kaocha/color? config)
-            test-plan  (test-plan config)
             reporter   (reporter config)
+            test-plan  (test-plan config)
             history    (atom [])]
         (binding [testable/*fail-fast?*   fail-fast?
                   history/*history*       history
@@ -62,7 +62,8 @@
                                     (t/do-report (history/clojure-test-summary))))
               (let [test-plan       (plugin/run-hook :kaocha.hooks/pre-run test-plan)
                     test-plan-tests (:kaocha.test-plan/tests test-plan)
-                    result-tests    (testable/run-testables test-plan-tests test-plan)
+                    run-testables   (plugin/run-hook :kaocha.hooks/wrap-run testable/run-testables test-plan)
+                    result-tests    (run-testables test-plan-tests test-plan)
                     result          (plugin/run-hook :kaocha.hooks/post-run
                                                      (-> test-plan
                                                          (dissoc :kaocha.test-plan/tests)

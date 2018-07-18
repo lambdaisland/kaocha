@@ -33,19 +33,15 @@
            :parse-fn #(Integer/parseInt %)]))
 
   (config [config]
-    (let [randomize? (get-in config [:kaocha/cli-options :randomize])]
-      (merge {::randomize? true}
-             (cond
-               (::seed config)
-               config
-
-               (get-in config [:kaocha/cli-options :seed])
-               (assoc config ::seed (get-in config [:kaocha/cli-options :seed]))
-
-               :else
-               (assoc config ::seed (rand-int Integer/MAX_VALUE)))
-             (when (false? randomize?)
-               {::randomize? false}))))
+    (let [randomize? (get-in config [:kaocha/cli-options :randomize])
+          seed       (get-in config [:kaocha/cli-options :seed])
+          config     (merge {::randomize? true}
+                            config
+                            (when (some? randomize?)
+                              {::randomize? randomize?}))]
+      (if (::randomize? config)
+        (merge {::seed (or seed (rand-int Integer/MAX_VALUE))} config)
+        config)))
 
   (post-load [test-plan]
     (if (::randomize? test-plan)

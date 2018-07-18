@@ -23,10 +23,10 @@
                  :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
                                            :kaocha.testable/id   :foo.hello-test
                                            :kaocha.test-plan/tests
-                                           [{:kaocha.testable/id :foo.hello-test/pass-2}
+                                           [{:kaocha.testable/id :foo.hello-test/pass-1}
+                                            {:kaocha.testable/id :foo.hello-test/fail-1}
                                             {:kaocha.testable/id :foo.hello-test/pass-3}
-                                            {:kaocha.testable/id :foo.hello-test/pass-1}
-                                            {:kaocha.testable/id :foo.hello-test/fail-1}]}]}
+                                            {:kaocha.testable/id :foo.hello-test/pass-2}]}]}
 
                 (plugin/run-hook :kaocha.hooks/post-load
                                  (-> test-suite
@@ -38,10 +38,10 @@
                  :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
                                            :kaocha.testable/id   :foo.hello-test
                                            :kaocha.test-plan/tests
-                                           [{:kaocha.testable/id :foo.hello-test/pass-1}
-                                            {:kaocha.testable/id :foo.hello-test/pass-2}
+                                           [{:kaocha.testable/id :foo.hello-test/pass-2}
                                             {:kaocha.testable/id :foo.hello-test/pass-3}
-                                            {:kaocha.testable/id :foo.hello-test/fail-1}]}]}
+                                            {:kaocha.testable/id :foo.hello-test/fail-1}
+                                            {:kaocha.testable/id :foo.hello-test/pass-1}]}]}
 
                 (plugin/run-hook :kaocha.hooks/post-load
                                  (-> test-suite

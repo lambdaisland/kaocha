@@ -23,34 +23,6 @@
            args)))
 
 (deftest command-line-runner-test
-  (testing "it lets you specifiy the test suite name"
-    (is (match? {:exit 0
-                 :out  "[(.)]\n1 test vars, 1 assertions, 0 failures.\n"
-                 :err  ""}
-                (invoke-runner "--config-file" "fixtures/tests.edn" "a"))))
-
-  (testing "it can print the config"
-    (is (match? {:exit 0
-                 :out  '{:kaocha.plugin.randomize/randomize? false
-                         :kaocha/reporter                    [kaocha.report/dots]
-                         :kaocha/color?                      true
-                         :kaocha/fail-fast?                  false
-                         :kaocha/plugins                     [:kaocha.plugin/randomize
-                                                              :kaocha.plugin/filter]
-                         :kaocha/tests
-                         [{:kaocha.testable/type      :kaocha.type/suite
-                           :kaocha.testable/id        :aaa
-                           :kaocha.suite/ns-patterns  ["^foo$"]
-                           :kaocha.suite/source-paths ["src"]
-                           :kaocha.suite/test-paths   ["fixtures/a-tests"]}]}
-                 :err  ""}
-                (-> (invoke-with-config {:tests [{:id          :aaa
-                                                  :test-paths  ["fixtures/a-tests"]
-                                                  :ns-patterns ["^foo$"]}]}
-                                        "--print-config")
-
-                    (update :out read-string)))))
-
   (testing "it elegantly reports when no tests are found"
     (is (match? (invoke-with-config {:color? false
                                      :tests  [{:id          :empty
@@ -74,17 +46,6 @@
                  :out  "No such suite: :foo, valid options: :a, :b.\n"
                  :exit 254}
                 (invoke-runner "--config-file" "fixtures/tests.edn" "--no-color" "foo"))))
-
-  (testing "Invalid reporter"
-    (is (match? {:exit 253
-                 :out  ""
-                 :err  "\u001b[31mERROR: \u001b[0mFailed to resolve reporter var: kaocha/does-not-exist\n"}
-                (invoke-runner "--reporter" "kaocha/does-not-exist")))
-
-    (is (match? {:exit 253
-                 :out  ""
-                 :err  "\u001b[31mERROR: \u001b[0mFailed to resolve reporter var: does/not-exist\n"}
-                (invoke-runner "--reporter" "does/not-exist"))))
 
   (testing "Exception outside `is` with fail-fast"
     (let [result (invoke-runner "--config-file" "fixtures/with_exception.edn" "outside-is" "--fail-fast")]

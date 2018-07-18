@@ -1,0 +1,19 @@
+{:kaocha.plugin.randomize/randomize? false,
+ :kaocha/reporter [kaocha.report/dots],
+ :kaocha/color? true,
+ :kaocha/fail-fast? false,
+ :kaocha/plugins
+ [:kaocha.plugin/randomize
+  :kaocha.plugin/filter
+  :kaocha.plugin/capture-output],
+ :kaocha/tests
+ [{:kaocha.testable/type :kaocha.type/suite,
+   :kaocha.testable/id :aaa,
+   :kaocha.suite/ns-patterns ["^foo$"],
+   :kaocha.suite/source-paths ["src"],
+   :kaocha.suite/test-paths ["fixtures/a-tests"]}],
+ :kaocha/cli-options
+ {:config-file "features/print_config/1/tests.edn",
+  :print-config true,
+  :randomize false},
+ :kaocha.plugin.capture-output/capture-output? true}

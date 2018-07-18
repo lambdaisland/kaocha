@@ -1,3 +1,27 @@
 #!/bin/bash
 
-colordiff -u <(cat features/$1/out) <(clj -A:dev:test --config-file features/$1/tests.edn `cat features/$1/args`)
+bin/run_feature "$@" 1>/tmp/kaocha_actual_out 2>/tmp/kaocha_actual_err
+
+RESULT=0
+
+if [[ -f "features/$1/out" ]]; then
+    colordiff -u "features/$1/out" /tmp/kaocha_actual_out
+else
+    colordiff -u <(echo -n) /tmp/kaocha_actual_out
+fi
+
+if [ $? -ne 0 ]; then
+    RESULT=1
+fi
+
+if [[ -f "features/$1/err" ]]; then
+    colordiff -u "features/$1/err" /tmp/kaocha_actual_err
+else
+    colordiff -u <(echo -n) /tmp/kaocha_actual_err
+fi
+
+if [ $? -ne 0 ]; then
+    RESULT=1
+fi
+
+exit $RESULT

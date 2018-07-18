@@ -26,6 +26,7 @@
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
 - [ ] Provide inspect plugin with e.g. --print-test-ids
 - [ ] Watch changes to tests.edn
+- [ ] Improve matcher-combinator support, maybe as a separate package/plugin?
 
 #+BEGIN_SRC clojure
   ;; config

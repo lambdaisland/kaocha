@@ -1,6 +1,7 @@
 (ns kaocha.monkey-patch
   (:require [clojure.test :as t]
             [clojure.string :as str]
+            [kaocha.testable :as testable]
             [kaocha.core-ext :refer :all]))
 
 (defn- test-file-and-line [stacktrace test-fn]
@@ -25,7 +26,8 @@
 (alter-var-root #'t/do-report
                 (fn [_]
                   (fn [m]
-                    (let [test-fn    (:kaocha.var/test (:kaocha/testable m))
+                    (let [m          (merge {:kaocha/testable testable/*current-testable*} m)
+                          test-fn    (:kaocha.var/test (:kaocha/testable m))
                           stacktrace (.getStackTrace (if (exception? (:actual m))
                                                        (:actual m)
                                                        (Thread/currentThread)))
@@ -44,7 +46,7 @@
                       (t/report
                        (case (:type m)
                          :fail     (merge file-and-line m)
-                         :mismatch (merge file-and-line m)  ; matcher-combinators
+                         :mismatch (merge file-and-line m) ; matcher-combinators
                          :error    (if (-> m :actual ex-data :kaocha/fail-fast)
                                      (do
                                        (throw (:actual m)))

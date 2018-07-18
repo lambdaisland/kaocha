@@ -63,6 +63,8 @@
   :args (s/cat :testable :kaocha/testable)
   :ret :kaocha.test-plan/testable)
 
+(def ^:dynamic *current-testable* nil)
+
 (defmulti -run
   "Given a test-plan, perform the tests, returning the test results."
   (fn [testable test-plan]
@@ -84,7 +86,8 @@
   implementation."
   [testable test-plan]
   (load-type+validate testable)
-  (-run testable test-plan))
+  (binding [*current-testable* testable]
+    (-run testable test-plan)))
 
 (s/fdef run
         :args (s/cat :testable :kaocha.test-plan/testable

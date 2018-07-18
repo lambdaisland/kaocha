@@ -1,27 +1,27 @@
-(ns kaocha.output)
+(ns kaocha.output
+  (:require [io.aviso.ansi :as ansi]))
 
 (def ^:dynamic *colored-output* true)
 
-(def ESC \u001b)
-(def CSI (str ESC \[))
+(def colors
+  {:black   ansi/black-font
+   :red     ansi/red-font
+   :green   ansi/green-font
+   :yellow  ansi/yellow-font
+   :blue    ansi/blue-font
+   :magenta ansi/magenta-font
+   :cyan    ansi/cyan-font
+   :white   ansi/white-font})
 
-(def colors [:black :red :green :yellow :blue :magenta :cyan :white])
-
-(def fg* (into {} (map-indexed (fn [idx color] [color (str CSI (+ 30 idx) "m")]) colors)))
-(def bg* (into {} (map-indexed (fn [idx color] [color (str CSI (+ 40 idx) "m")]) colors)))
-
-(def reset (str CSI "0m"))
-(def bold (str CSI "1m"))
-
-(defn colored [c s]
+(defn colored [color string]
   (if *colored-output*
-    (str (fg* c) s reset)
-    s))
+    (str (get colors color) string ansi/reset-font)
+    string))
 
 (defn warn [& args]
   (binding [*out* *err*]
-    (println (apply str (colored :red "WARNING: ") args))))
+    (println (apply str ansi/red-font "WARNING: " ansi/reset-font args))))
 
 (defn error [& args]
   (binding [*out* *err*]
-    (println (apply str (colored :red "ERROR: ") args))))
+    (println (apply str ansi/red-font "ERROR: " ansi/reset-font args))))

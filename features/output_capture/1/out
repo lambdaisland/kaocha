@@ -1,0 +1,10 @@
+Running with --seed 860726677
+[([31mF[m.)]
+
+FAIL in (stdout-fail-test) (has_output_test.clj:10)
+expected: (= :same :not-same)
+  actual: (not (= :same :not-same))
+------ Test output -------------------------------------
+Bu yi le hu?
+--------------------------------------------------------
+[31m2 test vars, 2 assertions, 1 failures.[m

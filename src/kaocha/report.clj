@@ -1,5 +1,6 @@
 (ns kaocha.report
-  (:require [kaocha.output :as out :refer [colored]]
+  (:require [kaocha.output :as out]
+            [kaocha.plugin.capture-output :as capture]
             [kaocha.stacktrace :as stack]
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]
@@ -22,6 +23,7 @@
   (when-not (contains? #{:pass
                          :fail
                          :error
+                         ;; :mismatch
                          :begin-test-suite
                          :end-test-suite
                          :begin-test-ns
@@ -36,13 +38,46 @@
 
 (defmulti dots* :type)
 (defmethod dots* :default [_])
-(defmethod dots* :pass [_] (print ".") (flush))
-(defmethod dots* :fail [_] (print (colored :red "F")) (flush))
-(defmethod dots* :error [_] (print (colored :red "E")) (flush))
-(defmethod dots* :begin-test-ns [_] (print "(") (flush))
-(defmethod dots* :end-test-ns [_] (print ")") (flush))
-(defmethod dots* :begin-test-suite [_] (print "[") (flush))
-(defmethod dots* :end-test-suite [_] (print "]") (flush))
+
+(defmethod dots* :pass [_]
+  (t/with-test-out
+    (print ".")
+    (flush)))
+
+(defmethod dots* :mismatch [_]
+  (t/with-test-out
+    (print (out/colored :red "F"))
+    (flush)))
+
+(defmethod dots* :fail [_]
+  (t/with-test-out
+    (print (out/colored :red "F"))
+    (flush)))
+
+(defmethod dots* :error [_]
+  (t/with-test-out
+    (print (out/colored :red "E"))
+    (flush)))
+
+(defmethod dots* :begin-test-ns [_]
+  (t/with-test-out
+    (print "(")
+    (flush)))
+
+(defmethod dots* :end-test-ns [_]
+  (t/with-test-out
+    (print ")")
+    (flush)))
+
+(defmethod dots* :begin-test-suite [_]
+  (t/with-test-out
+    (print "[")
+    (flush)))
+
+(defmethod dots* :end-test-suite [_]
+  (t/with-test-out
+    (print "]")
+    (flush)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -53,12 +88,15 @@
 (defmethod report-counters :pass [m]
   (t/inc-report-counter :pass))
 
+;; As long as we pass :mismatch events on to matcher-combinators they will get
+;; reported as failures there
+;; (defmethod report-counters :mismatch [m] (t/inc-report-counter :fail))
+
 (defmethod report-counters :fail [m]
   (t/inc-report-counter :fail))
 
 (defmethod report-counters :error [m]
   (t/inc-report-counter :error))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -78,47 +116,56 @@
      (name (:kaocha.testable/id testable)))
    " (" file ":" line ")"))
 
+(defn- print-output [m]
+  (let [buffer (get-in m [:kaocha/testable ::capture/buffer])
+        out (capture/read-buffer buffer)]
+    (when (seq out)
+      (println "------ Test output -------------------------------------")
+      (println (str/trim-newline out))
+      (println "--------------------------------------------------------"))))
+
 (defn- summary-fail [{:keys [testing-contexts testing-vars] :as m}]
-  (t/with-test-out
-    (println "\nFAIL in" (testing-vars-str m))
-    (when (seq testing-contexts)
-      (println (str/join " " testing-contexts)))
-    (when-let [message (:message m)]
-      (println message))
-    (println "expected:" (pr-str (:expected m)))
-    (println "  actual:" (pr-str (:actual m)))))
+  (println "\nFAIL in" (testing-vars-str m))
+  (when (seq testing-contexts)
+    (println (str/join " " testing-contexts)))
+  (when-let [message (:message m)]
+    (println message))
+  (println "expected:" (pr-str (:expected m)))
+  (println "  actual:" (pr-str (:actual m)))
+  (print-output m))
 
 (defn- summary-error [{:keys [testing-contexts testing-vars] :as m}]
-  (t/with-test-out
-    (println "\nERROR in" (testing-vars-str m))
-    (when (seq testing-contexts)
-      (println (str/join " " testing-contexts)))
-    (when-let [message (:message m)]
-      (println message))
-    (print "Exception: ")
-    (let [actual (:actual m)]
-      (if (instance? Throwable actual)
-        (stack/print-cause-trace actual t/*stack-trace-depth*)
-        (prn actual)))))
+  (println "\nERROR in" (testing-vars-str m))
+  (when (seq testing-contexts)
+    (println (str/join " " testing-contexts)))
+  (when-let [message (:message m)]
+    (println message))
+  (print-output m)
+  (print "Exception: ")
+  (let [actual (:actual m)]
+    (if (instance? Throwable actual)
+      (stack/print-cause-trace actual t/*stack-trace-depth*)
+      (prn actual))))
 
 (defmethod result :summary [m]
-  (println)
-  (let [failures (filter (comp #{:fail :error} :type) @history/*history*)]
-    (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
-      (binding [t/*testing-contexts* testing-contexts
-                t/*testing-vars* testing-vars]
-        (case (:type m)
-          :fail (summary-fail m)
-          :error (summary-error m)))))
+  (t/with-test-out
+    (println)
+    (let [failures (filter (comp #{:fail :error} :type) @history/*history*)]
+      (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
+        (binding [t/*testing-contexts* testing-contexts
+                  t/*testing-vars* testing-vars]
+          (case (:type m)
+            :fail (summary-fail m)
+            :error (summary-error m)))))
 
-  (let [{:keys [test pass fail error] :or {pass 0 fail 0 error 0}} m
-        passed? (pos-int? (+ fail error))]
-    (println (out/colored (if passed? :red :green)
-                          (str test " test vars, "
-                               (+ pass fail error) " assertions, "
-                               (when (pos-int? error)
-                                 (str error " errors, "))
-                               fail " failures.")))))
+    (let [{:keys [test pass fail error] :or {pass 0 fail 0 error 0}} m
+          passed? (pos-int? (+ fail error))]
+      (println (out/colored (if passed? :red :green)
+                            (str test " test vars, "
+                                 (+ pass fail error) " assertions, "
+                                 (when (pos-int? error)
+                                   (str error " errors, "))
+                                 fail " failures."))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

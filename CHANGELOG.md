@@ -1,10 +1,22 @@
 # master
 
+## Added
+
+- Capture output, this is enabled by default. Only output of failing tests is
+  printed. This also introduced a new plugin hook, `wrap-run`, which allows you
+  to decorate `run-testables` for doing things like adding bindings.
+- Reporters now always get the current testable in their clojure.test reporting
+  event.
+
 ## Fixed
 
 - The randomize plugin could cause an exception because the
   sort-by-random-number-generator wasn't stable (it violated the contract of a
-  comparator). Instead assign each testable a sort key first, then sort by those.
+  comparator). Instead assign each testable a sort key first, then sort by
+  those. This does mean seeds from before this change will no longer produce the
+  same result.
+- When specifying an invalid reporter var, error before trying to load tests.
+- Correctly count matcher-combinator mismatch failures when exiting early (Ctrl-C).
 
 # 7b79fad92d (2018-06-16)
 

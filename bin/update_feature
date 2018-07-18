@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bin/run_feature "$@" 1>features/$1/out 2>features/$1/err

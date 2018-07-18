@@ -2,7 +2,5 @@
 {:plugins [:kaocha.plugin/profiling]
  :tests [{:id         :unit
           :test-paths ["test/shared" "test/unit"]}
-         {:id         :api
-          :test-paths ["test/shared" "test/api"]}
          {:id         :integration
           :test-paths ["test/shared" "test/integration"]}]}
