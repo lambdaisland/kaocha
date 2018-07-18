@@ -29,3 +29,4 @@
 - [ ] Improve matcher-combinator support, maybe as a separate package/plugin?
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Colored diffs in report failures
+- [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
