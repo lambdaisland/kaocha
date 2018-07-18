@@ -1,2 +1,2 @@
 #!/bin/bash
-clj -A:dev:test "$@"
+clojure -A:dev:test "$@"
