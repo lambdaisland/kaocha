@@ -10,7 +10,8 @@
   hawk                        {:mvn/version "0.2.11"}
   expound                     {:mvn/version "0.6.0"}
   aero                        {:mvn/version "1.1.3"}
-  progrock                    {:mvn/version "0.1.2"}}
+  progrock                    {:mvn/version "0.1.2"}
+  io.aviso/pretty             {:mvn/version "0.1.34"}}
 
  :paths ["src" "resources"]
 
