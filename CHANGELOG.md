@@ -20,6 +20,11 @@
 - When specifying an invalid reporter var, error before trying to load tests.
 - Correctly count matcher-combinator mismatch failures when exiting early (Ctrl-C).
 
+# Changed
+
+- When `fail-fast` is true, quit immediately when a load error is detected,
+  instead of only failing when the namespace runs.
+
 # 7b79fad92d (2018-06-16)
 
 ## Added

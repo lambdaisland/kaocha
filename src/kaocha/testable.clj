@@ -98,7 +98,16 @@
 (defn load-testables
   "Load a collection of testables, returing a test-plan collection"
   [testables]
-  (doall (map #(cond-> % (not (::skip %)) load) testables)))
+  (loop [result []
+         [test & testables] testables]
+    (if test
+      (let [r (if (::skip test)
+                test
+                (load test))]
+        (if (and *fail-fast?* (:kaocha.test-plan/load-error r))
+          (reduce into [[r] result testables]) ;; move failing test to the front
+          (recur (conj result r) testables)))
+      result)))
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."

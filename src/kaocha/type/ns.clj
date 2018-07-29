@@ -52,19 +52,18 @@
     @result))
 
 (defmethod testable/-run :kaocha.type/ns [testable test-plan]
-  (let [do-report #(t/do-report (merge {:ns              (:kaocha.ns/ns testable)
-                                        :kaocha/testable testable}
-                                       %))]
+  (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
     (binding [t/*report-counters* (ref t/*initial-report-counters*)]
       (do-report {:type :begin-test-ns})
       (if-let [load-error (:kaocha.test-plan/load-error testable)]
         (do
-          (do-report {:type     :error
-                      :message  "Failed to load namespace."
-                      :expected nil
-                      :actual   load-error})
+          (do-report {:type                    :error
+                      :message                 "Failed to load namespace."
+                      :expected                nil
+                      :actual                  load-error
+                      :kaocha.result/exception load-error})
           (do-report {:type :end-test-ns})
-          assoc testable :kaocha.result/error 1)
+          (assoc testable :kaocha.result/error 1))
         (let [ns-meta         (:kaocha.testable/meta testable)
               once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
               tests           (run-tests testable test-plan once-fixture-fn)
