@@ -50,7 +50,6 @@
                          :fail     (merge file-and-line m)
                          :mismatch (merge file-and-line m) ; matcher-combinators
                          :error    (if (-> m :actual ex-data :kaocha/fail-fast)
-                                     (do
-                                       (throw (:actual m)))
+                                     (throw (:actual m))
                                      (merge file-and-line m))
                          m))))))

@@ -24,6 +24,9 @@
 
 - When `fail-fast` is true, quit immediately when a load error is detected,
   instead of only failing when the namespace runs.
+- Suite names can now be specified on the CLI with keyword syntax, i.e.
+  `bin/kaocha :unit`
+
 
 # 7b79fad92d (2018-06-16)
 

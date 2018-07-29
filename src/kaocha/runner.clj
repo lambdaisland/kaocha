@@ -59,9 +59,9 @@
         {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
         config                                     (-> config
                                                        (config/apply-cli-opts options)
-                                                       (config/apply-cli-args arguments))
+                                                       (config/apply-cli-args (map parse-kw arguments)))
         suites                                     (into #{} (map :kaocha.testable/id) (:kaocha/tests config))
-        unknown-suites                             (set/difference (into #{} (map keyword) arguments) (set suites))]
+        unknown-suites                             (set/difference (into #{} (map parse-kw) arguments) (set suites))]
 
     (plugin/with-plugins plugin-chain
       (cond

@@ -65,7 +65,7 @@
     (update config
             :kaocha/tests
             (fn [tests]
-              (mapv #(if (contains? (set args) (name (:kaocha.testable/id %)))
+              (mapv #(if (contains? (set args) (:kaocha.testable/id %))
                        %
                        (assoc % :kaocha.testable/skip true))
                     tests)))
