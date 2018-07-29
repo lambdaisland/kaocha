@@ -22,6 +22,8 @@
 
 # Changed
 
+- When running in watch mode, first re-run failed tests. Only when they pass do
+  a full re-run.
 - When `fail-fast` is true, quit immediately when a load error is detected,
   instead of only failing when the namespace runs.
 - Suite names can now be specified on the CLI with keyword syntax, i.e.
