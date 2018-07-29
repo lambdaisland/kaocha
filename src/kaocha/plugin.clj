@@ -1,7 +1,7 @@
 (ns kaocha.plugin
   (:require [kaocha.output :as out]))
 
-(def ^:dynamic *current-chain*)
+(def ^:dynamic *current-chain* [])
 
 (defmacro with-plugins [chain & body]
   `(binding [*current-chain* ~chain] ~@body))

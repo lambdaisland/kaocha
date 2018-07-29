@@ -16,7 +16,7 @@
       (doseq [test (testable/test-seq results)]
         (if (and (not (seq (::result/tests test))) (result/failed? test))
           (let [id (str (::testable/id test))]
-            (println "clj -A:dev:test"
+            (println "bin/kaocha"
                      (str/join
                       " "
                       (mapcat (fn [[k v]]
