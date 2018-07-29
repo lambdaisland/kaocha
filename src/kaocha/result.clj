@@ -34,6 +34,9 @@
   (let [{::keys [error fail]} (testable-totals testable)]
     (or (> error 0) (> fail 0))))
 
+(defn failed-one? [{::keys [error fail] :or {error 0 fail 0}}]
+  (or (> error 0) (> fail 0)))
+
 (defn totals->clojure-test-summary [totals]
   {:type :summary
    :test (::count totals)
