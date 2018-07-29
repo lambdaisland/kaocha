@@ -1,11 +1,13 @@
 (ns kaocha.watch
   (:require [hawk.core :as hawk]
             [kaocha.api :as api]
+            [kaocha.result :as result]
             [clojure.core.async :refer [chan <!! put! poll!]]
             [clojure.java.io :as io]
             [clojure.tools.namespace.file :as ctn.file]
             [clojure.tools.namespace.parse :as ctn.parse]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [kaocha.testable :as testable]))
 
 (defn- ns-file-name [sym ext]
   (let [base (-> (name sym)
@@ -30,6 +32,12 @@
     (catch Throwable t
       (.printStackTrace t))))
 
+(defn- try-run [config]
+  (try
+    (api/run config)
+    (catch Throwable t
+      (println "Fatal error in test run" t))))
+
 (defn run [config]
   (let [watch-paths (into #{} (comp (remove :kaocha.testable/skip)
                                     (map (juxt :kaocha.suite/test-paths :kaocha.suite/source-paths))
@@ -40,14 +48,23 @@
         watch-chan  (chan)]
     (future
       (try
-        (loop [reload []]
+        (loop [reload []
+               focus  nil]
           (run! reload-file! reload)
-          (try
-            (api/run config)
-            (catch Throwable t
-              (println "Fatal error in test run" t)))
-          (let [f (<!! watch-chan)]
-            (recur (into #{} (cons f (take-while identity (repeatedly #(poll! watch-chan))))))))
+          (when (seq focus)
+            (println "Focusing on failed tests:" (str/join ", " focus)))
+          (let [config' (cond-> config (seq focus) (assoc :kaocha.filter/focus focus))
+                result (try-run config')]
+            (if (and (seq focus) (not (result/failed? result)))
+              (do
+                (println "Failed tests pass, re-running all tests.")
+                (recur (take-while identity (repeatedly #(poll! watch-chan))) nil))
+              (let [f (<!! watch-chan)]
+                (recur (into #{} (cons f (take-while identity (repeatedly #(poll! watch-chan)))))
+                       (->> result
+                            testable/test-seq
+                            (filter result/failed-one?)
+                            (map ::testable/id)))))))
         (catch Throwable t
           (.printStackTrace t))
         (finally
