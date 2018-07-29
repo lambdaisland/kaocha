@@ -23,7 +23,7 @@ echo "Starting cider/cider-nrepl $CIDER_VERSION on port $NREPL_PORT"
 
 bash <<EOF &
   while ! nc -z localhost $NREPL_PORT ; do echo -n '.' ; sleep 1; done
-  emacsclient -e '(cider-connect "localhost" "'${NREPL_PORT}'" "'`pwd`'")'
+  emacsclient -e '(cider-connect (list :host "localhost" :port "'${NREPL_PORT}'" :project-dir "'`pwd`'"))'
 EOF
 
 EMACSCLIENT=$!
@@ -34,11 +34,11 @@ finish() {
 
 trap finish EXIT
 
-clj                                                                      \
+clj "$@"                                                                 \
     -A:dev                                                               \
     -Sdeps '{:deps {lambdaisland/nrepl {:mvn/version "0.2.0"}
                     cider/cider-nrepl {:mvn/version '$CIDER_VERSION'}
-                    refactor-nrepl {:mvn/version '$CLJR_VERSION'}}}' \
+                    refactor-nrepl {:mvn/version '$CLJR_VERSION'}}}'     \
     -m lambdaisland.nrepl.main                                           \
     --port $NREPL_PORT                                                   \
     --middleware cider.nrepl/cider-middleware                            \
