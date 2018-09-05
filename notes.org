@@ -1,26 +1,10 @@
-- [X] Watch source paths
-- [X] skip / focus by metadata
-  :skip-meta
-  :exclude-meta
-  :focus-meta
-- [X] skip / focus nss/vars
-  :skip-meta
-  :exclude-meta
-  :focus-meta
-- [X] profiling
-- [X] capture output
-- [X] wrap reporters in t/with-test-out
 - [ ] main namespace for cloverage
 - [ ] TAP reporter
 - [ ] parallelism
 - [ ] watch/api mode: undef removed vars
-- [ ] watch: re-run failed tests first
-- [X] signal load/parse errors as test failures
-- [X] print config / test plan / test result
 - [ ] make stack trace filtering configurable
-- [X] provide #kaocha convenience reader literal for config file
-- [ ] ClojureScript type
-- [ ] Midje type
+- [-] ClojureScript type
+- [-] Midje type
 - [ ] Expectations type
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
@@ -30,3 +14,72 @@
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Colored diffs in report failures
 - [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
+
+
+- [X] Watch source paths
+- [X] skip / focus by metadata
+  :skip-meta
+  :exclude-meta
+  :focus-meta
+- [X] skip / focus nss/vars.
+  :skip-meta
+  :exclude-meta
+  :focus-meta
+- [X] profiling
+- [X] capture output
+- [X] wrap reporters in t/with-test-out
+- [X] signal load/parse errors as test failures
+- [X] print config / test plan / test result
+- [X] provide #kaocha convenience reader literal for config file
+- [X] watch: re-run failed tests first
+
+* Classpath mess
+
+Kaocha relies on the ability to dynamically add directories to the classpath.
+There are a number of libraries that allow you to do this, but none of them work
+reliably across build tools and java versions.
+
+I [[https://clojureverse.org/t/dynamically-adding-to-the-classpath-in-a-post-java-9-world-help/2520][signalled this on ClojureVerse]] but got very little usable input. Still the
+post is useful for illustrating the problem. I might post there if I manage to
+better understand how this should be solved.
+
+Java 9 introduced the [[http://openjdk.java.net/projects/jigsaw/][Jigsaw]] project which introduces a new first class "module"
+concept to Java, and a "module path". Modules export package and depend on other
+modules. In a post-jigsaw world modules can only "see" types from modules they
+explicitly depend upon. This might be part of the problem.
+
+Java 9 also contains [[https://dzone.com/articles/java-19-reflection-and-package-access-changes][Reflection changes]], which makes the approach that
+Pomegranate/Dynapath used before (making URLClassLoader modifiable) no longer
+possible. In Java 9 they cause a warning, in Java 10 they fail irrevocably. This
+is also a result of Jigsaw.
+
+[[https://docs.oracle.com/javase/8/docs/technotes/tools/findingclasses.html][How classes are found (oracle.com)]]
+
+  Actually not that much useful stuff in here
+
+[[http://openjdk.java.net/projects/jigsaw/spec/sotms/][Good general overview of Jigsaw]]
+
+  - Class::forName continues to work *if* the package of the class that is
+    requested (I think? "The provider class") is known to the
+    ContextClassLoader. (i.e. thread-bound?)
+    -> on top of this code that reflects upon some type is considered in a
+       module which can read the module that contains the type
+
+  - Every classloader has its own "unnamed" module
+  - Classes loaded from the regular classpath end up in the unnamed module of
+    the AppClassLoader
+
+[[https://blog.andresteingress.com/2017/09/29/java-9-modules.html][Java 9 Modules (blog.andresteingress.com)]]
+
+
+Looking into what Clojure does
+
+2c2ed386ed0f6f875342721bdaace908e298c7f3
+http://github.com/clojure/clojure/commit/2c2ed386ed0f6f875342721bdaace908e298c7f3
+"hotfix for classloading"
+
+http://github.com/clojure/clojure/commit/a4142dc9c2e107528b90bb885ed5e8d92fd3f621
+"made eval use ephemeral classloader in all cases"
+
+
+Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seems to fix this.

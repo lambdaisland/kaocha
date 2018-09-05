@@ -12,7 +12,7 @@
   "Returns a seq of classloaders, with the tip of the hierarchy first.
    Uses the current thread context ClassLoader as the tip ClassLoader
    if one is not provided."
-  ([] (classloader-hierarchy (.. Thread currentThread getContextClassLoader)))
+  ([] (classloader-hierarchy (deref clojure.lang.Compiler/LOADER)))
   ([tip]
    (->> tip
         (iterate #(.getParent %))
@@ -35,20 +35,18 @@
      (throw (IllegalStateException. (str classloader " is not a modifiable classloader")))))
   ([jar-or-dir]
    (let [classloaders (classloader-hierarchy)]
-     (if-let [cl (last (filter modifiable-classloader? classloaders))]
-       (add-classpath jar-or-dir cl)
+     (if-let [cl (filter modifiable-classloader? classloaders)]
+       ;; Add to all classloaders that allow it. Brute force but doesn't hurt.
+       (run! #(add-classpath jar-or-dir %) cl)
        (throw (IllegalStateException. (str "Could not find a suitable classloader to modify from "
                                            classloaders)))))))
 
 ;; /Pomegranate
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn maybe-add-dynamic-classloader
-  "Add a DynamicClassLoader to the hierarchy if none of the existing classloaders
-  are modifiable."
+(defn ensure-compiler-loader
+  "Ensures the clojure.lang.Compiler/LOADER var is bound to a DynamicClassLoader,
+  so that we can add to Clojure's classpath dynamically."
   []
-  (when-not (some modifiable-classloader? (classloader-hierarchy))
-    (let [thread        (Thread/currentThread)
-          contextloader (.getContextClassLoader thread)
-          classloader   (clojure.lang.DynamicClassLoader. contextloader)]
-      (.setContextClassLoader thread classloader))))
+  (when-not (bound? Compiler/LOADER)
+    (push-thread-bindings {Compiler/LOADER (clojure.lang.DynamicClassLoader. (clojure.lang.RT/baseLoader))})))

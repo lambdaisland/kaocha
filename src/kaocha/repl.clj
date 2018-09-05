@@ -1,7 +1,8 @@
 (ns kaocha.repl
   (:require [kaocha.config :as config]
             [kaocha.plugin :as plugin]
-            [kaocha.api :as api]))
+            [kaocha.api :as api]
+            [kaocha.result :as result]))
 
 (defn config [& args]
   (let [[config-file opts] (if (string? (first args))
