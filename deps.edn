@@ -25,17 +25,12 @@
    :extra-deps  {com.cemerick/pomegranate                    {:mvn/version "1.0.0"}
                  nubank/matcher-combinators                  {:mvn/version "0.2.5"}
                  ancient-clj                                 {:mvn/version "0.6.15"}
-                 org.clojure/tools.deps.alpha                {:mvn/version "0.5.417"}
-                 lambdaisland/nrepl                          {:mvn/version "0.2.0" :exclusions [org.clojure/tools.cli]}
-                 ;; temporary: latest master detects deps.edn
-                 #_#_com.github.clojure-emacs/refactor-nrepl {:mvn/version "master-SNAPSHOT"}}}
+                 org.clojure/tools.deps.alpha                {:mvn/version "0.5.417"}}}
+
+  :cljs {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.339"}}}
+
+  :cloverage-local {:extra-deps {cloverage {:local/root "/home/arne/github/cloverage/cloverage"}}}
 
   :cloverage
-  {:extra-deps {cloverage {:mvn/version "1.0.10"}}
-   :main-opts  ["-m" "cloverage.coverage" "--runner" "kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}
-
- :mvn/repos
- {"central" {:url "https://repo1.maven.org/maven2/"}
-  "clojars" {:url "https://clojars.org/repo"}
-  "jitpack" {:url "https://jitpack.io"} ;; for refactor-nrepl
-  }}
+  {:extra-deps    {cloverage {:mvn/version "1.0.10"}}
+   #_#_:main-opts ["-m" "cloverage.coverage" "--runner" "kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}}
