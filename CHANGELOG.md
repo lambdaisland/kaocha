@@ -1,4 +1,20 @@
-# master
+# Master
+
+## Added
+
+- `kaocha.repl/run-tests` / `kaocha.repl/run-all-tests`
+
+## Fixed
+
+- Dynamically adding test directories to the classpath should be more robust now.
+
+## Changed
+
+- `:kaocha.suite/ns-patterns`, `:kaocha.suite/source-paths` and
+- `:kaocha.suite/test-paths` have been renamed to just use the `:kaocha`
+namespace.
+
+# b0a70dc267a (2018-07-29)
 
 ## Added
 
