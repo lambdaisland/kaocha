@@ -9,9 +9,9 @@
 
 (def test-suite {:kaocha.testable/type         :kaocha.type/suite
                  :kaocha.testable/id           :c
-                 :kaocha.suite/source-paths    []
-                 :kaocha.suite/test-paths      ["fixtures/c-tests"]
-                 :kaocha.suite/ns-patterns     [".*"]})
+                 :kaocha/source-paths    []
+                 :kaocha/test-paths      ["fixtures/c-tests"]
+                 :kaocha/ns-patterns     [".*"]})
 
 (deftest randomize-test
   (plugin/with-plugins plugin-chain

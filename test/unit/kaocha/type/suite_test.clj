@@ -6,16 +6,16 @@
 
 (def test-suite {:kaocha.testable/type      :kaocha.type/suite
                  :kaocha.testable/id        :a
-                 :kaocha.suite/source-paths []
-                 :kaocha.suite/test-paths   ["fixtures/a-tests"]
-                 :kaocha.suite/ns-patterns  [".*"]})
+                 :kaocha/source-paths []
+                 :kaocha/test-paths   ["fixtures/a-tests"]
+                 :kaocha/ns-patterns  [".*"]})
 
 (deftest load-test
   (is (match? {:kaocha.testable/type      :kaocha.type/suite
                :kaocha.testable/id        :a
-               :kaocha.suite/source-paths []
-               :kaocha.suite/test-paths   ["fixtures/a-tests"]
-               :kaocha.suite/ns-patterns  [".*"]
+               :kaocha/source-paths []
+               :kaocha/test-paths   ["fixtures/a-tests"]
+               :kaocha/ns-patterns  [".*"]
                :kaocha.test-plan/tests    [{:kaocha.testable/type   :kaocha.type/ns
                                             :kaocha.testable/id     :foo.bar-test
                                             :kaocha.ns/name         'foo.bar-test
@@ -31,9 +31,9 @@
   (let [test-plan (testable/load test-suite)]
     (is (match? {:kaocha.testable/type      :kaocha.type/suite
                  :kaocha.testable/id        :a
-                 :kaocha.suite/source-paths []
-                 :kaocha.suite/test-paths   ["fixtures/a-tests"]
-                 :kaocha.suite/ns-patterns  [".*"]
+                 :kaocha/source-paths []
+                 :kaocha/test-paths   ["fixtures/a-tests"]
+                 :kaocha/ns-patterns  [".*"]
                  :kaocha.result/tests       [{:kaocha.testable/type :kaocha.type/ns
                                               :kaocha.testable/id   :foo.bar-test
                                               :kaocha.ns/name       'foo.bar-test

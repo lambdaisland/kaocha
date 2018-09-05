@@ -40,7 +40,7 @@
 
 (defn run [config]
   (let [watch-paths (into #{} (comp (remove :kaocha.testable/skip)
-                                    (map (juxt :kaocha.suite/test-paths :kaocha.suite/source-paths))
+                                    (map (juxt :kaocha/test-paths :kaocha/source-paths))
                                     cat
                                     cat
                                     (map io/file))

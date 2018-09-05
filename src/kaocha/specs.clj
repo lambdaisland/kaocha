@@ -44,9 +44,9 @@
 
 (s/def :kaocha/suites (s/coll-of :kaocha/suite))
 
-(def suite-opts [:kaocha.suite/source-paths
-                 :kaocha.suite/test-paths
-                 :kaocha.suite/ns-patterns])
+(def suite-opts [:kaocha/source-paths
+                 :kaocha/test-paths
+                 :kaocha/ns-patterns])
 
 (s/def :kaocha/suite (s/keys :req ~suite-opts))
 

@@ -22,10 +22,10 @@
                   :kaocha/testable testable})
     testable))
 
-(s/def :kaocha.type/suite (s/keys :req [:kaocha.suite/source-paths
-                                        :kaocha.suite/test-paths
-                                        :kaocha.suite/ns-patterns]))
+(s/def :kaocha.type/suite (s/keys :req [:kaocha/source-paths
+                                        :kaocha/test-paths
+                                        :kaocha/ns-patterns]))
 
-(s/def :kaocha.suite/source-paths (s/coll-of string?))
-(s/def :kaocha.suite/test-paths (s/coll-of string?))
-(s/def :kaocha.suite/ns-patterns (s/coll-of string?))
+(s/def :kaocha/source-paths (s/coll-of string?))
+(s/def :kaocha/test-paths (s/coll-of string?))
+(s/def :kaocha/ns-patterns (s/coll-of string?))

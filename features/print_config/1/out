@@ -9,9 +9,9 @@
  :kaocha/tests
  [{:kaocha.testable/type :kaocha.type/suite,
    :kaocha.testable/id :aaa,
-   :kaocha.suite/ns-patterns ["^foo$"],
-   :kaocha.suite/source-paths ["src"],
-   :kaocha.suite/test-paths ["fixtures/a-tests"]}],
+   :kaocha/ns-patterns ["^foo$"],
+   :kaocha/source-paths ["src"],
+   :kaocha/test-paths ["fixtures/a-tests"]}],
  :kaocha/leaf-types [:kaocha.type/var],
  :kaocha/cli-options
  {:config-file "features/print_config/1/tests.edn",

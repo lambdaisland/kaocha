@@ -7,16 +7,16 @@
   (testing "allows API usage"
     (let [config {:kaocha/tests [{:kaocha.testable/id        :unit
                                   :kaocha.testable/type      :kaocha.type/suite
-                                  :kaocha.suite/test-paths   ["fixtures/a-tests"]
-                                  :kaocha.suite/source-paths ["src"]
-                                  :kaocha.suite/ns-patterns  ["-test$"]}]}]
+                                  :kaocha/test-paths   ["fixtures/a-tests"]
+                                  :kaocha/source-paths ["src"]
+                                  :kaocha/ns-patterns  ["-test$"]}]}]
       (is (match?
            {:kaocha.result/tests
             [{:kaocha.testable/id        :unit
               :kaocha.testable/type      :kaocha.type/suite
-              :kaocha.suite/test-paths   ["fixtures/a-tests"]
-              :kaocha.suite/source-paths ["src"]
-              :kaocha.suite/ns-patterns  ["-test$"]
+              :kaocha/test-paths   ["fixtures/a-tests"]
+              :kaocha/source-paths ["src"]
+              :kaocha/ns-patterns  ["-test$"]
               :kaocha.result/tests
               [{:kaocha.testable/type :kaocha.type/ns
                 :kaocha.testable/id   :foo.bar-test

@@ -26,9 +26,9 @@
                                           (-> m
                                               (rename-key :type :kaocha.testable/type)
                                               (rename-key :id :kaocha.testable/id)
-                                              (rename-key :test-paths :kaocha.suite/test-paths)
-                                              (rename-key :source-paths :kaocha.suite/source-paths)
-                                              (rename-key :ns-patterns :kaocha.suite/ns-patterns)
+                                              (rename-key :test-paths :kaocha/test-paths)
+                                              (rename-key :source-paths :kaocha/source-paths)
+                                              (rename-key :ns-patterns :kaocha/ns-patterns)
                                               (cond->> (not (:type m)) (merge (first (:kaocha/tests default-config))))))))]
     (cond-> default-config
       tests              (assoc :kaocha/tests tests)
