@@ -1,0 +1,1 @@
+[31mWARNING: [mFailed loading aaa.aaa-test java.io.FileNotFoundException: Could not locate aaa/aaa__init.class or aaa/aaa.clj on classpath., compiling:(aaa/aaa_test.clj:1:1)

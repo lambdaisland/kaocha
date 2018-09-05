@@ -1,4 +1,0 @@
-#kaocha
-{:tests [{:id :unit
-          :test-paths ["features/load_errors/test"]
-          :source-paths ["features/load_errors/src"]}]}

@@ -1,0 +1,75 @@
+[([31mE[m)]
+
+ERROR in aaa.aaa-test (load.clj:37)
+Failed to load namespace.
+Exception: clojure.lang.Compiler$CompilerException: java.io.FileNotFoundException: Could not locate aaa/aaa__init.class or aaa/aaa.clj on classpath., compiling:(aaa/aaa_test.clj:1:1)
+ at clojure.lang.Compiler.load (Compiler.java:7526)
+    ...
+    kaocha.type.ns$eval12877$fn__12878.invoke (ns.clj:20)
+    ...
+    kaocha.testable$load.invokeStatic (testable.clj:60)
+    kaocha.testable$load.invoke (testable.clj:53)
+    kaocha.testable$load_testables.invokeStatic (testable.clj:106)
+    kaocha.testable$load_testables.invoke (testable.clj:98)
+    kaocha.load$load_test_namespaces.invokeStatic (load.clj:37)
+    kaocha.load$load_test_namespaces.invoke (load.clj:23)
+    kaocha.type.suite$eval13230$fn__13231.invoke (suite.clj:13)
+    ...
+    kaocha.testable$load.invokeStatic (testable.clj:60)
+    kaocha.testable$load.invoke (testable.clj:53)
+    kaocha.testable$load_testables.invokeStatic (testable.clj:106)
+    kaocha.testable$load_testables.invoke (testable.clj:98)
+    kaocha.api$test_plan.invokeStatic (api.clj:32)
+    kaocha.api$test_plan.invoke (api.clj:26)
+    kaocha.api$run.invokeStatic (api.clj:57)
+    kaocha.api$run.invoke (api.clj:45)
+    kaocha.runner$_main_STAR_.invokeStatic (runner.clj:107)
+    kaocha.runner$_main_STAR_.doInvoke (runner.clj:52)
+    ...
+    kaocha.runner$_main.invokeStatic (runner.clj:116)
+    kaocha.runner$_main.doInvoke (runner.clj:114)
+    ...
+    clojure.main$main_opt.invokeStatic (main.clj:317)
+    clojure.main$main_opt.invoke (main.clj:313)
+    clojure.main$main.invokeStatic (main.clj:424)
+    clojure.main$main.doInvoke (main.clj:387)
+    ...
+    clojure.main.main (main.java:37)
+Caused by: java.io.FileNotFoundException: Could not locate aaa/aaa__init.class or aaa/aaa.clj on classpath.
+ at clojure.lang.RT.load (RT.java:463)
+    ...
+    aaa.aaa_test$eval13263$loading__6434__auto____13264.invoke (aaa_test.clj:1)
+    aaa.aaa_test$eval13263.invokeStatic (aaa_test.clj:1)
+    aaa.aaa_test$eval13263.invoke (aaa_test.clj:1)
+    ...
+    kaocha.type.ns$eval12877$fn__12878.invoke (ns.clj:20)
+    ...
+    kaocha.testable$load.invokeStatic (testable.clj:60)
+    kaocha.testable$load.invoke (testable.clj:53)
+    kaocha.testable$load_testables.invokeStatic (testable.clj:106)
+    kaocha.testable$load_testables.invoke (testable.clj:98)
+    kaocha.load$load_test_namespaces.invokeStatic (load.clj:37)
+    kaocha.load$load_test_namespaces.invoke (load.clj:23)
+    kaocha.type.suite$eval13230$fn__13231.invoke (suite.clj:13)
+    ...
+    kaocha.testable$load.invokeStatic (testable.clj:60)
+    kaocha.testable$load.invoke (testable.clj:53)
+    kaocha.testable$load_testables.invokeStatic (testable.clj:106)
+    kaocha.testable$load_testables.invoke (testable.clj:98)
+    kaocha.api$test_plan.invokeStatic (api.clj:32)
+    kaocha.api$test_plan.invoke (api.clj:26)
+    kaocha.api$run.invokeStatic (api.clj:57)
+    kaocha.api$run.invoke (api.clj:45)
+    kaocha.runner$_main_STAR_.invokeStatic (runner.clj:107)
+    kaocha.runner$_main_STAR_.doInvoke (runner.clj:52)
+    ...
+    kaocha.runner$_main.invokeStatic (runner.clj:116)
+    kaocha.runner$_main.doInvoke (runner.clj:114)
+    ...
+    clojure.main$main_opt.invokeStatic (main.clj:317)
+    clojure.main$main_opt.invoke (main.clj:313)
+    clojure.main$main.invokeStatic (main.clj:424)
+    clojure.main$main.doInvoke (main.clj:387)
+    ...
+    clojure.main.main (main.java:37)
+[31m0 test vars, 1 assertions, 1 errors, 0 failures.[m
