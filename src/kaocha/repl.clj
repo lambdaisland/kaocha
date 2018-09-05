@@ -19,3 +19,17 @@
         plugin-chain (plugin/load-all (:kaocha/plugins config))]
     (plugin/with-plugins plugin-chain
       (api/test-plan config))))
+
+(defn run-tests
+  ([]
+   (run-tests *ns*))
+  ([ns]
+   (let [config (config "--focus"
+                        (name (.name (the-ns *ns*))))]
+     (api/run config))))
+
+(defn run-all-tests [& args]
+  (result/totals (:kaocha.result/tests (api/run (apply config args)))))
+
+#_
+(run-all-tests)
