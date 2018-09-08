@@ -32,7 +32,9 @@ VERSION="0.0-$(git rev-list --count HEAD)"
 
 echo_info "Bumping version to $VERSION"
 
-sed "s/<version>.*<\/version>/<version>$VERSION<\/version>/" -i pom.xml
+echo "/<version>/
+s/<version>.*<\/version>/<version>$VERSION<\/version>
+wq" | ed pom.xml
 
 echo_info "Updating CHANGELOG"
 
