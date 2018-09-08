@@ -1,7 +1,8 @@
 (ns kaocha.cloverage
-  (:require [cloverage.coverage :as c]
-            [kaocha.runner :as runner]))
+  #_(:require [cloverage.coverage :as c]
+              [kaocha.runner :as runner]))
 
+#_
 (defmethod c/runner-fn :kaocha [_]
   (fn [_]
     (merge {:errors 0}

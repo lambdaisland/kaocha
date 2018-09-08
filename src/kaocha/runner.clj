@@ -11,7 +11,8 @@
             [kaocha.api :as api]
             [slingshot.slingshot :refer [try+]]
             [kaocha.result :as result]
-            [kaocha.plugin :as plugin]))
+            [kaocha.plugin :as plugin]
+            [clojure.java.io :as io]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -34,6 +35,11 @@
    [nil "--plugin KEYWORD"      "Load the given plugin."
     :parse-fn parse-kw
     :assoc-fn accumulate]
+   [nil "--version"             "Print version information and quit."]
+
+   ;; Clojure CLI tools intercepts --help, so we add --test-help, but in other
+   ;; circumstances it should still work.
+   [nil "--help"                "Display this help message."]
    ["-H" "--test-help"          "Display this help message."]])
 
 (defn help [summary]
@@ -48,6 +54,16 @@
 
 (defn print-help! [summary]
   (println (str/join "\n" (help summary))))
+
+(defn load-props [file-name]
+  (with-open [^java.io.Reader reader (io/reader file-name)]
+    (let [props (java.util.Properties.)]
+      (.load props reader)
+      (into {} (for [[k v] props] [(keyword k) v])))))
+
+(defn kaocha-version []
+  (let [resource (io/resource "META-INF/maven/lambdaisland/kaocha/pom.properties")]
+    (str "lambdaisland/kaocha " (pr-str (some-> resource load-props :version)))))
 
 (defn- -main* [& args]
   (let [{{:keys [config-file plugin]} :options}    (cli/parse-opts args cli-options)
@@ -71,8 +87,11 @@
           (print-help! summary)
           -1)
 
-        (:test-help options)
+        (or (:help options) (:test-help options))
         (do (print-help! summary) 0)
+
+        (:version options)
+        (do (println (kaocha-version)) 0)
 
         (:print-config options)
         (binding [clojure.core/*print-namespace-maps* false]
