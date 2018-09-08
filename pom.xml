@@ -4,10 +4,16 @@
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
   <version>0.0-100</version>
-  <name>kaocha</name>
 
+  <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
+
+  <inceptionYear>2018</inceptionYear>
+  <organization>
+      <name>Lambda Island</name>
+      <url>https://lambdaisland.com</url>
+  </organization>
 
   <licenses>
       <license>
