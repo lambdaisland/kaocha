@@ -280,8 +280,6 @@ integration:   100% [==================================================] 1/1
 19 test vars, 55 assertions, 0 failures.
 ```
 
-
-
 ## Usage
 
 The main entry point for Kaocha is the `kaocha.runner` namespace, which you can run with `clojure -m kaocha.runner`, followed by Kaocha command line options, and the names of suites to run.
@@ -307,6 +305,22 @@ clj -m kaocha.runner [OPTIONS]... [TEST-SUITE]...
       --focus SYM                                 Only run this test, skip others.
       --skip-meta SYM                             Skip tests where this metadata key is truthy.
       --focus-meta SYM                            Only run tests where this metadata key is truthy.
+```
+
+### Leiningen
+
+You can also use Kaocha from leiningen, with `lein run -m kaocha.runner`. It is recommended to set up an alias for this:
+
+```
+(defproject my-project "0.1.0"
+  :dependencies [[lambdaisland/kaocha "..."]]
+  :aliases {"kaocha" ["run" "-m" "kaocha.runner"]})
+```
+
+Now:
+
+```
+lein kaocha --print-config
 ```
 
 ## Features
