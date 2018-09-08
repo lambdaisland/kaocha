@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>kaocha</groupId>
+  <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
   <version>0.0-91</version>
   <name>kaocha</name>
+
+  <description>Full featured next generation test runner for Clojure.</description>
+  <url>https://github.com/lambdaisland/kaocha</url>
+
+  <licenses>
+      <license>
+          <name>Eclipse Public License 1.0</name>
+          <url>https://www.eclipse.org/legal/epl-v10.html</url>
+      </license>
+  </licenses>
+
+  <scm>
+      <url>https://github.com/lambdaisland/kaocha</url>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -72,13 +87,30 @@
       <version>0.4.474</version>
     </dependency>
   </dependencies>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <resources>
+        <resource>
+            <directory>src</directory>
+        </resource>
+    </resources>
   </build>
+
   <repositories>
     <repository>
       <id>clojars</id>
       <url>https://clojars.org/repo</url>
     </repository>
   </repositories>
+
+  <distributionManagement>
+      <repository>
+          <id>clojars</id>
+          <name>Clojars repository</name>
+          <url>https://clojars.org/repo</url>
+      </repository>
+  </distributionManagement>
+
+  <!-- Optional extras for Clojars -->
 </project>

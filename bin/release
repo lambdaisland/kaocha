@@ -1,0 +1,5 @@
+#!/bin/bash
+
+bin/prep_release
+git push --tags
+mvn deploy

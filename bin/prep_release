@@ -47,7 +47,7 @@ echo_info "Updating CHANGELOG"
 
 ## Changed
 "
-    echo "# ${VERSION} ($(date --rfc-3339=date))"
+    echo "# ${VERSION} ($(date --rfc-3339=date) / $(git rev-parse --short HEAD))"
     echo "."
     echo "wq"
 } | ed CHANGELOG.md
