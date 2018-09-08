@@ -2,9 +2,12 @@
 
 ## Added
 
+- `--version` command line flag (only works when running from a JAR)
+- `--help` as alternative to `--test-help`, for environments where `--help` isn't shadowed
+
 ## Fixed
 
-## Changed
+- Correctly store SCM tag in pom.xml, so clojars.org links to the right commit
 
 # 0.0-99 (2018-09-08 / 7104c2d)
 
