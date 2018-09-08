@@ -2,6 +2,14 @@
 
 ## Added
 
+## Fixed
+
+## Changed
+
+# 0.0-99 (2018-09-08 / 7104c2d)
+
+## Added
+
 - Added revision to `MANIFEST.MF`, included `resources` in build artifact.
 
 # 0.0-97 (2018-09-08 / 734df37)
