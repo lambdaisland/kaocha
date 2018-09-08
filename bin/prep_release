@@ -37,7 +37,7 @@ s/<version>.*<\/version>/<version>$VERSION<\/version>
 
 /<scm>/
 /<tag>/
-s/<tag>.*<\/tag>/<tag>v$VERSION<\/tag>
+s/<tag>.*<\/tag>/<tag>$(git rev-parse HEAD)<\/tag>
 
 /<Git-Revision>/
 s/<Git-Revision>.*<\/Git-Revision>/<Git-Revision>$(git rev-parse HEAD)<\/Git-Revision>
