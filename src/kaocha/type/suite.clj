@@ -5,7 +5,6 @@
             [kaocha.testable :as testable]
             [kaocha.classpath :as classpath]
             [kaocha.load :as load]
-            [clojure.tools.namespace.find :as ctn.find]
             [clojure.java.io :as io]
             [clojure.test :as t]))
 

@@ -4,8 +4,8 @@
             [kaocha.result :as result]
             [clojure.core.async :refer [chan <!! put! poll!]]
             [clojure.java.io :as io]
-            [clojure.tools.namespace.file :as ctn.file]
-            [clojure.tools.namespace.parse :as ctn.parse]
+            [clojure.tools.namespace.file :as ctn-file]
+            [clojure.tools.namespace.parse :as ctn-parse]
             [clojure.string :as str]
             [kaocha.testable :as testable]))
 
@@ -17,7 +17,7 @@
 
 (defn reload-file! [f]
   (try
-    (let [ns      (->> f ctn.file/read-file-ns-decl ctn.parse/name-from-ns-decl)
+    (let [ns      (->> f ctn-file/read-file-ns-decl ctn-parse/name-from-ns-decl)
           ext     (last (str/split (str f) #"\."))
           ns-file (io/resource (ns-file-name ns ext))]
       (when (contains? #{"clj" "cljc"} ext)

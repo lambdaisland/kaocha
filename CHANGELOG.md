@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Get rid of periods in namespace aliases to make the codox analyzer happy
 
 # 0.0-111 (2018-09-08 / 4918759)
 

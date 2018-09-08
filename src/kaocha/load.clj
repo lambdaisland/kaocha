@@ -3,11 +3,11 @@
             [kaocha.classpath :as classpath]
             [kaocha.testable :as testable]
             [clojure.java.io :as io]
-            [clojure.tools.namespace.find :as ctn.find]
+            [clojure.tools.namespace.find :as ctn-find]
             [kaocha.output :as out]))
 
-#_(def clj ctn.find/clj)
-#_(def cljs ctn.find/cljs)
+(def clj ctn-find/clj)
+(def cljs ctn-find/cljs)
 
 (defn- ns-match? [ns-patterns ns-sym]
   (some #(re-find % (name ns-sym)) ns-patterns))
@@ -15,7 +15,7 @@
 (defn find-test-nss [test-paths ns-patterns & [platform]]
   (sequence (comp
              (map io/file)
-             (map #(ctn.find/find-namespaces-in-dir % platform))
+             (map #(ctn-find/find-namespaces-in-dir % platform))
              cat
              (filter (partial ns-match? ns-patterns)))
             test-paths))
