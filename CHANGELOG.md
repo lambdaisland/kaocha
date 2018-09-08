@@ -1,5 +1,13 @@
 # Unreleased
 
+## Added
+
+## Fixed
+
+## Changed
+
+# 0.0-111 (2018-09-08 / 4918759)
+
 ## Fixed
 
 - Work around cljdoc build error
