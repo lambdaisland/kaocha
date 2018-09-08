@@ -34,8 +34,13 @@ echo_info "Bumping version to $VERSION"
 
 echo "/<version>/
 s/<version>.*<\/version>/<version>$VERSION<\/version>
-/<revision>/
-s/<revision>.*<\/revision>/<revision>$(git rev-parse HEAD)<\/revision>
+
+/<scm>/
+/<tag>/
+s/<tag>.*<\/tag>/<tag>v$VERSION<\/tag>
+
+/<Git-Revision>/
+s/<Git-Revision>.*<\/Git-Revision>/<Git-Revision>$(git rev-parse HEAD)<\/Git-Revision>
 wq" | ed pom.xml
 
 echo_info "Updating CHANGELOG"
