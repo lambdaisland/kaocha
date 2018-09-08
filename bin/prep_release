@@ -43,8 +43,8 @@ s/<tag>.*<\/tag>/<tag>v$VERSION<\/tag>
 s/<Git-Revision>.*<\/Git-Revision>/<Git-Revision>$(git rev-parse HEAD)<\/Git-Revision>
 wq" | ed pom.xml
 
-sed 's/lambdaisland\/kaocha {:mvn\/version "[^"]*"}/lambdaisland\/kaocha {:mvn\/version "'${VERSION}'"}' -i README.md doc/*.md
-sed '[s/lambdaisland\/kaocha "[^"]*"]/[lambdaisland\/kaocha "'${VERSION}'"]' -i README.md doc/*.md
+sed 's/lambdaisland\/kaocha {:mvn\/version "[^"]*"}/lambdaisland\/kaocha {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
+sed 's/\[lambdaisland\/kaocha "[^"]*"\]/\[lambdaisland\/kaocha "'${VERSION}'"\]/' -i README.md doc/*.md
 
 echo_info "Updating CHANGELOG"
 
