@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function echo_info() {
+   echo -en "[\033[0;32mINFO\033[0m] "
+   echo "$@"
+}
+
+function echo_error() {
+   echo -en "[\033[0;31mERROR\033[0m] "
+   echo "$@"
+}
+
+if [[ ! -z "$(git status --porcelain)" ]]; then
+    echo_error "Repo not clean.
+
+    Status:
+$(git status --short)
+
+    Diff:
+$(git diff)"
+
+    exit 1
+fi
