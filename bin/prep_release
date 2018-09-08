@@ -62,7 +62,7 @@ echo_info "Updating CHANGELOG"
     echo "wq"
 } | ed CHANGELOG.md
 
-git add pom.xml CHANGELOG.md
+git add -A
 git commit -m "Release v$VERSION"
 git tag v$VERSION
 
