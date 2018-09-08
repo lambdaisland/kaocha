@@ -2,6 +2,14 @@
 
 ## Added
 
+## Fixed
+
+## Changed
+
+# 0.0-97 (2018-09-08 / 734df37)
+
+## Added
+
 - `kaocha.repl/run-tests` / `kaocha.repl/run-all-tests`
 
 ## Fixed
