@@ -6,8 +6,8 @@
             [clojure.tools.namespace.find :as ctn.find]
             [kaocha.output :as out]))
 
-(def clj ctn.find/clj)
-(def cljs ctn.find/cljs)
+#_(def clj ctn.find/clj)
+#_(def cljs ctn.find/cljs)
 
 (defn- ns-match? [ns-patterns ns-sym]
   (some #(re-find % (name ns-sym)) ns-patterns))
@@ -22,7 +22,7 @@
 
 (defn load-test-namespaces [testable ns-testable-fn]
   (let [{:kaocha/keys [test-paths ns-patterns]} testable
-        ns-patterns                                   (map regex ns-patterns)]
+        ns-patterns                             (map regex ns-patterns)]
 
     (classpath/ensure-compiler-loader)
 

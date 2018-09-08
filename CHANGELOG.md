@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Work around cljdoc build error
 
 # 0.0-107 (2018-09-08 / 33be620)
 
