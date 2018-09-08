@@ -1,0 +1,57 @@
+#!/bin/bash
+
+function echo_info() {
+   echo -en "[\033[0;32mINFO\033[0m] "
+   echo "$@"
+}
+
+function echo_error() {
+   echo -en "[\033[0;31mERROR\033[0m] "
+   echo "$@"
+}
+
+if [[ ! -z "$(git status --porcelain)" ]]; then
+    echo_error "Repo not clean.
+
+    Status:
+$(git status --short)
+
+    Diff:
+$(git diff)"
+
+    exit 1
+fi
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" != "master" ]]; then
+    echo_error "On branch $BRANCH, release must be on master."
+    exit 1;
+fi
+
+VERSION="0.0-$(git rev-list --count HEAD)"
+
+echo_info "Bumping version to $VERSION"
+
+sed "s/<version>.*<\/version>/<version>$VERSION<\/version>/" -i pom.xml
+
+echo_info "Updating CHANGELOG"
+
+{
+    echo "1a
+
+## Added
+
+## Fixed
+
+## Changed
+"
+    echo "# ${VERSION} ($(date --rfc-3339=date))"
+    echo "."
+    echo "wq"
+} | ed CHANGELOG.md
+
+git add pom.xml CHANGELOG.md
+git commit -m "Release v$VERSION"
+git tag v$VERSION
+
+git show HEAD
