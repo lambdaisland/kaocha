@@ -28,6 +28,8 @@ if [[ "$BRANCH" != "master" ]]; then
     exit 1;
 fi
 
+git clean -xfd
+
 VERSION="0.0-$(git rev-list --count HEAD)"
 
 echo_info "Bumping version to $VERSION"

@@ -2,32 +2,13 @@
 
 ## Added
 
-## Fixed
-
-## Changed
-
-# 0.0-116 (2018-09-09 / 606bd92)
-
-## Fixed
-
-- Make code base analysable by cljdoc.xyz
-
-# 0.0-107 (2018-09-08 / 33be620)
-
-## Added
-
 - `--version` command line flag (only works when running from a JAR)
 - `--help` as alternative to `--test-help`, for environments where `--help` isn't shadowed
 
 ## Fixed
 
-- Correctly store SCM tag in pom.xml, so clojars.org links to the right commit
-
-# 0.0-99 (2018-09-08 / 7104c2d)
-
-## Added
-
-- Added revision to `MANIFEST.MF`, included `resources` in build artifact.
+- Make code base analysable by cljdoc.xyz
+- Make sure clojars.org links to correct
 
 # 0.0-97 (2018-09-08 / 734df37)
 
