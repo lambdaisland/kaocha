@@ -2,6 +2,14 @@
 
 ## Added
 
+## Fixed
+
+## Changed
+
+# 0.0-118 (2018-09-09 / cc55d42)
+
+## Added
+
 - `--version` command line flag (only works when running from a JAR)
 - `--help` as alternative to `--test-help`, for environments where `--help` isn't shadowed
 
