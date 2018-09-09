@@ -1,22 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
-
-# 0.0-113 (2018-09-08 / c8a3f98)
-
-## Fixed
-
-- Get rid of periods in namespace aliases to make the codox analyzer happy
-
-# 0.0-111 (2018-09-08 / 4918759)
-
-## Fixed
-
-- Work around cljdoc build error
+- Make code base analysable by cljdoc.xyz
 
 # 0.0-107 (2018-09-08 / 33be620)
 
