@@ -1,5 +1,13 @@
 # Unreleased
 
+## Added
+
+## Fixed
+
+## Changed
+
+# 0.0-116 (2018-09-09 / 606bd92)
+
 ## Fixed
 
 - Make code base analysable by cljdoc.xyz

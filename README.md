@@ -313,7 +313,7 @@ You can also use Kaocha from leiningen, with `lein run -m kaocha.runner`. It is 
 
 ```
 (defproject my-project "0.1.0"
-  :dependencies [[lambdaisland/kaocha "0.0-113"]]
+  :dependencies [[lambdaisland/kaocha "0.0-116"]]
   :aliases {"kaocha" ["run" "-m" "kaocha.runner"]})
 ```
 
