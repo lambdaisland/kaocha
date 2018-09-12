@@ -88,3 +88,13 @@ Now you can invoke Kaocha as such:
 ``` shell
 lein kaocha --version
 ```
+
+It is still recommeded to create a `bin/kaocha` wrapper for consistency among
+projects. The rest of the documentation assumes you can invoke Kaocha with
+`bin/kaocha`.
+
+```
+#!/bin/bash
+
+lein kaocha "$@"
+```
