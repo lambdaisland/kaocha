@@ -51,14 +51,8 @@ sed 's/\[lambdaisland\/kaocha "[^"]*"\]/\[lambdaisland\/kaocha "'${VERSION}'"\]/
 echo_info "Updating CHANGELOG"
 
 {
-    echo "1a
-
-## Added
-
-## Fixed
-
-## Changed
-"
+    echo "1d"
+    echo "1a"
     echo "# ${VERSION} ($(date --rfc-3339=date) / $(git rev-parse --short HEAD))"
     echo "."
     echo "wq"
@@ -68,4 +62,20 @@ git add -A
 git commit -m "Release v$VERSION"
 git tag v$VERSION
 
-git show HEAD
+echo "1a
+# Unreleased
+
+## Added
+
+## Fixed
+
+## Changed
+
+.
+wq
+" | ed CHANGELOG.md
+
+git add CHANGELOG.md
+git commit -m 'Add CHANGELOG placeholders'
+
+git show v$VERSION

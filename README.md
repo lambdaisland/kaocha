@@ -2,6 +2,12 @@
 
 Full featured next generation test runner for Clojure.
 
+## Links
+
+- [Github](https://github.com/lambdaisland/kaocha)
+- [Clojars](https://clojars.org/lambdaisland/kaocha)
+- [cljdoc](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT)
+
 ## Rationale
 
 Kaocha is written for end users to provide all the features that people have come to know and love from testing tools in other languages.
