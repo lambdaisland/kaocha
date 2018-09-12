@@ -1,4 +1,4 @@
-(ns kaocha.type.suite
+(ns kaocha.type.clojure.test
   (:require [kaocha.core-ext :refer :all]
             [clojure.spec.alpha :as s]
             [kaocha.type.ns :as type.ns]
@@ -8,10 +8,10 @@
             [clojure.java.io :as io]
             [clojure.test :as t]))
 
-(defmethod testable/-load :kaocha.type/suite [testable]
+(defmethod testable/-load :kaocha.type/clojure.test [testable]
   (load/load-test-namespaces testable type.ns/->testable))
 
-(defmethod testable/-run :kaocha.type/suite [testable test-plan]
+(defmethod testable/-run :kaocha.type/clojure.test [testable test-plan]
   (t/do-report {:type :begin-test-suite})
   (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
         testable (-> testable
@@ -21,7 +21,7 @@
                   :kaocha/testable testable})
     testable))
 
-(s/def :kaocha.type/suite (s/keys :req [:kaocha/source-paths
+(s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
                                         :kaocha/test-paths
                                         :kaocha/ns-patterns]))
 

@@ -9,7 +9,7 @@
   (is (= #:kaocha.result{:count 5, :pass 3, :error 1, :fail 1}
          (result/totals
           [{:kaocha.testable/id   :api
-            :kaocha.testable/type :kaocha.type/suite
+            :kaocha.testable/type :kaocha.type/clojure.test
             :kaocha.result/tests  [{:kaocha.testable/id   :ddd.bar-test
                                     :kaocha.testable/type :kaocha.type/ns
                                     :kaocha.result/tests  [{:kaocha.testable/id   :ddd.bar-test/test-1

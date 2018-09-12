@@ -6,6 +6,8 @@
 
 ## Changed
 
+- BREAKING: `:kaocha.type/suite` is now called `:kaocha.type/clojure.test`
+
 # 0.0-118 (2018-09-09 / cc55d42)
 
 ## Added

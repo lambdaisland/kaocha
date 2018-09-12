@@ -7,14 +7,14 @@
 (deftest run-test
   (testing "allows API usage"
     (let [config {:kaocha/tests [{:kaocha.testable/id        :unit
-                                  :kaocha.testable/type      :kaocha.type/suite
+                                  :kaocha.testable/type      :kaocha.type/clojure.test
                                   :kaocha/test-paths   ["fixtures/a-tests"]
                                   :kaocha/source-paths ["src"]
                                   :kaocha/ns-patterns  ["-test$"]}]}]
       (is (match?
            {:kaocha.result/tests
             [{:kaocha.testable/id        :unit
-              :kaocha.testable/type      :kaocha.type/suite
+              :kaocha.testable/type      :kaocha.type/clojure.test
               :kaocha/test-paths   ["fixtures/a-tests"]
               :kaocha/source-paths ["src"]
               :kaocha/ns-patterns  ["-test$"]

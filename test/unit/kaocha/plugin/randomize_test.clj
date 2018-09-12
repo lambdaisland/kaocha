@@ -7,7 +7,7 @@
 
 (def plugin-chain (plugin/register :kaocha.plugin/randomize []))
 
-(def test-suite {:kaocha.testable/type         :kaocha.type/suite
+(def test-suite {:kaocha.testable/type         :kaocha.type/clojure.test
                  :kaocha.testable/id           :c
                  :kaocha/source-paths    []
                  :kaocha/test-paths      ["fixtures/c-tests"]
@@ -19,7 +19,7 @@
                  :kaocha.plugin.randomize/seed       number?}
                 (plugin/run-hook :kaocha.hooks/config {})))
 
-    (is (match? {:kaocha.testable/type   :kaocha.type/suite
+    (is (match? {:kaocha.testable/type   :kaocha.type/clojure.test
                  :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
                                            :kaocha.testable/id   :foo.hello-test
                                            :kaocha.test-plan/tests
@@ -34,7 +34,7 @@
                                             :kaocha.plugin.randomize/randomize? true)
                                      testable/load))))
 
-    (is (match? {:kaocha.testable/type   :kaocha.type/suite
+    (is (match? {:kaocha.testable/type   :kaocha.type/clojure.test
                  :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
                                            :kaocha.testable/id   :foo.hello-test
                                            :kaocha.test-plan/tests

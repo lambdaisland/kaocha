@@ -169,7 +169,7 @@ Kaocha can be extended in three ways
 
 Kaocha currently provides three test types
 
-* `:kaocha.type/suite`
+* `:kaocha.type/clojure.test`
 * `:kaocha.type/ns`
 * `:kaocha.type/var`
 
@@ -351,7 +351,7 @@ whether they threw exceptions, and what they wrote on standard err and out.
 
 How tests are loaded and run is governed by two multimethods, `load-testable`
 and `run-testable`, based on the type of the testable. The default type is
-`:kaocha.type/suite`, a test suite with a test-path, namespaces and clojure.test
+`:kaocha.type/clojure.test`, a test suite with a test-path, namespaces and clojure.test
 style test vars.
 
 ## License
