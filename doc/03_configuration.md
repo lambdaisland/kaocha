@@ -50,6 +50,9 @@ grained control you can write the output of `--print-config` to `tests.edn` and
 go from there. The rest of the documentation will generally use the short forms
 used in `#kaocha {}`, rather than using fully qualified keywords.
 
+Configuration is read with [Aero](https://github.com/juxt/aero), meaning you
+have access to reader literals like `#env`, `#merge`, `#ref`, and `#include`.
+
 ## Test suites
 
 Test suites are a first class concept in Kaocha. This encourages testing at
@@ -98,6 +101,10 @@ This is what the `:unit` suite looks like after expansion:
  :kaocha/test-paths    ["test/unit"]}
 ```
 
+If you don't define any test suites than Kaocha assumes a single `:unit` test suite.
+
+
+
 ### :kaocha.type/clojure.test
 
 The main test suite type implemented at the moment is one for `clojure.test`,
@@ -122,11 +129,18 @@ Kaocha can be customized and extended with plugins. Some of these are included
 with Kaocha, others can be provided by third parties. They are regular Clojure
 libraries that follow specific conventions.
 
-A plugin has a name, a fully qualified keyword, and can be added easily.
+A plugin has a name, a fully qualified keyword, and can be configured easily,
+either in `tests.edn`:
 
 ``` clojure
 #kaocha
 {:plugins [:kaocha.plugin/profiling]}
+```
+
+or from the command line
+
+``` shell
+bin/kaocha --plugin kaocha.plugin/profiling
 ```
 
 Some plugins are needed for the normal functioning of Kaocha. These are added
@@ -136,4 +150,87 @@ automatically when using the `#kaocha {}` reader literal. They are
 - `:kaocha.plugin/filter`: allow filtering and "focusing" of tests
 - `:kaocha.plugin/capture-output`: implements output capturing during tests
 
-Typically plugins can be configured through `tests.edn` as well as through command line options. Try `bin/kaocha --test-help` to see which command line flags they add, and `--print-config` to see the defa
+Individual plugins can introduce their own configuration options, which can be
+specified either in `tests.edn` or on the command line. After enabling a plugin
+try `bin/kaocha --test-help` to see which command line flags were added, and use
+`--print-config` to see available configuration keys with their default values.
+
+## Reporters
+
+The output that Kaocha generates is dictated by "reporters". Reporters are a
+concept from `clojure.test`, but are used in Kaocha regardless of the test type
+being run.
+
+A reporter is configured with `--reporter` from the command line, or as
+`:reporter` in `tests.edn`. These reporters are Currently provided:
+
+### `kaocha.report/dots`
+
+Print the output as a sequence of dots and other symbols.
+
+- `[` / `]` Start/end suite
+- `(` / `)` Start/end namespace
+- `.` Pass
+- `F` Fail
+- `E` Error
+
+Failures with complete output and error information, as well as a general
+summary are printed at the end (or when `Ctrl-C` is pressed). This is a great
+reporter for when you want it concise but still information-rich.
+
+### `kaocha.report/documentation`
+
+Print a nested overview of test names and `testing` blocks. Suitable for CI.
+Works best when using good test names and making liberal use of `testing`
+blocks.
+
+### `kaocha.report.progress/report`
+
+Print a pretty progress bar. Provides less information than `dots`, but it's
+pretty. Great for demos.
+
+## Example
+
+You should be able to start with a simple `#kaocha {}`, and leave most
+configuration at its default. This is merely an example of what's possible
+
+``` clojure
+#kaocha
+{:tests [{;; Every suite must have an :id
+          :id :unit
+
+          ;; Directories containing files under test. This is used to
+          ;; watch for changes, and when doing code coverage analysis
+          ;; through Cloverage. These directories are *not* automatically
+          ;; added to the classpath.
+          :source-paths ["src"]
+
+          ;; Directories containing tests. These will automatically be
+          ;; added to the classpath when running this suite.
+          :test-paths ["test"]
+
+          ;; Regex patterns to determine whether a namespace contains
+          ;; tests.
+          :ns-patterns [#"-test$"]}]
+
+ :plugins [:kaocha.plugin/print-invocations
+           :kaocha.plugin/profiling]
+
+ ;; Colorize output (use ANSI escape sequences).
+ :color?      true
+
+ ;; Watch the file system for changes and re-run.
+ :watch?      false
+
+ ;; Specifiy the reporter function that generates output. Must be a namespaced
+ ;; symbol, or a vector of symbols. The symbols must refer to vars, which Kaocha
+ ;; will make sure are loaded. When providing a vector of symbols, or pointing
+ ;; at a var containing a vector, then kaocha will call all referenced functions
+ ;; for reporting.
+ :reporter    kaocha.report/documentation
+ 
+ ;; Plugin specific configuration. Show the 10 slowest tests of each type, rather 
+ ;; than only 3.
+ :kaocha.plugin.profiling/count 3
+ }}
+```
