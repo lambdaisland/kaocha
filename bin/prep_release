@@ -42,7 +42,7 @@ echo_info "Updating CHANGELOG"
 
 {
     echo "1d"
-    echo "1a"
+    echo "1i"
     echo "# ${VERSION} ($(date --rfc-3339=date) / $(git rev-parse --short HEAD))"
     echo "."
     echo "wq"

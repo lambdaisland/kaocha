@@ -18,7 +18,8 @@ wq" | ed pom.xml
 
 mvn deploy
 
-echo "1a
+echo "
+1i
 # Unreleased
 
 ## Added
