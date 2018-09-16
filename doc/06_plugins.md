@@ -8,7 +8,7 @@ For information on *writing* plugins, see the section on [extending Kaocha](7_ex
 
 The profiling plugin will output a list of the slowest tests for each test type at the end of the test run.
 
-Enabling the plugin:
+### Enabling
 
 ``` shell
 bin/kaocha --plugin kaocha.plugin/profiling
@@ -21,7 +21,7 @@ or
 {:plugins [kaocha.plugin/profiling]}
 ```
 
-Result
+### Example output
 
 ```
 Top 2 slowest kaocha.type/clojure.test (37.97308 seconds, 100.0% of total time)
@@ -47,14 +47,14 @@ Top 3 slowest kaocha.type/var (37.70178 seconds, 99.3% of total time)
     0.06573 seconds kaocha/runner_test.clj:10
 ```
 
-### Extra command line flags
+### Plugin-specific command line flags
 
 ```
 --[no-]profiling                  Show slowest tests of each type with timing information.
 --profiling-count NUM             Show this many slow tests of each kind in profile results.
 ```
 
-### Extra configuration options
+### Plugin-specific configuration options
 
 Shown with their default values:
 
@@ -66,3 +66,29 @@ Shown with their default values:
 
 ## Print invocations
 
+At the end of the test run, print command invocations that can be copy-pasted to re-run only specific failed tests. 
+
+### Enabling
+
+``` shell
+bin/kaocha --plugin kaocha.plugin/print-invocations
+```
+
+or
+
+``` clojure
+#kaocha
+{:plugins [kaocha.plugin/print-invocations]}
+```
+
+### Example output
+
+``` shell
+[(.)(F..)(..)(...)(............)(....)(...........)(......)(....)(.)(...)]
+
+FAIL in (clojure-test-summary-test) (kaocha/history_test.clj:5)
+...
+18 test vars, 50 assertions, 1 failures.
+
+bin/kaocha --focus 'kaocha.history-test/clojure-test-summary-test'
+```
