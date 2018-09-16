@@ -29,6 +29,10 @@
                                               (rename-key :test-paths :kaocha/test-paths)
                                               (rename-key :source-paths :kaocha/source-paths)
                                               (rename-key :ns-patterns :kaocha/ns-patterns)
+                                              (rename-key :skip :kaocha.filter/skip)
+                                              (rename-key :focus :kaocha.filter/focus)
+                                              (rename-key :skip-meta :kaocha.filter/skip-meta)
+                                              (rename-key :focus-meta :kaocha.filter/focus-meta)
                                               (cond->> (not (:type m)) (merge (first (:kaocha/tests default-config))))))))]
     (cond-> default-config
       tests              (assoc :kaocha/tests tests)
