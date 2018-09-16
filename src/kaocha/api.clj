@@ -24,7 +24,7 @@
          (.removeShutdownHook runtime# on-shutdown#)))))
 
 (defn test-plan [config]
-  (let [tests (:kaocha/tests config)]
+  (let [tests (:kaocha/tests (plugin/run-hook :kaocha.hooks/pre-load config))]
     (plugin/run-hook
      :kaocha.hooks/post-load
      (-> config
