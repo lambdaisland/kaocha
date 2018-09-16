@@ -74,7 +74,7 @@ Here's a more full-fledged example, still using `#kaocha {}`.
 
           ;; Regex patterns to determine whether a namespace contains
           ;; tests.
-          :ns-patterns [#"-test$"]}]
+          :ns-patterns ["-test$"]}]
 
  :plugins [:kaocha.plugin/print-invocations]
 
@@ -89,7 +89,7 @@ Here's a more full-fledged example, still using `#kaocha {}`.
  ;; will make sure are loaded. When providing a vector of symbols, or pointing
  ;; at a var containing a vector, then kaocha will call all referenced functions
  ;; for reporting.
- :reporter    kaocha.report/documentation}}
+ :reporter    kaocha.report/documentation}
 ```
 
 All these configuration keys have default values, shown above, so you can omit most of them, including `:tests`.
