@@ -6,6 +6,9 @@
 
 ## Changed
 
+- Due a limitation of Aero `:ns-patterns` must be strings, and not regex
+  literals. Clarified this in the docs.
+
 # 0.0-134 (2018-09-16 / d0da4e2)
 
 ## Added

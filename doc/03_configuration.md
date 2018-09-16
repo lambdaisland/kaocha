@@ -112,10 +112,11 @@ the testing library included with Clojure itself.
 
 It takes the following configuration options.
 
-- `:ns-patterns`: vector of regular expressions, if one of them matches the
-  namespace name then this namespace is considered a test namespace, and will
-  get loaded as part of Kaocha's "load" step. Patterns can be given as actual
-  regex types or as strings. Defaults to `["-test$"]`
+- `:ns-patterns`: vector of patterns, these are strings that get intepreted as
+  regular expressions. If one of them matches the namespace name then this
+  namespace is considered a test namespace, and will get loaded as part of
+  Kaocha's "load" step. Patterns can be given as actual regex types or as
+  strings. Defaults to `["-test$"]`
 - `:source-paths`: vector of paths containing source code under test. This
   is used to determine which files to watch for changes, and can be used by
   plugins e.g. when doing code coverage analyis. Defaults to `["src"]`
@@ -244,9 +245,9 @@ configuration at its default. This is merely an example of what's possible
           ;; added to the classpath when running this suite.
           :test-paths ["test"]
 
-          ;; Regex patterns to determine whether a namespace contains
-          ;; tests.
-          :ns-patterns [#"-test$"]}]
+          ;; Regex strings to determine whether a namespace contains
+          ;; tests. (use strings, not actual regexes, due to a limitation of Aero)
+          :ns-patterns ["-test$"]}]
 
  :plugins [:kaocha.plugin/print-invocations
            :kaocha.plugin/profiling]
