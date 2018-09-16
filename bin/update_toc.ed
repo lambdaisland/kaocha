@@ -1,0 +1,7 @@
+r README.md
+1
+/ docs-toc/+,/\/docs-toc/- d
+-
+.r ! bin/generate_toc
+w
+q

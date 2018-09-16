@@ -2,4 +2,32 @@
 
 bin/prep_release
 git push --tags
+
+echo "/<version>/
+s/<version>.*<\/version>/<version>$VERSION<\/version>
+
+/<scm>/
+/<tag>/
+s/<tag>.*<\/tag>/<tag>$(git rev-parse HEAD)<\/tag>
+
+/<Git-Revision>/
+s/<Git-Revision>.*<\/Git-Revision>/<Git-Revision>$(git rev-parse HEAD)<\/Git-Revision>
+wq" | ed pom.xml
+
 mvn deploy
+
+echo "1a
+# Unreleased
+
+## Added
+
+## Fixed
+
+## Changed
+
+.
+wq
+" | ed CHANGELOG.md
+
+git add CHANGELOG.md
+git commit -m 'Add CHANGELOG placeholders'

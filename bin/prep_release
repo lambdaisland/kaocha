@@ -34,19 +34,9 @@ VERSION="0.0-$(git rev-list --count HEAD)"
 
 echo_info "Bumping version to $VERSION"
 
-echo "/<version>/
-s/<version>.*<\/version>/<version>$VERSION<\/version>
-
-/<scm>/
-/<tag>/
-s/<tag>.*<\/tag>/<tag>$(git rev-parse HEAD)<\/tag>
-
-/<Git-Revision>/
-s/<Git-Revision>.*<\/Git-Revision>/<Git-Revision>$(git rev-parse HEAD)<\/Git-Revision>
-wq" | ed pom.xml
-
 sed 's/lambdaisland\/kaocha {:mvn\/version "[^"]*"}/lambdaisland\/kaocha {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
 sed 's/\[lambdaisland\/kaocha "[^"]*"\]/\[lambdaisland\/kaocha "'${VERSION}'"\]/' -i README.md doc/*.md
+ed < bin/update_toc.ed
 
 echo_info "Updating CHANGELOG"
 
@@ -61,21 +51,5 @@ echo_info "Updating CHANGELOG"
 git add -A
 git commit -m "Release v$VERSION"
 git tag v$VERSION
-
-echo "1a
-# Unreleased
-
-## Added
-
-## Fixed
-
-## Changed
-
-.
-wq
-" | ed CHANGELOG.md
-
-git add CHANGELOG.md
-git commit -m 'Add CHANGELOG placeholders'
 
 git show v$VERSION
