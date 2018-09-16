@@ -1,15 +1,18 @@
+- [ ] look at keyword inheritance for making the reporters more generic
+- [ ] prettier diffing of (is (= ))
+- [ ] improve Midje support
 - [ ] main namespace for cloverage
-- [ ] TAP reporter
-- [ ] parallelism
+- [ ] TAP reporter (provided by clojure.test?)
+- [ ] parallelism (?)
 - [ ] watch/api mode: undef removed vars
 - [ ] make stack trace filtering configurable
-- [-] ClojureScript type
-- [-] Midje type
-- [ ] Expectations type
+- [-] ClojureScript support 
+- [ ] Expectations support 
+- [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
 - [ ] Provide inspect plugin with e.g. --print-test-ids
-- [ ] Watch changes to tests.edn
+- [ ] Watch changes to `tests.edn`
 - [ ] Improve matcher-combinator support, maybe as a separate package/plugin?
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Colored diffs in report failures

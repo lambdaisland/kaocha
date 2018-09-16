@@ -22,8 +22,8 @@
     testable))
 
 (s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
-                                        :kaocha/test-paths
-                                        :kaocha/ns-patterns]))
+                                               :kaocha/test-paths
+                                               :kaocha/ns-patterns]))
 
 (s/def :kaocha/source-paths (s/coll-of string?))
 (s/def :kaocha/test-paths (s/coll-of string?))
