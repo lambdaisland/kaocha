@@ -74,7 +74,7 @@ Here's a more full-fledged example, still using `#kaocha {}`.
 
           ;; Regex patterns to determine whether a namespace contains
           ;; tests.
-          :ns-patterns [#"-test$"]}]
+          :ns-patterns ["-test$"]}]
 
  :plugins [:kaocha.plugin/print-invocations]
 
