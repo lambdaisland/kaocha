@@ -50,3 +50,5 @@
 (s/def :kaocha.var/var (s/spec var?
                                :gen (fn []
                                       (gen/return (.setDynamic (Var/create))))))
+
+(derive :kaocha.type/var :kaocha.testable.type/leaf)

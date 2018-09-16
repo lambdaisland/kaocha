@@ -23,10 +23,9 @@
 (defmethod progress :begin-test-suite [m]
   (let [testable   (:kaocha/testable m)
         test-plan  (:kaocha/test-plan m)
-        leaf-types (set (:kaocha/leaf-types test-plan))
         leaf-tests (->> testable
                         testable/test-seq
-                        (filter #(contains? leaf-types (::testable/type %))))]
+                        (filter #(isa? (::testable/type %) :kaocha.testable.type/leaf)))]
     (reset! bar (assoc (pr/progress-bar (count leaf-tests))
                        :label (name (:kaocha.testable/id testable))
                        :label-width (->> test-plan
