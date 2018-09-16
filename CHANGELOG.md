@@ -3,14 +3,10 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- filter keys (skip/skip-meta/focus/focus-meta) can now be used without namespace when using the `#kaocha` reader literal for configuration. Before: `:kaocha.filter/focus`, after: `:focus`.
+- Added a `:kaocha.hooks/pre-load` hook to complement `:kaocha.hooks/post-load`.
 
 # 0.0-122 (2018-09-12 / 735aa75)
-## Added
-
-## Fixed
 
 ## Changed
 

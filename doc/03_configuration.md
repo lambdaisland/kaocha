@@ -165,6 +165,8 @@ A reporter is configured with `--reporter` from the command line, or as
 `:reporter` in `tests.edn`. These reporters are Currently provided:
 
 ### `kaocha.report/dots`
+CLI: `--reporter kaocha.report/dots`
+Config: `{:kaocha/reporter [kaocha.report/dots]}`
 
 Print the output as a sequence of dots and other symbols.
 
@@ -178,16 +180,49 @@ Failures with complete output and error information, as well as a general
 summary are printed at the end (or when `Ctrl-C` is pressed). This is a great
 reporter for when you want it concise but still information-rich.
 
+This is a great all around reporter, it's concise but still rich in information.
+
+```
+[(.)(..F)(....)(..E..E)(...)(....)(.)(..)(............)(...)(...........)][(.....)]
+19 test vars, 55 assertions, 2 errors, 1 failures.
+```
+
 ### `kaocha.report/documentation`
 
-Print a nested overview of test names and `testing` blocks. Suitable for CI.
-Works best when using good test names and making liberal use of `testing`
-blocks.
+CLI: `--reporter kaocha.report/documentation`
+Config: `{:kaocha/reporter [kaocha.report/documentation]}`
 
-### `kaocha.report.progress/report`
+Provides detailed output of test namespaces, vars, and testing blocks. If you
+make good use of `clojure.test`'s facilities this can be very informative. A good choice for use on CI.
 
-Print a pretty progress bar. Provides less information than `dots`, but it's
-pretty. Great for demos.
+```
+--- :unit ---------------------------
+kaocha.type.var-test
+  run-test
+    a passing test var
+    a failing test var
+    an erroring test var
+    multiple assertions
+    early exit FAIL
+      early exit - exception ERROR
+```
+
+### `kaocha.report.progress/progress`
+
+CLI: `--reporter kaocha.report.progress/progress`
+Config: `{:kaocha/reporter [kaocha.report.progress/progress]}`
+
+Prints a separate progress bar for each test suite, with progress percentage,
+and the completed/total number of test vars.
+
+Turns red when a test has failed.
+
+``` clojure
+integration:   100% [==================================================] 1/1
+       unit:   100% [==================================================] 18/18
+
+19 test vars, 55 assertions, 0 failures.
+```
 
 ## Example
 

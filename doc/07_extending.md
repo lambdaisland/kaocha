@@ -173,7 +173,85 @@ first argument (possibly updated).
     run))
 ```
 
-
 ### Suite types
 
+Kaocha is designed to be a universal tool, able to run any type of test suite
+your project chooses to use. To make this possible it provides a way to
+implement custom test suite types.
+
+In the test configuration every suite has a type.
+
+``` clojure
+{:kaocha/tests [{:kaocha.testable/type :kaocha.type/clojure.test
+                 :kaocha.testable/id   :unit}]}
+```
+
+When Kaocha encounters this test suite it will first try to load the type, by
+requiring either the `kaocha.type` or `kaocha.type.clojure.test` namespace.
+
+It will then validate the suite configuration using the
+`:kaocha.type/clojure.test` spec, so a custom test suite implementation must
+register a Clojure spec with the same name as the suite type.
+
+Finally a test suite implements two multimethods, one that handles Kaocha's load stage, and one that handles the run stage.
+
+Here's a skeleton example of a test suite. 
+
+``` clojure
+(ns kaocha.type.clojure.test
+  (:require [clojure.spec.alpha :as s]
+            [kaocha.testable :as testable]
+            [kaocha.load :as load]
+            [clojure.test :as t]))
+
+(defmethod testable/-load :kaocha.type/clojure.test [testable]
+  (assoc :kaocha.testable test-plan/tests (load-tests ...)))
+
+(defmethod testable/-run :kaocha.type/clojure.test [testable test-plan]
+  (t/do-report {:type :begin-test-suite})
+  (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
+        testable (-> testable
+                     (dissoc :kaocha.test-plan/tests)
+                     (assoc :kaocha.result/tests results))]
+    (t/do-report {:type :end-test-suite
+                  :kaocha/testable testable})
+    testable))
+
+(s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
+                                               :kaocha/test-paths
+                                               :kaocha/ns-patterns]))
+```
+
+Some things to note:
+
+- you should structure your test types hierarchically, and use
+  `kaocha.testable/load-testables` / `kaocha.testable/run-testables` to perform
+  the recursion.
+- the `-run` implementation is responsible for calling `clojure.test/do-report`
+- `-load` transforms a config into a test-plan, so it should `dissoc
+  :kaocha/tests` and `assoc :kaocha.test-plan/tests`
+- `-run` transforms a test-plan into a test result, so it should `dissoc
+  :kaocha.test-plan/tests`, and `assoc :kaocha.result/tests`.
+- `-load` is responsible for adding the test directories to the classpath (if
+  this applies for your test type). The helpers in `kaocha.load` will come in
+  handy for this.
+- When in doubt study the existing implementations.
+  
+
 ### Reporters
+
+Reporters generate the test runners output. They are in their nature side-effectful, printing to stdout in response to events. 
+
+A reporter is a function which takes a single map as argument, with the map having a `:type` key. Kaocha uses the same types as `clojure.test`, but adds `:begin-test-suite` and `:end-test-suite`.
+
+Kaocha contains fine-grained reporters, which you can combine, or mix with your own to get the desired output. A reporter can be either a function, or a sequence of reporters, which will all be called in turn. For instance, the default Kaocha reporter is defined as such:
+
+``` clojure
+(ns kaocha.report)
+
+(def dots
+  "Reporter that prints progress as a sequence of dots and letters."
+  [dots* result])
+```
+
+Other reporters currently implemented include

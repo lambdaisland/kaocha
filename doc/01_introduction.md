@@ -31,11 +31,38 @@ tests from the command line or from the REPL.
 
 Features include
 
-- Watching for changes and re-running tests
 - Filtering tests based on test names or metadata
-- Pretty reporting
+- Watch mode: watch the file system for changes and re-run tests
+- Pretty, pluggable reporting
 - Randomize test order
-- Smart handling of Ctrl-C (show info on failed tests before exiting)
+- Detect when interrupted with ctrl-C and print report
+- Fail fast mode: stop at first failure and print report
 - Profiling (show slowest tests)
 - Dynamic classpath handling
 - Tests as data (get test config, test plan, or test results as EDN)
+- Extensible test types (clojure.test, Midje, ...)
+- Extensible through plugins 
+- Tool agnostic (Clojure CLI, Leiningen, ...)
+
+## Current status
+
+Kaocha is a work in progress. Focus so far has been on internal APIs, and on the
+data formats for configuration, test plan, and test results. These things are
+largely stable and complete.
+
+The command line test runner is largely feature complete, and being used in the
+real world. More work is still needed to support and intergrate with other
+frameworks and tools.
+
+- [X] clojure.test support 
+- [X] Midje support
+- [-] ClojureScript support
+- [ ] Expectation support
+- [X] Clojure CLI
+- [X] Leiningen
+- [ ] Boot
+- [ ] Cloverage
+
+Currently Kaocha's versioning scheme is `0.0-${commit count}`, and releases are
+made often. As long as the version is at `0.0` Kaocha will be considered alpha,
+in other words: subject to change. Keep an eye on the CHANGELOG.

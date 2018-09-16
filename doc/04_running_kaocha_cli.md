@@ -39,7 +39,7 @@ output.
 For example, to see a colorful progress bar, use
 
 ```
-bin/kaocha --reporter kaocha.report.progress/report
+bin/kaocha --reporter kaocha.report.progress/progress
 ```
 
 ## Fail fast mode
