@@ -11,13 +11,13 @@ Full featured next generation test runner for Clojure.
 ## Docs
 
 <!-- docs-toc -->
-- [1. Introduction](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/01_introduction.md)
-- [2. Installing](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/02_installing.md)
-- [3. Configuration](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/03_configuration.md)
-- [4. Running Kaocha CLI](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/04_running_kaocha_cli.md)
-- [4. Focusing and Skipping](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/05_focusing_and_skipping.md)
-- [6. Plugins](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/06_plugins.md)
-- [7. Extending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/07_extending.md)
+- [1. Introduction](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/1-introduction)
+- [2. Installing](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/2-installing)
+- [3. Configuration](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/3-configuration)
+- [4. Running Kaocha CLI](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/4-running-kaocha-cli)
+- [4. Focusing and Skipping](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/4-focusing-and-skipping)
+- [6. Plugins](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/6-plugins)
+- [7. Extending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/7-extending)
 <!-- /docs-toc -->
 
 ## Features
@@ -49,7 +49,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:deps {lambdaisland/kaocha {:mvn/version "0.0-134"}}}}}
+ {:test {:deps {lambdaisland/kaocha {:mvn/version "0.0-138"}}}}}
 ```
 
 Add a wrapper/binstub
