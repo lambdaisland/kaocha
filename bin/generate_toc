@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
 
+def uslug(s)
+  s.downcase.gsub(/[^\p{L}\p{N}]+/, ' ').gsub(/[\p{Z}\s]+/, '-')
+end
+
 Dir['doc/*.md'].sort.each do |f|
   title = File.read(f).each_line.first.sub(/^#+/, '').strip
-  file  = File.basename(f)
-  puts "- [%s](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/%s)" % [title, file]
+  puts "- [%s](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/%s)" % [title, uslug(title)]
 end

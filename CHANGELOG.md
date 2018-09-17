@@ -1,9 +1,5 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
 
 - Due a limitation of Aero `:ns-patterns` must be strings, and not regex

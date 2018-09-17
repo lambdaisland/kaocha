@@ -17,7 +17,7 @@
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Colored diffs in report failures
 - [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
-
+- [ ] Add to clojure.org
 
 - [X] Watch source paths
 - [X] skip / focus by metadata
