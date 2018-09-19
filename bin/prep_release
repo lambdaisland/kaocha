@@ -22,7 +22,9 @@ $(git diff)"
     exit 1
 fi
 
+PROJECT=$(git remote get-url origin | sed 's/.*lambdaisland\/\([a-z-]\+\).*/\1/')
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
 if [[ "$BRANCH" != "master" ]]; then
     echo_error "On branch $BRANCH, release must be on master."
     exit 1;
@@ -34,8 +36,8 @@ VERSION="0.0-$(git rev-list --count HEAD)"
 
 echo_info "Bumping version to $VERSION"
 
-sed 's/lambdaisland\/kaocha {:mvn\/version "[^"]*"}/lambdaisland\/kaocha {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
-sed 's/\[lambdaisland\/kaocha "[^"]*"\]/\[lambdaisland\/kaocha "'${VERSION}'"\]/' -i README.md doc/*.md
+sed 's/lambdaisland\/'"${PROJECT}"' {:mvn\/version "[^"]*"}/lambdaisland\/'"${PROJECT}"' {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
+sed 's/\[lambdaisland\/'"${PROJECT}"' "[^"]*"\]/\[lambdaisland\/'"${PROJECT}"' "'${VERSION}'"\]/' -i README.md doc/*.md
 ed < bin/update_toc.ed
 
 echo_info "Updating CHANGELOG"
