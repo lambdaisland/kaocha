@@ -1,19 +1,19 @@
 [([31mE[m)]
 
-ERROR in aaa.aaa-test (load.clj:37)
+ERROR in aaa.aaa-test (load.clj:35)
 Failed to load namespace.
 Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (aaa/aaa_test.clj:1:1).
  at clojure.lang.Compiler.load (Compiler.java:7624)
     ...
-    kaocha.type.ns$eval12878$fn__12879.invoke (ns.clj:20)
+    kaocha.type.ns$eval13086$fn__13087.invoke (ns.clj:20)
     ...
     kaocha.testable$load.invokeStatic (testable.clj:60)
     kaocha.testable$load.invoke (testable.clj:53)
     kaocha.testable$load_testables.invokeStatic (testable.clj:106)
     kaocha.testable$load_testables.invoke (testable.clj:98)
-    kaocha.load$load_test_namespaces.invokeStatic (load.clj:37)
+    kaocha.load$load_test_namespaces.invokeStatic (load.clj:35)
     kaocha.load$load_test_namespaces.invoke (load.clj:23)
-    kaocha.type.clojure.test$eval13231$fn__13232.invoke (test.clj:12)
+    kaocha.type.clojure.test$eval13302$fn__13303.invoke (test.clj:12)
     ...
     kaocha.testable$load.invokeStatic (testable.clj:60)
     kaocha.testable$load.invoke (testable.clj:53)
@@ -38,19 +38,19 @@ Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (a
 Caused by: java.io.FileNotFoundException: Could not locate aaa/aaa__init.class or aaa/aaa.clj on classpath.
  at clojure.lang.RT.load (RT.java:463)
     ...
-    aaa.aaa_test$eval13264$loading__6539__auto____13265.invoke (aaa_test.clj:1)
-    aaa.aaa_test$eval13264.invokeStatic (aaa_test.clj:1)
-    aaa.aaa_test$eval13264.invoke (aaa_test.clj:1)
+    aaa.aaa_test$eval13335$loading__6539__auto____13336.invoke (aaa_test.clj:1)
+    aaa.aaa_test$eval13335.invokeStatic (aaa_test.clj:1)
+    aaa.aaa_test$eval13335.invoke (aaa_test.clj:1)
     ...
-    kaocha.type.ns$eval12878$fn__12879.invoke (ns.clj:20)
+    kaocha.type.ns$eval13086$fn__13087.invoke (ns.clj:20)
     ...
     kaocha.testable$load.invokeStatic (testable.clj:60)
     kaocha.testable$load.invoke (testable.clj:53)
     kaocha.testable$load_testables.invokeStatic (testable.clj:106)
     kaocha.testable$load_testables.invoke (testable.clj:98)
-    kaocha.load$load_test_namespaces.invokeStatic (load.clj:37)
+    kaocha.load$load_test_namespaces.invokeStatic (load.clj:35)
     kaocha.load$load_test_namespaces.invoke (load.clj:23)
-    kaocha.type.clojure.test$eval13231$fn__13232.invoke (test.clj:12)
+    kaocha.type.clojure.test$eval13302$fn__13303.invoke (test.clj:12)
     ...
     kaocha.testable$load.invokeStatic (testable.clj:60)
     kaocha.testable$load.invoke (testable.clj:53)
