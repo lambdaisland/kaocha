@@ -8,11 +8,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pomegranate
 
+(defn ensure-compiler-loader
+  "Ensures the clojure.lang.Compiler/LOADER var is bound to a DynamicClassLoader,
+  so that we can add to Clojure's classpath dynamically."
+  []
+  (when-not (bound? Compiler/LOADER)
+    (.bindRoot Compiler/LOADER (clojure.lang.DynamicClassLoader. (clojure.lang.RT/baseLoader)))))
+
 (defn- classloader-hierarchy
   "Returns a seq of classloaders, with the tip of the hierarchy first.
    Uses the current thread context ClassLoader as the tip ClassLoader
    if one is not provided."
-  ([] (classloader-hierarchy (deref clojure.lang.Compiler/LOADER)))
+  ([]
+   (ensure-compiler-loader)
+   (classloader-hierarchy (deref clojure.lang.Compiler/LOADER)))
   ([tip]
    (->> tip
         (iterate #(.getParent %))
@@ -43,10 +52,3 @@
 
 ;; /Pomegranate
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn ensure-compiler-loader
-  "Ensures the clojure.lang.Compiler/LOADER var is bound to a DynamicClassLoader,
-  so that we can add to Clojure's classpath dynamically."
-  []
-  (when-not (bound? Compiler/LOADER)
-    (push-thread-bindings {Compiler/LOADER (clojure.lang.DynamicClassLoader. (clojure.lang.RT/baseLoader))})))

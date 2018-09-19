@@ -24,8 +24,6 @@
   (let [{:kaocha/keys [test-paths ns-patterns]} testable
         ns-patterns                             (map regex ns-patterns)]
 
-    (classpath/ensure-compiler-loader)
-
     (doseq [path test-paths]
       (when-not (.exists (io/file path))
         (out/warn "In :test-paths, no such file or directory: " path))
