@@ -20,8 +20,7 @@ wq" | ed pom.xml
 
 mvn deploy
 
-echo "
-1i
+echo "1i
 # Unreleased
 
 ## Added
@@ -31,8 +30,7 @@ echo "
 ## Changed
 
 .
-wq
-" | ed CHANGELOG.md
+wq" | ed CHANGELOG.md
 
 git add CHANGELOG.md pom.xml
 git commit -m 'Add CHANGELOG placeholders + update versions in pom.xml'
