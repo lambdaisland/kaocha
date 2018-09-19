@@ -19,7 +19,6 @@
   (when-not (contains? #{:pass
                          :fail
                          :error
-                         ;; :mismatch
                          :begin-test-suite
                          :end-test-suite
                          :begin-test-ns
@@ -40,6 +39,13 @@
     (print ".")
     (flush)))
 
+;; newer versions of matcher-combinators
+(defmethod dots* :matcher.combinators/mismatch [_]
+  (t/with-test-out
+    (print (out/colored :red "F"))
+    (flush)))
+
+;; older versions of matcher-combinators
 (defmethod dots* :mismatch [_]
   (t/with-test-out
     (print (out/colored :red "F"))
