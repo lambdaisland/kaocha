@@ -1,7 +1,5 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
 - Use tools.namespace.track for tracking/reloading namespaces in watch mode.
@@ -9,8 +7,6 @@
 - Change the `add-classpath` classloader hack so it doesn't mess up the thread
   binding stack.
 - Make dots reporter compatible with newer versions of matcher-combinators.
-
-## Changed
 
 # 0.0-138 (2018-09-17 / 9bc74e4)
 
