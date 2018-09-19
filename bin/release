@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 VERSION="0.0-$(git rev-list --count HEAD)"
 
 bin/prep_release
