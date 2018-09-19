@@ -44,6 +44,10 @@
       :->                (merge (dissoc value :tests :plugins :reporter :color? :fail-fast? :watch?)))))
 
 (defmethod aero/reader 'kaocha [opts tag value]
+  (out/warn "The #kaocha/v1 reader literal is deprecated, please change it to #kaocha/v1/v1.")
+  (normalize value))
+
+(defmethod aero/reader 'kaocha/v1 [opts tag value]
   (normalize value))
 
 (defn load-config

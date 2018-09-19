@@ -33,22 +33,22 @@ Here's an example test configuration with a single test suite:
 ```
 
 Writing a full test configuration by hand is tedious, which is why in
-`tests.edn` you can use the `#kaocha {}` tagged reader literal. It allows using
+`tests.edn` you can use the `#kaocha/v1 {}` tagged reader literal. It allows using
 plain instead of namespaced keywords, and provides many default values. If you
 have a single test suite with `clojure.test` style tests in the `test`
 directory, then you can start out with a `tests.edn` with nothing but
 
 ``` clojure
-#kaocha {}
+#kaocha/v1 {}
 ```
 
 Try it out! Use `bin/kaocha --print-config` to see the resulting test
 configuration.
 
-In general using `#kaocha {}` is highly recommended, however if you need fine
+In general using `#kaocha/v1 {}` is highly recommended, however if you need fine
 grained control you can write the output of `--print-config` to `tests.edn` and
 go from there. The rest of the documentation will generally use the short forms
-used in `#kaocha {}`, rather than using fully qualified keywords.
+used in `#kaocha/v1 {}`, rather than using fully qualified keywords.
 
 Configuration is read with [Aero](https://github.com/juxt/aero), meaning you
 have access to reader literals like `#env`, `#merge`, `#ref`, and `#include`.
@@ -76,7 +76,7 @@ which has its test files under `"test/unit"`, and one named `:features`, with
 its tests under `"test/features"`.
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:tests [{:id         :unit
           :test-paths ["test/unit"]}
          {:id         :features
@@ -86,7 +86,7 @@ its tests under `"test/features"`.
 You can now run only the unit tests with `bin/kaocha unit`, or all tests with
 `bin/kaocha`.
 
-Because it's using the `#kaocha {}` shorthand these test suites inherit the
+Because it's using the `#kaocha/v1 {}` shorthand these test suites inherit the
 defaults, this means they are of type `:kaocha.type/clojure.test`, that they
 consider files under `"src"` to be the code under test, and that only namespaces
 ending in `-test` are considered test namespaces.
@@ -134,7 +134,7 @@ A plugin has a name, a fully qualified keyword, and can be configured easily,
 either in `tests.edn`:
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:plugins [:kaocha.plugin/profiling]}
 ```
 
@@ -145,7 +145,7 @@ bin/kaocha --plugin kaocha.plugin/profiling
 ```
 
 Some plugins are needed for the normal functioning of Kaocha. These are added
-automatically when using the `#kaocha {}` reader literal. They are
+automatically when using the `#kaocha/v1 {}` reader literal. They are
 
 - `:kaocha.plugin/randomize`: randomize test order
 - `:kaocha.plugin/filter`: allow filtering and "focusing" of tests
@@ -227,11 +227,11 @@ integration:   100% [==================================================] 1/1
 
 ## Example
 
-You should be able to start with a simple `#kaocha {}`, and leave most
+You should be able to start with a simple `#kaocha/v1 {}`, and leave most
 configuration at its default. This is merely an example of what's possible
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:tests [{;; Every suite must have an :id
           :id :unit
 

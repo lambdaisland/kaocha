@@ -6,6 +6,10 @@
 
 ## Changed
 
+- BREAKING: Instead of `#kaocha` use `#kaocha/v1` as a reader literal that
+  normalizes configuration. The old version is still supported for now but
+  generates a warning.
+
 # 0.0-147 (2018-09-19 / 351429d)
 
 ## Fixed

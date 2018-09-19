@@ -20,7 +20,7 @@ or namespace metadata, based on four command line flags and configuration keys.
 ```
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:tests [{:id :unit
           :skip [...]
           :focus [...]
@@ -61,7 +61,7 @@ work. You can mark these with a metadata tag:
 To ignore such tests, add a `:skip-meta` key to the test suite config:
 
 ``` clojure
-#kaocha {:tests [{:id :unit
+#kaocha/v1 {:tests [{:id :unit
                   :skip-meta [:pending]}]}
 ```
 

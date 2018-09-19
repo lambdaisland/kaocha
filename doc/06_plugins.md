@@ -17,7 +17,7 @@ bin/kaocha --plugin kaocha.plugin/profiling
 or
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:plugins [kaocha.plugin/profiling]}
 ```
 
@@ -59,7 +59,7 @@ Top 3 slowest kaocha.type/var (37.70178 seconds, 99.3% of total time)
 Shown with their default values:
 
 ```
-#kaocha
+#kaocha/v1
 {:kaocha.plugin.profiling/count 3
  :kaocha.plugin.profiling/profiling? true}
 ```
@@ -77,7 +77,7 @@ bin/kaocha --plugin kaocha.plugin/print-invocations
 or
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:plugins [kaocha.plugin/print-invocations]}
 ```
 

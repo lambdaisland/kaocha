@@ -15,7 +15,7 @@
   (let [tmpfile (java.io.File/createTempFile "tests" ".edn")]
     (doto tmpfile
       (.deleteOnExit)
-      (spit (str "#kaocha" (prn-str config))))
+      (spit (str "#kaocha/v1" (prn-str config))))
     (apply shell/sh
            "clojure" "-A:dev" "-m" "kaocha.runner"
            "--config-file" (str tmpfile)

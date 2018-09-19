@@ -1,4 +1,4 @@
-#kaocha
+#kaocha/v1
 {:tests [{:id :a
           :test-paths ["fixtures/a-tests"]}
          {:id :b

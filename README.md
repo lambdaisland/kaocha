@@ -65,7 +65,7 @@ Add a `tests.edn` at the root of the project, add a first test suite with test
 and source paths. Optionally set a reporter or load plugins.
 
 ``` clojure
-#kaocha
+#kaocha/v1
 {:tests [{:id :unit
           :test-paths ["test/unit"]
           :source-paths ["src"]}]

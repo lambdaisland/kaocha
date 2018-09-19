@@ -1,4 +1,4 @@
-#kaocha
+#kaocha/v1
 {:plugins [:kaocha.plugin/profiling]
  :tests [{:id         :unit
           :test-paths ["test/shared" "test/unit"]}
