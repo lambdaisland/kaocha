@@ -18,6 +18,8 @@
 - [ ] Colored diffs in report failures
 - [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
 - [ ] Add to clojure.org
+- [ ] Use `#kaocha/v1 {}` instead of `#kaocha {}`
+
 
 - [X] Watch source paths
 - [X] skip / focus by metadata

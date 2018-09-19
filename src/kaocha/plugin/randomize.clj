@@ -53,5 +53,5 @@
 
   (pre-run [test-plan]
     (if (::randomize? test-plan)
-      (println "Running with --seed" (::seed test-plan)))
+      (println "Randomized with --seed" (::seed test-plan)))
     test-plan))
