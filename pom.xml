@@ -24,6 +24,8 @@
 
   <scm>
       <url>https://github.com/lambdaisland/kaocha</url>
+      <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
+      <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
       <tag>6a5301808fa3b7bea5c4f69ee487ff586c61d5a6</tag>
   </scm>
 
