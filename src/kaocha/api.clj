@@ -8,7 +8,8 @@
             [kaocha.report :as report]
             [kaocha.history :as history]
             [kaocha.config :as config]
-            [kaocha.output :as output]))
+            [kaocha.output :as output]
+            [kaocha.matcher-combinators]))
 
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]

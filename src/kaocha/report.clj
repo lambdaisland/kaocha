@@ -8,6 +8,25 @@
             [kaocha.history :as history]
             [kaocha.testable :as testable]))
 
+(defonce hierarchy (make-hierarchy))
+
+(defn derive! [tag parent]
+  (alter-var-root #'hierarchy derive tag parent))
+
+(derive! :fail :kaocha/fail-type)
+(derive! :error :kaocha/fail-type)
+
+(derive! :pass :kaocha/known-key)
+(derive! :fail :kaocha/known-key)
+(derive! :error :kaocha/known-key)
+(derive! :begin-test-suite :kaocha/known-key)
+(derive! :end-test-suite :kaocha/known-key)
+(derive! :begin-test-ns :kaocha/known-key)
+(derive! :end-test-ns :kaocha/known-key)
+(derive! :begin-test-var :kaocha/known-key)
+(derive! :end-test-var :kaocha/known-key)
+(derive! :summary :kaocha/known-key)
+
 (def clojure-test-report t/report)
 
 (defn dispatch-extra-keys
@@ -16,17 +35,7 @@
   clojure.test/assert-expr, as well as clojure.test/report, to signal special
   conditions."
   [m]
-  (when-not (contains? #{:pass
-                         :fail
-                         :error
-                         :begin-test-suite
-                         :end-test-suite
-                         :begin-test-ns
-                         :end-test-ns
-                         :begin-test-var
-                         :end-test-var
-                         :summary}
-                       (:type m))
+  (when-not (isa? hierarchy (:type m) :kaocha/known-key)
     (clojure-test-report m)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,18 +46,6 @@
 (defmethod dots* :pass [_]
   (t/with-test-out
     (print ".")
-    (flush)))
-
-;; newer versions of matcher-combinators
-(defmethod dots* :matcher.combinators/mismatch [_]
-  (t/with-test-out
-    (print (out/colored :red "F"))
-    (flush)))
-
-;; older versions of matcher-combinators
-(defmethod dots* :mismatch [_]
-  (t/with-test-out
-    (print (out/colored :red "F"))
     (flush)))
 
 (defmethod dots* :fail [_]
@@ -94,10 +91,6 @@
 (defmethod report-counters :pass [m]
   (t/inc-report-counter :pass))
 
-;; As long as we pass :mismatch events on to matcher-combinators they will get
-;; reported as failures there
-;; (defmethod report-counters :mismatch [m] (t/inc-report-counter :fail))
-
 (defmethod report-counters :fail [m]
   (t/inc-report-counter :fail))
 
@@ -124,7 +117,7 @@
        (name (:kaocha.testable/id testable)))
      " (" file ":" line ")")))
 
-(defn- print-output [m]
+(defn print-output [m]
   (let [buffer (get-in m [:kaocha/testable ::capture/buffer])
         out (capture/read-buffer buffer)]
     (when (seq out)
@@ -132,7 +125,9 @@
       (println (str/trim-newline out))
       (println "--------------------------------------------------------"))))
 
-(defn- summary-fail [{:keys [testing-contexts testing-vars] :as m}]
+(defmulti fail-summary :type)
+
+(defmethod fail-summary :fail [{:keys [testing-contexts testing-vars] :as m}]
   (println "\nFAIL in" (testing-vars-str m))
   (when (seq testing-contexts)
     (println (str/join " " testing-contexts)))
@@ -142,7 +137,7 @@
   (println "  actual:" (pr-str (:actual m)))
   (print-output m))
 
-(defn- summary-error [{:keys [testing-contexts testing-vars] :as m}]
+(defmethod fail-summary :error [{:keys [testing-contexts testing-vars] :as m}]
   (println "\nERROR in" (testing-vars-str m))
   (when (seq testing-contexts)
     (println (str/join " " testing-contexts)))
@@ -157,13 +152,11 @@
 
 (defmethod result :summary [m]
   (t/with-test-out
-    (let [failures (filter (comp #{:fail :error} :type) @history/*history*)]
+    (let [failures (filter #(isa? hierarchy (:type %) :kaocha/fail-type) @history/*history*)]
       (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
         (binding [t/*testing-contexts* testing-contexts
                   t/*testing-vars* testing-vars]
-          (case (:type m)
-            :fail (summary-fail m)
-            :error (summary-error m)))))
+          (fail-summary m))))
 
     (let [{:keys [test pass fail error] :or {pass 0 fail 0 error 0}} m
           passed? (pos-int? (+ fail error))]
@@ -180,7 +173,7 @@
   "Fail fast reporter, add this as a final reporter to interrupt testing as soon
   as a failure or error is encountered."
   [m]
-  (when (and (some #{(:type m)} [:error :fail :mismatch])
+  (when (and (isa? hierarchy (:type m) :kaocha/fail-type)
              (not (:kaocha.result/exception m))) ;; prevent handled exceptions from being re-thrown
     (throw+ {:kaocha/fail-fast true})))
 

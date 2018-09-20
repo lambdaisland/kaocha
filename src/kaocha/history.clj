@@ -1,9 +1,6 @@
 (ns kaocha.history
   (:require [clojure.test :as t]))
 
-;; TODO: this tries to track progress separate of t/inc-report-counter, which
-;; doesn't always work, see e.g. :mismatch to support matcher-combinators
-
 (def ^:dynamic *history* nil)
 
 (defmulti track :type)
@@ -27,10 +24,11 @@
    (reduce
     (fn [m {type :type}]
       (cond
-        (= type :begin-test-var)            (update m :test inc)
-        (= type :mismatch)                  (update m :fail inc)
-        (some #{type} [:pass :fail :error]) (update m type inc)
-        :else                               m))
+        (= type :begin-test-var)               (update m :test inc)
+        (= type :matcher-combinators/mismatch) (update m :fail inc)
+        (= type :mismatch)                     (update m :fail inc)
+        (some #{type} [:pass :fail :error])    (update m type inc)
+        :else                                  m))
     {:type  :summary
      :test  0
      :pass  0

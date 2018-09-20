@@ -4,6 +4,11 @@
 
 ## Fixed
 
+- Improved matcher-combinators support, now failure summary is only shown at the
+  end (for dots or docs reporter), and output is correctly captured and
+  displayed.
+- Compatibility with newer matcher-combinators.
+
 ## Changed
 
 # 0.0-153 (2018-09-19 / 25a68bd)

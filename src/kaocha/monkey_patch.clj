@@ -26,7 +26,7 @@
 (alter-var-root #'t/do-report
                 (fn [_]
                   (fn [m]
-                    (let [m          (merge {:kaocha/testable testable/*current-testable*
+                    (let [m          (merge {:kaocha/testable  testable/*current-testable*
                                              :kaocha/test-plan testable/*test-plan*} m)
                           test-fn    (:kaocha.var/test (:kaocha/testable m))
                           stacktrace (.getStackTrace (if (exception? (:actual m))
@@ -47,9 +47,10 @@
                                                          stacktrace)))]
                       (t/report
                        (case (:type m)
-                         :fail     (merge file-and-line m)
-                         :mismatch (merge file-and-line m) ; matcher-combinators
-                         :error    (if (-> m :actual ex-data :kaocha/fail-fast)
-                                     (throw (:actual m))
-                                     (merge file-and-line m))
+                         :fail                         (merge file-and-line m)
+                         :mismatch                     (merge file-and-line m) ; matcher-combinators
+                         :matcher-combinators/mismatch (merge file-and-line m) ; matcher-combinators
+                         :error                        (if (-> m :actual ex-data :kaocha/fail-fast)
+                                                         (throw (:actual m))
+                                                         (merge file-and-line m))
                          m))))))
