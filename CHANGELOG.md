@@ -2,6 +2,9 @@
 
 ## Added
 
+- Reporters in the `kaocha.report` namespace now can be specified on the command
+  line with just their short name, e.g. `--reporter dots`
+
 ## Fixed
 
 - Improved matcher-combinators support, now failure summary is only shown at the

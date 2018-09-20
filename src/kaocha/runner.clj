@@ -30,7 +30,11 @@
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
    [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
-    :parse-fn symbol
+    :parse-fn (fn [s]
+                (let [sym (symbol s)]
+                  (if (qualified-symbol? sym)
+                    sym
+                    (symbol "kaocha.report" s))))
     :assoc-fn accumulate]
    [nil "--plugin KEYWORD"      "Load the given plugin."
     :parse-fn parse-kw
