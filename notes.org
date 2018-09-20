@@ -1,13 +1,13 @@
-- [ ] look at keyword inheritance for making the reporters more generic
+- [X] look at keyword inheritance for making the reporters more generic
 - [ ] prettier diffing of (is (= ))
 - [ ] improve Midje support
 - [ ] main namespace for cloverage
 - [ ] TAP reporter (provided by clojure.test?)
 - [ ] parallelism (?)
-- [ ] watch/api mode: undef removed vars
+- [X] watch/api mode: undef removed vars
 - [ ] make stack trace filtering configurable
-- [-] ClojureScript support 
-- [ ] Expectations support 
+- [-] ClojureScript support
+- [ ] Expectations support
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
@@ -18,8 +18,9 @@
 - [ ] Colored diffs in report failures
 - [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
 - [ ] Add to clojure.org
-- [ ] Use `#kaocha/v1 {}` instead of `#kaocha {}`
-
+- [X] Use `#kaocha/v1 {}` instead of `#kaocha {}`
+- [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C
+- [X] Prevent output of matcher-combinators
 
 - [X] Watch source paths
 - [X] skip / focus by metadata
