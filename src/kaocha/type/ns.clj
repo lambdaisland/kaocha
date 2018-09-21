@@ -3,6 +3,7 @@
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
             [clojure.spec.alpha :as s]
+            [kaocha.type.var]
             [kaocha.output :as out]))
 
 (defn ->testable [ns-name]

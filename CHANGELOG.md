@@ -2,6 +2,8 @@
 
 ## Added
 
+- Make Kaocha's reporters more easily extendable through keyword hierarchies
+
 ## Fixed
 
 ## Changed
