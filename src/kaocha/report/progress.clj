@@ -3,7 +3,8 @@
             [progrock.core :as pr]
             [kaocha.testable :as testable]
             [kaocha.output :as out]
-            [kaocha.report :as report]))
+            [kaocha.report :as report]
+            [kaocha.hierarchy :as hierarchy]))
 
 (def bar (atom nil))
 
@@ -17,7 +18,7 @@
   (t/with-test-out
     (pr/print @bar {:format (format-bar @bar)})))
 
-(defmulti progress :type)
+(defmulti progress :type :hierarchy #'hierarchy/hierarchy)
 (defmethod progress :default [_])
 
 (defmethod progress :begin-test-suite [m]
@@ -25,12 +26,12 @@
         test-plan  (:kaocha/test-plan m)
         leaf-tests (->> testable
                         testable/test-seq
-                        (filter #(isa? (::testable/type %) :kaocha.testable.type/leaf)))]
+                        (filter #(isa? (:kaocha.testable/type %) :kaocha.testable.type/leaf)))]
     (reset! bar (assoc (pr/progress-bar (count leaf-tests))
                        :label (name (:kaocha.testable/id testable))
                        :label-width (->> test-plan
                                          :kaocha.test-plan/tests
-                                         (remove ::testable/skip)
+                                         (remove :kaocha.testable/skip)
                                          (map (comp count name :kaocha.testable/id))
                                          (apply max))))
     (print-bar)))
@@ -43,7 +44,7 @@
   (swap! bar assoc :done? true)
   (print-bar))
 
-(defmethod progress :fail [m]
+(defmethod progress :kaocha/fail-type [m]
   (swap! bar assoc :failed? true)
   (print-bar))
 

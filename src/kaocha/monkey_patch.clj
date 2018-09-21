@@ -2,7 +2,9 @@
   (:require [clojure.test :as t]
             [clojure.string :as str]
             [kaocha.testable :as testable]
-            [kaocha.core-ext :refer :all]))
+            [kaocha.core-ext :refer :all]
+            [kaocha.report :as report]
+            [kaocha.hierarchy :as hierarchy]))
 
 (defn- test-file-and-line [stacktrace test-fn]
   (let [test-class-name (.getName (class test-fn))
@@ -46,11 +48,14 @@
                                                                 (str/starts-with? cl-name "kaocha.type.")))
                                                          stacktrace)))]
                       (t/report
-                       (case (:type m)
-                         :fail                         (merge file-and-line m)
-                         :mismatch                     (merge file-and-line m) ; matcher-combinators
-                         :matcher-combinators/mismatch (merge file-and-line m) ; matcher-combinators
-                         :error                        (if (-> m :actual ex-data :kaocha/fail-fast)
-                                                         (throw (:actual m))
-                                                         (merge file-and-line m))
+                       (cond
+                         (= :error (:type m))
+                         (if (-> m :actual ex-data :kaocha/fail-fast)
+                           (throw (:actual m))
+                           (merge file-and-line m))
+
+                         (hierarchy/isa? :kaocha/fail-type (:type m))
+                         (merge file-and-line m)
+
+                         :else
                          m))))))

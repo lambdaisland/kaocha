@@ -1,13 +1,14 @@
 (ns kaocha.history
-  (:require [clojure.test :as t]))
+  (:require [clojure.test :as t]
+            [kaocha.hierarchy :as hierarchy]))
 
 (def ^:dynamic *history* nil)
 
-(defmulti track :type)
+(defmulti track :type :hierarchy #'hierarchy/hierarchy)
 
 (defmethod track :default [m] (swap! *history* conj m))
 
-(defmethod track :fail [m]
+(defmethod track :kaocha/fail-type [m]
   (swap! *history* conj (assoc m
                                :testing-contexts t/*testing-contexts*
                                :testing-vars t/*testing-vars*)) )
@@ -24,11 +25,10 @@
    (reduce
     (fn [m {type :type}]
       (cond
-        (= type :begin-test-var)               (update m :test inc)
-        (= type :matcher-combinators/mismatch) (update m :fail inc)
-        (= type :mismatch)                     (update m :fail inc)
-        (some #{type} [:pass :fail :error])    (update m type inc)
-        :else                                  m))
+        (some #{type} [:pass :error])           (update m type inc)
+        (= type :begin-test-var)                (update m :test inc)
+        (hierarchy/isa? type :kaocha/fail-type) (update m :fail inc)
+        :else                                   m))
     {:type  :summary
      :test  0
      :pass  0
