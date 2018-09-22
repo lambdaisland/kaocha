@@ -8,6 +8,9 @@
 
 ## Changed
 
+- Load errors in `--watch` mode no longer cause the process to exit. Instead you
+  get a warning and the loading is retried on next change.
+
 # 0.0-162 (2018-09-20 / dc503f4)
 
 ## Added

@@ -4,14 +4,17 @@
             [kaocha.result :as result]
             [clojure.core.async :refer [chan <!! put! poll!]]
             [clojure.java.io :as io]
-            [clojure.tools.namespace.dir :as ctn-dir]
-            [clojure.tools.namespace.file :as ctn-file]
-            [clojure.tools.namespace.parse :as ctn-parse]
-            [clojure.tools.namespace.reload :as ctn-reload]
-            [clojure.tools.namespace.track :as ctn-track]
+            [lambdaisland.tools.namespace.dir :as ctn-dir]
+            [lambdaisland.tools.namespace.file :as ctn-file]
+            [lambdaisland.tools.namespace.parse :as ctn-parse]
+            [lambdaisland.tools.namespace.reload :as ctn-reload]
+            [lambdaisland.tools.namespace.track :as ctn-track]
             [clojure.string :as str]
             [clojure.set :as set]
-            [kaocha.testable :as testable]))
+            [kaocha.testable :as testable]
+            [kaocha.stacktrace :as stacktrace]
+            [kaocha.output :as out]
+            [clojure.test :as t]))
 
 (defn- try-run [config]
   (let [result (try
@@ -32,17 +35,24 @@
         drain-watch-chan! (fn [] (doall (take-while identity (repeatedly #(poll! watch-chan)))))
         tracker           (-> (ctn-track/tracker)
                               (ctn-dir/scan-dirs watch-paths)
-                              (dissoc :clojure.tools.namespace.track/unload :clojure.tools.namespace.track/load))]
+                              (dissoc :lambdaisland.tools.namespace.track/unload
+                                      :lambdaisland.tools.namespace.track/load))]
     (future
       (try
         (loop [tracker tracker
                focus   nil]
-          (let [unload  (set (::ctn-track/unload tracker))
-                load    (set (::ctn-track/load tracker))
-                reload  (set/intersection unload load)
-                unload  (set/difference unload reload)
-                load    (set/difference load reload)
-                tracker (ctn-reload/track-reload tracker)]
+          (let [unload     (set (::ctn-track/unload tracker))
+                load       (set (::ctn-track/load tracker))
+                load-error (::ctn-file/load-error tracker)
+                reload     (set/intersection unload load)
+                unload     (set/difference unload reload)
+                load       (set/difference load reload)
+                tracker    (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {}))]
+            (when (seq load-error)
+              (doseq [[f e] load-error]
+                (out/warn "Failed loading" f)
+                (stacktrace/print-cause-trace e t/*stack-trace-depth*)))
+
             (when (seq unload) (println "[watch] Unloading" unload))
             (when (seq load) (println "[watch] Loading" unload))
             (when (seq reload) (println "[watch] Reloading" reload))

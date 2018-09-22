@@ -3,7 +3,7 @@
             [kaocha.classpath :as classpath]
             [kaocha.testable :as testable]
             [clojure.java.io :as io]
-            [clojure.tools.namespace.find :as ctn-find]
+            [lambdaisland.tools.namespace.find :as ctn-find]
             [kaocha.output :as out]))
 
 (def clj ctn-find/clj)
