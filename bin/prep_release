@@ -22,7 +22,7 @@ $(git diff)"
     exit 1
 fi
 
-PROJECT=$(git remote get-url origin | sed 's/.*lambdaisland\/\([a-z-]\+\).*/\1/')
+PROJECT=$(git remote get-url origin | sed 's/.*lambdaisland\/\([\.a-z-]\+\)\.git/\1/')
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 if [[ "$BRANCH" != "master" ]]; then
@@ -30,15 +30,17 @@ if [[ "$BRANCH" != "master" ]]; then
     exit 1;
 fi
 
-git clean -xfd
+git clean -xfd -e bin
 
 VERSION="0.0-$(git rev-list --count HEAD)"
 
 echo_info "Bumping version to $VERSION"
 
-sed 's/lambdaisland\/'"${PROJECT}"' {:mvn\/version "[^"]*"}/lambdaisland\/'"${PROJECT}"' {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
-sed 's/\[lambdaisland\/'"${PROJECT}"' "[^"]*"\]/\[lambdaisland\/'"${PROJECT}"' "'${VERSION}'"\]/' -i README.md doc/*.md
-ed < bin/update_toc.ed
+if [[ -d doc ]]; then
+    sed 's/lambdaisland\/'"${PROJECT}"' {:mvn\/version "[^"]*"}/lambdaisland\/'"${PROJECT}"' {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
+    sed 's/\[lambdaisland\/'"${PROJECT}"' "[^"]*"\]/\[lambdaisland\/'"${PROJECT}"' "'${VERSION}'"\]/' -i README.md doc/*.md
+    ed < bin/update_toc.ed
+fi
 
 echo_info "Updating CHANGELOG"
 

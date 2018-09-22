@@ -2,8 +2,13 @@
 
 set -e
 
-bin/kaocha
-bin/check_features
+if [[ -f tests.edn ]]; then
+    bin/kaocha
+fi
+
+if [[ -d features ]]; then
+    bin/check_features
+fi
 
 VERSION="0.0-$(git rev-list --count HEAD)"
 
