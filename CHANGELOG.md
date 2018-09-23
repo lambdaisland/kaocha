@@ -10,6 +10,8 @@
 
 - Load errors in `--watch` mode no longer cause the process to exit. Instead you
   get a warning and the loading is retried on next change.
+- Made `kaocha.repl` a lot more useful, making it easy to do a full or partial
+  test run from a REPL or buffer.
 
 # 0.0-162 (2018-09-20 / dc503f4)
 
