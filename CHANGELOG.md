@@ -6,10 +6,11 @@
 
 ## Fixed
 
-## Changed
-
 - Load errors in `--watch` mode no longer cause the process to exit. Instead you
   get a warning and the loading is retried on next change.
+
+## Changed
+
 - Made `kaocha.repl` a lot more useful, making it easy to do a full or partial
   test run from a REPL or buffer.
 
