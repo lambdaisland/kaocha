@@ -43,6 +43,7 @@ evaluation you can use this pattern to quickly define and validate a test.
 (run-tests
   (defmethod my-test ,,,))
 ;;=> #:kaocha/result{:count 1, :pass 3, :error 0, :fail 0}
+```
 
 To run all tests defined in `tests.edn`, use [[run-all-tests]]
 
