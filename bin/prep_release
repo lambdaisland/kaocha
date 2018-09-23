@@ -42,6 +42,10 @@ if [[ -d doc ]]; then
     ed < bin/update_toc.ed
 fi
 
+echo_inof "Updating pom.xml dependendencies"
+
+clojure -Spom
+
 echo_info "Updating CHANGELOG"
 
 {

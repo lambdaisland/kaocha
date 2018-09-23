@@ -2,14 +2,6 @@
 
 ## Added
 
-## Fixed
-
-## Changed
-
-# 0.0-173 (2018-09-23 / 9226074)
-
-## Added
-
 - Make Kaocha's reporters more easily extendable through keyword hierarchies
 
 ## Fixed
