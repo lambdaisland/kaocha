@@ -22,7 +22,7 @@ In `deps.edn`, create a `test` "alias" (profile) that loads the `lambdaisland/ka
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:deps {lambdaisland/kaocha {:mvn/version "0.0-176"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-176"}}}}}
 ```
 
 Other dependencies that are only used for tests like test framework or assertion

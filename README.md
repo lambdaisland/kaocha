@@ -34,7 +34,7 @@ Features include
 - Dynamic classpath handling
 - Tests as data (get test config, test plan, or test results as EDN)
 - Extensible test types (clojure.test, Midje, ...)
-- Extensible through plugins 
+- Extensible through plugins
 - Tool agnostic (Clojure CLI, Leiningen, ...)
 
 ## Quick start
@@ -49,7 +49,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:deps {lambdaisland/kaocha {:mvn/version "0.0-176"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-176"}}}}}
 ```
 
 Add a wrapper/binstub
