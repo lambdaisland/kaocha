@@ -42,3 +42,4 @@ wq" | ed CHANGELOG.md
 
 git add CHANGELOG.md pom.xml
 git commit -m 'Add CHANGELOG placeholders + update versions in pom.xml'
+git push
