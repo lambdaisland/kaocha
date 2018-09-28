@@ -15,9 +15,10 @@ Full featured next generation test runner for Clojure.
 - [2. Installing](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/2-installing)
 - [3. Configuration](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/3-configuration)
 - [4. Running Kaocha CLI](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/4-running-kaocha-cli)
-- [4. Focusing and Skipping](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/4-focusing-and-skipping)
-- [6. Plugins](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/6-plugins)
-- [7. Extending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/7-extending)
+- [5. Running Kaocha From the REPL](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/5-running-kaocha-from-the-repl)
+- [6. Focusing and Skipping](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/6-focusing-and-skipping)
+- [7. Plugins](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/7-plugins)
+- [8. Extending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/8-extending)
 <!-- /docs-toc -->
 
 ## Features
@@ -49,7 +50,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-181"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-185"}}}}}
 ```
 
 Add a wrapper/binstub
