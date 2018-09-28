@@ -1,4 +1,4 @@
-# 6. Plugins
+# 7. Plugins
 
 This section describes plug-ins that are built-in but not enabled by default. Functionality of default plugins is described in the [Running Kaocha CLI](04_running_kaocha_cli.md) section.
 
@@ -66,7 +66,7 @@ Shown with their default values:
 
 ## Print invocations
 
-At the end of the test run, print command invocations that can be copy-pasted to re-run only specific failed tests. 
+At the end of the test run, print command invocations that can be copy-pasted to re-run only specific failed tests.
 
 ### Enabling
 

@@ -41,6 +41,3 @@
                           #:kaocha.testable{:id :z/_1}]}
           #:kaocha.testable{:id :y/_1}
           #:kaocha.testable{:id :z/_1}])))
-
-#_
-(run-tests)

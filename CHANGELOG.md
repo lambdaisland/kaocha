@@ -1,10 +1,10 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- BREAKING: `kaocha.repl/run-tests` and `kaocha.repl/run-all-tests` have been
+  renamed to `run` and `run-all`, so a `(use 'kaocha.repl)` doesn't clash with
+  `clojure.test`.
 
 - Skip reloading namespaces during load if they are already defined. In watch
   mode they still get reloaded through tools.namespace when necessary. This

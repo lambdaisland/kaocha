@@ -1,4 +1,4 @@
-# 4. Focusing and Skipping
+# 6. Focusing and Skipping
 
 Often you will want to *skip* certain tests, so they don't get run, or you want
 to *focus* on specific tests, so only those get run.

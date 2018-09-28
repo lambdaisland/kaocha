@@ -3,44 +3,44 @@
 
 ## Running tests
 
-To run tests from the REPL, use [[run-tests]]. Without any arguments it runs all
-tests in the current namespace. This is equivalent to `(run-tests *ns*)`
+To run tests from the REPL, use [[run]]. Without any arguments it runs all
+tests in the current namespace. This is equivalent to `(run *ns*)`
 
 ``` clojure
 (use 'kaocha.repl)
 
-(run-tests) ;;=> #:kaocha.result{:count 18, :pass 50, :error 0, :fail 0}
+(run) ;;=> #:kaocha.result{:count 18, :pass 50, :error 0, :fail 0}
 ```
 
-Pass one or more arguments to [[run-tests]] to only run specific tests. This way
+Pass one or more arguments to [[run]] to only run specific tests. This way
 you can test a single var, a namespace, or a test suite. You can using keywords,
 symbols, namespace objects, and vars.
 
 ``` clojure
-(run-tests :unit)                               ;; run the :unit test suite
-(run-tests 'kaocha.random-test)                 ;; run all tests in the kaocha.random-test namespace
-(run-tests 'kaocha.random-test/rand-ints-test)  ;; run the specified test
-(run-tests #'rand-ints-test)                    ;; test the given var
+(run :unit)                               ;; run the :unit test suite
+(run 'kaocha.random-test)                 ;; run all tests in the kaocha.random-test namespace
+(run 'kaocha.random-test/rand-ints-test)  ;; run the specified test
+(run #'rand-ints-test)                    ;; test the given var
 ```
 
 You can pass in any number of things to test. As a final argument you can pass
 in a map to override specific configuration options. See [[config]] for syntax.
 
 ``` clojure
-(run-tests :foo.bar
-           :bar.baz
-           {:config-file \"my_tests.edn\"
-            :focus-meta [:xxx]}) ;; run all tests with ^:xxx metadata
+(run :foo.bar
+     :bar.baz
+     {:config-file \"my_tests.edn\"
+      :focus-meta [:xxx]}) ;; run all tests with ^:xxx metadata
 ```
 
-`run-tests` always performs a full kaocha run, meaning all fixtures, plugins etc
+`run` always performs a full kaocha run, meaning all fixtures, plugins etc
 will run.
 
 Note that `deftest` returns the var it defines. This means that with in-buffer
 evaluation you can use this pattern to quickly define and validate a test.
 
 ``` clojure
-(run-tests
+(run
   (defmethod my-test ,,,))
 ;;=> #:kaocha/result{:count 1, :pass 3, :error 0, :fail 0}
 ```
@@ -118,7 +118,7 @@ These will particularly come in handy when developing plugins."}
     (keyword (str (:ns (meta v)))
              (str (:name (meta v))))))
 
-(defn run-tests
+(defn run
   "Run tests, returning a summary
 
   Arguments are things to test, any testable id can be specified, including test
@@ -137,10 +137,10 @@ These will particularly come in handy when developing plugins."}
   Returns a summary map:
 
   ``` clojure
-  (run-tests) ;;=> #:kaocha.result{:count 18, :pass 50, :error 0, :fail 0}
+  (run) ;;=> #:kaocha.result{:count 18, :pass 50, :error 0, :fail 0}
   ```"
   ([]
-   (run-tests *ns*))
+   (run *ns*))
   ([& args]
    (let [[config-opts tests] (if (map? (last args))
                                [(last args) (butlast args)]
@@ -151,7 +151,7 @@ These will particularly come in handy when developing plugins."}
          :kaocha.result/tests
          result/totals))))
 
-(defn run-all-tests
+(defn run-all
   "Do a full Kaocha test run
 
   Run all tests as specified in `tests.edn`. Optionally takes a flag of extra

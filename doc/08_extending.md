@@ -1,4 +1,4 @@
-# 7. Extending
+# 8. Extending
 
 Kaocha is designed to be extensible and customizable, so that it can adapt to
 the needs of different projects, and so that it can act as a common base layer
@@ -55,7 +55,7 @@ Loading these tests is done with the `kaocha.testable/-load` multimethod, which
 dispatches on the testable type.
 
 After the load step these have become test-plan testables, with lots of extra
-info, including nested test-plan testables. 
+info, including nested test-plan testables.
 
 ``` clojure
 {:kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/clojure.test
@@ -107,7 +107,7 @@ vector of plugin maps.
 ``` clojure
 (ns my.kaocha.plugin
   (:require [kaocha.plugin :as p]))
-  
+
 (defmethod p/-register :my.kaocha/plugin [_name plugins]
   (conj plugins
         {:kaocha.hooks/config
@@ -119,7 +119,7 @@ vector of plugin maps.
            (println "run is starting!")
            test-plan)]]}))
 ```
- 
+
 Plugin names must be namespaced keywords. If your plugin is called
 `:foo.bar/baz` then it must be implemented in the namespace `foo.bar` or
 `foo.bar.baz`. This will allow Kaocha to automatically load the plugin before
@@ -139,11 +139,11 @@ first argument (possibly updated).
   ;; Install extra CLI options and flags.
   (cli-options [opts]
     opts)
-  
+
   ;; Alter the configuration. Useful for setting default values.
   (config [config]
     config)
-    
+
   ;; Runs before the load step
   (pre-load [config]
     config)
@@ -151,23 +151,23 @@ first argument (possibly updated).
   ;; Runs after the load step
   (post-load [test-plan]
     test-plan)
-    
+
   ;; Runs before the run step
   (pre-run [test-plan]
     test-plan)
-    
+
   ;; Runs before each individual test
   (pre-test [test test-plan]
     test)
-    
+
   ;; Runs after each individual test
   (post-test [test test-plan]
     test)
-    
+
   ;; Runs after the run step
   (post-run [result]
     result)
-    
+
   ;; Allows "wrapping" the run function
   (wrap-run [run test-plan]
     run))
@@ -195,7 +195,7 @@ register a Clojure spec with the same name as the suite type.
 
 Finally a test suite implements two multimethods, one that handles Kaocha's load stage, and one that handles the run stage.
 
-Here's a skeleton example of a test suite. 
+Here's a skeleton example of a test suite.
 
 ``` clojure
 (ns kaocha.type.clojure.test
@@ -236,11 +236,11 @@ Some things to note:
   this applies for your test type). The helpers in `kaocha.load` will come in
   handy for this.
 - When in doubt study the existing implementations.
-  
+
 
 ### Reporters
 
-Reporters generate the test runners output. They are in their nature side-effectful, printing to stdout in response to events. 
+Reporters generate the test runners output. They are in their nature side-effectful, printing to stdout in response to events.
 
 A reporter is a function which takes a single map as argument, with the map having a `:type` key. Kaocha uses the same types as `clojure.test`, but adds `:begin-test-suite` and `:end-test-suite`.
 
