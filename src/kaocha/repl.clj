@@ -45,7 +45,7 @@ evaluation you can use this pattern to quickly define and validate a test.
 ;;=> #:kaocha/result{:count 1, :pass 3, :error 0, :fail 0}
 ```
 
-To run all tests defined in `tests.edn`, use [[run-all-tests]]
+To run all tests defined in `tests.edn`, use [[run-all]]
 
 ## Inspecting configuration and test plan
 
@@ -157,6 +157,6 @@ These will particularly come in handy when developing plugins."}
   Run all tests as specified in `tests.edn`. Optionally takes a flag of extra
   configuration options, see [[config]] for details."
   ([]
-   (run-all-tests {}))
+   (run-all {}))
   ([extra-opts]
    (result/totals (:kaocha.result/tests (api/run (config extra-opts))))))

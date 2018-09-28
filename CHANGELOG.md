@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fixed `kaocha.repl/run-all`
 
 # 0.0-185 (2018-09-28 / 15081ed)
 
@@ -114,7 +112,7 @@
 
 ## Added
 
-- `kaocha.repl/run-tests` / `kaocha.repl/run-all-tests`
+- `kaocha.repl/run-tests` / `kaocha.repl/run-all-tests` (since renamed to `run` and `run-all`)
 
 ## Fixed
 
