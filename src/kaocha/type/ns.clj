@@ -17,8 +17,8 @@
 
   (let [ns-name (:kaocha.ns/name testable)]
     (try
-      ;; TODO, unload first
-      (require ns-name :reload)
+      (when-not (find-ns ns-name)
+        (require ns-name))
       (let [ns-obj          (the-ns ns-name)
             ns-meta         (meta ns-obj)
             each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]

@@ -6,6 +6,12 @@
 
 ## Changed
 
+- Skip reloading namespaces during load if they are already defined. In watch
+  mode they still get reloaded through tools.namespace when necessary. This
+  change is done to make REPL usage more intuitive. When running
+  `kaocha.repl/run-tests` it will refrain from doing a `(require ... :reload)`,
+  instead accepting whatever state your REPL process is in.
+
 # 0.0-181 (2018-09-27 / 472f63f)
 
 ## Changed
