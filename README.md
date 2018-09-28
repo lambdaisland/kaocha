@@ -50,7 +50,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-185"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-189"}}}}}
 ```
 
 Add a wrapper/binstub
