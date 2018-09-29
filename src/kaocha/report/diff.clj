@@ -11,20 +11,10 @@
 (defprotocol Diff
   (diff-similar [x y]))
 
-
-(seq-diff/diff [1 2 3] [1 :x 3])
-;; => {:+ [[0 :x]], :- [1]}
-
-(seq-diff/diff [1 2 3] [1 :x 3])
-(seq-diff/diff [1 2 3] [1 2 :x])
-(seq-diff/diff [1 2 3] [1 2 :x :y])
-(seq-diff/diff [1 2 3] [1 :c 2 :x :y])
-(seq-diff/diff [1 2 3 4 5] [1 :x :y 3 :c 5])
-
-(let [{del :- ins :+} (seq-diff/diff [1 2 3 4 5] [1 :x :y 3 :c 5] #_#_[1 2 3] [1 :x 3])
-      del (into #{} del)
-      ins (into {} (map (fn [[k & vs]] [k (vec vs)])) ins)]
-  (replacements del ins))
+;; For property based testing
+(defprotocol Undiff
+  (left-undiff [x])
+  (right-undiff [x]))
 
 (defn replacements [del ins]
   (reduce (fn [m d]
@@ -123,3 +113,37 @@
 
   java.util.Map
   (diff-similar [exp act] (diff-map exp act)))
+
+(extend-protocol Undiff
+  java.util.List
+  (left-undiff [s] (map left-undiff (remove #(instance? Insertion %) s)))
+  (right-undiff [s] (map right-undiff (remove #(instance? Deletion %) s)))
+
+  java.util.Set
+  (left-undiff [s] (set (left-undiff (seq s))))
+  (right-undiff [s] (set (right-undiff (seq s))))
+
+  java.util.Map
+  (left-undiff [m]
+    (into {}
+          (comp (remove #(instance? Insertion (key %)))
+                (map (juxt (comp left-undiff key) (comp left-undiff val))))
+          m))
+  (right-undiff [m]
+    (into {}
+          (comp (remove #(instance? Deletion (key %)))
+                (map (juxt (comp right-undiff key) (comp right-undiff val))))
+          m))
+
+  Mismatch
+  (left-undiff [m] (get m :-))
+  (right-undiff [m] (get m :+))
+
+  Insertion
+  (right-undiff [m] (get m :+))
+
+  Deletion
+  (left-undiff [m] (get m :-)))
+
+(extend nil Undiff {:left-undiff identity :right-undiff identity})
+(extend Object Undiff {:left-undiff identity :right-undiff identity})
