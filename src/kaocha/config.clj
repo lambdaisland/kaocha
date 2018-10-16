@@ -57,7 +57,7 @@
    (let [file (io/file path)]
      (if (.exists file)
        (aero/read-config file)
-       (out/warn "Config file not found: " path ", using default values.")))))
+       (normalize {})))))
 
 (defn apply-cli-opts [config options]
   (cond-> config
