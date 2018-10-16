@@ -93,6 +93,7 @@
   (:require [kaocha.output :as out]
             [kaocha.plugin.capture-output :as capture]
             [kaocha.stacktrace :as stacktrace]
+            [kaocha.testable :as testable]
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]
             [clojure.string :as str]
@@ -178,7 +179,7 @@
 (defmulti result :type :hierarchy #'hierarchy/hierarchy)
 (defmethod result :default [_])
 
-(defn- testing-vars-str
+(defn testing-vars-str
   "Returns a string representation of the current test. Renders names
   in :testing-vars as a list, then the source file and line of current
   assertion."
@@ -265,7 +266,8 @@
   "Fail fast reporter, add this as a final reporter to interrupt testing as soon
   as a failure or error is encountered."
   [m]
-  (when (and (hierarchy/isa? (:type m) :kaocha/fail-type)
+  (when (and testable/*fail-fast?*
+             (hierarchy/isa? (:type m) :kaocha/fail-type)
              (not (:kaocha.result/exception m))) ;; prevent handled exceptions from being re-thrown
     (throw+ {:kaocha/fail-fast true})))
 

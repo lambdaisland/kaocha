@@ -2,9 +2,21 @@
   (:require [clojure.test :as t]
             [kaocha.testable :as testable]
             [kaocha.result :as result]
+            [kaocha.report :as report]
+            [kaocha.hierarchy :as hierarchy]
             [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen])
+            [clojure.spec.gen.alpha :as gen]
+            [clojure.string :as str])
   (:import [clojure.lang Var]))
+
+(hierarchy/derive! ::zero-assertions :kaocha/known-key)
+(hierarchy/derive! ::zero-assertions :kaocha/fail-type)
+
+(defmethod report/fail-summary ::zero-assertions [{:keys [testing-contexts testing-vars] :as m}]
+  (println "\nFAIL in" (report/testing-vars-str m))
+  (when (seq testing-contexts)
+    (println (str/join " " testing-contexts)))
+  (println "Test ran without assertions. Did you forget an (is ...)?"))
 
 (defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test wrap] :as testable} test-plan]
   (let [initial-report @t/*report-counters*
@@ -29,10 +41,8 @@
                         :kaocha.result/exception e}))))
     (let [{::result/keys [pass error fail] :as result} (get-result)]
       (when (= pass error fail 0)
-        (t/do-report {:type :fail
-                      :message "Test ran without assertions."
-                      :expected '(is ...)
-                      :actual nil}))
+        (binding [testable/*fail-fast?* false]
+          (t/do-report {:type ::zero-assertions})))
       (t/do-report {:type :end-test-var, :var var})
       (merge testable {:kaocha.result/count 1} (get-result)))))
 
