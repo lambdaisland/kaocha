@@ -32,31 +32,32 @@
          (dissoc :kaocha/tests)
          (assoc :kaocha.test-plan/tests (testable/load-testables tests))))))
 
-(defn- reporter [config]
+(defn- resolve-reporter [config]
   (let [fail-fast? (:kaocha/fail-fast? config)
-        reporter   (-> config
-                       :kaocha/reporter
+        reporter   (:kaocha/reporter config)
+        reporter   (-> reporter
                        (cond-> (not (vector? reporter)) vector)
                        (conj 'kaocha.report/report-counters
                              'kaocha.history/track
                              'kaocha.report/dispatch-extra-keys)
                        (cond-> fail-fast? (conj 'kaocha.report/fail-fast)))]
-    (config/resolve-reporter reporter)))
+    (assoc config :kaocha/reporter (config/resolve-reporter reporter))))
 
 (defn run [config]
   (let [plugins      (:kaocha/plugins config)
         plugin-chain (plugin/load-all plugins)]
     (plugin/with-plugins plugin-chain
-      (let [config     (plugin/run-hook :kaocha.hooks/config config)
+      (let [config     (->> config
+                            (plugin/run-hook :kaocha.hooks/config)
+                            resolve-reporter)
             fail-fast? (:kaocha/fail-fast? config)
             color?     (:kaocha/color? config)
-            reporter   (reporter config)
             history    (atom [])]
         (binding [testable/*fail-fast?*   fail-fast?
                   history/*history*       history
                   output/*colored-output* color?]
           (let [test-plan (test-plan config)]
-            (with-reporter reporter
+            (with-reporter (:kaocha/reporter test-plan)
               (with-shutdown-hook (fn []
                                     (println "^C")
                                     (binding [history/*history* history]

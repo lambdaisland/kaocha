@@ -2,9 +2,16 @@
 
 ## Added
 
+- `kaocha.plugin.alpha/xfail`, mark failing tests with `^:kaocha/xfail` to make them pass, and vice versa.
+- `(is (= ,,,))` assertions are now deep diffed and pretty printed.
+
 ## Fixed
 
+- Fixed an incompatibility between `--fail-fast` mode, and the zero-assertions
+  check which fails tests when they don't contain any assertions.
+
 ## Changed
+
 
 # 0.0-189 (2018-09-28 / 087b78b)
 
