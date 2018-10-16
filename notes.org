@@ -1,6 +1,5 @@
 - [ ] repl/config merge overwrites values from tests.edn / extra-vals with default-config
-- [ ] prettier diffing of (is (= ))
-- [ ] Colored diffs in report failures
+- [ ] Consider FIPP for colored pretty printing
 - [ ] improve Midje support
 - [ ] main namespace for cloverage
 - [ ] TAP reporter (provided by clojure.test?)
@@ -20,7 +19,8 @@
 - [ ] Better error when plugin is not found. (currently: no method in multimethod -register)
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
 
-
+- [X] prettier diffing of (is (= ))
+- [X] Make zero-assertion check work with --fail-fast
 - [X] Add to tools.deps wiki
 - [X] Improve matcher-combinator support, maybe as a separate package/plugin?
 - [X] look at keyword inheritance for making the reporters more generic
