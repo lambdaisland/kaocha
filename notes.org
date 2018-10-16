@@ -1,10 +1,10 @@
-- [X] look at keyword inheritance for making the reporters more generic
+- [ ] repl/config merge overwrites values from tests.edn / extra-vals with default-config
 - [ ] prettier diffing of (is (= ))
+- [ ] Colored diffs in report failures
 - [ ] improve Midje support
 - [ ] main namespace for cloverage
 - [ ] TAP reporter (provided by clojure.test?)
 - [ ] parallelism (?)
-- [X] watch/api mode: undef removed vars
 - [ ] make stack trace filtering configurable
 - [-] ClojureScript support
 - [ ] Expectations support
@@ -13,15 +13,20 @@
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
 - [ ] Provide inspect plugin with e.g. --print-test-ids
 - [ ] Watch changes to `tests.edn`
-- [ ] Improve matcher-combinator support, maybe as a separate package/plugin?
 - [ ] Clean output when progress bar used without output capturing
-- [ ] Colored diffs in report failures
 - [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
-- [ ] Add to clojure.org
-- [X] Use `#kaocha/v1 {}` instead of `#kaocha {}`
-- [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C
-- [X] Prevent output of matcher-combinators
+- [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism
+- [ ] Support for test-ns-hook (?)
+- [ ] Better error when plugin is not found. (currently: no method in multimethod -register)
+- [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
 
+
+- [X] Add to tools.deps wiki
+- [X] Improve matcher-combinator support, maybe as a separate package/plugin?
+- [X] look at keyword inheritance for making the reporters more generic
+- [X] watch/api mode: undef removed vars
+- [X] Use `#kaocha/v1 {}` instead of `#kaocha {}`
+- [X] Prevent output of matcher-combinators
 - [X] Watch source paths
 - [X] skip / focus by metadata
   :skip-meta
