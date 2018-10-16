@@ -1,24 +1,40 @@
-- [ ] repl/config merge overwrites values from tests.edn / extra-vals with default-config
-- [ ] Consider FIPP for colored pretty printing
-- [ ] improve Midje support
+* Todos
+** Major features
+- [ ] Use FIPP/puget for colored pretty printing
 - [ ] main namespace for cloverage
+- [ ] improve Midje support
 - [ ] TAP reporter (provided by clojure.test?)
+- [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism (also necessary for parallellism)
 - [ ] parallelism (?)
-- [ ] make stack trace filtering configurable
 - [-] ClojureScript support
 - [ ] Expectations support
+
+** Bug fixes
+- [ ] repl/config merge overwrites values from tests.edn / extra-vals with default-config
+- [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
+- [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
+
+** Improvements
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
-- [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
-- [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
-- [ ] Provide inspect plugin with e.g. --print-test-ids
 - [ ] Watch changes to `tests.edn`
 - [ ] Clean output when progress bar used without output capturing
-- [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
-- [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism
 - [ ] Support for test-ns-hook (?)
-- [ ] Better error when plugin is not found. (currently: no method in multimethod -register)
-- [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
 
+** Friendly interface
+- [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
+- [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
+- [ ] Provide a warning when no test namespaces are found (please check test-paths and ns-patterns)
+- [ ] Better error when plugin is not found. (currently: no method in multimethod -register)
+
+** Extra config options
+- [ ] make stack trace filtering configurable
+- [ ] Output reporter output to file (use with Junit/Tap etc)
+
+** Plugin ideas
+- [ ] Provide inspect plugin with e.g. --print-test-ids
+- [ ] Timing info of config/load/run steps
+
+** Done
 - [X] prettier diffing of (is (= ))
 - [X] Make zero-assertion check work with --fail-fast
 - [X] Add to tools.deps wiki
