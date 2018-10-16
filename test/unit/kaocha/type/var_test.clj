@@ -7,7 +7,9 @@
             [kaocha.test-helper]
             [kaocha.core-ext :refer :all]
             [kaocha.config :as config]
-            [kaocha.test-util :refer [with-test-ctx]]))
+            [kaocha.test-util :refer [with-test-ctx]]
+
+            [kaocha.type.var]))
 
 (deftest run-test
   (testing "a passing test var"

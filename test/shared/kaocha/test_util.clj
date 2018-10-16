@@ -2,7 +2,8 @@
   (:require [clojure.test :as t]
             [clojure.spec.alpha :as s]
             [expound.alpha :as expound]
-            [kaocha.report :as report]))
+            [kaocha.report :as report]
+            [kaocha.testable :as testable]))
 
 (def ^:dynamic *report-history* nil)
 
@@ -12,7 +13,8 @@
   [opts & body]
   `(binding [t/*report-counters* (ref t/*initial-report-counters*)
              t/*testing-vars* (list)
-             *report-history* (atom [])]
+             *report-history* (atom [])
+             testable/*fail-fast?* (:fail-fast? ~opts)]
      (with-redefs [t/report (fn [m#]
                               (swap! *report-history* conj m#)
                               (report/report-counters m#)
