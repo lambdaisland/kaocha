@@ -16,56 +16,98 @@
   (left-undiff [x])
   (right-undiff [x]))
 
-(defn replacements [del ins]
-  (reduce (fn [m d]
-            (if-let [i (some ins #{d (dec d)})]
-              (assoc m d (first i))
-              m)) {} del))
+(defn shift-insertions [ins]
+  (reduce (fn [res idx]
+            (let [offset (apply + (map count (vals res)))]
+              (assoc res (+ idx offset) (get ins idx))))
+          {}
+          (sort (keys ins))))
+
+(defn replacements
+  "Given a set of deletion indexes and a map of insertion index to value sequence,
+  match up deletions and insertions into replacements, returning a map of
+  replacements, a set of deletions, and a map of insertions."
+  [[del ins]]
+  ;; Loop over deletions, if they match up with an insertion, turn them into a
+  ;; replacement. This could be a reduce over (sort del) tbh but it's already a
+  ;; lot more readable than the first version.
+  (loop [rep {}
+         del del
+         del-rest (sort del)
+         ins ins]
+    (if-let [d (first del-rest)]
+      (if-let [i (seq (get ins d))] ;; matching insertion
+        (recur (assoc rep d (first i))
+               (disj del d)
+               (next del-rest)
+               (update ins d next))
+
+        (if-let [i (seq (get ins (dec d)))]
+          (recur (assoc rep d (first i))
+                 (disj del d)
+                 (next del-rest)
+                 (-> ins
+                     (dissoc (dec d))
+                     (assoc d (seq (concat (next i)
+                                           (get ins d))))))
+          (recur rep
+                 del
+                 (next del-rest)
+                 ins)))
+      [rep del (into {}
+                     (remove (comp nil? val))
+                     (shift-insertions ins))])))
+
+(defn del+ins
+  "Wrapper around clj-diff that returns deletions and insertions as a set and map
+  respectively."
+  [exp act]
+  (let [{del :- ins :+} (seq-diff/diff exp act)]
+    [(into #{} del)
+     (into {} (map (fn [[k & vs]] [k (vec vs)])) ins)]))
+
+(defn diff-seq-replacements [replacements s]
+  (map-indexed
+   (fn [idx v]
+     (if (contains? replacements idx)
+       (diff v (get replacements idx))
+       v))
+   s))
+
+(defn diff-seq-deletions [del s]
+  (map
+   (fn [v idx]
+     (if (contains? del idx)
+       (->Deletion v)
+       v))
+   s
+   (range)))
+
+(defn diff-seq-insertions [ins s]
+  (reduce (fn [res [idx vs]]
+            (concat (take (inc idx) res) (map ->Insertion vs) (drop (inc idx) res)))
+          s
+          ins))
 
 (defn diff-seq [exp act]
-  (first
-   (let [{del :- ins :+} (seq-diff/diff exp act)
-         del (into #{} del)
-         ins (into {} (map (fn [[k & vs]] [k (vec vs)])) ins)
-         rep (replacements del ins)
-         del (apply disj del (keys rep))
-         ins (reduce (fn [m [k vs]]
-                       (if (or (contains? rep k) (contains? rep (inc k)))
-                         (if (next vs)
-                           (assoc m k (next vs))
-                           m)
-                         (assoc m k vs)))
-                     {}
-                     ins)]
-     (prn {:ins ins :del del :rep rep})
-     (reduce
-      (fn [[s idx] x]
-        [(cond-> s
-           (contains? rep idx)
-           (conj (diff (nth exp idx) (get rep idx)))
+  (let [[rep del ins] (replacements (del+ins exp act))]
+    (->> exp
+         (diff-seq-replacements rep)
+         (diff-seq-deletions del)
+         (diff-seq-insertions ins))))
 
-           (contains? del idx)
-           (conj (->Deletion x))
-
-           (not (or  (contains? del idx) (contains? rep idx)))
-           (conj x)
-
-           (contains? ins idx)
-           (into (map ->Insertion) (get ins idx)))
-         (inc idx)])
-      [(if (contains? ins -1)
-         (into [] (map ->Insertion (get ins -1)))
-         []) 0]
-      exp))))
+(defn val-type [val]
+  (let [t (type val)]
+    (if (class? t)
+      (symbol (.getName t))
+      t)))
 
 (defn diff-map [exp act]
   (first
-   (let [exp-ks (sort (keys exp))
-         act-ks (sort (keys act))
-         {del :- ins :+} (seq-diff/diff exp-ks act-ks)
-         del (into #{} del)
-         ins (into {} (map (fn [[k & vs]] [k (vec vs)])) ins)]
-
+   (let [exp-ks (keys exp)
+         act-ks (concat (filter (set (keys act)) exp-ks)
+                        (remove (set exp-ks) (keys act)))
+         [del ins] (del+ins exp-ks act-ks)]
      (reduce
       (fn [[m idx] k]
         [(cond-> m
@@ -109,7 +151,11 @@
   (diff-similar [exp act] (diff-seq exp act))
 
   java.util.Set
-  (diff-similar [exp act] (set (diff-seq (sort exp) (sort act))))
+  (diff-similar [exp act]
+    (let [exp-seq (seq exp)
+          act-seq (seq act)]
+      (set (diff-seq exp-seq (concat (filter act exp-seq)
+                                     (remove exp act-seq))))))
 
   java.util.Map
   (diff-similar [exp act] (diff-map exp act)))

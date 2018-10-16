@@ -92,13 +92,16 @@
   "
   (:require [kaocha.output :as out]
             [kaocha.plugin.capture-output :as capture]
-            [kaocha.stacktrace :as stack]
+            [kaocha.stacktrace :as stacktrace]
             [clojure.test :as t]
             [slingshot.slingshot :refer [throw+]]
             [clojure.string :as str]
             [kaocha.history :as history]
             [kaocha.testable :as testable]
-            [kaocha.hierarchy :as hierarchy]))
+            [kaocha.hierarchy :as hierarchy]
+            [kaocha.report.printer :as printer]
+            [kaocha.report.diff :as diff]
+            [clojure.data]))
 
 (def clojure-test-report t/report)
 
@@ -198,6 +201,23 @@
       (println (str/trim-newline out))
       (println "--------------------------------------------------------"))))
 
+(defmulti print-expr
+  (fn [m]
+    (if-let [s (and (seq? (:expected m)) (seq (:expected m)))]
+      (first s)
+      :default))
+  :hierarchy #'hierarchy/hierarchy)
+
+(defmethod print-expr :default [m]
+  (println "expected:" (pr-str (:expected m)))
+  (println "  actual:" (pr-str (:actual m))))
+
+(defmethod print-expr '= [m]
+  (let [[_ expected & actuals] (-> m :actual second)]
+    (println "Expected:" (pr-str expected))
+    (doseq [actual actuals]
+      (printer/pretty-print (diff/diff expected actual)))))
+
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 
 (defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
@@ -206,8 +226,7 @@
     (println (str/join " " testing-contexts)))
   (when-let [message (:message m)]
     (println message))
-  (println "expected:" (pr-str (:expected m)))
-  (println "  actual:" (pr-str (:actual m)))
+  (print-expr m)
   (print-output m))
 
 (defmethod fail-summary :error [{:keys [testing-contexts testing-vars] :as m}]
@@ -220,7 +239,7 @@
   (print "Exception: ")
   (let [actual (:actual m)]
     (if (instance? Throwable actual)
-      (stack/print-cause-trace actual t/*stack-trace-depth*)
+      (stacktrace/print-cause-trace actual t/*stack-trace-depth*)
       (prn actual))))
 
 (defmethod result :summary [m]
@@ -270,15 +289,6 @@
                       ctx))
           (flush))))
 
-    #_(when (> (count contexts) (count printed-contexts))
-
-
-      (println)
-      (doseq [[c1 c2] (map vector (concat printed-contexts
-                                          (repeat nil)) contexts)]
-        (print (if (= c1 c2)
-                 "  "
-                 (str "    " c2)))))
     (reset! doc-printed-contexts contexts)))
 
 (defmulti doc :type :hierarchy #'hierarchy/hierarchy)
@@ -325,8 +335,10 @@
     (println)))
 
 (defn debug [m]
-  (prn (cond-> (select-keys m [:type :var :ns])
-         (:kaocha/testable m) (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type]))))
+  (t/with-test-out
+    (prn (cond-> (select-keys m [:type :var :ns :expected :actual :message])
+           (:kaocha/testable m)
+           (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type])))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

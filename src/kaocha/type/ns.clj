@@ -42,7 +42,8 @@
                     :kaocha.ns/ns ns-obj
                     :kaocha.test-plan/tests)))
       (catch Throwable t
-        (out/warn "Failed loading " ns-name " " (.getMessage t))
+        (out/warn "Failed loading " ns-name ": " (.getMessage t))
+        #_(kaocha.stacktrace/print-cause-trace t)
         (assoc testable :kaocha.test-plan/load-error t)))))
 
 (defn run-tests [testable test-plan fixture-fn]

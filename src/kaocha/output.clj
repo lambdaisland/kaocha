@@ -11,7 +11,8 @@
    :blue    ansi/blue-font
    :magenta ansi/magenta-font
    :cyan    ansi/cyan-font
-   :white   ansi/white-font})
+   :white   ansi/white-font
+   :reset   ansi/reset-font})
 
 (defn colored [color string]
   (if *colored-output*
