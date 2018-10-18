@@ -25,6 +25,7 @@
 - [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
 - [ ] Provide a warning when no test namespaces are found (please check test-paths and ns-patterns)
 - [ ] Better error when plugin is not found. (currently: no method in multimethod -register)
+- [ ] Warn if plugin in config file is not a keyword
 
 ** Extra config options
 - [ ] make stack trace filtering configurable

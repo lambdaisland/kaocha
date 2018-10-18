@@ -100,7 +100,7 @@
             [kaocha.history :as history]
             [kaocha.testable :as testable]
             [kaocha.hierarchy :as hierarchy]
-            [kaocha.report.printer :as printer]
+            [kaocha.report.printer2 :as printer]
             [kaocha.report.diff :as diff]
             [clojure.data]))
 
@@ -215,9 +215,14 @@
 
 (defmethod print-expr '= [m]
   (let [[_ expected & actuals] (-> m :actual second)]
-    (println "Expected:" (pr-str expected))
-    (doseq [actual actuals]
-      (printer/pretty-print (diff/diff expected actual)))))
+    (printer/print-doc
+     [:span
+      "Expected:" :line
+      [:nest (printer/format-doc expected)]
+      :break
+      "Actual:" :line
+      [:nest (for [actual actuals]
+               (printer/format-doc (diff/diff expected actual)))]])))
 
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 

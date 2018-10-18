@@ -76,10 +76,9 @@ These will particularly come in handy when developing plugins."}
    (config {}))
   ([extra-config]
    (let [config-file (:config-file extra-config "tests.edn")
-         config       (-> config-file
-                          config/load-config
-                          (merge extra-config)
-                          config/normalize)
+         config       (-> (config/default-config)
+                          (merge (config/normalize (config/load-config config-file)))
+                          (merge (config/normalize extra-config)))
          plugin-chain (plugin/load-all (:kaocha/plugins config))]
      (plugin/with-plugins plugin-chain
        (plugin/run-hook :kaocha.hooks/config config)))))

@@ -1,0 +1,7 @@
+#kaocha/v1
+{:tests [{:id :foo
+          :test-paths ["test/foo"]}]
+ :reporter [kaocha.report.progress/report]
+ :color? false
+ :fail-fast? true
+ :plugins [:kaocha.plugin.alpha/xfail]}

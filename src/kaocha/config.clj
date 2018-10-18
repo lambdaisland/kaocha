@@ -3,7 +3,8 @@
             [clojure.java.io :as io]
             [kaocha.output :as out]
             [kaocha.report :as report]
-            [slingshot.slingshot :refer [throw+]]))
+            [slingshot.slingshot :refer [throw+]]
+            [meta-merge.core :refer [meta-merge]]))
 
 (defn- rename-key [m old-key new-key]
   (if (contains? m old-key)
@@ -13,14 +14,14 @@
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
-(defn normalize [value]
-  (let [default-config   (default-config)
+(defn normalize [config]
+  (let [default-config (default-config)
         {:keys [tests
                 plugins
                 reporter
                 color?
                 fail-fast?
-                watch?]} value
+                watch?]} config
         tests            (some->> tests
                                   (mapv (fn [m]
                                           (-> m
@@ -34,21 +35,26 @@
                                               (rename-key :skip-meta :kaocha.filter/skip-meta)
                                               (rename-key :focus-meta :kaocha.filter/focus-meta)
                                               (cond->> (not (:type m)) (merge (first (:kaocha/tests default-config))))))))]
-    (cond-> default-config
+    (cond-> {}
       tests              (assoc :kaocha/tests tests)
-      plugins            (update :kaocha/plugins into plugins)
+      plugins            (assoc :kaocha/plugins plugins)
       reporter           (assoc :kaocha/reporter reporter)
       (some? color?)     (assoc :kaocha/color? color?)
       (some? fail-fast?) (assoc :kaocha/fail-fast? fail-fast?)
       (some? watch?)     (assoc :kaocha/watch? watch?)
-      :->                (merge (dissoc value :tests :plugins :reporter :color? :fail-fast? :watch?)))))
+      :->                (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch?)))))
+
+(defn merge-config [c1 c2]
+  (meta))
 
 (defmethod aero/reader 'kaocha [opts tag value]
   (out/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")
-  (normalize value))
+  (-> (default-config)
+      (merge (normalize value))))
 
 (defmethod aero/reader 'kaocha/v1 [opts tag value]
-  (normalize value))
+  (-> (default-config)
+      (merge (normalize value))))
 
 (defn load-config
   ([]
@@ -57,7 +63,7 @@
    (let [file (io/file path)]
      (if (.exists file)
        (aero/read-config file)
-       (normalize {})))))
+       (default-config)))))
 
 (defn apply-cli-opts [config options]
   (cond-> config

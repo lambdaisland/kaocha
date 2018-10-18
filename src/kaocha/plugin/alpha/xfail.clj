@@ -23,7 +23,7 @@
               (hierarchy/isa? (:type event) :kaocha/fail-type)
               (assoc event :type :pass)
 
-              (= (:type m) :pass)
+              (= (:type event) :pass)
               (assoc event :type :fail)
 
               :else
