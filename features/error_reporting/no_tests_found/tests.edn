@@ -1,0 +1,6 @@
+#kaocha/v1
+{:color? false
+ :kaocha.plugin.randomize/randomize? false
+ :tests  [{:id          :empty
+           :test-paths  ["fixtures/a-tests"]
+           :ns-patterns ["^foo$"]}]}

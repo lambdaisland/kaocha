@@ -1,0 +1,6 @@
+[(.)][(..F)]
+
+FAIL in :foo.hello-test/fail-1 (foo/hello_test.clj:10)
+expected: false
+  actual: false
+3 test vars, 4 assertions, 1 failures.

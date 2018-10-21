@@ -2,6 +2,7 @@
 
 bin/run_feature "$@" 1>/tmp/kaocha_actual_out 2>/tmp/kaocha_actual_err
 
+KAOCHA_EXIT_CODE=$?
 RESULT=0
 
 if [[ -f "features/$1/out" ]]; then
@@ -18,6 +19,14 @@ if [[ -f "features/$1/err" ]]; then
     colordiff -u "features/$1/err" /tmp/kaocha_actual_err
 else
     colordiff -u <(echo -n) /tmp/kaocha_actual_err
+fi
+
+if [[ -f "features/$1/exit" ]]; then
+    EXPECTED_EXIT_CODE=$(cat features/$1/exit)
+    if [[ $KAOCHA_EXIT_CODE -ne $EXPECTED_EXIT_CODE ]]; then
+        echo "Bad exit code, expected " $EXPECTED_EXIT_CODE ", got " $KAOCHA_EXIT_CODE "."
+        RESULT=1
+    fi
 fi
 
 if [ $? -ne 0 ]; then

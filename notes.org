@@ -1,6 +1,6 @@
 * Todos
 ** Major features
-- [ ] Use FIPP/puget for colored pretty printing
+- [X] Use FIPP/puget for colored pretty printing
 - [ ] main namespace for cloverage
 - [ ] improve Midje support
 - [ ] TAP reporter (provided by clojure.test?)
@@ -10,15 +10,16 @@
 - [ ] Expectations support
 
 ** Bug fixes
-- [ ] repl/config merge overwrites values from tests.edn / extra-vals with default-config
+- [X] repl/config merge overwrites values from tests.edn / extra-vals with default-config
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
-- [ ] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
+- [X] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
 
 ** Improvements
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
 - [ ] Watch changes to `tests.edn`
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Support for test-ns-hook (?)
+- [ ] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
@@ -38,6 +39,9 @@
 - [ ] Global pre/post hooks
 - [ ] test.check configuration
 - [ ] Detect side effects (see circleci.test)
+
+** Internal
+- [ ] Create test suite type for integration/feature tests
 
 ** Done
 - [X] prettier diffing of (is (= ))
