@@ -70,6 +70,11 @@
 - [X] provide #kaocha convenience reader literal for config file
 - [X] watch: re-run failed tests first
 
+* Upstream issues
+** Updates to pom continually adds superfluous newlines under Java 9
+
+https://dev.clojure.org/jira/browse/TDEPS-29
+
 * Classpath mess
 
 Kaocha relies on the ability to dynamically add directories to the classpath.
