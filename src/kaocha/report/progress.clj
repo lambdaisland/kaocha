@@ -2,7 +2,7 @@
   (:require [clojure.test :as t]
             [progrock.core :as pr]
             [kaocha.testable :as testable]
-            [kaocha.output :as out]
+            [kaocha.output :as output]
             [kaocha.report :as report]
             [kaocha.hierarchy :as hierarchy]))
 

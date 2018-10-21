@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix regression in `kaocha.report.progress`
 
 # 0.0-206 (2018-10-21 / 4654f45)
 
