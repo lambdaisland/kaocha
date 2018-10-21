@@ -47,6 +47,12 @@
     (assoc config :kaocha/reporter (fn [m]
                                      (try
                                        (reporter m)
+                                       (catch clojure.lang.ExceptionInfo e
+                                         (if (:kaocha/fail-fast (ex-data e))
+                                           (throw e)
+                                           (do
+                                             (output/error "Error in reporter: " (ex-data e) " when processing " (:type m))
+                                             (stacktrace/print-cause-trace e))))
                                        (catch Throwable t
                                          (output/error "Error in reporter: " (.getClass t) " when processing " (:type m))
                                          (stacktrace/print-cause-trace t)))))))
