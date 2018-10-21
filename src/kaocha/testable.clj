@@ -88,7 +88,8 @@
   [testable test-plan]
   (load-type+validate testable)
   (binding [*current-testable* testable]
-    (-run testable test-plan)))
+    (let [run (plugin/run-hook :kaocha.hooks/wrap-run -run test-plan)]
+      (run testable test-plan))))
 
 (s/fdef run
         :args (s/cat :testable :kaocha.test-plan/testable

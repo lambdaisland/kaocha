@@ -78,7 +78,7 @@
   propagated to the original `clojure.test/report`
 
   ``` clojure
-  (kaocha.hierarchy/derive! :mismatch :kaocha/known-type)
+  (kaocha.hierarchy/derive! :mismatch :kaocha/known-key)
   ```
 
   If the event signals an error or failure which causes the test to fail, then
@@ -90,7 +90,7 @@
   ```
 
   "
-  (:require [kaocha.output :as out]
+  (:require [kaocha.output :as output]
             [kaocha.plugin.capture-output :as capture]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
@@ -100,7 +100,7 @@
             [kaocha.history :as history]
             [kaocha.testable :as testable]
             [kaocha.hierarchy :as hierarchy]
-            [kaocha.report.printer2 :as printer]
+            [kaocha.report.printer :as printer]
             [kaocha.report.diff :as diff]
             [clojure.data]))
 
@@ -127,12 +127,12 @@
 
 (defmethod dots* :kaocha/fail-type [_]
   (t/with-test-out
-    (print (out/colored :red "F"))
+    (print (output/colored :red "F"))
     (flush)))
 
 (defmethod dots* :error [_]
   (t/with-test-out
-    (print (out/colored :red "E"))
+    (print (output/colored :red "E"))
     (flush)))
 
 (defmethod dots* :begin-test-ns [_]
@@ -184,14 +184,14 @@
   in :testing-vars as a list, then the source file and line of current
   assertion."
   [{:keys [file line testing-vars kaocha/testable] :as m}]
-  (let [file (or (some-> testable ::testable/meta :file) file)
-        line (or (some-> testable ::testable/meta :line) line)]
+  (let [file (or file (some-> testable ::testable/meta :file))
+        line (or line (some-> testable ::testable/meta :line))]
     (str
      ;; Uncomment to include namespace in failure report:
      ;;(ns-name (:ns (meta (first *testing-vars*)))) "/ "
-     (if (seq testing-vars)
-       (reverse (map #(:name (meta %)) testing-vars))
-       (name (:kaocha.testable/id testable)))
+     (or (:kaocha.testable/id testable)
+         (and (seq testing-vars)
+              (reverse (map #(:name (meta %)) testing-vars))))
      " (" file ":" line ")")))
 
 (defn print-output [m]
@@ -210,8 +210,10 @@
   :hierarchy #'hierarchy/hierarchy)
 
 (defmethod print-expr :default [m]
-  (println "expected:" (pr-str (:expected m)))
-  (println "  actual:" (pr-str (:actual m))))
+  (when (contains? m :expected)
+    (println "expected:" (pr-str (:expected m))))
+  (when (contains? m :actual)
+    (println "  actual:" (pr-str (:actual m)))))
 
 (defmethod print-expr '= [m]
   (let [[_ expected & actuals] (-> m :actual second)]
@@ -221,8 +223,10 @@
       [:nest (printer/format-doc expected)]
       :break
       "Actual:" :line
-      [:nest (for [actual actuals]
-               (printer/format-doc (diff/diff expected actual)))]])))
+      (into [:nest]
+            (interpose :break)
+            (for [actual actuals]
+              (printer/format-doc (diff/diff expected actual))))])))
 
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 
@@ -258,12 +262,12 @@
 
     (let [{:keys [test pass fail error] :or {pass 0 fail 0 error 0}} m
           passed? (pos-int? (+ fail error))]
-      (println (out/colored (if passed? :red :green)
-                            (str test " test vars, "
-                                 (+ pass fail error) " assertions, "
-                                 (when (pos-int? error)
-                                   (str error " errors, "))
-                                 fail " failures."))))))
+      (println (output/colored (if passed? :red :green)
+                               (str test " test vars, "
+                                    (+ pass fail error) " assertions, "
+                                    (when (pos-int? error)
+                                      (str error " errors, "))
+                                    fail " failures."))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -330,12 +334,12 @@
 (defmethod doc :error [m]
   (t/with-test-out
     (doc-print-contexts t/*testing-contexts*)
-    (print (out/colored :red " ERROR"))))
+    (print (output/colored :red " ERROR"))))
 
 (defmethod doc :kaocha/fail-type [m]
   (t/with-test-out
     (doc-print-contexts t/*testing-contexts*)
-    (print (out/colored :red " FAIL"))))
+    (print (output/colored :red " FAIL"))))
 
 (defmethod doc :summary [m]
   (t/with-test-out
@@ -343,7 +347,7 @@
 
 (defn debug [m]
   (t/with-test-out
-    (prn (cond-> (select-keys m [:type :var :ns :expected :actual :message])
+    (prn (cond-> (select-keys m [:type :file :line :var :ns :expected :actual :message :kaocha/testable :debug])
            (:kaocha/testable m)
            (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type])))))
 

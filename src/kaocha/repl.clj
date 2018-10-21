@@ -9,7 +9,8 @@ tests in the current namespace. This is equivalent to `(run *ns*)`
 ``` clojure
 (use 'kaocha.repl)
 
-(run) ;;=> #:kaocha.result{:count 18, :pass 50, :error 0, :fail 0}
+(run)
+;;=> #:kaocha.result{:count 18, :pass 50, :error 0, :fail 0}
 ```
 
 Pass one or more arguments to [[run]] to only run specific tests. This way
@@ -76,9 +77,8 @@ These will particularly come in handy when developing plugins."}
    (config {}))
   ([extra-config]
    (let [config-file (:config-file extra-config "tests.edn")
-         config       (-> (config/default-config)
-                          (merge (config/normalize (config/load-config config-file)))
-                          (merge (config/normalize extra-config)))
+         config      (-> (config/load-config config-file)
+                         (config/merge-config (config/normalize extra-config)))
          plugin-chain (plugin/load-all (:kaocha/plugins config))]
      (plugin/with-plugins plugin-chain
        (plugin/run-hook :kaocha.hooks/config config)))))
@@ -142,13 +142,14 @@ These will particularly come in handy when developing plugins."}
    (run *ns*))
   ([& args]
    (let [[config-opts tests] (if (map? (last args))
-                               [(last args) (butlast args)]
+                               [(last args) (or (butlast args) [*ns*])]
                                [{} args])
          config (-> (config config-opts)
                     (update :kaocha.filter/focus into (map testable-id) tests))]
      (-> (api/run config)
          :kaocha.result/tests
          result/totals))))
+
 
 (defn run-all
   "Do a full Kaocha test run

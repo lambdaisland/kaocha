@@ -1,5 +1,5 @@
 (ns kaocha.plugin
-  (:require [kaocha.output :as out]))
+  (:require [kaocha.output :as output]))
 
 (def ^:dynamic *current-chain* [])
 
@@ -35,7 +35,7 @@
             (if-let [step-fn (get plugin step)]
               (let [value (apply step-fn value extra-args)]
                 (when (nil? value)
-                  (out/warn "Plugin " (:id plugin) " hook " step " returned nil."))
+                  (output/warn "Plugin " (:id plugin) " hook " step " returned nil."))
                 value)
               value))
           value
@@ -47,10 +47,14 @@
 (defmacro defplugin
   {:style/indent [1 :form [1]]}
   [id & hooks]
-  (let [plugin-id (keyword id)]
+  (let [plugin-id (keyword id)
+        [desc & hooks] (if (string? (first hooks))
+                         hooks
+                         (cons "" hooks))]
     `(defmethod -register ~plugin-id [_# plugins#]
        (conj plugins#
-             ~(into {:kaocha.plugin/id plugin-id}
+             ~(into {:kaocha.plugin/id plugin-id
+                     :kaocha.plugin/description desc}
                     (map (fn [[hook & fn-tail]]
                            [(keyword "kaocha.hooks" (str hook))
                             `(fn ~@fn-tail)]))

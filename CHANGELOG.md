@@ -2,16 +2,23 @@
 
 ## Added
 
-- `kaocha.plugin.alpha/xfail`, mark failing tests with `^:kaocha/xfail` to make them pass, and vice versa.
+- `kaocha.plugin.alpha/xfail`, mark failing tests with `^:kaocha/xfail` to make them pass, and vice versa. ([#2](https://github.com/lambdaisland/kaocha/issues/2))
 - `(is (= ,,,))` assertions are now deep diffed and pretty printed.
+- Plugins now take a "docstring" (added under the `:description` key). (For future use.)
 
 ## Fixed
 
-- Fixed an incompatibility between `--fail-fast` mode, and the zero-assertions
-  check which fails tests when they don't contain any assertions.
+- `--fail-fast` mode is incompatible with the check which fails tests when they don't contain any assertions. ([#10](https://github.com/lambdaisland/kaocha/issues/10))
+- `kaocha.repl` does not correctly merge in extra config keys
+- Reported line number in case of failures points to the failed assertion, not to the failed var.
+- Passing extra config to `kaocha.repl/run` will still by default run the current `*ns*`, rather than all tests.
+- Honor `*print-length*` when set. (defaults to 100)
+- Make sure `kaocha.testable/*current-testable*` is bound when plugin's `wrap-run` result executes.
 
 ## Changed
 
+- Config merging (defaults + tests.edn + repl values) now uses `meta-merge` for flexible append/prepend/replace.
+- Print the testable-id in failure messages rather than just the var name, so it can be passed straight on to `--focus`
 
 # 0.0-189 (2018-09-28 / 087b78b)
 

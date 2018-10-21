@@ -4,7 +4,7 @@
             [kaocha.testable :as testable]
             [clojure.spec.alpha :as s]
             [kaocha.type.var]
-            [kaocha.output :as out]))
+            [kaocha.output :as output]))
 
 (defn ->testable [ns-name]
   {:kaocha.testable/type :kaocha.type/ns
@@ -42,7 +42,7 @@
                     :kaocha.ns/ns ns-obj
                     :kaocha.test-plan/tests)))
       (catch Throwable t
-        (out/warn "Failed loading " ns-name ": " (.getMessage t))
+        (output/warn "Failed loading " ns-name ": " (.getMessage t))
         #_(kaocha.stacktrace/print-cause-trace t)
         (assoc testable :kaocha.test-plan/load-error t)))))
 

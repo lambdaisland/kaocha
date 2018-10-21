@@ -11,7 +11,7 @@
 (defn format-bar [{:keys [label label-width failed?] :as bar}]
   (str (format (str "%" label-width "s") label)
        ":   :percent% ["
-       (out/colored (if failed? :red :green) ":bar")
+       (output/colored (if failed? :red :green) ":bar")
        "] :progress/:total"))
 
 (defn print-bar []

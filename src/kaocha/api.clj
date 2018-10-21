@@ -9,7 +9,9 @@
             [kaocha.history :as history]
             [kaocha.config :as config]
             [kaocha.output :as output]
-            [kaocha.matcher-combinators]))
+            [kaocha.stacktrace :as stacktrace]))
+
+(require '[kaocha.matcher-combinators])
 
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]
@@ -40,8 +42,14 @@
                        (conj 'kaocha.report/report-counters
                              'kaocha.history/track
                              'kaocha.report/dispatch-extra-keys)
-                       (cond-> fail-fast? (conj 'kaocha.report/fail-fast)))]
-    (assoc config :kaocha/reporter (config/resolve-reporter reporter))))
+                       (cond-> fail-fast? (conj 'kaocha.report/fail-fast))
+                       config/resolve-reporter)]
+    (assoc config :kaocha/reporter (fn [m]
+                                     (try
+                                       (reporter m)
+                                       (catch Throwable t
+                                         (output/error "Error in reporter: " (.getClass t) " when processing " (:type m))
+                                         (stacktrace/print-cause-trace t)))))))
 
 (defn run [config]
   (let [plugins      (:kaocha/plugins config)
@@ -65,8 +73,7 @@
                 (let [test-plan       (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
                   (binding [testable/*test-plan* test-plan]
                     (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
-                          run-testables   (plugin/run-hook :kaocha.hooks/wrap-run testable/run-testables test-plan)
-                          result-tests    (run-testables test-plan-tests test-plan)
+                          result-tests    (testable/run-testables test-plan-tests test-plan)
                           result          (plugin/run-hook :kaocha.hooks/post-run
                                                            (-> test-plan
                                                                (dissoc :kaocha.test-plan/tests)

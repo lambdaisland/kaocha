@@ -13,7 +13,7 @@
             [clojure.set :as set]
             [kaocha.testable :as testable]
             [kaocha.stacktrace :as stacktrace]
-            [kaocha.output :as out]
+            [kaocha.output :as output]
             [clojure.test :as t]))
 
 (defn- try-run [config]
@@ -50,7 +50,7 @@
                 tracker    (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {}))]
             (when (seq load-error)
               (doseq [[f e] load-error]
-                (out/warn "Failed loading" f)
+                (output/warn "Failed loading" f)
                 (stacktrace/print-cause-trace e t/*stack-trace-depth*)))
 
             (when (seq unload) (println "[watch] Unloading" unload))

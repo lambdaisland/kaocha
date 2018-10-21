@@ -4,7 +4,7 @@
             [kaocha.testable :as testable]
             [clojure.java.io :as io]
             [lambdaisland.tools.namespace.find :as ctn-find]
-            [kaocha.output :as out]))
+            [kaocha.output :as output]))
 
 (def clj ctn-find/clj)
 (def cljs ctn-find/cljs)
@@ -26,7 +26,7 @@
 
     (doseq [path test-paths]
       (when-not (.exists (io/file path))
-        (out/warn "In :test-paths, no such file or directory: " path))
+        (output/warn "In :test-paths, no such file or directory: " path))
       (classpath/add-classpath path))
 
     (let [ns-names  (find-test-nss test-paths ns-patterns)

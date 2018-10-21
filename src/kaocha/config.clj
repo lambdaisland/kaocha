@@ -1,7 +1,7 @@
 (ns kaocha.config
   (:require [aero.core :as aero]
             [clojure.java.io :as io]
-            [kaocha.output :as out]
+            [kaocha.output :as output]
             [kaocha.report :as report]
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]]))
@@ -36,25 +36,34 @@
                                               (rename-key :focus-meta :kaocha.filter/focus-meta)
                                               (cond->> (not (:type m)) (merge (first (:kaocha/tests default-config))))))))]
     (cond-> {}
-      tests              (assoc :kaocha/tests tests)
+      tests              (assoc :kaocha/tests (vary-meta tests assoc :replace true))
       plugins            (assoc :kaocha/plugins plugins)
-      reporter           (assoc :kaocha/reporter reporter)
+      reporter           (assoc :kaocha/reporter (vary-meta reporter assoc :replace true))
       (some? color?)     (assoc :kaocha/color? color?)
       (some? fail-fast?) (assoc :kaocha/fail-fast? fail-fast?)
       (some? watch?)     (assoc :kaocha/watch? watch?)
       :->                (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch?)))))
 
+(defn replace-by-default [config k]
+  (if-let [v (get config k)]
+    (if (#{:prepend :append} (meta v))
+      config
+      (update config k vary-meta assoc :replace true))
+    config))
+
 (defn merge-config [c1 c2]
-  (meta))
+  (meta-merge c1 (-> c2
+                     (replace-by-default :kaocha/reporter)
+                     (replace-by-default :kaocha/tests))))
 
 (defmethod aero/reader 'kaocha [opts tag value]
-  (out/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")
+  (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")
   (-> (default-config)
-      (merge (normalize value))))
+      (merge-config (normalize value))))
 
 (defmethod aero/reader 'kaocha/v1 [opts tag value]
   (-> (default-config)
-      (merge (normalize value))))
+      (merge-config (normalize value))))
 
 (defn load-config
   ([]

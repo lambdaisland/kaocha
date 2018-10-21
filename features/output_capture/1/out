@@ -1,8 +1,10 @@
 [([31mF[m.)]
 
-FAIL in (stdout-fail-test) (has_output_test.clj:8)
-expected: (= :same :not-same)
-  actual: (not (= :same :not-same))
+FAIL in :has-output-test/stdout-fail-test (has_output_test.clj:8)
+Expected:
+[1;33m  :same[0m
+Actual:
+  [31m-:same[0m [32m+:not-same[0m
 ------ Test output -------------------------------------
 Bu yi le hu?
 --------------------------------------------------------

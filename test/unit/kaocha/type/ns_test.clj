@@ -4,7 +4,8 @@
             [kaocha.testable :as testable]
             [kaocha.test-helper]
             [kaocha.classpath :as classpath]
-            [kaocha.test-util :refer [with-test-ctx]]))
+            [kaocha.test-util :as util :refer [with-test-ctx]]
+            [kaocha.output :as out]))
 
 (defn var-name?
   "Predicate for the name of a var, for use in matchers."
@@ -32,14 +33,15 @@
                    :kaocha.testable/meta #(= % (meta (resolve 'foo.bar-test/a-test)))}]}
                 test-plan)))
 
-  (is (match? {:kaocha.testable/type        :kaocha.type/ns
-               :kaocha.testable/id          :foo.unknown-test
-               :kaocha.ns/name              'foo.unknown-test
-               :kaocha.test-plan/load-error #(instance? java.io.FileNotFoundException %)}
+  (util/expect-warning #"Could not locate foo/unknown_test"
+    (is (match? {:kaocha.testable/type        :kaocha.type/ns
+                 :kaocha.testable/id          :foo.unknown-test
+                 :kaocha.ns/name              'foo.unknown-test
+                 :kaocha.test-plan/load-error #(instance? java.io.FileNotFoundException %)}
 
-              (testable/load {:kaocha.testable/type :kaocha.type/ns
-                              :kaocha.testable/id   :foo.unknown-test
-                              :kaocha.ns/name       'foo.unknown-test}))))
+                (testable/load {:kaocha.testable/type :kaocha.type/ns
+                                :kaocha.testable/id   :foo.unknown-test
+                                :kaocha.ns/name       'foo.unknown-test})))))
 
 (deftest run-test
   (classpath/add-classpath "fixtures/a-tests")

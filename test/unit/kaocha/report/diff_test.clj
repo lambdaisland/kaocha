@@ -90,13 +90,33 @@
              (diff/diff {:a 1 :b 2 :c 3} {:a 2 :x 2 :c 3})))
 
       (is (= {:a [1 (diff/->Deletion 2) 3]}
-             (diff/diff {:a [1 2 3]} {:a [1 3]}))))))
+             (diff/diff {:a [1 2 3]} {:a [1 3]})))))
+
+  (is (= [{:x (kaocha.report.diff/->Mismatch 1 2)}]
+         (diff/diff [{:x 1}] [{:x 2}])))
+
+  (is (= [(kaocha.report.diff/->Mismatch 0 [[]]) (kaocha.report.diff/->Mismatch 0 [])]
+         (diff/diff [0 0] [[[]] []])))
+
+  (is (= [(kaocha.report.diff/->Mismatch 0 []) (kaocha.report.diff/->Deletion 0)]
+         (diff/diff [0 0] [[]])))
+
+  (is (= [(kaocha.report.diff/->Mismatch 0 false)]
+         (diff/diff [0] [false]))))
 
 (deftest undiff-test
   (is (= {:a [1 2 [9 8 7]] :b 2 :c 3}
          (diff/left-undiff
           (diff/diff {:a [1 2 [9 8 7]] :b 2 :c 3}
-                     {:a [1 3 [9 8]] :x 2 :c 3})))))
+                     {:a [1 3 [9 8]] :x 2 :c 3}))))
+
+  (is (= [-1 1 true 4 5]
+         (diff/right-undiff
+          (diff/diff-seq [true 0] [-1 1 true 4 5]))))
+
+  (is (= [-1 1 true]
+         (diff/right-undiff
+          (diff/diff-seq [true 0] [-1 1 true])))))
 
 (deftest replacements-test
   (is (= [{} #{} {}]
@@ -112,7 +132,63 @@
          (diff/del+ins [0 1 2] [0 :x :y :z])))
 
   (is (= [{2 :x} #{1} {2 '(:y :z)}]
-         (diff/replacements [#{1 2} {2 [:x :y :z]}]))))
+         (diff/replacements [#{1 2} {2 [:x :y :z]}])))
+
+  (is (= [{} #{} {-1 [1], 1 [3], 3 [5]}]
+         (diff/replacements (diff/del+ins [2 4]  [1 2 3 4 5]))))
+
+  (is (= [{1 4} #{} {-1 [-1 1], 3 [5]}]
+         (diff/replacements
+          (diff/del+ins [true 0] [-1 1 true 4 5]))))
+
+  (is (= [{} #{1} {-1 [-1 1]}]
+         (diff/replacements
+          (diff/del+ins [true 0] [-1 1 true]))))
+
+  (is (= [{} #{1} {-1 [-1 1]}]
+         (diff/replacements
+          (diff/del+ins [true 0] [-1 1 true]))))
+
+  (is (= [{} #{1} {2 [:d]}]
+         (-> (diff/del+ins [:a :b :c] [:a :c :d])
+             (diff/replacements))))
+
+  (is (= [{0 [[]], 1 []} #{} {}]
+         (-> (diff/del+ins [0 0] [[[]] []])
+             diff/replacements)))
+
+  (is (= [{0 :x, 1 :y} #{} {}]
+         (-> (diff/del+ins [1 2] [:x :y])
+             diff/replacements)))
+
+  (is (= [{1 :x} #{} {1 [:y]}]
+         (-> (diff/del+ins [1 2] [1 :x :y])
+             diff/replacements)))
+
+  (is (= [{0 []} #{1} {}]
+         (diff/replacements (diff/del+ins [0 0] [[]]))))
+
+  (is (= [{0 false} #{} {}]
+         (diff/replacements (diff/del+ins [0] [false]))))
+
+  (is (= [{0 {:x 2}} #{} {}]
+         (diff/replacements (diff/del+ins [{:x 1}] [{:x 2}]))))
+
+  (is (= [{1 {:x 2}} #{} {}]
+         (diff/replacements (diff/del+ins [:a {:x 1}] [:a {:x 2}])))))
+
+(deftest del+ins-test
+  (is (= [#{} {-1 [1], 0 [3], 1 [5]}]
+         (diff/del+ins [2 4]  [1 2 3 4 5])))
+
+  (is (= [#{} {-1 [1], 0 [3]}]
+         (diff/del+ins [2]  [1 2 3])))
+
+  (is (= [#{1} {-1 [-1 1]}]
+         (diff/del+ins [true 0] [-1 1 true])))
+
+  (is (= [#{0 1} {-1 [[]]}]
+         (diff/del+ins [0 0] [[]]))))
 
 (defspec round-trip-diff 100
   (prop/for-all [x gen/any
@@ -120,132 +196,65 @@
                 (let [diff (diff/diff x y)]
                   (= [x y] [(diff/left-undiff diff) (diff/right-undiff diff)]))))
 
+(deftest diff-seq-test
+  (is (= [(kaocha.report.diff/->Insertion 1) 2 (kaocha.report.diff/->Insertion 3)]
+         (diff/diff-seq [2]  [1 2 3])))
+
+  (is (= [(kaocha.report.diff/->Insertion 1) 2 (kaocha.report.diff/->Insertion 3) 4 (kaocha.report.diff/->Insertion 5)]
+         (diff/diff-seq [2 4]  [1 2 3 4 5])))
+
+  (is (= [(kaocha.report.diff/->Insertion -1) (kaocha.report.diff/->Insertion 1) true (kaocha.report.diff/->Deletion 0)]
+         (diff/diff-seq [true 0] [-1 1 true])))
+
+  (is (= [1 (kaocha.report.diff/->Mismatch 2 3) 3 4]
+         (diff/diff-seq-replacements {1 3} [1 2 3 4])))
+
+  (is (= [1 (kaocha.report.diff/->Deletion 2) 3 4]
+         (diff/diff-seq-deletions #{1} [1 2 3 4])))
+
+  (is (= [1 (kaocha.report.diff/->Mismatch 2 :x) (kaocha.report.diff/->Insertion :y)]
+         (diff/diff-seq [1 2] [1 :x :y])))
+
+  (is (= [(kaocha.report.diff/->Mismatch 0 false)]
+         (->> [0]
+              (diff/diff-seq-replacements {0 false}))))
+
+  (is (= [(kaocha.report.diff/->Insertion :y) (kaocha.report.diff/->Mismatch 1 :x) (kaocha.report.diff/->Deletion 2)]
+         (->> [1 2]
+              (diff/diff-seq-replacements {0 :x})
+              (diff/diff-seq-deletions #{1})
+              (diff/diff-seq-insertions {-1 [:y]}))))
+
+  (is (= [1 2 (kaocha.report.diff/->Insertion :x) (kaocha.report.diff/->Insertion :y) 3 4]
+         (diff/diff-seq-insertions {1 [:x :y]} [1 2 3 4])))
+
+  (is (= [(kaocha.report.diff/->Insertion -1) (kaocha.report.diff/->Insertion 1) true (kaocha.report.diff/->Mismatch 0 4) (kaocha.report.diff/->Insertion 5)]
+         (->> [true 0]
+              (diff/diff-seq-replacements {1 4})
+              (diff/diff-seq-deletions #{})
+              (diff/diff-seq-insertions {-1 [-1 1] 3 [5]}))))
+
+
+  (is (= [(kaocha.report.diff/->Insertion -1) (kaocha.report.diff/->Insertion 1) true (kaocha.report.diff/->Deletion 0)]
+         (diff/diff-seq [true 0] [-1 1 true])))
+
+
+  (is (= [:a (kaocha.report.diff/->Deletion :b) :c (kaocha.report.diff/->Insertion :d)]
+         (diff/diff-seq [:a :b :c] [:a :c :d]))))
+
+
+
+
 
 (comment
   (use 'kaocha.repl)
   (run)
 
-  ;; REPL stuff to be converted to tests
-  (diff/diff-seq [2]  [1 2 3])
+  (defmethod clojure.core/print-method kaocha.report.diff.Insertion [v writer]
+    (.write writer (pr-str `(diff/->Insertion ~(:+ v)))))
 
-  (diff/del+ins [2]  [1 2 3])
+  (defmethod clojure.core/print-method kaocha.report.diff.Deletion [v writer]
+    (.write writer (pr-str `(diff/->Deletion ~(:- v)))))
 
-  (diff/del+ins [2 4]  [1 2 3 4 5])
-
-  (apply diff/replacements (diff/del+ins [2 4]  [1 2 3 4 5]))
-
-  (diff/diff-seq [2 4]  [1 2 3 4 5])
-
-  (diff/del+ins [true 0] [-1 1 true])
-  ;; => [#{1} {-1 [-1 1]}]
-  ;; => [#{1} {-1 [-1 1]}]
-
-  (diff/diff-seq [true 0] [-1 1 true])
-
-  (diff/diff-seq-replacements {1 3} [1 2 3 4])
-
-  (diff/diff-seq-deletions #{1} [1 2 3 4])
-
-  (diff/diff-seq-insertions {1 [:x :y]} [1 2 3 4])
-
-  (concat (take [1 2 3 4] 1) [:x :y] (drop ))
-
-  (apply diff/replacements
-         (diff/del+ins [true 0] [-1 1 true 4 5]))
-  ;; => [{1 4} #{} {-1 [-1 1], 3 (5)}]
-
-  (diff/right-undiff
-   (diff/diff-seq [true 0] [-1 1 true 4 5]))
-  ;; => ({:+ -1} {:+ 1} true {:- 0, :+ 4} {:+ 5})
-
-  (->> [true 0]
-       (diff/diff-seq-replacements {1 4})
-       ;; => (true {:- 0, :+ 4})
-       (diff/diff-seq-deletions #{})
-       ;; => (true {:- 0, :+ 4})
-       (diff/diff-seq-insertions {-1 [-1 1] 3 [5]})
-       )
-  ;; => ({:+ -1} {:+ 1} true {:- 0, :+ 4} {:+ 5})
-
-  [#{1} {-1 [-1 1], 1 [4 5]}]
-
-  (apply diff/replacements'
-         (diff/del+ins [true 0] [-1 1 true]))
-
-
-  (apply diff/replacements
-         (diff/del+ins [true 0] [-1 1 true]))
-
-  (diff/diff-seq [true 0] [-1 1 true])
-
-  (diff/right-undiff
-   (diff/diff-seq [true 0] [-1 1 true]))
-
-  (-> (diff/del+ins [:a :b :c] [:a :c :d])
-      (diff/replacements))
-  ;; => [{} #{1} {1 [:d]}]
-  ;; => [{} #{1} {2 [:d]}]
-  (diff/diff-seq [:a :b :c] [:a :c :d])
-  ;; => (:a :c {:+ :d})
-  ;; => (:a :c {:+ :d})
-
-  (diff/diff [{:x 1}] [{:x 2}])
-
-  (diff/replacements (diff/del+ins [{:x 1}] [{:x 2}]))
-  ;; => [{0 {:x 2}} #{} {-1 nil}]
-  (diff/replacements (diff/del+ins [:a {:x 1}] [:a {:x 2}]))
-  ;; => [{1 {:x 2}} #{1} {0 nil}]
-
-  (diff/diff [0 0] [[[]] []])
-
-  (-> (diff/del+ins [0 0] [[[]] []])
-      ;; => [#{0 1} {-1 [[[]] []]}]
-
-      diff/replacements
-      ;; => [{0 [[]]} #{1} {-1 ([])}]
-      )
-  ;; => [{0 [[]]} #{1} {-1 ([])}]
-  (-> (diff/del+ins [1 2] [:x :y])
-      ;; => [#{0 1} {-1 [:x :y]}]
-      diff/replacements
-      ;; => [{0 :x} #{1} {-1 (:y)}]
-      )
-
-  (-> (diff/del+ins [1 2] [1 :x :y])
-      ;; => [#{1} {1 [:x :y]}]
-      diff/replacements
-      ;; => [{0 :x} #{1} {1 (:y)}]
-      )
-
-  (->> [1 2]
-       (diff/diff-seq-replacements {0 :x})
-       ;; => (true {:- 0, :+ 4})
-       (diff/diff-seq-deletions #{1})
-       ;; => (true {:- 0, :+ 4})
-       (diff/diff-seq-insertions {-1 [:y]})
-       )
-  ;; => ({:+ :y} {:- 1, :+ :x} {:- 2})
-  ;; => ({:- 1, :+ :x} {:- 2})
-  ;; => ({:- 1, :+ :x} 2)
-
-  (diff/diff-seq [1 2] [1 :x :y])
-
-  ;; => (1 {:- 2, :+ :x} {:+ :y})
-
-  (diff/diff [0 0] [[]])
-
-  (diff/del+ins [0 0] [[]])
-  ;; => [#{0 1} {-1 [[]]}]
-
-  (diff/replacements (diff/del+ins [0 0] [[]]))
-  ;; => [{0 []} #{1} {0 nil}]
-  ;; => [{0 [], 1 nil} #{} {1 ()}]
-
-  (diff/replacements (diff/del+ins [0] [false]))
-  ;; => [{0 false} #{} {0 nil}]
-
-  (diff/diff [0] [false])
-
-  (->> [0]
-       (diff/diff-seq-replacements {0 false}))
-  )
+  (defmethod clojure.core/print-method kaocha.report.diff.Mismatch [v writer]
+    (.write writer (pr-str `(diff/->Mismatch ~(:- v) ~(:+ v))))))
