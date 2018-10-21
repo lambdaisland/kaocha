@@ -1,18 +1,15 @@
 * Todos
 ** Major features
-- [X] Use FIPP/puget for colored pretty printing
 - [ ] main namespace for cloverage
 - [ ] improve Midje support
 - [ ] TAP reporter (provided by clojure.test?)
 - [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism (also necessary for parallellism)
 - [ ] parallelism (?)
-- [-] ClojureScript support
+- [ ] ClojureScript support
 - [ ] Expectations support
 
 ** Bug fixes
-- [X] repl/config merge overwrites values from tests.edn / extra-vals with default-config
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
-- [X] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
 
 ** Improvements
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
@@ -42,8 +39,12 @@
 
 ** Internal
 - [ ] Create test suite type for integration/feature tests
+- [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
 
 ** Done
+- [X] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
+- [X] Use FIPP/puget for colored pretty printing
+- [X] repl/config merge overwrites values from tests.edn / extra-vals with default-config
 - [X] prettier diffing of (is (= ))
 - [X] Make zero-assertion check work with --fail-fast
 - [X] Add to tools.deps wiki
