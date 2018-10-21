@@ -11,7 +11,7 @@
   <artifactId>kaocha</artifactId>
       
   
-  <version>0.0-206</version>
+  <version>0.0-211</version>
       
   
   <name>kaocha</name>
@@ -68,7 +68,7 @@
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
               
     
-    <tag>4120904e76963391bc3689bf9f6186b8fe6b983b</tag>
+    <tag>9654f7f1aa0d38eed7bffaeffb288951a2e8ddd7</tag>
           
   
   </scm>
@@ -212,7 +212,7 @@
             <manifestEntries>
                                                     
               
-              <Git-Revision>4120904e76963391bc3689bf9f6186b8fe6b983b</Git-Revision>
+              <Git-Revision>9654f7f1aa0d38eed7bffaeffb288951a2e8ddd7</Git-Revision>
                                                 
             
             </manifestEntries>
