@@ -3,11 +3,11 @@
 ERROR in :ddd.exception-outside-is/exception-outside-is-test (exception_outside_is.clj:4)
 Uncaught exception, not in assertion.
 Exception: java.lang.Exception: booo
- at ddd.exception_outside_is$fn__15611.invokeStatic (exception_outside_is.clj:4)
+ at ddd.exception_outside_is$fn__15612.invokeStatic (exception_outside_is.clj:4)
     ddd.exception_outside_is/fn (exception_outside_is.clj:4)
     kaocha.plugin.capture_output$eval2677$fn__2678$fn__2691$fn__2693$fn__2694.invoke (capture_output.clj:88)
-    kaocha.type.var$eval15284$fn__15286$fn__15292.invoke (var.clj:28)
-    kaocha.type.var$eval15284$fn__15286.invoke (var.clj:25)
+    kaocha.type.var$eval15285$fn__15287$fn__15293.invoke (var.clj:28)
+    kaocha.type.var$eval15285$fn__15287.invoke (var.clj:25)
     ...
     kaocha.plugin.capture_output$eval2677$fn__2678$fn__2683$fn__2684$fn__2685.invoke (capture_output.clj:79)
     ...
@@ -18,11 +18,11 @@ Exception: java.lang.Exception: booo
     kaocha.testable$run_testables.invokeStatic (testable.clj:123)
     kaocha.testable$run_testables.invoke (testable.clj:113)
     ...
-    kaocha.type.ns$run_tests$fn__15350.invoke (ns.clj:53)
+    kaocha.type.ns$run_tests$fn__15351.invoke (ns.clj:53)
     ...
     kaocha.type.ns$run_tests.invokeStatic (ns.clj:53)
     kaocha.type.ns$run_tests.invoke (ns.clj:49)
-    kaocha.type.ns$eval15354$fn__15355.invoke (ns.clj:71)
+    kaocha.type.ns$eval15355$fn__15356.invoke (ns.clj:71)
     ...
     kaocha.plugin.capture_output$eval2677$fn__2678$fn__2683$fn__2684$fn__2685.invoke (capture_output.clj:79)
     ...
@@ -32,7 +32,7 @@ Exception: java.lang.Exception: booo
     kaocha.testable$run.invoke (testable.clj:83)
     kaocha.testable$run_testables.invokeStatic (testable.clj:123)
     kaocha.testable$run_testables.invoke (testable.clj:113)
-    kaocha.type.clojure.test$eval15556$fn__15557.invoke (test.clj:16)
+    kaocha.type.clojure.test$eval15557$fn__15558.invoke (test.clj:16)
     ...
     kaocha.plugin.capture_output$eval2677$fn__2678$fn__2683$fn__2684$fn__2685.invoke (capture_output.clj:79)
     ...
@@ -42,7 +42,7 @@ Exception: java.lang.Exception: booo
     kaocha.testable$run.invoke (testable.clj:83)
     kaocha.testable$run_testables.invokeStatic (testable.clj:123)
     kaocha.testable$run_testables.invoke (testable.clj:113)
-    kaocha.api$run$fn__5498.invoke (api.clj:82)
+    kaocha.api$run$fn__5499.invoke (api.clj:82)
     ...
     kaocha.api$run.invokeStatic (api.clj:74)
     kaocha.api$run.invoke (api.clj:60)
