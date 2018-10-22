@@ -101,8 +101,7 @@
             [kaocha.testable :as testable]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.report.printer :as printer]
-            [kaocha.report.diff :as diff]
-            [clojure.data]))
+            [kaocha.report.diff :as diff]))
 
 (def clojure-test-report t/report)
 

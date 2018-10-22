@@ -86,7 +86,7 @@
                                           :boolean    [:bold :cyan]
                                           :tag        [:magenta]}
                          :print-handlers (fn [klz]
-                                           (get @#'print-handlers (symbol (.getName klz))))}))
+                                           (and klz (get @#'print-handlers (symbol (.getName klz)))))}))
 
 (defn format-doc [expr]
   (puget/format-doc (puget-printer) expr))
