@@ -45,6 +45,7 @@ fi
 echo_inof "Updating pom.xml dependendencies"
 
 clojure -Spom
+sed '/^ *$/d' -i pom.xml # https://dev.clojure.org/jira/browse/TDEPS-29
 
 echo_info "Updating CHANGELOG"
 
