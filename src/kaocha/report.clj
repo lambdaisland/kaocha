@@ -100,8 +100,9 @@
             [kaocha.history :as history]
             [kaocha.testable :as testable]
             [kaocha.hierarchy :as hierarchy]
-            [kaocha.report.printer :as printer]
-            [kaocha.report.diff :as diff]))
+            [lambdaisland.deep-diff :as ddiff]
+            [puget.printer :as puget]
+            [fipp.engine :as fipp]))
 
 (def clojure-test-report t/report)
 
@@ -215,17 +216,19 @@
     (println "  actual:" (pr-str (:actual m)))))
 
 (defmethod print-expr '= [m]
-  (let [[_ expected & actuals] (-> m :actual second)]
-    (printer/print-doc
+  (let [[_ expected & actuals] (-> m :actual second)
+        printer (ddiff/printer {:print-color output/*colored-output*})]
+    (fipp/pprint-document
      [:span
       "Expected:" :line
-      [:nest (printer/format-doc expected)]
+      [:nest (puget/format-doc printer expected)]
       :break
       "Actual:" :line
       (into [:nest]
             (interpose :break)
             (for [actual actuals]
-              (printer/format-doc (diff/diff expected actual))))])))
+              (puget/format-doc printer (ddiff/diff expected actual))))]
+     {:width (:width printer)})))
 
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 

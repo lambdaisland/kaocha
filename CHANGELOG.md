@@ -6,6 +6,8 @@
 
 ## Changed
 
+- deep-diff functionality has been extracted into [its own library](https://github.com/lambdaisland/deep-diff)
+
 # 0.0-217 (2018-10-22 / 642cff8)
 
 ## Fixed

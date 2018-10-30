@@ -3,7 +3,7 @@
             [kaocha.output :as out]
             [kaocha.hierarchy :as hierarchy]
             [clojure.test :as t]
-            [kaocha.report.printer :as printer]
+            [lambdaisland.deep-diff.printer :as printer]
             [puget.color :as color]))
 
 (hierarchy/derive! :mismatch :kaocha/fail-type)
@@ -42,7 +42,7 @@
                                           [:raw (:expected-type-msg expr)]])
                          (printer/print-insertion printer {:+ (:provided expr)})]])})
 
-(alter-var-root #'printer/print-handlers merge print-handlers)
+(run! #(apply printer/register-print-handler! %) print-handlers)
 
 (defn fail-summary [{:keys [testing-contexts testing-vars] :as m}]
   (println "\nFAIL in" (clojure.test/testing-vars-str m))
