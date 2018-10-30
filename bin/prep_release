@@ -42,7 +42,7 @@ if [[ -d doc ]]; then
     ed < bin/update_toc.ed
 fi
 
-echo_inof "Updating pom.xml dependendencies"
+echo_info "Updating pom.xml dependendencies"
 
 clojure -Spom
 sed '/^ *$/d' -i pom.xml # https://dev.clojure.org/jira/browse/TDEPS-29
