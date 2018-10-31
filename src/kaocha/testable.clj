@@ -89,8 +89,16 @@
   [testable test-plan]
   (load-type+validate testable)
   (binding [*current-testable* testable]
-    (let [run (plugin/run-hook :kaocha.hooks/wrap-run -run test-plan)]
-      (run testable test-plan))))
+    (let [run (plugin/run-hook :kaocha.hooks/wrap-run -run test-plan)
+          result (run testable test-plan)]
+      (if-let [history history/*history*]
+        (assoc result
+               ::events
+               (filter (fn [event]
+                         (= (get-in event [:kaocha/testable ::id])
+                            (::id testable)))
+                       @history))
+        result))))
 
 (s/fdef run
         :args (s/cat :testable :kaocha.test-plan/testable
