@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk11
+      - image: circleci/openjdk9
     steps:
       - checkout
       - run: mkdir -p ~/downloads
