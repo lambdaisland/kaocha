@@ -17,6 +17,8 @@
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Support for test-ns-hook (?)
 - [ ] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
+- [ ] Capture stderr separately
+- [ ] Use SignalHandler instead of shutdownhooks
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
@@ -40,6 +42,7 @@
 ** Internal
 - [ ] Create test suite type for integration/feature tests
 - [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
+- [ ] Run CI on different levels of Java and Clojure
 
 ** Done
 - [X] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)

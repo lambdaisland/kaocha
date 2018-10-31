@@ -1,4 +1,6 @@
-# Kaocha [![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha)
+# Kaocha
+
+[![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha) [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT)
 
 Full featured next generation test runner for Clojure.
 
@@ -102,4 +104,5 @@ bin/kaocha --test-help
 ## License
 
 &copy; Arne Brasseur 2018
+
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
