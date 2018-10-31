@@ -37,13 +37,13 @@ jobs:
     docker:
       - image: circleci/openjdk:8u181-jdk-stretch
     environment:
-      EXTRA_ALIASES: clojure-1.9
+      EXTRA_ALIASES: ":clojure-1.9"
     steps: *shared_steps
   "java-9-clojure-1.9":
     docker:
       - image: circleci/openjdk:9.0.4-12-jdk-sid
     environment:
-      EXTRA_ALIASES: clojure-1.9
+      EXTRA_ALIASES: ":clojure-1.9"
     steps: *shared_steps
   "java-8-clojure-1.10":
     docker:
