@@ -2,7 +2,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:11.0.1-jdk-sid
+      # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/openjdk/images
+      - image: circleci/openjdk:9.0.4-12-jdk-sid
     steps:
       - checkout
       - run: mkdir -p ~/downloads
