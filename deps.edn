@@ -32,9 +32,7 @@
 
   :cloverage-local {:extra-deps {cloverage {:local/root "/home/arne/github/cloverage/cloverage"}}}
 
-  :junit-xml {:extra-deps {lambdaisland/kaocha-junit-xml {:git/url "https://github.com/lambdaisland/kaocha-junit-xml.git"
-                                                          :sha "9178a94471afa033606dbd91a4671b65cf1c5f3d"
-                                                          #_#_:local/root "/home/arne/github/lambdaisland/kaocha-junit-xml"}}}
+  :junit-xml {:extra-deps {lambdaisland/kaocha-junit-xml {:mvn/version "0.0-10"}}}
 
   :clojure-1.9 {:extra-deps {org.clojure/clojure {:mvn/version "1.9.0"}}}
 
