@@ -3,8 +3,11 @@
 ## Added
 
 - Skip tests marked as `^:kaocha/skip` by default
+- Junit.xml output, see [lambdaisland/kaocha-junit-xml](https://github.com/lambdaisland/kaocha-junit-xml)
 
 ## Fixed
+
+- Fix Java 11 compatiblity
 
 ## Changed
 
