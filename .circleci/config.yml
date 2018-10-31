@@ -1,36 +1,39 @@
 version: 2
+
+shared_steps: &shared_steps
+  - checkout
+  - run: mkdir -p ~/downloads
+  - restore_cache:
+      keys:
+      - kaocha-001-{{ checksum "deps.edn" }}
+      # fallback to using the latest cache if no exact match is found
+      - kaocha-001-
+  - run:
+      command: |
+        cd ~/downloads
+        if [[ ! -f "linux-install-1.9.0.394.sh" ]]; then
+          curl -O https://download.clojure.org/install/linux-install-1.9.0.394.sh
+          chmod +x linux-install-1.9.0.394.sh
+        fi
+  - run: sudo ~/downloads/linux-install-1.9.0.394.sh
+  - run: sudo apt-get install colordiff
+  - run: clojure -A:dev:test:junit-xml -Spath
+  - save_cache:
+      paths:
+        - ~/.m2
+        - ~/downloads
+      key: kaocha-001-{{ checksum "deps.edn" }}
+  - run: mkdir -p test-results/kaocha
+  - run: java -version
+  - run: clojure -e '(println (clojure-version))'
+  - run: clojure -A:dev:test:junit-xml -m kaocha.runner --reporter kaocha.report/documentation --plugin kaocha.plugin/junit-xml --junit-xml-file test-results/kaocha/results.xml
+  - run: bin/check_features
+  - store_test_results:
+      path: test-results
+
 jobs:
   build:
     docker:
       # https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/openjdk/images
       - image: circleci/openjdk:9.0.4-12-jdk-sid
-    steps:
-      - checkout
-      - run: mkdir -p ~/downloads
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "deps.edn" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-      - run:
-          command: |
-            cd ~/downloads
-            if [[ ! -f "linux-install-1.9.0.394.sh" ]]; then
-              curl -O https://download.clojure.org/install/linux-install-1.9.0.394.sh
-              chmod +x linux-install-1.9.0.394.sh
-            fi
-      - run: sudo ~/downloads/linux-install-1.9.0.394.sh
-      - run: sudo apt-get install colordiff
-      - run: clojure -A:dev:test:junit-xml -Spath
-      - save_cache:
-          paths:
-            - ~/.m2
-            - ~/.downloads
-          key: v1-dependencies-{{ checksum "deps.edn" }}
-      - run: mkdir -p test-results/kaocha
-      - run: java -version
-      - run: clojure -e '(println (clojure-version))'
-      - run: clojure -A:dev:test:junit-xml -m kaocha.runner --reporter kaocha.report/documentation --plugin kaocha.plugin/junit-xml --junit-xml-file test-results/kaocha/results.xml
-      - run: bin/check_features
-      - store_test_results:
-          path: test-results
+    steps: *shared_steps
