@@ -36,7 +36,6 @@
                                                           :sha "9178a94471afa033606dbd91a4671b65cf1c5f3d"
                                                           #_#_:local/root "/home/arne/github/lambdaisland/kaocha-junit-xml"}}}
 
-  :clojure-1.8 {:extra-deps {org.clojure/clojure {:mvn/version "1.8.0"}}}
   :clojure-1.9 {:extra-deps {org.clojure/clojure {:mvn/version "1.9.0"}}}
 
   :cloverage

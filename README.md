@@ -101,6 +101,10 @@ bin/kaocha --config-file tests_ci.edn
 bin/kaocha --test-help
 ```
 
+## Requirements
+
+Kaocha requirements Clojure 1.9 or later.
+
 ## License
 
 &copy; Arne Brasseur 2018
