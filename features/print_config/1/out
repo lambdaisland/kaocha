@@ -11,7 +11,8 @@
    :kaocha.testable/id :aaa,
    :kaocha/ns-patterns ["^foo$"],
    :kaocha/source-paths ["src"],
-   :kaocha/test-paths ["fixtures/a-tests"]}],
+   :kaocha/test-paths ["fixtures/a-tests"],
+   :kaocha.filter/skip-meta [:kaocha/skip]}],
  :kaocha/cli-options
  {:config-file "features/print_config/1/tests.edn",
   :print-config true,

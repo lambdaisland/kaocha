@@ -23,11 +23,11 @@
    (clojure-test-summary @*history*))
   ([history]
    (reduce
-    (fn [m {type :type}]
+    (fn [m {type :type :as event}]
       (cond
         (some #{type} [:pass :error]) (update m type inc)
         (= type :begin-test-var)      (update m :test inc)
-        (hierarchy/fail-type? m)      (update m :fail inc)
+        (hierarchy/fail-type? event)  (update m :fail inc)
         :else                         m))
     {:type  :summary
      :test  0

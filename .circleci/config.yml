@@ -2,13 +2,34 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/openjdk:9
+      - image: circleci/openjdk11
     steps:
       - checkout
-      - run: curl -O https://download.clojure.org/install/linux-install-1.9.0.375.sh
-      - run: chmod +x linux-install-1.9.0.375.sh
-      - run: sudo ./linux-install-1.9.0.375.sh
+      - run: mkdir -p ~/downloads
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "deps.edn" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run:
+          command: |
+            cd ~/downloads
+            if [[ ! -f "linux-install-1.9.0.394.sh" ]]; then
+              curl -O https://download.clojure.org/install/linux-install-1.9.0.394.sh
+              chmod +x linux-install-1.9.0.394.sh
+            fi
+      - run: sudo ~/downloads/linux-install-1.9.0.394.sh
       - run: sudo apt-get install colordiff
-      - run: clojure -Spath
-      - run: bin/kaocha --reporter kaocha.report/documentation
+      - run: clojure -A:dev:test:junit-xml -Spath
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.downloads
+          key: v1-dependencies-{{ checksum "deps.edn" }}
+      - run: mkdir -p test-results/kaocha
+      - run: java -version
+      - run: clojure -e '(println (clojure-version))'
+      - run: clojure -A:dev:test:junit-xml -m kaocha.runner --reporter kaocha.report/documentation --plugin kaocha.plugin/junit-xml --junit-xml-file test-results/kaocha/results.xml
       - run: bin/check_features
+      - store_test_results:
+          path: test-results

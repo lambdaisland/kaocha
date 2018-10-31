@@ -1,8 +1,0 @@
-#kaocha/v1
-{:tests [{:id                  :inside-is
-          :test-paths          ["fixtures/d-tests"]
-          :kaocha.filter/focus [ddd.foo-test/test-3]}
-         {:id                  :outside-is
-          :test-paths          ["fixtures/d-tests"]
-          :ns-patterns         [""]
-          :kaocha.filter/focus [ddd.exception-outside-is]}]}
