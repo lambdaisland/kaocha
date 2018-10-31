@@ -1,9 +1,12 @@
 (ns kaocha.matcher-combinators
   (:require [kaocha.report :as report]
-            [kaocha.output :as out]
+            [kaocha.output :as output]
             [kaocha.hierarchy :as hierarchy]
             [clojure.test :as t]
+            [lambdaisland.deep-diff :as ddiff]
             [lambdaisland.deep-diff.printer :as printer]
+            [puget.printer :as puget]
+            [fipp.engine :as fipp]
             [puget.color :as color]))
 
 (hierarchy/derive! :mismatch :kaocha/fail-type)
@@ -45,16 +48,18 @@
 (run! #(apply printer/register-print-handler! %) print-handlers)
 
 (defn fail-summary [{:keys [testing-contexts testing-vars] :as m}]
-  (println "\nFAIL in" (clojure.test/testing-vars-str m))
-  (when (seq t/*testing-contexts*)
-    (println (t/testing-contexts-str)))
-  (when-let [message (:message m)]
-    (println message))
-  (printer/print-doc
-   [:span
-    "Mismatch:" :line
-    [:nest (printer/format-doc (:markup m))]])
-  (report/print-output m))
+  (let [printer (ddiff/printer {:print-color output/*colored-output*})]
+    (println "\nFAIL in" (clojure.test/testing-vars-str m))
+    (when (seq t/*testing-contexts*)
+      (println (t/testing-contexts-str)))
+    (when-let [message (:message m)]
+      (println message))
+    (fipp/pprint-document
+     [:span
+      "Mismatch:" :line
+      [:nest (puget/format-doc printer (:markup m))]]
+     {:width (:width printer)})
+    (report/print-output m)))
 
 (defmethod report/fail-summary :mismatch [m] (fail-summary m))
 (defmethod report/fail-summary :matcher-combinators/mismatch [m] (fail-summary m))

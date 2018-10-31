@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix matcher-combinator support
 
 # 0.0-239 (2018-10-31 / f1b9a61)
 
