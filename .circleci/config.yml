@@ -5,7 +5,7 @@ shared_steps: &shared_steps
   - run: mkdir -p ~/downloads
   - restore_cache:
       keys:
-      - kaocha-001-{{ echo $EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
+      - kaocha-001-{{ .Environment.EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
       # fallback to using the latest cache if no exact match is found
       - kaocha-001-
   - run:
@@ -22,7 +22,7 @@ shared_steps: &shared_steps
       paths:
         - ~/.m2
         - ~/downloads
-      key: kaocha-001-{{ echo $EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
+      key: kaocha-001-{{ .Environment.EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
   - run: mkdir -p test-results/kaocha
   - run: java -version
   - run: clojure -e '(println (clojure-version))'
