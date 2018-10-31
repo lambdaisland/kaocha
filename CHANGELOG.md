@@ -2,6 +2,8 @@
 
 ## Added
 
+- Skip tests marked as `^:kaocha/skip` by default
+
 ## Fixed
 
 ## Changed
