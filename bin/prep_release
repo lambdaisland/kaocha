@@ -10,18 +10,6 @@ function echo_error() {
    echo "$@"
 }
 
-if [[ ! -z "$(git status --porcelain)" ]]; then
-    echo_error "Repo not clean.
-
-    Status:
-$(git status --short)
-
-    Diff:
-$(git diff)"
-
-    exit 1
-fi
-
 PROJECT=$(git remote get-url origin | sed 's/.*lambdaisland\/\([\.a-z-]\+\)\.git/\1/')
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 

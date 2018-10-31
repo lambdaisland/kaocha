@@ -2,6 +2,18 @@
 
 set -e
 
+if [[ ! -z "$(git status --porcelain)" ]]; then
+    echo "Repo not clean.
+
+    Status:
+$(git status --short)
+
+    Diff:
+$(git diff)"
+
+    exit 1
+fi
+
 if [[ -f tests.edn ]]; then
     bin/kaocha
 fi
