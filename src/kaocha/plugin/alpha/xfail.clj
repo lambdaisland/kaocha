@@ -20,7 +20,7 @@
          (reporter
           (if (-> event :kaocha/testable ::testable/meta :kaocha/xfail)
             (cond
-              (hierarchy/isa? (:type event) :kaocha/fail-type)
+              (hierarchy/fail-type? event)
               (assoc event :type :pass)
 
               (= (:type event) :pass)

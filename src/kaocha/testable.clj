@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [load])
   (:require [clojure.spec.alpha :as s]
             [kaocha.specs :refer [assert-spec]]
+            [kaocha.history :as history]
             [kaocha.result :as result]
             [kaocha.plugin :as plugin]
             [clojure.pprint :as pprint]))

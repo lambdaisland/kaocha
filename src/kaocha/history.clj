@@ -25,10 +25,10 @@
    (reduce
     (fn [m {type :type}]
       (cond
-        (some #{type} [:pass :error])           (update m type inc)
-        (= type :begin-test-var)                (update m :test inc)
-        (hierarchy/isa? type :kaocha/fail-type) (update m :fail inc)
-        :else                                   m))
+        (some #{type} [:pass :error]) (update m type inc)
+        (= type :begin-test-var)      (update m :test inc)
+        (hierarchy/fail-type? m)      (update m :fail inc)
+        :else                         m))
     {:type  :summary
      :test  0
      :pass  0

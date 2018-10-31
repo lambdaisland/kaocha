@@ -24,3 +24,9 @@
 
 (defn isa? [tag parent]
   (clojure.core/isa? hierarchy tag parent))
+
+(defn fail-type? [event]
+  (isa? (:type event) :kaocha/fail-type))
+
+(defn known-key? [event]
+  (isa? (:type event) :kaocha/known-key))

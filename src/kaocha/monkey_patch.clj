@@ -54,7 +54,7 @@
                            (throw (:actual m))
                            (merge file-and-line m))
 
-                         (hierarchy/isa? :kaocha/fail-type (:type m))
+                         (hierarchy/fail-type? m)
                          (merge file-and-line m)
 
                          :else

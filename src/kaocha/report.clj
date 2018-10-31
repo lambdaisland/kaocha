@@ -90,7 +90,8 @@
   ```
 
   "
-  (:require [kaocha.output :as output]
+  (:require [kaocha.core-ext :refer :all]
+            [kaocha.output :as output]
             [kaocha.plugin.capture-output :as capture]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
@@ -112,7 +113,7 @@
   clojure.test/assert-expr, as well as clojure.test/report, to signal special
   conditions."
   [m]
-  (when-not (hierarchy/isa? (:type m) :kaocha/known-key)
+  (when-not (hierarchy/known-key? m)
     (clojure-test-report m)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -195,18 +196,23 @@
      " (" file ":" line ")")))
 
 (defn print-output [m]
-  (let [buffer (get-in m [:kaocha/testable ::capture/buffer])
-        out (capture/read-buffer buffer)]
+  (let [output (get-in m [:kaocha/testable ::capture/output])
+        buffer (get-in m [:kaocha/testable ::capture/buffer])
+        out (or output (and buffer (capture/read-buffer buffer)))]
     (when (seq out)
       (println "------ Test output -------------------------------------")
       (println (str/trim-newline out))
       (println "--------------------------------------------------------"))))
 
+(defn assertion-type
+  "Given a clojure.test event, return the first symbol in the expression inside (is)."
+  [m]
+  (if-let [s (and (seq? (:expected m)) (seq (:expected m)))]
+    (first s)
+    :default))
+
 (defmulti print-expr
-  (fn [m]
-    (if-let [s (and (seq? (:expected m)) (seq (:expected m)))]
-      (first s)
-      :default))
+  assertion-type
   :hierarchy #'hierarchy/hierarchy)
 
 (defmethod print-expr :default [m]
@@ -250,13 +256,13 @@
   (print-output m)
   (print "Exception: ")
   (let [actual (:actual m)]
-    (if (instance? Throwable actual)
+    (if (throwable? actual)
       (stacktrace/print-cause-trace actual t/*stack-trace-depth*)
       (prn actual))))
 
 (defmethod result :summary [m]
   (t/with-test-out
-    (let [failures (filter #(hierarchy/isa? (:type %) :kaocha/fail-type) @history/*history*)]
+    (let [failures (filter hierarchy/fail-type? @history/*history*)]
       (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
         (binding [t/*testing-contexts* testing-contexts
                   t/*testing-vars* testing-vars]
@@ -278,7 +284,7 @@
   as a failure or error is encountered."
   [m]
   (when (and testable/*fail-fast?*
-             (hierarchy/isa? (:type m) :kaocha/fail-type)
+             (hierarchy/fail-type? m)
              (not (:kaocha.result/exception m))) ;; prevent handled exceptions from being re-thrown
     (throw+ {:kaocha/fail-fast true})))
 
