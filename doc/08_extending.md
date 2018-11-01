@@ -173,7 +173,7 @@ first argument (possibly updated).
     run))
 ```
 
-### Suite types
+### Test types
 
 Kaocha is designed to be a universal tool, able to run any type of test suite
 your project chooses to use. To make this possible it provides a way to
@@ -242,6 +242,8 @@ Some things to note:
 
 Reporters generate the test runners output. They are in their nature side-effectful, printing to stdout in response to events.
 
+Before creating your own reporters, consider whether the same thing could be accomplished with plugins. They provide a more functional and composable interface, and should be preferred.
+
 A reporter is a function which takes a single map as argument, with the map having a `:type` key. Kaocha uses the same types as `clojure.test`, but adds `:begin-test-suite` and `:end-test-suite`.
 
 Kaocha contains fine-grained reporters, which you can combine, or mix with your own to get the desired output. A reporter can be either a function, or a sequence of reporters, which will all be called in turn. For instance, the default Kaocha reporter is defined as such:
@@ -254,4 +256,43 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
   [dots* result])
 ```
 
-Other reporters currently implemented include
+Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
+
+A common use case for extending or replacing reporters is to support custom assertion functions which emit their own `:type` of `clojure.test` events.
+
+``` clojure
+(clojure.test/do-report {:type ::my-assertion, :message ..., :expected ..., :actual ...})
+```
+
+For this use case you might not have to implement a custom reporter at all.
+
+First make Kaocha aware of your new event type. This will prevent it from being foward to the original `clojure.test/report`, which by default just prints the map to stdout.
+
+``` clojure
+(kaocha.hierarchy/derive! ::my-assertion :kaocha/known-key)
+```
+
+If your event would cause a test to fail, then also mark it as a `:kaocha/fail-type`
+
+
+``` clojure
+(kaocha.hierarchy/derive! ::my-assertion :kaocha/fail-type)
+```
+
+This way Kaocha's built-in reporters will know that this event indicates a failure, and correctly report it in the test results. It will also cause a default failure message to be rendered based on the `:message`, `:expected`, and `:actual` keys.
+
+If you want to provide custom output then add an implementation of the `kaocha.report/fail-summary` multimethod.
+
+``` clojure
+(defmulti kaocha.report/fail-summary ::my-assertion [m]
+  (println ...)
+  )
+```
+
+For a full example have a look at Kaocha's built-in [matcher combinator support](https://github.com/lambdaisland/kaocha/blob/ca2d71dbb1e259041fb5314a286d22416ce77555/src/kaocha/matcher_combinators.clj).
+
+Built in reporters include
+
+- `kaocha.report/dots`
+- `kaocha.report/documentation`
+- `kaocha.report.progress/report`
