@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- De-dupe plugins, for cases where a plugin is added to `tests.edn` and on the CLI
 
 # 0.0-243 (2018-10-31 / 55bb5c1)
 

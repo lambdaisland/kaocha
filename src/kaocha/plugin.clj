@@ -28,7 +28,7 @@
   (-register name plugins))
 
 (defn load-all [names]
-  (reduce #(register %2 %1) [] names))
+  (reduce #(register %2 %1) [] (distinct names)))
 
 (defn run-hook* [plugins step value & extra-args]
   (reduce (fn [value plugin]
