@@ -19,6 +19,7 @@
 - [ ] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
 - [ ] Capture stderr separately
 - [ ] Use SignalHandler instead of shutdownhooks
+- [ ] Run config hooks when doing --print-config
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
