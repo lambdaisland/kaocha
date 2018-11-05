@@ -8,7 +8,6 @@
             [kaocha.core-ext :refer :all]
             [kaocha.config :as config]
             [kaocha.test-util :refer [with-test-ctx]]
-
             [kaocha.type.var]))
 
 (deftest run-test
@@ -18,7 +17,8 @@
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run {:kaocha.testable/type :kaocha.type/var
-                           :kaocha.testable/id   :foo.bar-test/a-test,
+                           :kaocha.testable/id   :foo.bar-test/a-test
+                           :kaocha.testable/desc "a-test"
                            :kaocha.var/name      'foo.bar-test/a-test
                            :kaocha.var/var       (resolve 'foo.bar-test/a-test)
                            :kaocha.var/test      (-> (resolve 'foo.bar-test/a-test) meta :test)}
@@ -26,6 +26,7 @@
 
       (is (match? {:kaocha.testable/type :kaocha.type/var
                    :kaocha.testable/id   :foo.bar-test/a-test
+                   :kaocha.testable/desc "a-test"
                    :kaocha.var/name      'foo.bar-test/a-test
                    :kaocha.var/var       (resolve 'foo.bar-test/a-test)
                    :kaocha.var/test      fn?

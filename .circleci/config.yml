@@ -26,8 +26,7 @@ shared_steps: &shared_steps
   - run: mkdir -p test-results/kaocha
   - run: java -version
   - run: clojure -e '(println (clojure-version))'
-  - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -m kaocha.runner --reporter kaocha.report/documentation --plugin kaocha.plugin/junit-xml --junit-xml-file test-results/kaocha/results.xml
-  - run: bin/check_features
+  - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -m kaocha.runner --reporter documentation --plugin junit-xml --junit-xml-file test-results/kaocha/results.xml
   - store_test_results:
       path: test-results
 

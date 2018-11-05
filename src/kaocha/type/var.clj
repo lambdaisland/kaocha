@@ -1,5 +1,6 @@
 (ns kaocha.type.var
   (:require [clojure.test :as t]
+            [kaocha.type :as type]
             [kaocha.testable :as testable]
             [kaocha.result :as result]
             [kaocha.report :as report]
@@ -19,32 +20,31 @@
   (println "Test ran without assertions. Did you forget an (is ...)?"))
 
 (defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test wrap] :as testable} test-plan]
-  (let [initial-report @t/*report-counters*
-        get-result #(result/diff-test-result initial-report @t/*report-counters*)
-        test (reduce #(%2 %1) test wrap)]
-    (binding [t/*testing-vars* (conj t/*testing-vars* var)]
-      (t/do-report {:type :begin-test-var, :var var})
-      (try
-        (test)
-        (catch clojure.lang.ExceptionInfo e
-          (when-not (:kaocha/fail-fast (ex-data e))
+  (type/with-report-counters
+    (let [test (reduce #(%2 %1) test wrap)]
+      (binding [t/*testing-vars* (conj t/*testing-vars* var)]
+        (t/do-report {:type :begin-test-var, :var var})
+        (try
+          (test)
+          (catch clojure.lang.ExceptionInfo e
+            (when-not (:kaocha/fail-fast (ex-data e))
+              (t/do-report {:type :error
+                            :message "Uncaught exception, not in assertion."
+                            :expected nil
+                            :actual e
+                            :kaocha.result/exception e})))
+          (catch Throwable e
             (t/do-report {:type :error
                           :message "Uncaught exception, not in assertion."
                           :expected nil
                           :actual e
-                          :kaocha.result/exception e})))
-        (catch Throwable e
-          (t/do-report {:type :error
-                        :message "Uncaught exception, not in assertion."
-                        :expected nil
-                        :actual e
-                        :kaocha.result/exception e}))))
-    (let [{::result/keys [pass error fail] :as result} (get-result)]
-      (when (= pass error fail 0)
-        (binding [testable/*fail-fast?* false]
-          (t/do-report {:type ::zero-assertions})))
-      (t/do-report {:type :end-test-var, :var var})
-      (merge testable {:kaocha.result/count 1} (get-result)))))
+                          :kaocha.result/exception e}))))
+      (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
+        (when (= pass error fail pending 0)
+          (binding [testable/*fail-fast?* false]
+            (t/do-report {:type ::zero-assertions})))
+        (t/do-report {:type :end-test-var, :var var})
+        (merge testable {:kaocha.result/count 1} (type/report-count))))))
 
 (s/def :kaocha.type/var (s/keys :req [:kaocha.testable/type
                                       :kaocha.testable/id

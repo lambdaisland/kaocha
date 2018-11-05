@@ -2,24 +2,30 @@
   (:require [clojure.test :as t]
             [kaocha.core-ext :refer :all]
             [matcher-combinators.test]
+            [matcher-combinators.result :as mc.result]
             [matcher-combinators.core :as mc.core]
             [matcher-combinators.model :as mc.model]
             [clojure.spec.alpha :as s]
-            [clojure.spec.test.alpha :as stest]
-            [expound.alpha :as expound])
+            [expound.alpha :as expound]
+            [orchestra.spec.test :as orchestra])
   (:import [clojure.lang ExceptionInfo]))
 
-(stest/instrument)
+(orchestra/instrument)
 
 (extend-protocol mc.core/Matcher
   clojure.lang.Var
   (match [this actual]
     (if (= this actual)
-      [:match actual]
-      (if (and (keyword? actual)
-               (= ::mc.core/missing actual))
-        [:mismatch (mc.model/->Missing this)]
-        [:mismatch (mc.model/->Mismatch this actual)]))))
+      {::mc.result/type :match
+       ::mc.result/value actual
+       ::mc.result/weight 0}
+      {::mc.result/type :mismatch
+       ::mc.result/value (if (and (keyword? actual) (= ::mc.core/missing actual))
+                           (mc.model/->Missing this)
+                           (mc.model/->Mismatch this actual))
+       ::mc.result/weight 1})))
+
+;; TODO move to kaocha.assertions
 
 (defmacro thrown-ex-data?
   "Verifies that an expression throws an ExceptionInfo with specific data and

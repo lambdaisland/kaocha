@@ -101,9 +101,7 @@
             [kaocha.history :as history]
             [kaocha.testable :as testable]
             [kaocha.hierarchy :as hierarchy]
-            [lambdaisland.deep-diff :as ddiff]
-            [puget.printer :as puget]
-            [fipp.engine :as fipp]))
+            [lambdaisland.deep-diff :as ddiff]))
 
 (def clojure-test-report t/report)
 
@@ -136,12 +134,17 @@
     (print (output/colored :red "E"))
     (flush)))
 
-(defmethod dots* :begin-test-ns [_]
+(defmethod dots* :kaocha/pending [_]
+  (t/with-test-out
+    (print (output/colored :yellow "P"))
+    (flush)))
+
+(defmethod dots* :kaocha/begin-group [_]
   (t/with-test-out
     (print "(")
     (flush)))
 
-(defmethod dots* :end-test-ns [_]
+(defmethod dots* :kaocha/end-group [_]
   (t/with-test-out
     (print ")")
     (flush)))
@@ -175,6 +178,9 @@
 (defmethod report-counters :error [m]
   (t/inc-report-counter :error))
 
+(defmethod report-counters :kaocha/pending [m]
+  (t/inc-report-counter :pending))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defmulti result :type :hierarchy #'hierarchy/hierarchy)
@@ -190,7 +196,7 @@
     (str
      ;; Uncomment to include namespace in failure report:
      ;;(ns-name (:ns (meta (first *testing-vars*)))) "/ "
-     (or (:kaocha.testable/id testable)
+     (or (some-> (:kaocha.testable/id testable) str (subs 1))
          (and (seq testing-vars)
               (reverse (map #(:name (meta %)) testing-vars))))
      " (" file ":" line ")")))
@@ -222,19 +228,29 @@
     (println "  actual:" (pr-str (:actual m)))))
 
 (defmethod print-expr '= [m]
-  (let [[_ expected & actuals] (-> m :actual second)
-        printer (ddiff/printer {:print-color output/*colored-output*})]
-    (fipp/pprint-document
-     [:span
-      "Expected:" :line
-      [:nest (puget/format-doc printer expected)]
-      :break
-      "Actual:" :line
-      (into [:nest]
-            (interpose :break)
-            (for [actual actuals]
-              (puget/format-doc printer (ddiff/diff expected actual))))]
-     {:width (:width printer)})))
+  (let [printer (output/printer)]
+    (if (seq? (:actual m))
+      (let [[_ expected & actuals] (-> m :actual second)]
+
+        (output/print-doc
+         [:span
+          "Expected:" :line
+          [:nest (output/format-doc expected printer)]
+          :break
+          "Actual:" :line
+          (into [:nest]
+                (interpose :break)
+                (for [actual actuals]
+                  (output/format-doc (ddiff/diff expected actual)
+                                     printer)))]))
+
+      (output/print-doc
+       [:span
+        "Expected:" :line
+        [:nest (output/format-doc (:expected m) printer)]
+        :break
+        "Actual:" :line
+        [:nest (output/format-doc (:actual m) printer)]]))))
 
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 
@@ -268,13 +284,19 @@
                   t/*testing-vars* testing-vars]
           (fail-summary m))))
 
-    (let [{:keys [test pass fail error] :or {pass 0 fail 0 error 0}} m
-          passed? (pos-int? (+ fail error))]
-      (println (output/colored (if passed? :red :green)
-                               (str test " test vars, "
+    (doseq [deferred (filter hierarchy/deferred? @history/*history*)]
+      (clojure-test-report deferred))
+
+    (let [{:keys [test pass fail error pending] :or {pass 0 fail 0 error 0 pending 0}} m
+          failed? (pos-int? (+ fail error))
+          pending? (pos-int? pending)]
+      (println (output/colored (if failed? :red (if pending? :yellow :green))
+                               (str test " tests, "
                                     (+ pass fail error) " assertions, "
                                     (when (pos-int? error)
                                       (str error " errors, "))
+                                    (when pending?
+                                      (str pending " pending, "))
                                     fail " failures."))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -316,23 +338,26 @@
 (defmethod doc :begin-test-suite [m]
   (t/with-test-out
     (reset! doc-printed-contexts (list))
-    (print "---" (-> m :kaocha/testable :kaocha.testable/id) "---------------------------")
+    (print "---" (-> m :kaocha/testable :kaocha.testable/desc) "---------------------------")
     (flush)))
 
-(defmethod doc :begin-test-ns [m]
+(defmethod doc :kaocha/begin-group [m]
   (t/with-test-out
     (reset! doc-printed-contexts (list))
-    (print (str "\n" (-> m :kaocha/testable :kaocha.ns/name)))
+    (print (str "\n" (-> m
+                         :kaocha/testable
+                         :kaocha.testable/desc)))
     (flush)))
 
-(defmethod doc :end-test-ns [m]
+(defmethod doc :kaocha/end-group [m]
   (t/with-test-out
     (println)))
 
-(defmethod doc :begin-test-var [m]
+(defmethod doc :kaocha/begin-test [m]
   (t/with-test-out
-    (let [{:keys [name]} (-> m :var meta)]
-      (print (str "\n  " name))
+    (let [desc (or (some-> m :kaocha/testable :kaocha.testable/desc)
+                   (some-> m :var meta :name))]
+      (print (str "\n  " desc))
       (flush))))
 
 (defmethod doc :pass [m]

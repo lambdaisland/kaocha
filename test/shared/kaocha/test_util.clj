@@ -4,7 +4,8 @@
             [expound.alpha :as expound]
             [kaocha.report :as report]
             [kaocha.testable :as testable]
-            [kaocha.output :as output]))
+            [kaocha.output :as output]
+            [kaocha.type :as type]))
 
 (def ^:dynamic *report-history* nil)
 
@@ -12,7 +13,7 @@
   "When testing lower level functions, make sure the necessary shared state is set
   up. This also helps to isolate us from the outer test runner state."
   [opts & body]
-  `(binding [t/*report-counters* (ref t/*initial-report-counters*)
+  `(binding [t/*report-counters* (ref type/initial-counters)
              t/*testing-vars* (list)
              *report-history* (atom [])
              testable/*fail-fast?* (:fail-fast? ~opts)]

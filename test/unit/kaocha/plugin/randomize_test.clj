@@ -7,11 +7,12 @@
 
 (def plugin-chain (plugin/register :kaocha.plugin/randomize []))
 
-(def test-suite {:kaocha.testable/type         :kaocha.type/clojure.test
-                 :kaocha.testable/id           :c
-                 :kaocha/source-paths    []
-                 :kaocha/test-paths      ["fixtures/c-tests"]
-                 :kaocha/ns-patterns     [".*"]})
+(def test-suite {:kaocha.testable/type :kaocha.type/clojure.test
+                 :kaocha.testable/id   :c
+                 :kaocha.testable/desc "c (clojure.test)"
+                 :kaocha/source-paths  []
+                 :kaocha/test-paths    ["fixtures/c-tests"]
+                 :kaocha/ns-patterns   [".*"]})
 
 (deftest randomize-test
   (plugin/with-plugins plugin-chain
@@ -22,6 +23,7 @@
     (is (match? {:kaocha.testable/type   :kaocha.type/clojure.test
                  :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
                                            :kaocha.testable/id   :foo.hello-test
+                                           :kaocha.testable/desc "foo.hello-test"
                                            :kaocha.test-plan/tests
                                            [{:kaocha.testable/id :foo.hello-test/pass-1}
                                             {:kaocha.testable/id :foo.hello-test/fail-1}
@@ -37,6 +39,7 @@
     (is (match? {:kaocha.testable/type   :kaocha.type/clojure.test
                  :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/ns
                                            :kaocha.testable/id   :foo.hello-test
+                                           :kaocha.testable/desc "foo.hello-test"
                                            :kaocha.test-plan/tests
                                            [{:kaocha.testable/id :foo.hello-test/pass-2}
                                             {:kaocha.testable/id :foo.hello-test/pass-3}

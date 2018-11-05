@@ -6,11 +6,14 @@
             [kaocha.config :as config]))
 
 (defn var-testable [m]
-  (merge (gen/generate (s/gen :kaocha.type/var))
-         {:kaocha.testable/type :kaocha.type/var}
-         m))
+  (let [testable (gen/generate (s/gen :kaocha.type/var))]
+    (merge testable
+           {:kaocha.testable/type :kaocha.type/var
+            :kaocha.testable/desc (name (:kaocha.testable/id testable))}
+           m)))
 
 (defn test-plan [m]
   (merge
    (config/default-config)
+
    m))

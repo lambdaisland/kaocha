@@ -4,20 +4,22 @@
 (defn diff-test-result
   "Subtract two clojure.test style summary maps."
   [before after]
-  {::pass  (apply - (map :pass [after before]))
-   ::error (apply - (map :error [after before]))
-   ::fail  (apply - (map :fail [after before]))})
+  {::pass    (apply - (map :pass [after before]))
+   ::error   (apply - (map :error [after before]))
+   ::fail    (apply - (map :fail [after before]))
+   ::pending (apply - (map :pending [after before]))})
 
 (defn sum
   "Sum up kaocha result maps."
   [& rs]
-  {::count (apply + (map #(::count % 0) rs))
-   ::pass  (apply + (map #(::pass % 0) rs))
-   ::error (apply + (map #(::error % 0) rs))
-   ::fail  (apply + (map #(::fail % 0) rs))})
+  {::count   (apply + (map #(::count % 0) rs))
+   ::pass    (apply + (map #(::pass % 0) rs))
+   ::error   (apply + (map #(::error % 0) rs))
+   ::fail    (apply + (map #(::fail % 0) rs))
+   ::pending (apply + (map #(::pending % 0) rs))})
 
 (s/fdef sum
-        :ret (s/keys :req [::count ::pass ::error ::fail]))
+        :ret (s/keys :req [::count ::pass ::error ::fail ::pending]))
 
 (declare testable-totals)
 
@@ -34,7 +36,7 @@
     (merge (sum) testable)))
 
 (s/fdef testable-totals
-        :ret (s/keys :req [::count ::pass ::error ::fail]))
+        :ret (s/keys :req [::count ::pass ::error ::fail ::pending]))
 
 (defn failed?
   "Did this testable, or one of its children, fail or error?"
@@ -50,8 +52,9 @@
 (defn totals->clojure-test-summary
   "Turn a kaocha-style result map into a clojure.test style summary map."
   [totals]
-  {:type :summary
-   :test (::count totals)
-   :pass (::pass totals)
-   :fail (::fail totals)
-   :error (::error totals)})
+  {:type    :summary
+   :test    (::count totals)
+   :pass    (::pass totals)
+   :fail    (::fail totals)
+   :pending (::pending totals)
+   :error   (::error totals)})

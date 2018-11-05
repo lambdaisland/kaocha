@@ -13,9 +13,11 @@
                        {:kaocha.error/reason         :kaocha.error/missing-method,
                         :kaocha.error/missing-method 'kaocha.testable/load,
                         :kaocha/testable             {:kaocha.testable/type :kaocha.type/unknown
-                                                      :kaocha.testable/id   :foo}}
+                                                      :kaocha.testable/id   :foo
+                                                      :kaocha.testable/desc "foo"}}
                        (testable/load {:kaocha.testable/type :kaocha.type/unknown
-                                       :kaocha.testable/id   :foo}))))
+                                       :kaocha.testable/id   :foo
+                                       :kaocha.testable/desc "foo"}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -24,10 +26,12 @@
                         {:kaocha.error/reason         :kaocha.error/missing-method,
                          :kaocha.error/missing-method 'kaocha.testable/run,
                          :kaocha/testable             #:kaocha.testable{:type :kaocha.type/unknown
-                                                                        :id   :foo}}
-                        (testable/run
-                          #:kaocha.testable{:type :kaocha.type/unknown
-                                            :id   :foo}
+                                                                        :id   :foo
+                                                                        :desc "foo"}}
+
+                        (testable/run {:kaocha.testable/type :kaocha.type/unknown
+                                       :kaocha.testable/id   :foo
+                                       :kaocha.testable/desc "foo"}
                           (f/test-plan {})))))
 
 

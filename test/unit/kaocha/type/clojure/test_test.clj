@@ -6,6 +6,7 @@
 
 (def test-suite {:kaocha.testable/type :kaocha.type/clojure.test
                  :kaocha.testable/id   :a
+                 :kaocha.testable/desc "a (clojure.test)"
                  :kaocha/source-paths  []
                  :kaocha/test-paths    ["fixtures/a-tests"]
                  :kaocha/ns-patterns   [".*"]})
@@ -13,6 +14,7 @@
 (deftest load-test
   (is (match? {:kaocha.testable/type   :kaocha.type/clojure.test
                :kaocha.testable/id     :a
+               :kaocha.testable/desc   "a (clojure.test)"
                :kaocha/source-paths    []
                :kaocha/test-paths      ["fixtures/a-tests"]
                :kaocha/ns-patterns     [".*"]
@@ -31,6 +33,7 @@
   (let [test-plan (testable/load test-suite)]
     (is (match? {:kaocha.testable/type :kaocha.type/clojure.test
                  :kaocha.testable/id   :a
+                 :kaocha.testable/desc "a (clojure.test)"
                  :kaocha/source-paths  []
                  :kaocha/test-paths    ["fixtures/a-tests"]
                  :kaocha/ns-patterns   [".*"]
@@ -38,14 +41,15 @@
                                          :kaocha.testable/id   :foo.bar-test
                                          :kaocha.ns/name       'foo.bar-test
                                          :kaocha.ns/ns         ns?
-                                         :kaocha.result/tests  [{:kaocha.testable/type :kaocha.type/var
-                                                                 :kaocha.testable/id   :foo.bar-test/a-test
-                                                                 :kaocha.var/name      'foo.bar-test/a-test
-                                                                 :kaocha.var/var       var?
-                                                                 :kaocha.var/test      fn?
-                                                                 :kaocha.result/count  1
-                                                                 :kaocha.result/pass   1
-                                                                 :kaocha.result/error  0
-                                                                 :kaocha.result/fail   0}]}]}
+                                         :kaocha.result/tests  [{:kaocha.testable/type  :kaocha.type/var
+                                                                 :kaocha.testable/id    :foo.bar-test/a-test
+                                                                 :kaocha.var/name       'foo.bar-test/a-test
+                                                                 :kaocha.var/var        var?
+                                                                 :kaocha.var/test       fn?
+                                                                 :kaocha.result/count   1
+                                                                 :kaocha.result/pass    1
+                                                                 :kaocha.result/error   0
+                                                                 :kaocha.result/fail    0
+                                                                 :kaocha.result/pending 0}]}]}
 
                 (:result (with-test-ctx {} (testable/run test-plan test-plan)))))))

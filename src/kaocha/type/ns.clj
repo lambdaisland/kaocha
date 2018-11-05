@@ -4,11 +4,13 @@
             [kaocha.testable :as testable]
             [clojure.spec.alpha :as s]
             [kaocha.type.var]
-            [kaocha.output :as output]))
+            [kaocha.output :as output]
+            [kaocha.type :as type]))
 
 (defn ->testable [ns-name]
   {:kaocha.testable/type :kaocha.type/ns
    :kaocha.testable/id   (keyword (str ns-name))
+   :kaocha.testable/desc (str ns-name)
    :kaocha.ns/name       ns-name})
 
 (defmethod testable/-load :kaocha.type/ns [testable]
@@ -25,12 +27,14 @@
         (->> ns-obj
              ns-publics
              (filter (comp :test meta val))
+             (sort-by key)
              (map (fn [[sym var]]
                     (let [nsname    (:kaocha.ns/name testable)
                           test-name (symbol (str nsname) (str sym))]
                       {:kaocha.testable/type :kaocha.type/var
                        :kaocha.testable/id   (keyword test-name)
                        :kaocha.testable/meta (meta var)
+                       :kaocha.testable/desc (str sym)
                        :kaocha.var/name      test-name
                        :kaocha.var/var       var
                        :kaocha.var/test      (:test (meta var))
@@ -55,7 +59,7 @@
 
 (defmethod testable/-run :kaocha.type/ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
-    (binding [t/*report-counters* (ref t/*initial-report-counters*)]
+    (type/with-report-counters
       (do-report {:type :begin-test-ns})
       (if-let [load-error (:kaocha.test-plan/load-error testable)]
         (do

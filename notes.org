@@ -1,12 +1,16 @@
 * Todos
+** Test types
+- [ ] ClojureScript support
+- [ ] Expectations support
+- [ ] Fudje
+- [ ] improve Midje support
+- [X] Cucumber
+
 ** Major features
 - [ ] main namespace for cloverage
-- [ ] improve Midje support
 - [ ] TAP reporter (provided by clojure.test?)
 - [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism (also necessary for parallellism)
 - [ ] parallelism (?)
-- [ ] ClojureScript support
-- [ ] Expectations support
 
 ** Bug fixes
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
@@ -20,7 +24,8 @@
 - [ ] Capture stderr separately
 - [ ] Use SignalHandler instead of shutdownhooks
 - [ ] Run config hooks when doing --print-config
-- [ ] Provide short plugin names on CLI when in the kaocha.plugin namespace
+- [X] Provide short plugin names on CLI when in the kaocha.plugin namespace
+- [ ] Make ids strings, much more flexible
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
@@ -31,7 +36,7 @@
 
 ** Extra config options
 - [ ] make stack trace filtering configurable
-- [ ] Output reporter output to file (use with Junit/Tap etc)
+- [ ] Output reporter output to file (?)
 
 ** Plugin ideas
 - [ ] Provide inspect plugin with e.g. --print-test-ids
@@ -41,10 +46,14 @@
 - [ ] test.check configuration
 - [ ] Detect side effects (see circleci.test)
 
+** Cucumber
+- [ ] Better file/line numbers
+- [ ] detect load errors / step definition errors
+- [ ] --watch feature step/files
+
 ** Internal
-- [ ] Create test suite type for integration/feature tests
 - [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
-- [ ] Run CI on different levels of Java and Clojure
+- [X] Run CI on different levels of Java and Clojure
 
 ** Done
 - [X] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
@@ -130,3 +139,8 @@ http://github.com/clojure/clojure/commit/a4142dc9c2e107528b90bb885ed5e8d92fd3f62
 
 
 Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seems to fix this.
+* New test types
+  - dots
+  - documentation
+  - test with junit
+  - derive :kaocha.testable.type/leaf

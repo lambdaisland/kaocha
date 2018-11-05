@@ -1,5 +1,10 @@
 #kaocha/v1
 {:plugins [:kaocha.plugin/profiling
            :kaocha.test-plugins/capture-warn+error]
- :tests [{:id         :unit
-          :test-paths ["test/shared" "test/unit"]}]}
+ :tests   [{:id         :unit
+            :test-paths ["test/shared" "test/unit"]}
+           {:id                  :integration
+            :type                :kaocha.type/cucumber
+            :source-paths        ["src"]
+            :test-paths          ["test/features"]
+            :cucumber/glue-paths ["test/features/steps"]}]}
