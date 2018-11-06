@@ -27,6 +27,7 @@ shared_steps: &shared_steps
   - run: java -version
   - run: clojure -e '(println (clojure-version))'
   - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -m kaocha.runner --reporter documentation --plugin junit-xml --plugin cloverage --coveralls --junit-xml-file test-results/kaocha/results.xml
+  - run: head target/coverage/coveralls.json
   - run: curl -F 'json_file=@target/coverage/coveralls.json' https://coveralls.io/api/v1/jobs
   - store_test_results:
       path: test-results
