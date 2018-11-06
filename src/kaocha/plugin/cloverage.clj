@@ -104,6 +104,13 @@
                (contains? opts :cov-ns-exclude-regex)
                (assoc :ns-exclude-regex (map re-pattern (:cov-ns-exclude-regex opts)))))))
 
+(defn run-cloverage [opts]
+  ;; Compatibility with future versions
+  (let [arity (count (first (:arglists (meta #'c/run-main))))]
+    (case arity
+      1 (c/run-main [opts])
+      2 (c/run-main [opts] {}))))
+
 (defplugin kaocha.plugin/cloverage
   (cli-options [opts]
     (into opts (map #(into [nil] %)) cli-opts))
@@ -130,7 +137,7 @@
                                 :test-ns-path test-paths
                                 ::config config)]
         (run! cp/add-classpath test-paths)
-        (throw+ {:kaocha/early-exit (c/run-main [opts] {})})))))
+        (throw+ {:kaocha/early-exit (run-cloverage opts)})))))
 
 (defmethod c/runner-fn :kaocha [opts]
   (fn [_test-nses]
