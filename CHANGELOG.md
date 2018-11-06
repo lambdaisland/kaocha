@@ -1,10 +1,18 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
+## Added
+
+- Cucumber support, see [lambdaisland/kaocha-cucumber](https://github.com/lambdaisland/kaocha-cucumber)
+- Function specs are now checked with orchestra + expound
+- Plugins in the `kaocha.plugin` namespace can now be specified on the command line with their short name
+- `kaocha.assertions` namespace with custom `clojure.test` assertions. Currently
+  for internal use but might evolve into its own library.
+
 ## Changed
+
+- This release contains several internal changes to support disparate test suite types.
 
 # 0.0-248 (2018-11-01 / d6edc4f)
 
