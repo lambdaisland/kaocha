@@ -19,11 +19,13 @@
     (println (str/join " " testing-contexts)))
   (println "Test ran without assertions. Did you forget an (is ...)?"))
 
-(defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [var test wrap] :as testable} test-plan]
+(defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [test wrap]
+                                            the-var :kaocha.var/var
+                                            :as testable} test-plan]
   (type/with-report-counters
     (let [test (reduce #(%2 %1) test wrap)]
-      (binding [t/*testing-vars* (conj t/*testing-vars* var)]
-        (t/do-report {:type :begin-test-var, :var var})
+      (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
+        (t/do-report {:type :begin-test-var, :var the-var})
         (try
           (test)
           (catch clojure.lang.ExceptionInfo e
@@ -43,7 +45,7 @@
         (when (= pass error fail pending 0)
           (binding [testable/*fail-fast?* false]
             (t/do-report {:type ::zero-assertions})))
-        (t/do-report {:type :end-test-var, :var var})
+        (t/do-report {:type :end-test-var, :var the-var})
         (merge testable {:kaocha.result/count 1} (type/report-count))))))
 
 (s/def :kaocha.type/var (s/keys :req [:kaocha.testable/type

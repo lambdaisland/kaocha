@@ -138,9 +138,11 @@
             (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))
 
           :else
-          (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
-                totals (result/totals (:kaocha.result/tests result))]
-            (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)))))))
+          (do
+            (plugin/run-hook :kaocha.hooks/main config)
+            (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
+                  totals (result/totals (:kaocha.result/tests result))]
+              (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))))))))
 
 (defn- exit-process! [code]
   (System/exit code))
@@ -148,5 +150,5 @@
 (defn -main [& args]
   (try+
    (exit-process! (apply -main* args))
-   (catch :kaocha/early-exit {:kaocha/keys [exit-code]}
-     (exit-process! -3))))
+   (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
+     (exit-process! exit-code))))
