@@ -1,8 +1,8 @@
---- :a ---------------------------
+--- a (clojure.test) ---------------------------
 foo.bar-test
   a-test
---- :b ---------------------------
+--- b (clojure.test) ---------------------------
 finn.finn-test
   the-test
 
-[32m2 test vars, 2 assertions, 0 failures.[m
+[32m2 tests, 2 assertions, 0 failures.[m

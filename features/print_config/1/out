@@ -9,6 +9,7 @@
  :kaocha/tests
  [{:kaocha.testable/type :kaocha.type/clojure.test,
    :kaocha.testable/id :aaa,
+   :kaocha.testable/desc "aaa (clojure.test)",
    :kaocha/ns-patterns ["^foo$"],
    :kaocha/source-paths ["src"],
    :kaocha/test-paths ["fixtures/a-tests"],

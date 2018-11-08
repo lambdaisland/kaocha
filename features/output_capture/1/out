@@ -1,6 +1,6 @@
 [([31mF[m.)]
 
-FAIL in :has-output-test/stdout-fail-test (has_output_test.clj:10)
+FAIL in has-output-test/stdout-fail-test (has_output_test.clj:10)
 Expected:
 [1;33m  :same[0m
 Actual:
@@ -8,4 +8,4 @@ Actual:
 ------ Test output -------------------------------------
 Bu yi le hu?
 --------------------------------------------------------
-[31m2 test vars, 2 assertions, 1 failures.[m
+[31m2 tests, 2 assertions, 1 failures.[m
