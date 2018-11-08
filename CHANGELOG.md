@@ -2,6 +2,8 @@
 
 ## Fixed
 
+- Speeded up startup by avoiding loading kaocha.watch, core.async, fipp, puget [#14](https://github.com/lambdaisland/kaocha/issues/14)
+
 ## Added
 
 - Cucumber support, see [lambdaisland/kaocha-cucumber](https://github.com/lambdaisland/kaocha-cucumber)
@@ -9,6 +11,7 @@
 - Plugins in the `kaocha.plugin` namespace can now be specified on the command line with their short name
 - `kaocha.assertions` namespace with custom `clojure.test` assertions. Currently
   for internal use but might evolve into its own library.
+- Added Cloverage integration, currently still included in the main `lambdaisland/kaocha` artifact.
 
 ## Changed
 
