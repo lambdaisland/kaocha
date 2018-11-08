@@ -5,7 +5,10 @@
             [kaocha.history :as history]
             [kaocha.result :as result]
             [kaocha.plugin :as plugin]
-            [clojure.pprint :as pprint]))
+            [clojure.pprint :as pprint]
+            [clojure.java.io :as io]
+            [kaocha.output :as output]
+            [kaocha.classpath :as classpath]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -58,6 +61,11 @@
   implementation."
   [testable]
   (load-type+validate testable)
+  (doseq [path (:kaocha/test-paths testable)]
+    (when-not (.exists (io/file path))
+      (output/warn "In :test-paths, no such file or directory: " path))
+    (classpath/add-classpath path))
+
   (-load testable))
 
 (s/fdef load

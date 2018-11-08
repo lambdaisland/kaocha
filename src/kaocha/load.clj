@@ -24,11 +24,6 @@
   (let [{:kaocha/keys [test-paths ns-patterns]} testable
         ns-patterns                             (map regex ns-patterns)]
 
-    (doseq [path test-paths]
-      (when-not (.exists (io/file path))
-        (output/warn "In :test-paths, no such file or directory: " path))
-      (classpath/add-classpath path))
-
     (let [ns-names  (find-test-nss test-paths ns-patterns)
           testables (map ns-testable-fn ns-names)]
       (assoc testable :kaocha.test-plan/tests
