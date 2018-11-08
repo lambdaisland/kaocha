@@ -12,8 +12,7 @@
             [slingshot.slingshot :refer [try+ throw+]]))
 
 ;; Prevent clj-refactor from "cleaning" these from the ns form
-(require 'kaocha.matcher-combinators
-         'kaocha.monkey-patch)
+(require 'kaocha.monkey-patch)
 
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]
@@ -77,6 +76,9 @@
                   output/*colored-output* color?]
           (let [config (resolve-reporter config)]
             (let [test-plan (test-plan config)]
+              (when (find-ns 'matcher-combinators.core)
+                (require 'kaocha.matcher-combinators))
+
               (with-reporter (:kaocha/reporter test-plan)
                 (with-shutdown-hook (fn []
                                       (println "^C")

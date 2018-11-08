@@ -6,14 +6,13 @@
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
             [kaocha.config :as config]
-            [kaocha.watch :as watch]
             [kaocha.output :as output]
             [kaocha.api :as api]
+            [kaocha.jit :refer [jit]]
             [slingshot.slingshot :refer [try+]]
             [kaocha.result :as result]
             [kaocha.plugin :as plugin]
             [clojure.java.io :as io]
-
             [clojure.spec.alpha :as clojure.spec]
             [expound.alpha :as expound]
             [orchestra.spec.test :as orchestra]))
@@ -128,7 +127,8 @@
             -2)
 
           (:kaocha/watch? config)
-          (do (watch/run config) 1) ; exit 1 because only an anomaly would break this loop
+          (do
+            ((jit kaocha.watch/run) config) 1) ; exit 1 because only an anomaly would break this loop
 
           (:print-result options)
           (let [result (api/run (assoc config :kaocha/reporter []))

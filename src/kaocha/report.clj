@@ -101,7 +101,7 @@
             [kaocha.history :as history]
             [kaocha.testable :as testable]
             [kaocha.hierarchy :as hierarchy]
-            [lambdaisland.deep-diff :as ddiff]))
+            [kaocha.jit :refer [jit]]))
 
 (def clojure-test-report t/report)
 
@@ -241,7 +241,7 @@
           (into [:nest]
                 (interpose :break)
                 (for [actual actuals]
-                  (output/format-doc (ddiff/diff expected actual)
+                  (output/format-doc ((jit lambdaisland.deep-diff/diff) expected actual)
                                      printer)))]))
 
       (output/print-doc

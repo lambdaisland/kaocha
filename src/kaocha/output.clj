@@ -1,26 +1,25 @@
 (ns kaocha.output
-  (:require [io.aviso.ansi :as ansi]
-            [lambdaisland.deep-diff :as ddiff]
-            [fipp.engine :as fipp]
-            [puget.printer :as puget]))
+  (:require [kaocha.jit :refer [jit]]))
 
 (def ^:dynamic *colored-output* true)
 
+(def ESC \u001b)
+
 (def colors
-  {:black   ansi/black-font
-   :red-bg  ansi/red-bg-font
-   :red     ansi/red-font
-   :green   ansi/green-font
-   :yellow  ansi/yellow-font
-   :blue    ansi/blue-font
-   :magenta ansi/magenta-font
-   :cyan    ansi/cyan-font
-   :white   ansi/white-font
-   :reset   ansi/reset-font})
+  {:black   (str ESC "[30m")
+   :red-bg  (str ESC "[41m")
+   :red     (str ESC "[31m")
+   :green   (str ESC "[32m")
+   :yellow  (str ESC "[33m")
+   :blue    (str ESC "[34m")
+   :magenta (str ESC "[35m")
+   :cyan    (str ESC "[36m")
+   :white   (str ESC "[37m")
+   :reset   (str ESC "[m")})
 
 (defn colored [color string]
   (if *colored-output*
-    (str (get colors color) string ansi/reset-font)
+    (str (get colors color) string (:reset colors))
     string))
 
 (defn warn [& args]
@@ -32,16 +31,16 @@
     (println (apply str (colored :red "ERROR: ") args))))
 
 (defn printer [& [opts]]
-  (ddiff/printer (merge {:print-color *colored-output*} opts)))
+  ((jit lambdaisland.deep-diff/printer) (merge {:print-color *colored-output*} opts)))
 
 (defn print-doc
   ([doc]
    (print-doc doc (printer)))
   ([doc printer]
-   (fipp/pprint-document doc {:width (:width printer)})))
+   ((jit fipp.engine/pprint-document) doc {:width (:width printer)})))
 
 (defn format-doc
   ([doc]
    (format-doc doc (printer)))
   ([doc printer]
-   (puget/format-doc printer doc)))
+   ((jit puget.printer/format-doc) printer doc)))

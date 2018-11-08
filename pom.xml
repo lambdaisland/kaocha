@@ -51,11 +51,6 @@
       <version>0.0-15</version>
     </dependency>
     <dependency>
-      <groupId>io.aviso</groupId>
-      <artifactId>pretty</artifactId>
-      <version>0.1.35</version>
-    </dependency>
-    <dependency>
       <groupId>slingshot</groupId>
       <artifactId>slingshot</artifactId>
       <version>0.12.2</version>
