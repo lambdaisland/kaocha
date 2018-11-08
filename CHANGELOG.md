@@ -12,10 +12,12 @@
 - `kaocha.assertions` namespace with custom `clojure.test` assertions. Currently
   for internal use but might evolve into its own library.
 - Added Cloverage integration, currently still included in the main `lambdaisland/kaocha` artifact.
+- Added support for "pending" tests (skipped but still reported). Currently only used by Cucumber.
 
 ## Changed
 
 - This release contains several internal changes to support disparate test suite types.
+- The test summary now reads "x tests, y assertions, z failures", rather than "test vars", to be more test type agnostic.
 
 # 0.0-248 (2018-11-01 / d6edc4f)
 
