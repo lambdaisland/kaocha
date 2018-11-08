@@ -1,6 +1,6 @@
 # Kaocha
 
-[![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha) [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT)
+[![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha) [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT) [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/kaocha.svg)](https://clojars.org/lambdaisland/kaocha)
 
 Full featured next generation test runner for Clojure.
 
