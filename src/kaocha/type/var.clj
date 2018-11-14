@@ -63,4 +63,4 @@
                                :gen (fn []
                                       (gen/return (.setDynamic (Var/create))))))
 
-(derive :kaocha.type/var :kaocha.testable.type/leaf)
+(hierarchy/derive! :kaocha.type/var :kaocha.testable.type/leaf)

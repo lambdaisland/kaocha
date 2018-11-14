@@ -26,7 +26,7 @@
         test-plan  (:kaocha/test-plan m)
         leaf-tests (->> testable
                         testable/test-seq
-                        (filter #(isa? (:kaocha.testable/type %) :kaocha.testable.type/leaf)))]
+                        (filter hierarchy/leaf?))]
     (reset! bar (assoc (pr/progress-bar (count leaf-tests))
                        :label (name (:kaocha.testable/id testable))
                        :label-width (->> test-plan

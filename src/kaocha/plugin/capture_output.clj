@@ -1,6 +1,7 @@
 (ns kaocha.plugin.capture-output
   (:require [kaocha.plugin :as plugin :refer [defplugin]]
-            [kaocha.testable :as testable])
+            [kaocha.testable :as testable]
+            [kaocha.hierarchy :as hierarchy])
   (:import [java.io OutputStream ByteArrayOutputStream PrintStream PrintWriter]))
 
 ;; Many props to eftest for much of this code
@@ -83,9 +84,9 @@
     (if (::capture-output? test-plan)
       (let [buffer (make-buffer)]
         (cond-> testable
-          (= (::testable/type testable) :kaocha.type/var)
+          (hierarchy/leaf? testable)
           (-> (assoc ::buffer buffer)
-              (update :kaocha.var/wrap conj (fn [t] #(with-test-buffer buffer (t)))))))
+              (update :kaocha.testable/wrap conj (fn [t] #(with-test-buffer buffer (t)))))))
       testable))
 
   (post-test [testable test-plan]

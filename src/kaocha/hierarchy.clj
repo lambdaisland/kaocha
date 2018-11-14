@@ -36,7 +36,10 @@
 (derive! :kaocha/deferred :kaocha/known-key)
 
 (defn isa? [tag parent]
-  (clojure.core/isa? hierarchy tag parent))
+  (or (clojure.core/isa? tag parent)
+      (clojure.core/isa? hierarchy tag parent)))
+
+;; Test event types
 
 (defn fail-type?
   "fail-type types indicate a failing test"
@@ -54,3 +57,13 @@
   summary step."
   [event]
   (isa? (:type event) :kaocha/deferred))
+
+;; Testable types
+
+(defn leaf?
+  "This is a leaf in the tree of testables, i.e. it's an actual test with
+  assertions, not just a container for tests.
+
+  :kaocha.type/var is a leaf type, :kaocha.type/ns is not."
+  [testable]
+  (isa? (:kaocha.testable/type testable) :kaocha.testable.type/leaf))
