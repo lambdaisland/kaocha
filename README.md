@@ -1,14 +1,16 @@
 # Kaocha
 
-[![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha) [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT) [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/kaocha.svg)](https://clojars.org/lambdaisland/kaocha) [![codecov](https://codecov.io/gh/lambdaisland/kaocha/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/kaocha)
-
 Full featured next generation test runner for Clojure.
 
-## Links
+## Projects
 
-- [Github](https://github.com/lambdaisland/kaocha)
-- [Clojars](https://clojars.org/lambdaisland/kaocha)
-- [cljdoc](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT)
+<!-- projects -->
+| Project | CI | Docs | Release | Coverage |
+|---------|----|------|---------|----------|
+| [kaocha](https://github.com/lambdaisland/kaocha) | [![CircleCI](https://circleci.com/gh/lambdaisland/kaocha.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha)](https://cljdoc.org/d/lambdaisland/kaocha) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/kaocha.svg)](https://clojars.org/lambdaisland/kaocha) | [![codecov](https://codecov.io/gh/lambdaisland/kaocha/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/kaocha) |
+| [kaocha-junit-xml](https://github.com/lambdaisland/kaocha-junit-xml) | [![CircleCI](https://circleci.com/gh/lambdaisland/kaocha-junit-xml.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha-junit-xml) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha-junit-xml)](https://cljdoc.org/d/lambdaisland/kaocha-junit-xml) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/kaocha-junit-xml.svg)](https://clojars.org/lambdaisland/kaocha-junit-xml) | [![codecov](https://codecov.io/gh/lambdaisland/kaocha-junit-xml/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/kaocha-junit-xml) |
+| [kaocha-cucumber](https://github.com/lambdaisland/kaocha-cucumber) | [![CircleCI](https://circleci.com/gh/lambdaisland/kaocha-cucumber.svg?style=svg)](https://circleci.com/gh/lambdaisland/kaocha-cucumber) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/kaocha-cucumber)](https://cljdoc.org/d/lambdaisland/kaocha-cucumber) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/kaocha-cucumber.svg)](https://clojars.org/lambdaisland/kaocha-cucumber) | [![codecov](https://codecov.io/gh/lambdaisland/kaocha-cucumber/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/kaocha-cucumber) |
+<!-- /projects -->
 
 ## Docs
 
@@ -104,6 +106,7 @@ bin/kaocha --test-help
 ## Requirements
 
 Kaocha requirements Clojure 1.9 or later.
+
 
 ## License
 
