@@ -19,9 +19,10 @@
     (println (str/join " " testing-contexts)))
   (println "Test ran without assertions. Did you forget an (is ...)?"))
 
-(defmethod testable/-run :kaocha.type/var [{:kaocha.var/keys [test wrap]
+(defmethod testable/-run :kaocha.type/var [{test    :kaocha.var/test
+                                            wrap    :kaocha.testable/wrap
                                             the-var :kaocha.var/var
-                                            :as testable} test-plan]
+                                            :as     testable} test-plan]
   (type/with-report-counters
     (let [test (reduce #(%2 %1) test wrap)]
       (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
@@ -30,16 +31,16 @@
           (test)
           (catch clojure.lang.ExceptionInfo e
             (when-not (:kaocha/fail-fast (ex-data e))
-              (t/do-report {:type :error
-                            :message "Uncaught exception, not in assertion."
-                            :expected nil
-                            :actual e
+              (t/do-report {:type                    :error
+                            :message                 "Uncaught exception, not in assertion."
+                            :expected                nil
+                            :actual                  e
                             :kaocha.result/exception e})))
           (catch Throwable e
-            (t/do-report {:type :error
-                          :message "Uncaught exception, not in assertion."
-                          :expected nil
-                          :actual e
+            (t/do-report {:type                    :error
+                          :message                 "Uncaught exception, not in assertion."
+                          :expected                nil
+                          :actual                  e
                           :kaocha.result/exception e}))))
       (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
         (when (= pass error fail pending 0)

@@ -38,7 +38,7 @@
                        :kaocha.var/name      test-name
                        :kaocha.var/var       var
                        :kaocha.var/test      (:test (meta var))
-                       :kaocha.var/wrap      (if (::t/each-fixtures ns-meta)
+                       :kaocha.testable/wrap (if (::t/each-fixtures ns-meta)
                                                [(fn [t] #(each-fixture-fn t))]
                                                [])})))
              (assoc testable

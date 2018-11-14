@@ -16,6 +16,8 @@
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
 
 ** Improvements
+- [ ] Allow filtering `--watch` e.g. to skip temp files
+- [ ] Only forward events that clojure.test/report understands
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
 - [ ] Watch changes to `tests.edn`
 - [ ] Clean output when progress bar used without output capturing

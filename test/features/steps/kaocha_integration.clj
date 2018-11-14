@@ -5,7 +5,8 @@
             [clojure.test :refer :all]
             [lambdaisland.cucumber.dsl :refer :all]
             [kaocha.report :as report]
-            [kaocha.hierarchy :as hierarchy])
+            [kaocha.hierarchy :as hierarchy]
+            [kaocha.output :as output])
   (:import [java.nio.file Files OpenOption Path Paths]
            java.nio.file.attribute.FileAttribute))
 

@@ -20,7 +20,8 @@
 (s/def :kaocha/testable (s/keys :req [:kaocha.testable/type
                                       :kaocha.testable/id
                                       :kaocha.testable/desc]
-                                :opt [:kaocha.testable/meta]))
+                                :opt [:kaocha.testable/meta
+                                      :kaocha.testable/wrap]))
 
 (s/def :kaocha.testable/type qualified-keyword?)
 
@@ -28,6 +29,8 @@
 
 ;; Short description as used by the documentation reporter. No newlines.
 (s/def :kaocha.testable/desc string?)
+
+(s/def :kaocha.testable/wrap (s/coll-of fn? :into []))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan

@@ -206,9 +206,10 @@
         buffer (get-in m [:kaocha/testable ::capture/buffer])
         out (or output (and buffer (capture/read-buffer buffer)))]
     (when (seq out)
-      (println "------ Test output -------------------------------------")
-      (println (str/trim-newline out))
-      (println "--------------------------------------------------------"))))
+      (println "╭───── Test output ───────────────────────────────────────────────────────")
+      (println (str/replace (str/trim-newline out)
+                            #"(?m)^" "│ "))
+      (println "╰─────────────────────────────────────────────────────────────────────────"))))
 
 (defn assertion-type
   "Given a clojure.test event, return the first symbol in the expression inside (is)."
