@@ -256,18 +256,18 @@
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 
 (defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
-  (println "\nFAIL in" (testing-vars-str m))
+  (println (str "\n" (output/colored :red "FAIL") " in") (testing-vars-str m))
   (when (seq testing-contexts)
-    (println (str/join " " testing-contexts)))
+    (println (str/join " " (reverse testing-contexts))))
   (when-let [message (:message m)]
     (println message))
   (print-expr m)
   (print-output m))
 
 (defmethod fail-summary :error [{:keys [testing-contexts testing-vars] :as m}]
-  (println "\nERROR in" (testing-vars-str m))
+  (println (str "\n" (output/colored :red "ERROR") " in") (testing-vars-str m))
   (when (seq testing-contexts)
-    (println (str/join " " testing-contexts)))
+    (println (str/join " " (reverse testing-contexts))))
   (when-let [message (:message m)]
     (println message))
   (print-output m)

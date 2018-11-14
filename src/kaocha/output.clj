@@ -6,16 +6,17 @@
 (def ESC \u001b)
 
 (def colors
-  {:black   (str ESC "[30m")
-   :red-bg  (str ESC "[41m")
-   :red     (str ESC "[31m")
-   :green   (str ESC "[32m")
-   :yellow  (str ESC "[33m")
-   :blue    (str ESC "[34m")
-   :magenta (str ESC "[35m")
-   :cyan    (str ESC "[36m")
-   :white   (str ESC "[37m")
-   :reset   (str ESC "[m")})
+  {:black     (str ESC "[30m")
+   :red-bg    (str ESC "[41m")
+   :red       (str ESC "[31m")
+   :green     (str ESC "[32m")
+   :yellow    (str ESC "[33m")
+   :blue      (str ESC "[34m")
+   :magenta   (str ESC "[35m")
+   :cyan      (str ESC "[36m")
+   :white     (str ESC "[37m")
+   :underline (str ESC "[4m")
+   :reset     (str ESC "[m")})
 
 (defn colored [color string]
   (if *colored-output*

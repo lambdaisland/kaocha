@@ -27,7 +27,7 @@
 
 (defn show-trailing-whitespace [s]
   (str/replace s
-               #"[ \t\f\v\r]+$"
+               #"(?m)[ \h\x0B\f\r\x85\u2028\u2029]+$"
                (fn [s]
                  (output/colored :red-bg s))))
 
@@ -41,11 +41,11 @@
      [:span
       "Expected: (substring? needle haystack)"
       :break
-      (color/document printer ::header "Haystack:")
+      (color/document printer ::header (output/colored :underline "Haystack:"))
       :break
       (show-trailing-whitespace s2)
       :break
-      (color/document printer ::header "Needle:")
+      (color/document printer ::header (output/colored :underline "Needle:"))
       :break
       (color/document printer ::long-sub long-sub)
       (show-trailing-whitespace remainder)])))

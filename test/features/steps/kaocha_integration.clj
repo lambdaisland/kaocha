@@ -17,7 +17,7 @@
 
 (extend-protocol Joinable
   String
-  (join [this that] (join (Paths/get this) that))
+  (join [this that] (join (Paths/get this (make-array String 0)) that))
   Path
   (join [this that] (.resolve this (str that))))
 
@@ -31,6 +31,11 @@
     (io/make-writer (io/make-output-stream this opts) opts))
   (make-reader [this opts]
     (io/make-reader (io/make-input-stream this opts) opts)))
+
+(extend-protocol io/Coercions
+  Path
+  (as-file [path] (.toFile path))
+  (as-url [path] (.toURL (.toFile path))))
 
 (def shellwords-pattern #"[^\s'\"]+|[']([^']*)[']|[\"]([^\"]*)[\"]")
 
@@ -89,8 +94,41 @@
       (spit fname contents)))
   m)
 
-(When "I run Kaocha with {string}" [{:keys [config-file] :as m} args]
-  (merge m (apply shell/sh "clojure" "-m" "kaocha.runner" "--config-file" (str config-file) (shellwords args))))
+(Given "the following test configuration" [m doc-string]
+  (let [dir (temp-dir)
+        test-dir (join dir "test")
+        config-file (join dir "tests.edn")]
+    (spit (str config-file) doc-string)
+    (mkdir test-dir)
+    (assoc m
+           :dir dir
+           :config-file config-file)))
+
+(Given "the file {string} containing" [{:keys [dir] :as m} path contents]
+  (let [path (join dir path)]
+    (mkdir (.getParent path))
+    (spit path contents)
+    m))
+
+
+(When "I run Kaocha with {string}" [{:keys [config-file dir] :as m} args]
+  (let [args   (into ["clojure"
+                      "-Sdeps" (str "{:deps {lambdaisland/kaocha {:local/root \""
+                                    (.getAbsolutePath (io/file ""))
+                                    "\"}}}")
+                      "-m" "kaocha.runner"
+                      "--config-file" (str config-file)]
+                     (shellwords args))
+        result (apply shell/sh (conj args :dir dir))]
+    ;; By default these are hidden unless the test fails
+    (when (seq (:out result))
+      (println (str dir) "$" (str/join " " (map (fn [a]
+                                                  (if (str/includes? a " ") (str "'" a "'") a))
+                                                args)))
+      (println (str (output/colored :underline "stdout") ":\n" (:out result))))
+    (when (seq (:err result))
+      (println (str (output/colored :underline "stderr") ":\n" (:err result))))
+    (merge m result)))
 
 (Then "the exit-code is non-zero" [{:keys [exit] :as m}]
   (is (not= "0" exit))
@@ -104,6 +142,11 @@
   (is (substring? output (:out m)))
   m)
 
+(Then "the output should not contain" [m output]
+  (is (not (str/includes? (:out m) output)))
+  m)
+
 (Then "stderr should contain" [m output]
+
   (is (substring? output (:err m)))
   m)
