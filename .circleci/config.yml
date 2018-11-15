@@ -25,7 +25,7 @@ shared_steps: &shared_steps
   - run: mkdir -p test-results/kaocha
   - run: clojure -e '(println (System/getProperty "java.runtime.name") (System/getProperty "java.runtime.version") "\nClojure" (clojure-version))'
   - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -m kaocha.runner --reporter documentation --plugin junit-xml --plugin cloverage --codecov --junit-xml-file test-results/kaocha/results.xml
-  - run: curl -s https://codecov.io/bash | bash -s - -f target/coverage/codecov.json
+  - run: curl -s https://codecov.io/bash | bash -s - -f target/coverage/codecov.json -F unit
   - run: for covjson in target/coverage/integration*/codecov.json; do bash <(curl -s https://codecov.io/bash) -f $covjson -F integration ; done
   - store_test_results:
       path: test-results
