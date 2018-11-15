@@ -6,7 +6,6 @@
   org.clojure/tools.cli        {:mvn/version "0.4.1"}
   lambdaisland/tools.namespace {:mvn/version "0.0-228"}
   lambdaisland/deep-diff       {:mvn/version "0.0-25"}
-  org.clojure/core.async       {:mvn/version "0.4.474"}
   org.tcrawley/dynapath        {:mvn/version "1.0.0"}
   slingshot                    {:mvn/version "0.12.2"}
   clojure.java-time            {:mvn/version "0.3.2"}

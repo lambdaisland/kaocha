@@ -2,7 +2,6 @@
   (:require [hawk.core :as hawk]
             [kaocha.api :as api]
             [kaocha.result :as result]
-            [clojure.core.async :refer [chan <!! put! poll!]]
             [clojure.java.io :as io]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
             [lambdaisland.tools.namespace.file :as ctn-file]
@@ -31,8 +30,8 @@
                                           cat
                                           (map io/file))
                                 (:kaocha/tests config))
-        watch-chan        (chan)
-        drain-watch-chan! (fn [] (doall (take-while identity (repeatedly #(poll! watch-chan)))))
+        watch-chan        (java.util.concurrent.ArrayBlockingQueue. 1024)
+        drain-watch-chan! (fn [] (doall (take-while identity (repeatedly #(.poll watch-chan)))))
         tracker           (-> (ctn-track/tracker)
                               (ctn-dir/scan-dirs watch-paths)
                               (dissoc :lambdaisland.tools.namespace.track/unload
@@ -65,7 +64,7 @@
                   (println "[watch] Failed tests pass, re-running all tests.")
                   (drain-watch-chan!)
                   (recur (ctn-dir/scan-dirs tracker) nil))
-                (let [f (<!! watch-chan)]
+                (let [f (.take watch-chan)]
                   (drain-watch-chan!)
                   (recur (ctn-dir/scan-dirs tracker)
                          (->> result
@@ -80,6 +79,6 @@
     (hawk/watch! [{:paths   watch-paths
                    :handler (fn [ctx event]
                               (when (= (:kind event) :modify)
-                                (put! watch-chan (:file event))))}])
+                                (.put watch-chan (:file event))))}])
 
     @(promise)))
