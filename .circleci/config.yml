@@ -16,7 +16,6 @@ shared_steps: &shared_steps
           chmod +x linux-install-1.9.0.394.sh
         fi
   - run: sudo ~/downloads/linux-install-1.9.0.394.sh
-  - run: sudo apt-get install colordiff
   - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -Spath
   - save_cache:
       paths:
@@ -24,10 +23,10 @@ shared_steps: &shared_steps
         - ~/downloads
       key: kaocha-001-{{ .Environment.EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
   - run: mkdir -p test-results/kaocha
-  - run: java -version
-  - run: clojure -e '(println (clojure-version))'
+  - run: clojure -e '(println (System/getProperty "java.runtime.name") (System/getProperty "java.runtime.version") "\nClojure" (clojure-version))'
   - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -m kaocha.runner --reporter documentation --plugin junit-xml --plugin cloverage --codecov --junit-xml-file test-results/kaocha/results.xml
   - run: curl -s https://codecov.io/bash | bash -s - -f target/coverage/codecov.json
+  - run: for covjson in target/coverage/integration*/codecov.json; do bash <(curl -s https://codecov.io/bash) -f $covjson -F integration ; done
   - store_test_results:
       path: test-results
 

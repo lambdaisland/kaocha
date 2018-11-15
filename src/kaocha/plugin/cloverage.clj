@@ -27,7 +27,7 @@
    :ns-exclude-regex []})
 
 (def cli-opts
-  [["--cov-output" "Cloverage output directory."]
+  [["--cov-output PATH" "Cloverage output directory."]
    ["--[no-]cov-text" "Produce a text report."]
    ["--[no-]cov-html" "Produce a HTML report."]
    ["--[no-]emma-xml"
@@ -55,6 +55,9 @@
     :assoc-fn accumulate]
    ["--cov-ns-exclude-regex REGEX"
     "Regex for namespaces not to be instrumented (can be repeated)."
+    :assoc-fn accumulate]
+   ["--cov-src-ns-path PATH"
+    "Path (string) to directory containing test namespaces (can be repeated). Defaults to test suite source paths."
     :assoc-fn accumulate]])
 
 (defn update-config [config]
@@ -98,6 +101,9 @@
                (contains? opts :cov-nop)
                (assoc :nop? (:cov-nop opts))
 
+               (contains? opts :cov-src-ns-path)
+               (assoc :src-ns-path (:cov-src-ns-path opts))
+
                (contains? opts :cov-ns-regex)
                (assoc :ns-regex (map re-pattern (:cov-ns-regex opts)))
 
@@ -127,15 +133,16 @@
 
   (main [config]
     (binding [c/*exit-after-test* false]
-      (let [config       (update-config config)
-            suites       (remove :kaocha.testable/skip (:kaocha/tests config))
-            source-paths (mapcat :kaocha/source-paths suites)
-            test-paths   (mapcat :kaocha/test-paths suites)
-            opts         (assoc (:cloverage/opts config)
-                                :runner :kaocha
-                                :src-ns-path source-paths
-                                :test-ns-path test-paths
-                                ::config config)]
+      (let [config         (update-config config)
+            suites         (remove :kaocha.testable/skip (:kaocha/tests config))
+            source-paths   (mapcat :kaocha/source-paths suites)
+            test-paths     (mapcat :kaocha/test-paths suites)
+            cloverage-opts (:cloverage/opts config)
+            opts           (assoc cloverage-opts
+                                  :runner :kaocha
+                                  :src-ns-path (:src-ns-path cloverage-opts source-paths)
+                                  :test-ns-path test-paths
+                                  ::config config)]
         (run! cp/add-classpath test-paths)
         (throw+ {:kaocha/early-exit (run-cloverage opts)})))))
 

@@ -110,15 +110,27 @@
     (spit path contents)
     m))
 
+(defn project-dir-path [& paths]
+  (str (reduce join (.getAbsolutePath (io/file "")) paths)))
+
+(defn ci? []
+  (= (System/getenv "CI") "true"))
 
 (When "I run Kaocha with {string}" [{:keys [config-file dir] :as m} args]
-  (let [args   (into ["clojure"
+  (let [args (cond-> ["clojure"
                       "-Sdeps" (str "{:deps {lambdaisland/kaocha {:local/root \""
-                                    (.getAbsolutePath (io/file ""))
+                                    (project-dir-path)
                                     "\"}}}")
                       "-m" "kaocha.runner"
                       "--config-file" (str config-file)]
-                     (shellwords args))
+               (ci?)
+               (into ["--plugin" "cloverage"
+                      "--cov-output" (project-dir-path "target/coverage" (str (gensym "integration")))
+                      "--cov-src-ns-path" (project-dir-path "src")
+                      "--codecov"])
+               :always
+               (into (shellwords args)))
+
         result (apply shell/sh (conj args :dir dir))]
     ;; By default these are hidden unless the test fails
     (when (seq (:out result))

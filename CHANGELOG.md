@@ -6,6 +6,10 @@
 
 ## Changed
 
+- Kaocha now also considers the global hierarchy when determining event types.
+  This makes it possible for third-party clojure.test reporters to be
+  Kaocha-aware without having to depend on Kaocha.
+
 # 0.0-266 (2018-11-08 / 0e9d0ee)
 
 ## Fixed
@@ -145,10 +149,6 @@
 - Compatibility with newer matcher-combinators.
 
 # 0.0-153 (2018-09-19 / 25a68bd)
-
-## Added
-
-## Fixed
 
 ## Changed
 
