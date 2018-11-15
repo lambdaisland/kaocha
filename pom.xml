@@ -48,7 +48,7 @@
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>deep-diff</artifactId>
-      <version>0.0-15</version>
+      <version>0.0-25</version>
     </dependency>
     <dependency>
       <groupId>slingshot</groupId>
@@ -83,7 +83,7 @@
     <dependency>
       <groupId>orchestra</groupId>
       <artifactId>orchestra</artifactId>
-      <version>2018.09.10-1</version>
+      <version>2018.11.07-1</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
