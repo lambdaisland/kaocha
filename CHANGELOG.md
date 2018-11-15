@@ -1,14 +1,12 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
 
 - Kaocha now also considers the global hierarchy when determining event types.
   This makes it possible for third-party clojure.test reporters to be
   Kaocha-aware without having to depend on Kaocha.
+- [lambdaisland/kaocha-cloverage](https://github.com/lambdaisland/kaocha-cloverage)
+  is now its own project, make sure to include it in your deps/project files.
 
 # 0.0-266 (2018-11-08 / 0e9d0ee)
 

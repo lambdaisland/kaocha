@@ -23,8 +23,9 @@
 
  :aliases
  {:test
-  {:extra-deps {org.clojure/test.check       {:mvn/version "0.10.0-alpha3"}
-                lambdaisland/kaocha-cucumber {:mvn/version "0.0-15"}}}
+  {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
+                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-15"}
+                lambdaisland/kaocha-cloverage {:mvn/version "0.0-3"}}}
 
   :dev
   {:extra-paths ["dev" "test/api" "test/shared"]
@@ -45,8 +46,4 @@
   :clojure-1.9
   {:extra-deps
    ^:depot/ignore
-   {org.clojure/clojure {:mvn/version "1.9.0"}}}
-
-  :cloverage
-  {:extra-deps    {cloverage {:mvn/version "1.0.13"}}
-   #_#_:main-opts ["-m" "cloverage.coverage" "--runner" "kaocha" "--test-ns-path" "test/unit" "--src-ns-path" "src" "--ns-exclude-regex" "if-not-set-it-does-not-work"]}}}
+   {org.clojure/clojure {:mvn/version "1.9.0"}}}}}
