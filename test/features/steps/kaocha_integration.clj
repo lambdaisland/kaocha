@@ -113,8 +113,8 @@
 (defn project-dir-path [& paths]
   (str (reduce join (.getAbsolutePath (io/file "")) paths)))
 
-(defn ci? []
-  (= (System/getenv "CI") "true"))
+(defn codecov? []
+  (= (System/getenv "KAOCHA_INTEGRATION_CODECOV") "true"))
 
 (When "I run Kaocha with {string}" [{:keys [config-file dir] :as m} args]
   (let [args (cond-> ["clojure"
@@ -123,7 +123,7 @@
                                     "\"}}}")
                       "-m" "kaocha.runner"
                       "--config-file" (str config-file)]
-               (ci?)
+               (codecov?)
                (into ["--plugin" "cloverage"
                       "--cov-output" (project-dir-path "target/coverage" (str (gensym "integration")))
                       "--cov-src-ns-path" (project-dir-path "src")
