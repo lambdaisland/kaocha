@@ -88,13 +88,13 @@
            :config-file config-file)))
 
 (Given "the following test namespace" [{:keys [test-dir] :as m} contents]
-       (let [ns-form (read-string contents)]
-         (assert (= 'ns (and (seq ns-form) (first ns-form))))
-         (assert (symbol? (second ns-form)))
-         (let [fname (join test-dir (ns->fname (second ns-form)))]
-           (mkdir (.getParent fname))
-           (spit fname contents)))
-       m)
+  (let [ns-form (read-string contents)]
+    (assert (= 'ns (and (seq ns-form) (first ns-form))))
+    (assert (symbol? (second ns-form)))
+    (let [fname (join test-dir (ns->fname (second ns-form)))]
+      (mkdir (.getParent fname))
+      (spit fname contents)))
+  m)
 
 (Given "shared test fixtures" [m]
   (assoc m :copy-fixtures? true))
