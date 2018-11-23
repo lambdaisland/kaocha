@@ -142,7 +142,12 @@ http://github.com/clojure/clojure/commit/a4142dc9c2e107528b90bb885ed5e8d92fd3f62
 
 Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seems to fix this.
 * New test types
+  - implement -run and -load
+  - add specs
+  - derive :kaocha.testable.type/leaf
+  - handle load errors (in load and run!)
+  - set metadata (if applicable)
+
   - dots
   - documentation
-  - test with junit
-  - derive :kaocha.testable.type/leaf
+  - test with junit.xml

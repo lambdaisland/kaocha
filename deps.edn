@@ -19,8 +19,9 @@
  :aliases
  {:test
   {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
-                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-15"}
-                lambdaisland/kaocha-cloverage {:mvn/version "0.0-6"}}}
+                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-20"}
+                lambdaisland/kaocha-cloverage {:mvn/version "0.0-6"}
+                akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
   :dev
   {:extra-paths ["dev" "test/api" "test/shared"]
@@ -36,7 +37,7 @@
   {:extra-deps {cloverage {:local/root "/home/arne/github/cloverage/cloverage"}}}
 
   :junit-xml
-  {:extra-deps {lambdaisland/kaocha-junit-xml {:mvn/version "0.0-27"}}}
+  {:extra-deps {lambdaisland/kaocha-junit-xml {:mvn/version "0.0-31"}}}
 
   :clojure-1.9
   {:extra-deps

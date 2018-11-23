@@ -18,8 +18,7 @@
 (s/def :kaocha/tests (s/coll-of :kaocha/testable))
 
 (s/def :kaocha/testable (s/keys :req [:kaocha.testable/type
-                                      :kaocha.testable/id
-                                      :kaocha.testable/desc]
+                                      :kaocha.testable/id]
                                 :opt [:kaocha.testable/meta
                                       :kaocha.testable/wrap]))
 
@@ -40,7 +39,8 @@
 (s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
 
 (s/def :kaocha.test-plan/testable (s/and :kaocha/testable
-                                         (s/keys :opt [:kaocha.test-plan/tests
+                                         (s/keys :req [:kaocha.testable/desc]
+                                                 :opt [:kaocha.test-plan/tests
                                                        :kaacha.test-plan/load-error])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -50,9 +50,8 @@
 
 (s/def :kaocha.result/tests (s/coll-of :kaocha.result/testable))
 
-(s/def :kaocha.result/testable (s/and :kaocha/testable
-                                      (s/keys #_#_:req [:kaocha.result/count]
-                                              :opt [:kaocha.result/count
+(s/def :kaocha.result/testable (s/and :kaocha.test-plan/testable
+                                      (s/keys :opt [:kaocha.result/count
                                                     :kaocha.result/tests
                                                     :kaocha.result/pass
                                                     :kaocha.result/error

@@ -3,11 +3,11 @@
             [clojure.java.shell :as shell]
             [clojure.string :as str]
             [clojure.test :refer :all]
+            [kaocha.output :as output]
             [lambdaisland.cucumber.dsl :refer :all]
-            [kaocha.report :as report]
-            [kaocha.hierarchy :as hierarchy]
-            [kaocha.output :as output])
-  (:import [java.nio.file Files OpenOption Path Paths]
+            [me.raynes.fs :as fs])
+  (:import java.io.File
+           [java.nio.file Files OpenOption Path Paths]
            java.nio.file.attribute.FileAttribute))
 
 (require 'kaocha.assertions)
@@ -19,7 +19,9 @@
   String
   (join [this that] (join (Paths/get this (make-array String 0)) that))
   Path
-  (join [this that] (.resolve this (str that))))
+  (join [this that] (.resolve this (str that)))
+  File
+  (join [this that] (.toPath (io/file this (str that)))))
 
 (extend-protocol io/IOFactory
   Path
@@ -62,6 +64,13 @@
 (defn mkdir [path]
   (Files/createDirectories path default-attributes))
 
+(defn ns->fname [ns]
+  (-> ns
+      str
+      (str/replace #"\." "/")
+      (str/replace #"-" "_")
+      (str ".clj")))
+
 (Given "the default test configuration" [m]
   (let [dir (temp-dir)
         test-dir (join dir "test")
@@ -78,21 +87,17 @@
            :test-dir test-dir
            :config-file config-file)))
 
-(defn ns->fname [ns]
-  (-> ns
-      str
-      (str/replace #"\." "/")
-      (str/replace #"-" "_")
-      (str ".clj")))
-
 (Given "the following test namespace" [{:keys [test-dir] :as m} contents]
-  (let [ns-form (read-string contents)]
-    (assert (= 'ns (and (seq ns-form) (first ns-form))))
-    (assert (symbol? (second ns-form)))
-    (let [fname (join test-dir (ns->fname (second ns-form)))]
-      (mkdir (.getParent fname))
-      (spit fname contents)))
-  m)
+       (let [ns-form (read-string contents)]
+         (assert (= 'ns (and (seq ns-form) (first ns-form))))
+         (assert (symbol? (second ns-form)))
+         (let [fname (join test-dir (ns->fname (second ns-form)))]
+           (mkdir (.getParent fname))
+           (spit fname contents)))
+       m)
+
+(Given "shared test fixtures" [m]
+  (assoc m :copy-fixtures? true))
 
 (Given "the following test configuration" [m doc-string]
   (let [dir (temp-dir)
@@ -100,6 +105,8 @@
         config-file (join dir "tests.edn")]
     (spit (str config-file) doc-string)
     (mkdir test-dir)
+    (when (:copy-fixtures? m)
+      (fs/copy-dir (io/file "fixtures") dir))
     (assoc m
            :dir dir
            :config-file config-file)))
@@ -154,11 +161,18 @@
   (is (substring? output (:out m)))
   m)
 
+(Then "the output should be" [m output]
+  (is (= (str/trim output) (str/trim (:out m))))
+  m)
+
 (Then "the output should not contain" [m output]
   (is (not (str/includes? (:out m) output)))
   m)
 
 (Then "stderr should contain" [m output]
-
   (is (substring? output (:err m)))
   m)
+
+#_(do
+    (require 'kaocha.repl)
+    (kaocha.repl/run "integration"))

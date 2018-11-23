@@ -9,7 +9,7 @@
 (def clj ctn-find/clj)
 (def cljs ctn-find/cljs)
 
-(defn- ns-match? [ns-patterns ns-sym]
+(defn ns-match? [ns-patterns ns-sym]
   (some #(re-find % (name ns-sym)) ns-patterns))
 
 (defn find-test-nss [test-paths ns-patterns & [platform]]
@@ -20,11 +20,11 @@
              (filter (partial ns-match? ns-patterns)))
             test-paths))
 
-(defn load-test-namespaces [testable ns-testable-fn]
-  (let [{:kaocha/keys [test-paths ns-patterns]} testable
-        ns-patterns                             (map regex ns-patterns)]
-
-    (let [ns-names  (find-test-nss test-paths ns-patterns)
-          testables (map ns-testable-fn ns-names)]
-      (assoc testable :kaocha.test-plan/tests
-             (testable/load-testables testables)))))
+(defn load-test-namespaces [testable ns-testable-fn & [platform]]
+  (let [test-paths  (:kaocha/test-paths testable)
+        ns-patterns (map regex (:kaocha/ns-patterns testable))
+        ns-names    (find-test-nss test-paths ns-patterns platform)
+        testables   (map ns-testable-fn ns-names)]
+    (assoc testable
+           :kaocha.test-plan/tests
+           (testable/load-testables testables))))
