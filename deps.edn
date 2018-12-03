@@ -21,12 +21,12 @@
   {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
                 lambdaisland/kaocha-cucumber  {:mvn/version "0.0-20"}
                 lambdaisland/kaocha-cloverage {:mvn/version "0.0-6"}
+                nubank/matcher-combinators    {:mvn/version "0.4.2"}
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
   :dev
   {:extra-paths ["dev" "test/api" "test/shared"]
    :extra-deps  {com.cemerick/pomegranate     {:mvn/version "1.1.0"}
-                 nubank/matcher-combinators   {:mvn/version "0.4.2"}
                  ancient-clj                  {:mvn/version "0.6.15"}
                  org.clojure/tools.deps.alpha {:mvn/version "0.5.460"}}}
 
