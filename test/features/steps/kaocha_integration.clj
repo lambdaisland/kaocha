@@ -124,30 +124,31 @@
   (= (System/getenv "CI") "true"))
 
 (When "I run Kaocha with {string}" [{:keys [config-file dir] :as m} args]
-  (let [args (cond-> ["clojure"
-                      "-Sdeps" (str "{:deps {lambdaisland/kaocha {:local/root \""
-                                    (project-dir-path)
-                                    "\"}}}")
-                      "-m" "kaocha.runner"
-                      "--config-file" (str config-file)]
-               (codecov?)
-               (into ["--plugin" "cloverage"
-                      "--cov-output" (project-dir-path "target/coverage" (str (gensym "integration")))
-                      "--cov-src-ns-path" (project-dir-path "src")
-                      "--codecov"])
-               :always
-               (into (shellwords args)))
+      (let [args (cond-> ["clojure"
+                          "-Sdeps" (str "{:deps {lambdaisland/kaocha {:local/root \""
+                                        (project-dir-path)
+                                        "\"}"
+                                        "lambdaisland/kaocha-cloverage {:mvn/version \"RELEASE\"}}}")
+                          "-m" "kaocha.runner"
+                          "--config-file" (str config-file)]
+                   (codecov?)
+                   (into ["--plugin" "cloverage"
+                          "--cov-output" (project-dir-path "target/coverage" (str (gensym "integration")))
+                          "--cov-src-ns-path" (project-dir-path "src")
+                          "--codecov"])
+                   :always
+                   (into (shellwords args)))
 
-        result (apply shell/sh (conj args :dir dir))]
-    ;; By default these are hidden unless the test fails
-    (when (seq (:out result))
-      (println (str dir) "$" (str/join " " (map (fn [a]
-                                                  (if (str/includes? a " ") (str "'" a "'") a))
-                                                args)))
-      (println (str (output/colored :underline "stdout") ":\n" (:out result))))
-    (when (seq (:err result))
-      (println (str (output/colored :underline "stderr") ":\n" (:err result))))
-    (merge m result)))
+            result (apply shell/sh (conj args :dir dir))]
+        ;; By default these are hidden unless the test fails
+        (when (seq (:out result))
+          (println (str dir) "$" (str/join " " (map (fn [a]
+                                                      (if (str/includes? a " ") (str "'" a "'") a))
+                                                    args)))
+          (println (str (output/colored :underline "stdout") ":\n" (:out result))))
+        (when (seq (:err result))
+          (println (str (output/colored :underline "stderr") ":\n" (:err result))))
+        (merge m result)))
 
 (Then "the exit-code is non-zero" [{:keys [exit] :as m}]
   (is (not= "0" exit))
