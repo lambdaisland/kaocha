@@ -151,3 +151,40 @@ Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seem
   - dots
   - documentation
   - test with junit.xml
+
+* Docker images
+
+- [[https://nextjournal.com/a/KYviFHeN9TQPpAoba5FmP/edit][OpenJDK 11]]
+- [[https://nextjournal.com/a/KYvsJbdUoW4J6LASmZvHX/edit][OpenJDK 9]]
+- [[https://nextjournal.com/a/KYvu2HZZytCyB9V6Kd656/edit][OpenJDK 8]]
+
+#+BEGIN_SRC shell
+function push_clojure_image() {
+docker pull $IMAGE
+docker run -i -t $IMAGE clojure -e '(println (System/getProperty "java.runtime.name") (System/getProperty "java.runtime.version") "\nClojure" (clojure-version))'
+docker run -i -t $IMAGE node --version
+docker tag $IMAGE lambdaisland/clojure:openjdk${JDK}
+docker push lambdaisland/clojure:openjdk${JDK}
+}
+
+IMAGE=eu.gcr.io/nextjournal-com/environment@sha256:98c079ac7708fc21185b2aae809e058e51219aa44b5319c7606f96a827830fd7
+JDK=11
+push_clojure_image
+
+IMAGE=eu.gcr.io/nextjournal-com/environment@sha256:2f11d0e4ff5150f2972747d9be64f541cd46b8772f1fb1a2bd6b76e3aa366a33
+JDK=9
+push_clojure_image
+
+IMAGE=eu.gcr.io/nextjournal-com/environment@sha256:96be10d0a10ceb8cabec300f1265ae87cd3e62a82c00c7073155a10b37911455
+JDK=8
+push_clojure_image
+#+END_SRC
+
+
+- pull image from nextjournal : docker pull <image>
+- tag it : docker tag <nj_image> lambdaisland/clojure:openjdk<version>
+- push it : docker push !$
+
+* Links
+
+https://github.com/nubank/emidje
