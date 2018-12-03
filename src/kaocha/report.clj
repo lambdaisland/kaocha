@@ -103,7 +103,7 @@
             [kaocha.hierarchy :as hierarchy]
             [kaocha.jit :refer [jit]]))
 
-(def clojure-test-report t/report)
+(defonce clojure-test-report t/report)
 
 (defn dispatch-extra-keys
   "Call the original clojure.test/report multimethod when dispatching an unknown
@@ -111,7 +111,9 @@
   clojure.test/assert-expr, as well as clojure.test/report, to signal special
   conditions."
   [m]
-  (when-not (hierarchy/known-key? m)
+  (when (and (not (hierarchy/known-key? m))
+             (not= (get-method clojure-test-report :default)
+                   (get-method clojure-test-report (:type m))))
     (clojure-test-report m)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
