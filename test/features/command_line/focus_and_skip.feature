@@ -19,7 +19,7 @@ Feature: Focusing and skipping tests
 
   Scenario: Focusing on a group of tests
     When I run Kaocha with "--focus finn.finn-test"
-    Then the output should be
+    Then the output should contain
     """
     --- b (clojure.test) ---------------------------
     finn.finn-test
