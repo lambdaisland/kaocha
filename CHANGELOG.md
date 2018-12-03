@@ -1,5 +1,15 @@
 # Unreleased
 
+## Fixed
+
+- Honor the `capture-output?` flag when provided in `tests.edn`
+- Print captured output when a test fails because it doesn't contain assertions
+
+## Added
+
+- Consider `(is (= ))` assertions with only a single argument as failures, as
+  these are most likely typos, they always evaluate to true.
+
 ## Changed
 
 - Kaocha now also considers the global hierarchy when determining event types.

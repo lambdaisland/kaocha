@@ -17,7 +17,8 @@
   (println "\nFAIL in" (report/testing-vars-str m))
   (when (seq testing-contexts)
     (println (str/join " " testing-contexts)))
-  (println "Test ran without assertions. Did you forget an (is ...)?"))
+  (println "Test ran without assertions. Did you forget an (is ...)?")
+  (report/print-output m))
 
 (defmethod testable/-run :kaocha.type/var [{test    :kaocha.var/test
                                             wrap    :kaocha.testable/wrap

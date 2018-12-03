@@ -230,9 +230,20 @@
   (when (contains? m :actual)
     (println "  actual:" (pr-str (:actual m)))))
 
+(defmethod t/assert-expr '= [msg form]
+  (if (= 2 (count form))
+    `(t/do-report {:type ::one-arg-eql
+                   :message "Equality assertion expects 2 or more values to compare, but only 1 arguments given."
+                   :expected '~(concat form '(arg2))
+                   :actual '~form})
+
+    (t/assert-predicate msg form)))
+
+(hierarchy/derive! ::one-arg-eql :kaocha/fail-type)
+
 (defmethod print-expr '= [m]
   (let [printer (output/printer)]
-    (if (seq? (:actual m))
+    (if (> (count (:actual m)) 2)
       (let [[_ expected & actuals] (-> m :actual second)]
 
         (output/print-doc
