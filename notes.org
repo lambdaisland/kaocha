@@ -186,5 +186,4 @@ push_clojure_image
 - push it : docker push !$
 
 * Links
-
 https://github.com/nubank/emidje
