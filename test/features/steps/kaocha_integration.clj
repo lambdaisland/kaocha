@@ -121,7 +121,7 @@
   (str (reduce join (.getAbsolutePath (io/file "")) paths)))
 
 (defn codecov? []
-  (= (System/getenv "KAOCHA_INTEGRATION_CODECOV") "true"))
+  (= (System/getenv "CI") "true"))
 
 (When "I run Kaocha with {string}" [{:keys [config-file dir] :as m} args]
   (let [args (cond-> ["clojure"

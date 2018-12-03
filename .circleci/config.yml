@@ -1,72 +1,58 @@
-version: 2
+version: 2.1
 
-shared_steps: &shared_steps
-  - checkout
-  - run: mkdir -p ~/downloads
-  - restore_cache:
-      keys:
-      - kaocha-001-{{ .Environment.EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
-      # fallback to using the latest cache if no exact match is found
-      - kaocha-001-
-  - run:
-      command: |
-        cd ~/downloads
-        if [[ ! -f "linux-install-1.9.0.394.sh" ]]; then
-          curl -O https://download.clojure.org/install/linux-install-1.9.0.394.sh
-          chmod +x linux-install-1.9.0.394.sh
-        fi
-  - run: sudo ~/downloads/linux-install-1.9.0.394.sh
-  - run: clojure -Spath
-  - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -Spath
-  - save_cache:
-      paths:
-        - ~/.m2
-        - ~/downloads
-      key: kaocha-001-{{ .Environment.EXTRA_ALIASES }}-{{ checksum "deps.edn" }}
-  - run: mkdir -p test-results/kaocha
-  - run: clojure -e '(println (System/getProperty "java.runtime.name") (System/getProperty "java.runtime.version") "\nClojure" (clojure-version))'
-  - run: clojure -A:dev:test:junit-xml${EXTRA_ALIASES} -m kaocha.runner --reporter documentation --plugin junit-xml --plugin cloverage --codecov --junit-xml-file test-results/kaocha/results.xml
-  - run: KAOCHA_INTEGRATION_CODECOV=true clojure -A:dev:test${EXTRA_ALIASES} -m kaocha.runner integration || true
-  - run: curl -s https://codecov.io/bash | bash -s - -f target/coverage/codecov.json -F unit
-  - run: for covjson in target/coverage/integration*/codecov.json; do bash <(curl -s https://codecov.io/bash) -f $covjson -F integration ; done
-  - store_test_results:
-      path: test-results
+orbs:
+  kaocha: lambdaisland/kaocha@dev:first
+  clojure: lambdaisland/clojure@dev:first
 
-# https://github.com/CircleCI-Public/circleci-dockerfiles/tree/master/openjdk/images
+commands:
+  checkout_and_run:
+    parameters:
+      clojure_version:
+        type: string
+    steps:
+      - checkout
+      - clojure/with_cache:
+          cache_version: << parameters.clojure_version >>
+          steps:
+            - run: clojure -e '(println (System/getProperty "java.runtime.name") (System/getProperty "java.runtime.version") "\nClojure" (clojure-version))'
+            - kaocha/execute:
+                args: "unit --reporter documentation --plugin cloverage --codecov"
+                clojure_version: << parameters.clojure_version >>
+            - kaocha/execute:
+                args: "integration --reporter documentation --plugin cloverage --codecov"
+                clojure_version: << parameters.clojure_version >>
+      - kaocha/upload_codecov:
+          flags: unit
+      - kaocha/upload_codecov:
+          flags: integration
+          file: target/coverage/integration*/codecov.json
+
 jobs:
-  "java-8-clojure-1-9":
-    docker:
-      - image: circleci/openjdk:8u181-jdk-stretch
-    environment:
-      EXTRA_ALIASES: ":clojure-1.9"
-    steps: *shared_steps
-  "java-8-clojure-1-10":
-    docker:
-      - image: circleci/openjdk:8u181-jdk-stretch
-    steps: *shared_steps
-  "java-9-clojure-1-9":
-    docker:
-      - image: circleci/openjdk:9.0.4-12-jdk-sid
-    environment:
-      EXTRA_ALIASES: ":clojure-1.9"
-    steps: *shared_steps
-  "java-9-clojure-1-10":
-    docker:
-      - image: circleci/openjdk:9.0.4-12-jdk-sid
-    steps: *shared_steps
-  "java-11-clojure-1-9":
-    docker:
-      - image: circleci/openjdk:11.0.1-jdk-sid
-    environment:
-      EXTRA_ALIASES: ":clojure-1.9"
-    steps: *shared_steps
+  java-11-clojure-1_10:
+    executor: clojure/openjdk11
+    steps: [{checkout_and_run: {clojure_version: "1.10.0-RC2"}}]
+
+  java-11-clojure-1_8:
+    executor: clojure/openjdk11
+    steps: [{checkout_and_run: {clojure_version: "1.8.0"}}]
+
+  java-9-clojure-1_9:
+    executor: clojure/openjdk9
+    steps: [{checkout_and_run: {clojure_version: "1.9.0"}}]
+
+  java-8-clojure-1_8:
+    executor: clojure/openjdk8
+    steps: [{checkout_and_run: {clojure_version: "1.8.0"}}]
+
+  java-8-clojure-1_10:
+    executor: clojure/openjdk8
+    steps: [{checkout_and_run: {clojure_version: "1.10.0-RC2"}}]
 
 workflows:
-  version: 2
-  build:
+  kaocha_test:
     jobs:
-      - "java-8-clojure-1-9"
-      - "java-8-clojure-1-10"
-      - "java-9-clojure-1-9"
-      - "java-9-clojure-1-10"
-      - "java-11-clojure-1-9"
+      - java-11-clojure-1_8
+      - java-11-clojure-1_10
+      - java-9-clojure-1_9
+      - java-8-clojure-1_8
+      - java-8-clojure-1_10
