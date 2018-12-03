@@ -14,7 +14,8 @@
   (ByteArrayOutputStream.))
 
 (defn read-buffer [buffer]
-  (some-> buffer (.toByteArray) (String.)))
+  (when buffer
+    (-> buffer (.toByteArray) (String.))))
 
 (defmacro with-test-buffer [buffer & body]
   `(try
@@ -27,10 +28,9 @@
 (defn- doto-capture-buffer [f]
   (if *test-buffer*
     (f *test-buffer*)
-    (doseq [buffer @active-buffers]
-      (f buffer))))
+    (run! f @active-buffers)))
 
-(defn- create-proxy-output-stream ^OutputStream []
+(defn create-proxy-output-stream ^OutputStream []
   (proxy [OutputStream] []
     (write
       ([data]
@@ -72,7 +72,10 @@
 
   (config [config]
     (let [cli-flag (get-in config [:kaocha/cli-options :capture-output])]
-      (assoc config ::capture-output? (if (some? cli-flag) cli-flag true))))
+      (assoc config ::capture-output?
+             (if (some? cli-flag)
+               cli-flag
+               (::capture-output? config true)))))
 
   (wrap-run [run test-plan]
     (if (::capture-output? test-plan)
