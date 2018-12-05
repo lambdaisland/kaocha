@@ -243,7 +243,7 @@
 
 (defmethod print-expr '= [m]
   (let [printer (output/printer)]
-    (if (> (count (:actual m)) 2)
+    (if (> (count (second (:actual m))) 2)
       (let [[_ expected & actuals] (-> m :actual second)]
 
         (output/print-doc
