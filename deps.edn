@@ -4,7 +4,7 @@
  {org.clojure/clojure          {:mvn/version "1.10.0-RC3"}
   org.clojure/spec.alpha       {:mvn/version "0.2.176"}
   org.clojure/tools.cli        {:mvn/version "0.4.1"}
-  lambdaisland/tools.namespace {:mvn/version "0.0-228"}
+  lambdaisland/tools.namespace {:mvn/version "0.0-234"}
   lambdaisland/deep-diff       {:mvn/version "0.0-25"}
   org.tcrawley/dynapath        {:mvn/version "1.0.0"}
   slingshot                    {:mvn/version "0.12.2"}
