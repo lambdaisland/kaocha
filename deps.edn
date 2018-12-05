@@ -1,7 +1,7 @@
 {:paths ["src" "resources"]
 
  :deps
- {org.clojure/clojure          {:mvn/version "1.10.0-beta5"}
+ {org.clojure/clojure          {:mvn/version "1.10.0-RC3"}
   org.clojure/spec.alpha       {:mvn/version "0.2.176"}
   org.clojure/tools.cli        {:mvn/version "0.4.1"}
   lambdaisland/tools.namespace {:mvn/version "0.0-228"}
@@ -19,8 +19,8 @@
  :aliases
  {:test
   {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
-                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-20"}
-                lambdaisland/kaocha-cloverage {:mvn/version "0.0-6"}
+                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-28"}
+                lambdaisland/kaocha-cloverage {:mvn/version "0.0-18"}
                 nubank/matcher-combinators    {:mvn/version "0.4.2"}
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
@@ -37,7 +37,7 @@
   {:extra-deps {cloverage {:local/root "/home/arne/github/cloverage/cloverage"}}}
 
   :junit-xml
-  {:extra-deps {lambdaisland/kaocha-junit-xml {:mvn/version "0.0-31"}}}
+  {:extra-deps {lambdaisland/kaocha-junit-xml {:mvn/version "0.0-43"}}}
 
   :clojure-1.9
   {:extra-deps

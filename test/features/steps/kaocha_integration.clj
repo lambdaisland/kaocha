@@ -174,6 +174,7 @@
   (is (substring? output (:err m)))
   m)
 
-#_(do
-    (require 'kaocha.repl)
-    (kaocha.repl/run "integration"))
+#_
+(do
+  (require 'kaocha.repl)
+  (kaocha.repl/run "integration"))
