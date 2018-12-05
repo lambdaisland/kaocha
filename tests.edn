@@ -1,5 +1,6 @@
 #kaocha/v1
-{:plugins [:kaocha.plugin/profiling]
+{:plugins [:kaocha.plugin/profiling
+           :kaocha.plugin/print-invocations]
  :tests   [{:id         :unit
             :test-paths ["test/shared" "test/unit"]}
            {:id                  :integration

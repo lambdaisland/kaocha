@@ -6,10 +6,9 @@ Feature: `--fail-fast` option
   has occured. Afterwards a summary of the test run so far is printed.
 
   Scenario: Failing fast
-    Given the default test configuration
-    And the following test namespace
+    Given a file named "test/my/project/fail_fast_test.clj" with:
       """clojure
-      (ns kaocha.fail-fast-test
+      (ns my.project.fail-fast-test
         (:require [clojure.test :refer :all]))
 
       (deftest test-1
@@ -23,13 +22,13 @@ Feature: `--fail-fast` option
       (deftest test-3
         (is true))
       """
-    When I run Kaocha with "--fail-fast"
+    When I run `bin/kaocha --fail-fast`
     Then the exit-code should be 1
     And the output should contain
       """
       [(..F)]
 
-      FAIL in kaocha.fail-fast-test/test-2 (fail_fast_test.clj:9)
+      FAIL in my.project.fail-fast-test/test-2 (fail_fast_test.clj:9)
       expected: false
         actual: false
       2 tests, 3 assertions, 1 failures.

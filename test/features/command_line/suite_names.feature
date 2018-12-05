@@ -5,7 +5,7 @@ Feature: Selecting test suites
   test suites.
 
   Background:
-    Given the following test configuration
+    Given a file named "tests.edn" with:
       """clojure
       #kaocha/v1
       {:tests [{:id :aaa
@@ -14,20 +14,20 @@ Feature: Selecting test suites
                 :test-paths ["tests/bbb"]}]}
       """
 
-    And the file "tests/aaa/aaa_test.clj" containing
+    And a file named "tests/aaa/aaa_test.clj" with:
       """clojure
       (ns aaa-test (:require [clojure.test :refer :all]))
       (deftest foo-test (is true))
       """
 
-    And the file "tests/bbb/bbb_test.clj" containing
+    And a file named "tests/bbb/bbb_test.clj" with:
       """clojure
       (ns bbb-test (:require [clojure.test :refer :all]))
       (deftest bbb-test (is true))
       """
 
   Scenario: Specifying a test suite on the command line
-    When I run Kaocha with "aaa --reporter documentation"
+    When I run `bin/kaocha aaa --reporter documentation`
     And the output should contain
       """
       aaa-test
@@ -39,7 +39,7 @@ Feature: Selecting test suites
       """
 
   Scenario: Specifying a test suite using keyword syntax
-    When I run Kaocha with ":aaa --reporter documentation"
+    When I run `bin/kaocha :aaa --reporter documentation`
     And the output should contain
       """
       aaa-test
@@ -51,7 +51,7 @@ Feature: Selecting test suites
       """
 
   Scenario: Specifying an unkown suite
-    When I run Kaocha with "suite-name"
+    When I run `bin/kaocha suite-name`
     Then the output should contain
       """
       No such suite: :suite-name, valid options: :aaa, :bbb.
