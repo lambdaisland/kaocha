@@ -70,6 +70,20 @@
 (defn project-dir-path [& paths]
   (str (reduce join (.getAbsolutePath (io/file "")) paths)))
 
+(defmacro with-print-namespace-maps [bool & body]
+  (if (find-var 'clojure.core/*print-namespace-maps*)
+    `(binding [*print-namespace-maps* ~bool]
+       ~@body)
+    ;; pre Clojure 1.9
+    `(do ~@body)))
+
+(defn write-deps-edn [path]
+  (with-open [deps-out (io/writer path)]
+    (binding [*out* deps-out]
+      (with-print-namespace-maps false
+        (clojure.pprint/pprint {:deps {'lambdaisland/kaocha           {:local/root (project-dir-path)}
+                                       'lambdaisland/kaocha-cloverage {:mvn/version "RELEASE"}}})))))
+
 (defn test-dir-setup [m]
   (if (:dir m)
     m
@@ -97,11 +111,7 @@
                                "--codecov"])
                         :always
                         (conj "\"$@\""))))
-      (spit (str deps-edn)
-            (str "{:deps {lambdaisland/kaocha {:local/root \""
-                 (project-dir-path)
-                 "\"}"
-                 "lambdaisland/kaocha-cloverage {:mvn/version \"RELEASE\"}}}"))
+      (write-deps-edn deps-edn)
       (Files/setPosixFilePermissions runner (PosixFilePermissions/fromString "rwxr--r--"));
       (assoc m
              :dir dir
@@ -142,7 +152,7 @@
   (is (= code (Integer. exit)))
   m)
 
-(Then "the output should contain" [m output]
+(Then "the output should contain:" [m output]
   (is (substring? output (:out m)))
   m)
 

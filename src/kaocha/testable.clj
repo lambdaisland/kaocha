@@ -75,6 +75,12 @@
 (def ^:dynamic *current-testable* nil)
 (def ^:dynamic *test-plan* nil)
 
+(def ^:dynamic *test-location*
+  "Can be bound by a test type to override detecting the current line/file from
+  the stacktrace in case of failure. The value should be a map with keys `:file`
+  and `:line`."
+  nil)
+
 (defmulti -run
   "Given a test-plan, perform the tests, returning the test results."
   (fn [testable test-plan]

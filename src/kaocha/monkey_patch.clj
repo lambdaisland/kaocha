@@ -9,7 +9,8 @@
 (defn- test-file-and-line [stacktrace test-fn]
   (let [test-class-name (.getName (class test-fn))
         trace-matches?  #(str/starts-with? (.getClassName ^StackTraceElement %) test-class-name)]
-    (when-let [s (first (filter trace-matches? stacktrace))]
+    (when-let [^StackTraceElement s (first (filter trace-matches? stacktrace))]
+      (.getClassName s)
       (when (.getFileName s)
         {:file (.getFileName s) :line (.getLineNumber s)}))))
 
@@ -35,15 +36,22 @@
                                                        (:actual m)
                                                        (Thread/currentThread)))
                           file-and-line
-                          (or (and test-fn (test-file-and-line stacktrace test-fn))
+                          (or testable/*test-location*
+                              (and test-fn (test-file-and-line stacktrace test-fn))
                               (stacktrace-file-and-line (drop-while
                                                          #(let [cl-name (.getClassName ^StackTraceElement %)]
-                                                            (or (str/starts-with? cl-name "java.lang.")
+                                                            (or (str/starts-with? cl-name "java.")
                                                                 (str/starts-with? cl-name "clojure.test$")
                                                                 (str/starts-with? cl-name "clojure.lang.")
+                                                                (str/starts-with? cl-name "clojure.main$")
                                                                 (str/starts-with? cl-name "sun.reflect.")
                                                                 (str/starts-with? cl-name "clojure.core")
+                                                                (str/starts-with? cl-name "orchestra.")
+                                                                (str/starts-with? cl-name "kaocha.plugin.capture_output")
                                                                 (str/starts-with? cl-name "kaocha.monkey_patch$")
+                                                                (str/starts-with? cl-name "kaocha.runner")
+                                                                (str/starts-with? cl-name "kaocha.watch")
+                                                                (str/starts-with? cl-name "kaocha.api")
                                                                 (str/starts-with? cl-name "kaocha.testable")
                                                                 (str/starts-with? cl-name "kaocha.type.")))
                                                          stacktrace)))]

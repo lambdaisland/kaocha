@@ -4,6 +4,7 @@
 
 - Honor the `capture-output?` flag when provided in `tests.edn`
 - Print captured output when a test fails because it doesn't contain assertions
+- Make file/line in failures more accurate
 
 ## Added
 

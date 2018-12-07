@@ -14,6 +14,7 @@
 
 ** Bug fixes
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
+- [ ] :kaocha.filter/skip-meta should do a meta merge, retaining :kaocha/skip unless ^:replace is specified.
 
 ** Improvements
 - [ ] Allow filtering `--watch` e.g. to skip temp files
@@ -151,6 +152,7 @@ Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seem
   - dots
   - documentation
   - test with junit.xml
+  - check file/line in test failures
 
 * Docker images
 

@@ -28,7 +28,7 @@ Feature: Selecting test suites
 
   Scenario: Specifying a test suite on the command line
     When I run `bin/kaocha aaa --reporter documentation`
-    And the output should contain
+    And the output should contain:
       """
       aaa-test
         foo-test
@@ -40,7 +40,7 @@ Feature: Selecting test suites
 
   Scenario: Specifying a test suite using keyword syntax
     When I run `bin/kaocha :aaa --reporter documentation`
-    And the output should contain
+    And the output should contain:
       """
       aaa-test
         foo-test
@@ -52,7 +52,7 @@ Feature: Selecting test suites
 
   Scenario: Specifying an unkown suite
     When I run `bin/kaocha suite-name`
-    Then the output should contain
+    Then the output should contain:
       """
       No such suite: :suite-name, valid options: :aaa, :bbb.
       """

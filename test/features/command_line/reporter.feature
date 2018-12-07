@@ -27,7 +27,7 @@ Feature: `--reporter` option
 
   Scenario: Using a fully qualified function as a reporter
     When I run `bin/kaocha --reporter kaocha.report/documentation`
-    And the output should contain
+    And the output should contain:
       """
       my.project.reporter-test
         test-1 FAIL
@@ -38,7 +38,7 @@ Feature: `--reporter` option
   Scenario: Specifying a reporter via shorthand
     When I run `bin/kaocha --reporter documentation`
     Then the exit-code should be 2
-    And the output should contain
+    And the output should contain:
       """
       my.project.reporter-test
         test-1 FAIL

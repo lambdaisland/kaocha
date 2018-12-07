@@ -193,8 +193,8 @@
   in :testing-vars as a list, then the source file and line of current
   assertion."
   [{:keys [file line testing-vars kaocha/testable] :as m}]
-  (let [file (or file (some-> testable ::testable/meta :file))
-        line (or line (some-> testable ::testable/meta :line))]
+  (let [file' (or file (some-> testable ::testable/meta :file))
+        line' (or line (some-> testable ::testable/meta :line))]
     (str
      ;; Uncomment to include namespace in failure report:
      ;;(ns-name (:ns (meta (first *testing-vars*)))) "/ "
@@ -236,14 +236,18 @@
                    :message "Equality assertion expects 2 or more values to compare, but only 1 arguments given."
                    :expected '~(concat form '(arg2))
                    :actual '~form})
-
     (t/assert-predicate msg form)))
 
 (hierarchy/derive! ::one-arg-eql :kaocha/fail-type)
 
 (defmethod print-expr '= [m]
   (let [printer (output/printer)]
-    (if (> (count (second (:actual m))) 2)
+    ;; :actual is of the form (not (= ...))
+
+    (if (and (not= (:type m) ::one-arg-eql)
+             (seq? (second (:actual m)))
+             (> (count (second (:actual m))) 2))
+
       (let [[_ expected & actuals] (-> m :actual second)]
 
         (output/print-doc

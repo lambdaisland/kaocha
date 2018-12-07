@@ -24,7 +24,7 @@ Feature: `--fail-fast` option
       """
     When I run `bin/kaocha --fail-fast`
     Then the exit-code should be 1
-    And the output should contain
+    And the output should contain:
       """
       [(..F)]
 
