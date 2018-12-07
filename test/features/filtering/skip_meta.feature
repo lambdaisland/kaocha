@@ -127,7 +127,7 @@ Feature: Skipping based on metadata
       (ns my.project.sample-test
         (:require [clojure.test :refer :all]))
 
-      (deftest ^xxx some-test
+      (deftest ^:xxx some-test
         (is (= 1 1)))
 
       (deftest ^:kaocha/skip other-test ;; this is ignored now

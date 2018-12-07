@@ -156,6 +156,7 @@ Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seem
   - documentation
   - test with junit.xml
   - check file/line in test failures
+  - result counts in final result
 
 * Docker images
 
