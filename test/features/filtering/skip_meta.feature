@@ -78,6 +78,9 @@ Feature: Skipping based on metadata
 
       (deftest ^:xxx other-test
         (is (= 2 2)))
+
+      (deftest ^:kaocha/skip also-skipped
+        (is (= 3 3)))
       """
     When I run `bin/kaocha --reporter documentation`
     Then the output should contain:
@@ -107,6 +110,35 @@ Feature: Skipping based on metadata
       --- unit (clojure.test) ---------------------------
       my.project.sample-test
         some-test
+
+      1 tests, 1 assertions, 0 failures.
+      """
+
+  Scenario: Replacing skip metadata
+    Given a file named "tests.edn" with:
+      """ edn
+      #kaocha/v1
+      {:tests [{:kaocha.filter/skip-meta ^:replace [:xxx]}]
+       :color? false
+       :randomize? false}
+      """
+    Given a file named "test/my/project/sample_test.clj" with:
+      """clojure
+      (ns my.project.sample-test
+        (:require [clojure.test :refer :all]))
+
+      (deftest ^xxx some-test
+        (is (= 1 1)))
+
+      (deftest ^:kaocha/skip other-test ;; this is ignored now
+        (is (= 2 2)))
+      """
+    When I run `bin/kaocha --reporter documentation`
+    Then the output should contain:
+      """
+      --- unit (clojure.test) ---------------------------
+      my.project.sample-test
+        other-test
 
       1 tests, 1 assertions, 0 failures.
       """

@@ -6,6 +6,11 @@
 
 ## Changed
 
+- When specifying test suites defaults are always provided, so it's no longer
+  necessary to provide `:src-paths`, `:test-paths`, etc. if they don't deviate
+  from the defaults. This also means all test suites get the default
+  `:kaocha.filter/skip-meta [:kaocha/skip]`.
+
 # 0.0-305 (2018-12-07 / 8b51576)
 
 ## Fixed

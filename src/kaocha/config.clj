@@ -14,6 +14,21 @@
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
+(defn replace-by-default [config k]
+  (if-let [v (get config k)]
+    (if (#{:prepend :append} (meta v))
+      config
+      (update config k vary-meta assoc :replace true))
+    config))
+
+(defn merge-config [c1 c2]
+  (meta-merge c1 (-> c2
+                     (replace-by-default :kaocha/reporter)
+                     (replace-by-default :kaocha/tests)
+                     (replace-by-default :kaocha/test-paths)
+                     (replace-by-default :kaocha/source-paths)
+                     (replace-by-default :kaocha/ns-patterns))))
+
 (defn normalize-test-suite [m]
   (let [m (-> m
               (rename-key :type :kaocha.testable/type)
@@ -25,8 +40,7 @@
               (rename-key :focus :kaocha.filter/focus)
               (rename-key :skip-meta :kaocha.filter/skip-meta)
               (rename-key :focus-meta :kaocha.filter/focus-meta)
-              (cond->> (not (:type m))
-                (merge (first (:kaocha/tests (default-config))))))]
+              (->> (merge-config (first (:kaocha/tests (default-config))))))]
     (assoc m :kaocha.testable/desc (str (name (:kaocha.testable/id m))
                                         " (" (name (:kaocha.testable/type m)) ")"))))
 
@@ -49,18 +63,6 @@
       (some? watch?)     (assoc :kaocha/watch? watch?)
       (some? randomize?) (assoc :kaocha.plugin.randomize/randomize? randomize?)
       :->                (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch?)))))
-
-(defn replace-by-default [config k]
-  (if-let [v (get config k)]
-    (if (#{:prepend :append} (meta v))
-      config
-      (update config k vary-meta assoc :replace true))
-    config))
-
-(defn merge-config [c1 c2]
-  (meta-merge c1 (-> c2
-                     (replace-by-default :kaocha/reporter)
-                     (replace-by-default :kaocha/tests))))
 
 (defmethod aero/reader 'kaocha [opts tag value]
   (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")

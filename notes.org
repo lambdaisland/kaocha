@@ -14,7 +14,9 @@
 
 ** Bug fixes
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
-- [ ] :kaocha.filter/skip-meta should do a meta merge, retaining :kaocha/skip unless ^:replace is specified.
+- [X] :kaocha.filter/skip-meta should do a meta merge, retaining :kaocha/skip unless ^:replace is specified.
+- [X] Default like src-paths, skip-meta not honored
+- [ ] Cucumber steps don't currently reload correctly in watch (due to cache) -> convert to use function definitions in ns
 
 ** Improvements
 - [ ] Allow filtering `--watch` e.g. to skip temp files
