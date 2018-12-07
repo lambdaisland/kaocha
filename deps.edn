@@ -25,21 +25,4 @@
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
   :dev
-  {:extra-paths ["dev" "test/api" "test/shared"]
-   :extra-deps  {com.cemerick/pomegranate     {:mvn/version "1.1.0"}
-                 ancient-clj                  {:mvn/version "0.6.15"}
-                 org.clojure/tools.deps.alpha {:mvn/version "0.5.460"}}}
-
-  :cljs
-  {:extra-deps {org.clojure/clojurescript {:mvn/version "1.10.439"}}}
-
-  :cloverage-local
-  {:extra-deps {cloverage {:local/root "/home/arne/github/cloverage/cloverage"}}}
-
-  :junit-xml
-  {:extra-deps {lambdaisland/kaocha-junit-xml {:mvn/version "0.0-43"}}}
-
-  :clojure-1.9
-  {:extra-deps
-   ^:depot/ignore
-   {org.clojure/clojure {:mvn/version "1.9.0"}}}}}
+  {}}}

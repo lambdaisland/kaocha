@@ -58,8 +58,13 @@
 
 (def default-attributes (into-array FileAttribute []))
 
-(defn temp-dir []
-  (Files/createTempDirectory "kaocha_integration" default-attributes))
+(defn temp-dir
+  ([]
+   (temp-dir "kaocha_integration"))
+  ([path]
+   (Files/createTempDirectory path default-attributes)))
+
+(defonce clj-cpcache-dir (temp-dir "kaocha_cpcache"))
 
 (defn mkdir [path]
   (Files/createDirectories path default-attributes))
@@ -133,16 +138,28 @@
     (spit path contents)
     m))
 
-(When "I run `(.*)`" [{:keys [config-file dir] :as m} args]
-  (let [m      (test-dir-setup m)
-        result (apply shell/sh (conj (shellwords args) :dir dir))]
-    ;; By default these are hidden unless the test fails
-    (when (seq (:out result))
-      (println (str dir) "$" args)
-      (println (str (output/colored :underline "stdout") ":\n" (:out result))))
-    (when (seq (:err result))
-      (println (str (output/colored :underline "stderr") ":\n" (:err result))))
-    (merge m result)))
+(def last-cpcache-dir (atom nil))
+
+(When "I run `(.*)`" [m args]
+  (let [{:keys [config-file dir] :as m} (test-dir-setup m)]
+
+    (when-let [cache @last-cpcache-dir]
+      (let [target (join dir ".cpcache")]
+        (mkdir target)
+        (run! #(fs/copy % (io/file (join target (.getName %)))) (fs/glob cache "*"))))
+
+    (let [result (apply shell/sh (conj (shellwords args)
+                                       :dir dir))]
+      ;; By default these are hidden unless the test fails
+      (when (seq (:out result))
+        (println (str dir) "$" args)
+        (println (str (output/colored :underline "stdout") ":\n" (:out result))))
+      (when (seq (:err result))
+        (println (str (output/colored :underline "stderr") ":\n" (:err result))))
+      (let [cpcache (io/file (join dir ".cpcache"))]
+        (when (.exists cpcache)
+          (reset! last-cpcache-dir cpcache)))
+      (merge m result))))
 
 (Then "the exit-code is non-zero" [{:keys [exit] :as m}]
   (is (not= "0" exit))
