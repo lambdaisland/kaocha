@@ -2,7 +2,8 @@
 
 ## Added
 
-## Fixed
+- A new work-in-progress information plugin, `:kaocha.plugin.alpha/info`,
+  currently only prints the list of all test ids.
 
 ## Changed
 

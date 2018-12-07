@@ -20,7 +20,7 @@
 
 ** Improvements
 - [ ] Allow filtering `--watch` e.g. to skip temp files
-- [ ] Only forward events that clojure.test/report understands
+- [X] Only forward events that clojure.test/report understands
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
 - [ ] Watch changes to `tests.edn`
 - [ ] Clean output when progress bar used without output capturing
@@ -31,6 +31,7 @@
 - [ ] Run config hooks when doing --print-config
 - [X] Provide short plugin names on CLI when in the kaocha.plugin namespace
 - [ ] Make ids strings, much more flexible
+- [ ] Provide validation in defplugin, don't allow hooks which don't exist
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)

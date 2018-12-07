@@ -1,8 +1,0 @@
---- a (clojure.test) ---------------------------
-foo.bar-test
-  a-test
---- b (clojure.test) ---------------------------
-finn.finn-test
-  the-test
-
-[32m2 tests, 2 assertions, 0 failures.[m
