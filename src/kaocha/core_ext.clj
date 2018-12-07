@@ -17,11 +17,14 @@
 (defn ns? [x]
   (instance? clojure.lang.Namespace x))
 
-(defn regex [x]
-  (cond
-    (regex? x)  x
-    (string? x) (Pattern/compile x)
-    :else       (throw (ex-info (str "Can't coerce " (class x) " to regex.") {}))))
+(defn regex
+  ([x & xs]
+   (regex (apply str x xs)))
+  ([x]
+   (cond
+     (regex? x)  x
+     (string? x) (Pattern/compile x)
+     :else       (throw (ex-info (str "Can't coerce " (class x) " to regex.") {})))))
 
 (defn mapply
   "Applies a function f to the argument list formed by concatenating

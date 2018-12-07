@@ -27,6 +27,7 @@
 (deftest regex-test
   (is (= "ok" (re-find (regex "[ko]+") "--ok--")))
   (is (= "ok" (re-find (regex #"[ko]+") "--ok--")))
+  (is (= "ok" (re-find (regex "o" "k") "--ok--")))
   (is (thrown? clojure.lang.ExceptionInfo (regex 123) "")))
 
 (deftest mapply-test
