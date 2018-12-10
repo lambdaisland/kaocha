@@ -108,7 +108,6 @@ bin/kaocha --test-help
 
 Kaocha requirements Clojure 1.9 or later.
 
-
 ## License
 
 &copy; Arne Brasseur 2018

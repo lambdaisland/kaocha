@@ -22,6 +22,13 @@
     config))
 
 (defn merge-config [c1 c2]
+  (prn c1)
+  (prn (-> c2
+           (replace-by-default :kaocha/reporter)
+           (replace-by-default :kaocha/tests)
+           (replace-by-default :kaocha/test-paths)
+           (replace-by-default :kaocha/source-paths)
+           (replace-by-default :kaocha/ns-patterns)))
   (meta-merge c1 (-> c2
                      (replace-by-default :kaocha/reporter)
                      (replace-by-default :kaocha/tests)

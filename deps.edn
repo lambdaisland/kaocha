@@ -19,8 +19,8 @@
  :aliases
  {:test
   {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
-                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-28"}
-                lambdaisland/kaocha-cloverage {:mvn/version "0.0-18"}
+                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-36"}
+                lambdaisland/kaocha-cloverage {:mvn/version "0.0-22"}
                 nubank/matcher-combinators    {:mvn/version "0.4.2"}
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
