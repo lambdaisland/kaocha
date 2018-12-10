@@ -78,7 +78,7 @@
     <dependency>
       <groupId>orchestra</groupId>
       <artifactId>orchestra</artifactId>
-      <version>2018.11.07-1</version>
+      <version>2018.12.06-2</version>
     </dependency>
     <dependency>
       <groupId>org.tcrawley</groupId>
