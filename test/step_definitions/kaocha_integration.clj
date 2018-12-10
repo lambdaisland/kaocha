@@ -107,8 +107,7 @@
       (spit (str runner)
             (str/join " "
                       (cond-> ["clojure"
-                               "-m" "kaocha.runner"
-                               "--config-file" (str config-file)]
+                               "-m" "kaocha.runner"]
                         (codecov?)
                         (into ["--plugin" "cloverage"
                                "--cov-output" (project-dir-path "target/coverage" (str (gensym "integration")))

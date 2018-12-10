@@ -63,10 +63,10 @@
                 (do
                   (println "[watch] Failed tests pass, re-running all tests.")
                   (drain-watch-chan!)
-                  (recur (ctn-dir/scan-dirs tracker) nil))
+                  (recur (ctn-dir/scan-dirs tracker watch-paths) nil))
                 (let [f (.take watch-chan)]
                   (drain-watch-chan!)
-                  (recur (ctn-dir/scan-dirs tracker)
+                  (recur (ctn-dir/scan-dirs tracker watch-paths)
                          (->> result
                               testable/test-seq
                               (filter result/failed-one?)

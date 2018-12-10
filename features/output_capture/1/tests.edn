@@ -1,4 +1,0 @@
-#kaocha/v1
-{:tests [{:id :unit
-          :source-paths []
-          :test-paths ["features/output_capture/1/test"]}]}

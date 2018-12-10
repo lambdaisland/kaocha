@@ -62,7 +62,7 @@
       (some? fail-fast?) (assoc :kaocha/fail-fast? fail-fast?)
       (some? watch?)     (assoc :kaocha/watch? watch?)
       (some? randomize?) (assoc :kaocha.plugin.randomize/randomize? randomize?)
-      :->                (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch?)))))
+      :->                (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [opts tag value]
   (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")

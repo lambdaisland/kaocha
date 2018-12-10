@@ -1,4 +1,0 @@
-#kaocha/v1
-{:tests [{:id          :aaa
-          :test-paths  ["fixtures/a-tests"]
-          :ns-patterns ["^foo$"]}]}

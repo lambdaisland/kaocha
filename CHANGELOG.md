@@ -12,6 +12,11 @@
   from the defaults. This also means all test suites get the default
   `:kaocha.filter/skip-meta [:kaocha/skip]`.
 
+## Fixed
+
+- In watch mode: Scan test-dirs/source-dirs, rather than letting tools.namespace
+  derive the list of paths from the classpath
+
 # 0.0-305 (2018-12-07 / 8b51576)
 
 ## Fixed
