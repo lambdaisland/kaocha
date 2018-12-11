@@ -249,7 +249,6 @@
              (> (count (second (:actual m))) 2))
 
       (let [[_ expected & actuals] (-> m :actual second)]
-
         (output/print-doc
          [:span
           "Expected:" :line
@@ -261,7 +260,6 @@
                 (for [actual actuals]
                   (output/format-doc ((jit lambdaisland.deep-diff/diff) expected actual)
                                      printer)))]))
-
       (output/print-doc
        [:span
         "Expected:" :line
@@ -278,7 +276,9 @@
     (println (str/join " " (reverse testing-contexts))))
   (when-let [message (:message m)]
     (println message))
-  (print-expr m)
+  (if-let [expr (::printed-expression m)]
+    (print expr)
+    (print-expr m))
   (print-output m))
 
 (defmethod fail-summary :error [{:keys [testing-contexts testing-vars] :as m}]
@@ -287,12 +287,14 @@
     (println (str/join " " (reverse testing-contexts))))
   (when-let [message (:message m)]
     (println message))
-  (print-output m)
-  (print "Exception: ")
-  (let [actual (:actual m)]
-    (if (throwable? actual)
-      (stacktrace/print-cause-trace actual t/*stack-trace-depth*)
-      (prn actual))))
+  (if-let [expr (::printed-expression m)]
+    (print expr)
+    (let [actual (:actual m)]
+      (print "Exception: " (prn-str (keys m)))
+      (if (throwable? actual)
+        (stacktrace/print-cause-trace actual t/*stack-trace-depth*)
+        (prn actual))))
+  (print-output m))
 
 (defmethod result :summary [m]
   (t/with-test-out
