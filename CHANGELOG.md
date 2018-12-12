@@ -4,6 +4,14 @@
 
 - Removed debug prn calls
 
+## Added
+
+- [internal] Test types can signal that any remaining sibling tests should be
+  skipped. This is used by the ClojureScript test type: if a test times out then
+  we can no longer rely on the JavaScript environment being responsive. Instead
+  fail the test (signal a timeout) and skip any remaining tests in the same
+  suite.
+
 # 0.0-313 (2018-12-10 / b45ccd1)
 
 ## Added

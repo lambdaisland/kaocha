@@ -133,20 +133,23 @@
           (recur (conj result r) testables)))
       result)))
 
+(defn run-testable [test test-plan]
+  (if (::skip test)
+    test
+    (as-> test %
+      (plugin/run-hook :kaocha.hooks/pre-test % test-plan)
+      (run % test-plan)
+      (plugin/run-hook :kaocha.hooks/post-test % test-plan))))
+
 (defn run-testables
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
   (loop [result []
          [test & testables] testables]
     (if test
-      (let [r (if (::skip test)
-                test
-                (as-> test %
-                  (plugin/run-hook :kaocha.hooks/pre-test % test-plan)
-                  (run % test-plan)
-                  (plugin/run-hook :kaocha.hooks/post-test % test-plan)))]
-        (if (and *fail-fast?* (result/failed? r))
-          (reduce into [result [r] testables])
+      (let [r (run-testable test test-plan)]
+        (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
+          (reduce into result [[r] testables])
           (recur (conj result r) testables)))
       result)))
 
