@@ -57,6 +57,10 @@
 - [ ] detect load errors / step definition errors
 - [ ] --watch feature step/files
 
+** ClojureScript
+   - file/line not (always) correct
+   - need to manually add test dir to classpath
+   - automatically pick a free port for the websocket
 ** Internal
 - [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
 - [X] Run CI on different levels of Java and Clojure

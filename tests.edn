@@ -5,6 +5,5 @@
             :test-paths ["test/shared" "test/unit"]}
            {:id                  :integration
             :type                :kaocha.type/cucumber
-            :source-paths        ["src"]
             :test-paths          ["test/features"]
             :cucumber/glue-paths ["test/step_definitions"]}]}
