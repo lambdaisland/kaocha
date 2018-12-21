@@ -2,6 +2,9 @@
 
 ## Added
 
+- Added a new `--print-env` flag to the `:kaocha.plugin.alpha/info` plugin,
+  which outputs the Clojure and Java version before each run.
+
 ## Fixed
 
 ## Changed
