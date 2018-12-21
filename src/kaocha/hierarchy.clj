@@ -42,9 +42,14 @@
 ;; Test event types
 
 (defn fail-type?
-  "fail-type types indicate a failing test"
+  "Fail-type types indicate a failing test."
   [event]
   (isa? (:type event) :kaocha/fail-type))
+
+(defn error-type?
+  "Error-type indicates a test that failed because of an exception."
+  [event]
+  (isa? (:type event) :error))
 
 (defn known-key?
   "Known keys don't get propogated to clojure.test/report, our own reporters
