@@ -9,6 +9,9 @@
 
 ## Changed
 
+- The `print-invocations` plugin no longer prints out the `--config-file` flag
+  when it hasn't changed from its default value (`tests.edn`)
+
 # 0.0-319 (2018-12-12 / 012b4ef)
 
 ## Fixed
