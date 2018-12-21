@@ -290,7 +290,7 @@
   (if-let [expr (::printed-expression m)]
     (print expr)
     (let [actual (:actual m)]
-      (print "Exception: " (prn-str (keys m)))
+      (print "Exception: ")
       (if (throwable? actual)
         (stacktrace/print-cause-trace actual t/*stack-trace-depth*)
         (prn actual))))
