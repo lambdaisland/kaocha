@@ -270,6 +270,8 @@
 
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 
+(defmethod fail-summary :default [_])
+
 (defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
   (println (str "\n" (output/colored :red "FAIL") " in") (testing-vars-str m))
   (when (seq testing-contexts)
@@ -404,6 +406,7 @@
            (:kaocha/testable m)
            (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type])))))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def dots
@@ -411,4 +414,30 @@
   [dots* result])
 
 (def documentation
+  "Reporter that prints an overview of all tests bein run using indentation."
   [doc result])
+
+(defn tap
+  "Reporter for the TAP protocol (Test Anything Protocol)."
+  [{:keys [type] :as m}]
+  (let [pass (jit clojure.test.tap/print-tap-pass)
+        fail (jit clojure.test.tap/print-tap-fail)
+        error (jit clojure.test.tap/print-tap-error)
+        summary (jit clojure.test.tap/print-tap-plan)]
+    (t/with-test-out
+      (cond
+        (hierarchy/fail-type? m)
+        (fail (testing-vars-str m))
+
+        (hierarchy/error-type? m)
+        (error (testing-vars-str m))
+
+        (hierarchy/pass-type? m)
+        (pass (testing-vars-str m))
+
+        (= :summary type)
+        (summary (+ (:pass m) (:fail m) (:error m))))
+      (run! #(println "# " %) (remove #{""}
+                                      (str/split (with-out-str
+                                                   (fail-summary m))
+                                                 #"\n"))))))

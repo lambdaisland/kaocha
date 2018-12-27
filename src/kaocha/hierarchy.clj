@@ -51,6 +51,11 @@
   [event]
   (isa? (:type event) :error))
 
+(defn pass-type?
+  "Error-type indicates a test that failed because of an exception."
+  [event]
+  (isa? (:type event) :pass))
+
 (defn known-key?
   "Known keys don't get propogated to clojure.test/report, our own reporters
   already handle them."

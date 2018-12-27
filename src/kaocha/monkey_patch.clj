@@ -37,7 +37,6 @@
                                                        (Thread/currentThread)))
                           file-and-line
                           (or testable/*test-location*
-                              (and test-fn (test-file-and-line stacktrace test-fn))
                               (stacktrace-file-and-line (drop-while
                                                          #(let [cl-name (.getClassName ^StackTraceElement %)]
                                                             (or (str/starts-with? cl-name "java.")
@@ -54,7 +53,8 @@
                                                                 (str/starts-with? cl-name "kaocha.api")
                                                                 (str/starts-with? cl-name "kaocha.testable")
                                                                 (str/starts-with? cl-name "kaocha.type.")))
-                                                         stacktrace)))]
+                                                         stacktrace))
+                              (and test-fn (test-file-and-line stacktrace test-fn)))]
                       (t/report
                        (cond
                          (= :error (:type m))
@@ -62,8 +62,5 @@
                            (throw (:actual m))
                            (merge file-and-line m))
 
-                         (hierarchy/fail-type? m)
-                         (merge file-and-line m)
-
                          :else
-                         m))))))
+                         (merge file-and-line m)))))))

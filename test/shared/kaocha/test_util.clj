@@ -50,3 +50,13 @@
                                          ~pattern
                                          ") but no warning occured.")}))
          result#))))
+
+(defmacro with-test-out-str
+  "Evaluates exprs in a context in which [[clojure.test/*test-out*]] is bound to a
+  fresh StringWriter. Returns the string created by any nested printing calls
+  that use [[clojure.test/with-test-out]]."
+  [& body]
+  `(let [s# (new java.io.StringWriter)]
+     (binding [clojure.test/*test-out* s#]
+       ~@body
+       (str s#))))
