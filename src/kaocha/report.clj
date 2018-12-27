@@ -87,9 +87,7 @@
 
   ``` clojure
   (kaocha.hierarchy/derive! :mismatch :kaocha/fail-type)
-  ```
-
-  "
+  ```"
   (:require [kaocha.core-ext :refer :all]
             [kaocha.output :as output]
             [kaocha.plugin.capture-output :as capture]

@@ -56,11 +56,9 @@
                                                          stacktrace))
                               (and test-fn (test-file-and-line stacktrace test-fn)))]
                       (t/report
-                       (cond
-                         (= :error (:type m))
+                       (if (= :error (:type m))
                          (if (-> m :actual ex-data :kaocha/fail-fast)
                            (throw (:actual m))
                            (merge file-and-line m))
 
-                         :else
                          (merge file-and-line m)))))))

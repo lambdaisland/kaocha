@@ -26,4 +26,5 @@
         (println (System/getProperty "java.runtime.name") (System/getProperty "java.runtime.version"))
         config)
 
+      :else
       config)))
