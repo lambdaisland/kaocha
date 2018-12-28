@@ -28,12 +28,12 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.0-RC3</version>
+      <version>1.10.0</version>
     </dependency>
     <dependency>
       <groupId>expound</groupId>
       <artifactId>expound</artifactId>
-      <version>0.7.1</version>
+      <version>0.7.2</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
