@@ -6,11 +6,15 @@
 - Added a new `--print-env` flag to the `:kaocha.plugin.alpha/info` plugin,
   which outputs the Clojure and Java version before each run.
 
-
 ## Fixed
+
+- Filter out `jdk.internal.reflect` stack frames when detecting source file (Java 9+)
 
 ## Changed
 
+- Prefer a stackframe-based file/line detection over taking the file/line of the
+  test definition, this way the reported location is that of the assertion,
+  rather than that of the test.
 - The `print-invocations` plugin no longer prints out the `--config-file` flag
   when it hasn't changed from its default value (`tests.edn`)
 

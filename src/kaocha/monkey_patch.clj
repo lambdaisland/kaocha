@@ -40,12 +40,16 @@
                               (stacktrace-file-and-line (drop-while
                                                          #(let [cl-name (.getClassName ^StackTraceElement %)]
                                                             (or (str/starts-with? cl-name "java.")
+                                                                (str/starts-with? cl-name "jdk.internal.reflect.")
+                                                                (str/starts-with? cl-name "sun.reflect.")
+
+                                                                (str/starts-with? cl-name "clojure.core")
                                                                 (str/starts-with? cl-name "clojure.test$")
                                                                 (str/starts-with? cl-name "clojure.lang.")
                                                                 (str/starts-with? cl-name "clojure.main$")
-                                                                (str/starts-with? cl-name "sun.reflect.")
-                                                                (str/starts-with? cl-name "clojure.core")
+
                                                                 (str/starts-with? cl-name "orchestra.")
+
                                                                 (str/starts-with? cl-name "kaocha.plugin.capture_output")
                                                                 (str/starts-with? cl-name "kaocha.monkey_patch$")
                                                                 (str/starts-with? cl-name "kaocha.runner")
