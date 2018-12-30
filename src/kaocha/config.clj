@@ -39,10 +39,12 @@
               (rename-key :skip :kaocha.filter/skip)
               (rename-key :focus :kaocha.filter/focus)
               (rename-key :skip-meta :kaocha.filter/skip-meta)
-              (rename-key :focus-meta :kaocha.filter/focus-meta)
-              (->> (merge-config (first (:kaocha/tests (default-config))))))]
-    (assoc m :kaocha.testable/desc (str (name (:kaocha.testable/id m))
-                                        " (" (name (:kaocha.testable/type m)) ")"))))
+              (rename-key :focus-meta :kaocha.filter/focus-meta))]
+    (as-> m $
+      (merge-config (first (:kaocha/tests (default-config))) $)
+      (merge {:kaocha.testable/desc (str (name (:kaocha.testable/id $))
+                                         " (" (name (:kaocha.testable/type $)) ")")}
+             $))))
 
 (defn normalize [config]
   (let [default-config   (default-config)

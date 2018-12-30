@@ -213,3 +213,23 @@ push_clojure_image
 
 * Links
 https://github.com/nubank/emidje
+* Missing tests
+
+- [ ] src/kaocha/watch.clj
+- [ ] src/kaocha/config.clj
+- [ ] src/kaocha/hierarchy.clj
+- [ ] src/kaocha/classpath.clj
+- [ ] src/kaocha/load.clj
+- [ ] src/kaocha/specs.clj
+- [ ] src/kaocha/stacktrace.clj
+- [ ] src/kaocha/plugin/profiling.clj
+- [ ] src/kaocha/plugin/print_invocations.clj
+- [ ] src/kaocha/plugin/alpha/info.clj
+- [ ] src/kaocha/plugin/alpha/xfail.clj
+- [ ] src/kaocha/plugin.clj
+- [ ] src/kaocha/assertions.clj
+- [ ] src/kaocha/report/progress.clj
+- [ ] src/kaocha/monkey_patch.clj
+- [ ] src/kaocha/type.clj
+- [ ] src/kaocha/matcher_combinators.clj
+- [ ] src/kaocha/jit.clj
