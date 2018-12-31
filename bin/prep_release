@@ -24,9 +24,12 @@ VERSION="0.0-$(git rev-list --count HEAD)"
 
 echo_info "Bumping version to $VERSION"
 
+sed 's/lambdaisland\/'"${PROJECT}"' {:mvn\/version "[^"]*"}/lambdaisland\/'"${PROJECT}"' {:mvn\/version "'${VERSION}'"}/' -i README.md
+sed 's/\[lambdaisland\/'"${PROJECT}"' "[^"]*"\]/\[lambdaisland\/'"${PROJECT}"' "'${VERSION}'"\]/' -i README.md
+
 if [[ -d doc ]]; then
-    sed 's/lambdaisland\/'"${PROJECT}"' {:mvn\/version "[^"]*"}/lambdaisland\/'"${PROJECT}"' {:mvn\/version "'${VERSION}'"}/' -i README.md doc/*.md
-    sed 's/\[lambdaisland\/'"${PROJECT}"' "[^"]*"\]/\[lambdaisland\/'"${PROJECT}"' "'${VERSION}'"\]/' -i README.md doc/*.md
+    sed 's/lambdaisland\/'"${PROJECT}"' {:mvn\/version "[^"]*"}/lambdaisland\/'"${PROJECT}"' {:mvn\/version "'${VERSION}'"}/' -i doc/*.md
+    sed 's/\[lambdaisland\/'"${PROJECT}"' "[^"]*"\]/\[lambdaisland\/'"${PROJECT}"' "'${VERSION}'"\]/' -i doc/*.md
     ed < bin/update_toc.ed
 fi
 

@@ -1,4 +1,4 @@
-# Unreleased
+# 0.0-343 (2018-12-31 / c38d94f)
 
 ## Changed
 
