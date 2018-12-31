@@ -24,8 +24,8 @@
                                   (mapcat (fn [v] [(str "--" (name k)) v]) v)
                                   [(str "--" (name k))  v]))
                               (cond-> (dissoc (:kaocha/cli-options results) :focus)
-                                (= "tests.edn" (:test-file (:kaocha/cli-options results)))
-                                (dissoc :test-file))))
+                                (= "tests.edn" (:config-file (:kaocha/cli-options results)))
+                                (dissoc :config-file))))
                      "--focus"
                      (str
                       "'" (cond-> id (= (first id) \:) (subs 1)) "'"))))))
