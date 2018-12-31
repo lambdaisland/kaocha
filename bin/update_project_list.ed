@@ -3,5 +3,5 @@ i
 | Project | CI | Docs | Release | Coverage |
 |---------|----|------|---------|----------|
 .
-.r ! for X in kaocha kaocha-cljs kaocha-cucumber kaocha-junit-xml kaocha-cloverage; do echo "| [${X}](https://github.com/lambdaisland/${X}) | [![CircleCI](https://circleci.com/gh/lambdaisland/${X}.svg?style=svg)](https://circleci.com/gh/lambdaisland/${X}) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/${X})](https://cljdoc.org/d/lambdaisland/${X}) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/${X}.svg)](https://clojars.org/lambdaisland/${X}) | [![codecov](https://codecov.io/gh/lambdaisland/${X}/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/${X}) |" ; done
+.r ! for X in kaocha kaocha-cljs kaocha-cucumber kaocha-junit-xml kaocha-cloverage kaocha-boot; do echo "| [${X}](https://github.com/lambdaisland/${X}) | [![CircleCI](https://circleci.com/gh/lambdaisland/${X}.svg?style=svg)](https://circleci.com/gh/lambdaisland/${X}) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/${X})](https://cljdoc.org/d/lambdaisland/${X}) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/${X}.svg)](https://clojars.org/lambdaisland/${X}) | [![codecov](https://codecov.io/gh/lambdaisland/${X}/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/${X}) |" ; done
 wq
