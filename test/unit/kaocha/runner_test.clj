@@ -18,10 +18,3 @@
       (is (= -1 result))
       (is (re-find #"Unknown option: \"--foo\"\n" out))
       (is (re-find #"USAGE:" out)))))
-
-(deftest help-test
-  (is (= ["" "USAGE:"
-          "" "clj -m kaocha.runner [OPTIONS]... [TEST-SUITE]..."
-          "" "SUMMARY"
-          "" "Options may be repeated multiple times for a logical OR effect."]
-         (runner/help "SUMMARY"))))

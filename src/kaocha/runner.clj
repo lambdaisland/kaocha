@@ -55,19 +55,6 @@
    [nil "--help"                "Display this help message."]
    ["-H" "--test-help"          "Display this help message."]])
 
-(defn help [summary]
-  [""
-   "USAGE:"
-   ""
-   (format "clj -m %s [OPTIONS]... [TEST-SUITE]..." (namespace `_))
-   ""
-   summary
-   ""
-   "Options may be repeated multiple times for a logical OR effect."])
-
-(defn print-help! [summary]
-  (println (str/join "\n" (help summary))))
-
 (defn load-props [file-name]
   (with-open [^java.io.Reader reader (io/reader file-name)]
     (let [props (java.util.Properties.)]
@@ -85,11 +72,11 @@
       (seq errors)
       (do
         (run! println errors)
-        (print-help! summary)
+        (println summary)
         -1)
 
       (or (:help options) (:test-help options))
-      (do (print-help! summary) 0)
+      (do (println summary) 0)
 
       (:version options)
       (do (println (kaocha-version)) 0)
@@ -149,7 +136,10 @@
               :options options
               :errors errors
               :suites suites
-              :summary summary})))))
+              :summary (str "USAGE:\n\n"
+                            "bin/kaocha [OPTIONS]... [TEST-SUITE]...\n\n"
+                            summary
+                            "\n\nOptions may be repeated multiple times for a logical OR effect.")})))))
 
 (defn -main [& args]
   (try+
