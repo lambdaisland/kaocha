@@ -78,6 +78,59 @@
   (let [resource (io/resource "META-INF/maven/lambdaisland/kaocha/pom.properties")]
     (str "lambdaisland/kaocha " (pr-str (some-> resource load-props :version)))))
 
+(defn run [{:keys [config errors options suites summary]}]
+  (let [all-suites     (into #{} (map :kaocha.testable/id) (:kaocha/tests config))
+        unknown-suites (set/difference (set suites) all-suites)]
+    (cond
+      (seq errors)
+      (do
+        (run! println errors)
+        (print-help! summary)
+        -1)
+
+      (or (:help options) (:test-help options))
+      (do (print-help! summary) 0)
+
+      (:version options)
+      (do (println (kaocha-version)) 0)
+
+      (:print-config options)
+      (binding [clojure.core/*print-namespace-maps* false]
+        (pprint/pprint (plugin/run-hook :kaocha.hooks/config config))
+        0)
+
+      (:print-test-plan options)
+      (binding [clojure.core/*print-namespace-maps* false]
+        (pprint/pprint (api/test-plan (plugin/run-hook :kaocha.hooks/config config)))
+        0)
+
+      (seq unknown-suites)
+      (do
+        (println (str "No such suite: "
+                      (str/join ", " (sort unknown-suites))
+                      ", valid options: "
+                      (str/join ", " (sort all-suites))
+                      "."))
+        -2)
+
+      (:kaocha/watch? config)
+      (do
+        ((jit kaocha.watch/run) config) 1) ; exit 1 because only an anomaly would break this loop
+
+      (:print-result options)
+      (let [result (api/run (assoc config :kaocha/reporter []))
+            totals (result/totals (:kaocha.result/tests result))]
+        (binding [clojure.core/*print-namespace-maps* false]
+          (pprint/pprint result))
+        (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))
+
+      :else
+      (do
+        (plugin/run-hook :kaocha.hooks/main config)
+        (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
+              totals (result/totals (:kaocha.result/tests result))]
+          (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))))))
+
 (defn- -main* [& args]
   (binding [clojure.spec/*explain-out* expound/printer]
     (let [{{:keys [config-file plugin]} :options}    (cli/parse-opts args cli-options)
@@ -90,65 +143,16 @@
           config                                     (-> config
                                                          (config/apply-cli-opts options)
                                                          (config/apply-cli-args (map parse-kw arguments)))
-          suites                                     (into #{} (map :kaocha.testable/id) (:kaocha/tests config))
-          unknown-suites                             (set/difference (into #{} (map parse-kw) arguments) (set suites))]
-
+          suites                                     (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
-        (cond
-          (seq errors)
-          (do
-            (run! println errors)
-            (print-help! summary)
-            -1)
-
-          (or (:help options) (:test-help options))
-          (do (print-help! summary) 0)
-
-          (:version options)
-          (do (println (kaocha-version)) 0)
-
-          (:print-config options)
-          (binding [clojure.core/*print-namespace-maps* false]
-            (pprint/pprint (plugin/run-hook :kaocha.hooks/config config))
-            0)
-
-          (:print-test-plan options)
-          (binding [clojure.core/*print-namespace-maps* false]
-            (pprint/pprint (api/test-plan (plugin/run-hook :kaocha.hooks/config config)))
-            0)
-
-          (seq unknown-suites)
-          (do
-            (println (str "No such suite: "
-                          (str/join ", " (sort unknown-suites))
-                          ", valid options: "
-                          (str/join ", " (sort suites))
-                          "."))
-            -2)
-
-          (:kaocha/watch? config)
-          (do
-            ((jit kaocha.watch/run) config) 1) ; exit 1 because only an anomaly would break this loop
-
-          (:print-result options)
-          (let [result (api/run (assoc config :kaocha/reporter []))
-                totals (result/totals (:kaocha.result/tests result))]
-            (binding [clojure.core/*print-namespace-maps* false]
-              (pprint/pprint result))
-            (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))
-
-          :else
-          (do
-            (plugin/run-hook :kaocha.hooks/main config)
-            (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
-                  totals (result/totals (:kaocha.result/tests result))]
-              (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))))))))
-
-(defn- exit-process! [code]
-  (System/exit code))
+        (run {:config config
+              :options options
+              :errors errors
+              :suites suites
+              :summary summary})))))
 
 (defn -main [& args]
   (try+
-   (exit-process! (apply -main* args))
+   (System/exit (apply -main* args))
    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
-     (exit-process! exit-code))))
+     (System/exit exit-code))))

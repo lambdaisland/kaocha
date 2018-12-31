@@ -1,10 +1,9 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- [internal] Extracted `kaocha.runner/run`, to be used by alternative command
+  line runners like boot.
 
 # 0.0-333 (2018-12-28 / 89b4c13)
 
