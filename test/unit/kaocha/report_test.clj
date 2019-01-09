@@ -7,6 +7,8 @@
             [kaocha.hierarchy :as hierarchy]
             [clojure.test :as t]))
 
+(require 'kaocha.assertions)
+
 (deftest dispatch-extra-keys-test
   (testing "it dispatches to custom clojure.test/report extensions"
     (.addMethod r/clojure-test-report
@@ -127,6 +129,89 @@
            (r/testing-vars-str {:file "foo.clj"
                                 :line 33
                                 :testing-vars [#'report-counters-test]})))))
+
+(deftest print-output-test
+  (is (= (str "╭───── Test output ───────────────────────────────────────────────────────\n"
+              "│ foo\n"
+              "╰─────────────────────────────────────────────────────────────────────────\n")
+         (with-out-str
+           (r/print-output {:kaocha/testable {:kaocha.plugin.capture-output/output "foo"}})))))
+
+(deftest assertion-type-test
+  (is (= '=
+         (r/assertion-type {:expected '(= 1 2)})))
+
+  (is (= :default
+         (r/assertion-type {}))))
+
+(deftest print-expr-test
+  (is (= "expected: 1\n  actual: 2\n"
+         (with-out-str
+           (r/print-expr {:expected 1
+                          :actual 2}))))
+
+  (is (= "Expected:\n[36m  1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n"
+         (with-out-str
+           (r/print-expr {:expected '(= 1 (+ 1 1))
+                          :actual '(not (= 1 2))})))))
+
+(deftest fail-summary-test
+  (is (= (str   "\n"
+                "[31mFAIL[m in foo/bar-test (foo.clj:42)\n"
+                "it does the thing\n"
+                "Numbers are not equal\n"
+                "Expected:\n"
+                "[36m  1[0m\n"
+                "Actual:\n"
+                "  [31m-1[0m [32m+2[0m\n")
+         (with-out-str
+           (r/fail-summary {:type :fail
+                            :file "foo.clj"
+                            :line 42
+                            :kaocha/testable {:kaocha.testable/id :foo/bar-test}
+                            :testing-contexts ["it does the thing"]
+                            :expected '(= 1 (+ 1 1))
+                            :actual '(not (= 1 2))
+                            :message "Numbers are not equal"}))))
+
+  (is (= (str "\n"
+              "[31mFAIL[m in foo/bar-test (foo.clj:42)\n"
+              "Numbers are not equal\n"
+              "Oh no!")
+         (with-out-str
+           (r/fail-summary {:type :fail
+                            :file "foo.clj"
+                            :line 42
+                            :kaocha/testable {:kaocha.testable/id :foo/bar-test}
+                            :expected '(= 1 (+ 1 1))
+                            :actual '(not (= 1 2))
+                            :kaocha.report/printed-expression "Oh no!"
+                            :message "Numbers are not equal"}))))
+
+  (is (substring? (str "[31mERROR[m in foo/bar-test (foo.clj:42)\n"
+                       "Numbers are not equal\n"
+                       "Exception: clojure.lang.ExceptionInfo: a message\n"
+                       "{:some :info}\n"
+                       " at kaocha.report_test")
+                  (with-out-str
+                    (r/fail-summary {:type :error
+                                     :file "foo.clj"
+                                     :line 42
+                                     :kaocha/testable {:kaocha.testable/id :foo/bar-test}
+                                     :actual (ex-info "a message" {:some :info})
+                                     :message "Numbers are not equal"}))))
+
+  (is (= (str "\n"
+              "[31mERROR[m in foo/bar-test (foo.clj:42)\n"
+              "Numbers are not equal\n"
+              "Oh no!")
+         (with-out-str
+           (r/fail-summary {:type :error
+                            :file "foo.clj"
+                            :line 42
+                            :kaocha/testable {:kaocha.testable/id :foo/bar-test}
+                            :kaocha.report/printed-expression "Oh no!"
+                            :message "Numbers are not equal"})))))
 
 (deftest tap-test
   (is (= "ok  (foo.clj:20)\n"
