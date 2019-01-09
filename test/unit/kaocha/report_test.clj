@@ -190,9 +190,7 @@
 
   (is (substring? (str "[31mERROR[m in foo/bar-test (foo.clj:42)\n"
                        "Numbers are not equal\n"
-                       "Exception: clojure.lang.ExceptionInfo: a message\n"
-                       "{:some :info}\n"
-                       " at kaocha.report_test")
+                       "Exception: clojure.lang.ExceptionInfo: a message\n")
                   (with-out-str
                     (r/fail-summary {:type :error
                                      :file "foo.clj"
