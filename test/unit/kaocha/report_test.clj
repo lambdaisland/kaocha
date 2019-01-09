@@ -45,6 +45,43 @@
            (with-test-out-str
              (r/dispatch-extra-keys {:type ::knowlo}))))))
 
+(deftest dots*-test
+  (is (= "."
+         (with-test-out-str
+           (r/dots* {:type :pass}))))
+
+  (is (= "[31mF[m"
+         (with-test-out-str
+           (r/dots* {:type :fail}))))
+
+  (is (= "[31mE[m"
+         (with-test-out-str
+           (r/dots* {:type :error}))))
+
+  (is (= "[33mP[m"
+         (with-test-out-str
+           (r/dots* {:type :kaocha/pending}))))
+
+  (is (= "("
+         (with-test-out-str
+           (r/dots* {:type :kaocha/begin-group}))))
+
+  (is (= ")"
+         (with-test-out-str
+           (r/dots* {:type :kaocha/end-group}))))
+
+  (is (= "["
+         (with-test-out-str
+           (r/dots* {:type :begin-test-suite}))))
+
+  (is (= "]"
+         (with-test-out-str
+           (r/dots* {:type :end-test-suite}))))
+
+  (is (= "\n"
+         (with-test-out-str
+           (r/dots* {:type :summary})))))
+
 (deftest tap-test
   (is (= "ok  (foo.clj:20)\n"
          (with-test-out-str
@@ -66,3 +103,10 @@
                      :line 20
                      :expected '(= 3 4)
                      :actual '(not (= 3 4))}))))))
+
+(comment
+  (do
+    (require 'kaocha.repl)
+    (kaocha.repl/run))
+
+  )

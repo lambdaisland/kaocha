@@ -149,6 +149,7 @@
     (print ")")
     (flush)))
 
+;; TODO these really should be :kaocha/{begin,end}-test-suite
 (defmethod dots* :begin-test-suite [_]
   (t/with-test-out
     (print "[")
