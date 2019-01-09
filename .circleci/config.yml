@@ -18,11 +18,11 @@ commands:
             - kaocha/execute:
                 args: "unit --reporter documentation --plugin cloverage --codecov"
                 clojure_version: << parameters.clojure_version >>
+            - kaocha/upload_codecov:
+                flags: unit
             - kaocha/execute:
                 args: "integration --reporter documentation --plugin cloverage --codecov"
                 clojure_version: << parameters.clojure_version >>
-      - kaocha/upload_codecov:
-          flags: unit
       - kaocha/upload_codecov:
           flags: integration
           file: target/coverage/integration*/codecov.json
