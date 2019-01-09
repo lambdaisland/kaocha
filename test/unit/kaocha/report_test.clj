@@ -1,9 +1,11 @@
 (ns kaocha.report-test
   (:require [clojure.test :refer :all]
             [kaocha.report :as r]
+            [kaocha.type :as type]
             [kaocha.test-util :refer [with-test-out-str]]
             [kaocha.output :as output]
-            [kaocha.hierarchy :as hierarchy]))
+            [kaocha.hierarchy :as hierarchy]
+            [clojure.test :as t]))
 
 (deftest dispatch-extra-keys-test
   (testing "it dispatches to custom clojure.test/report extensions"
@@ -81,6 +83,27 @@
   (is (= "\n"
          (with-test-out-str
            (r/dots* {:type :summary})))))
+
+(deftest report-counters-test
+  (is (= #:kaocha.result {:pass 1 :error 0 :fail 0 :pending 0}
+         (type/with-report-counters
+           (r/report-counters {:type :pass})
+           (type/report-count))))
+
+  (is (= #:kaocha.result {:pass 0 :error 0 :fail 1 :pending 0}
+         (type/with-report-counters
+           (r/report-counters {:type :fail})
+           (type/report-count))))
+
+  (is (= #:kaocha.result {:pass 0 :error 1 :fail 0 :pending 0}
+         (type/with-report-counters
+           (r/report-counters {:type :error})
+           (type/report-count))))
+
+  (is (= #:kaocha.result {:pass 0 :error 0 :fail 0 :pending 1}
+         (type/with-report-counters
+           (r/report-counters {:type :kaocha/pending})
+           (type/report-count)))))
 
 (deftest tap-test
   (is (= "ok  (foo.clj:20)\n"
