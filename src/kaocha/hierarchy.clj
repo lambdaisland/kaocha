@@ -68,6 +68,13 @@
   [event]
   (isa? (:type event) :kaocha/deferred))
 
+(defn pending?
+  "A test that generates a pending event will not be executed, but explicitly
+  reported as being pending i.e. still needing to be implemented. Tests with
+  the :kaocha/pending metadata will automatically generate a pending event."
+  [event]
+  (isa? (:type event) :kaocha/pending))
+
 ;; Testable types
 
 (defn leaf?

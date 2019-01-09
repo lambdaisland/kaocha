@@ -298,27 +298,33 @@
   (print-output m))
 
 (defmethod result :summary [m]
-  (t/with-test-out
-    (let [failures (filter hierarchy/fail-type? @history/*history*)]
-      (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
-        (binding [t/*testing-contexts* testing-contexts
-                  t/*testing-vars* testing-vars]
-          (fail-summary m))))
+  (let [history @history/*history*]
+    (t/with-test-out
+      (let [failures (filter hierarchy/fail-type? history)]
+        (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
+          (binding [t/*testing-contexts* testing-contexts
+                    t/*testing-vars* testing-vars]
+            (fail-summary m))))
 
-    (doseq [deferred (filter hierarchy/deferred? @history/*history*)]
-      (clojure-test-report deferred))
+      (doseq [deferred (filter hierarchy/deferred? history)]
+        (clojure-test-report deferred))
 
-    (let [{:keys [test pass fail error pending] :or {pass 0 fail 0 error 0 pending 0}} m
-          failed? (pos-int? (+ fail error))
-          pending? (pos-int? pending)]
-      (println (output/colored (if failed? :red (if pending? :yellow :green))
-                               (str test " tests, "
-                                    (+ pass fail error) " assertions, "
-                                    (when (pos-int? error)
-                                      (str error " errors, "))
-                                    (when pending?
-                                      (str pending " pending, "))
-                                    fail " failures."))))))
+      (let [{:keys [test pass fail error pending] :or {pass 0 fail 0 error 0 pending 0}} m
+            failed? (pos-int? (+ fail error))
+            pending? (pos-int? pending)]
+        (println (output/colored (if failed? :red (if pending? :yellow :green))
+                                 (str test " tests, "
+                                      (+ pass fail error) " assertions, "
+                                      (when (pos-int? error)
+                                        (str error " errors, "))
+                                      (when pending?
+                                        (str pending " pending, "))
+                                      fail " failures."))))
+
+      (when-let [pending (seq (filter hierarchy/pending? history))]
+        (println)
+        (doseq [m pending]
+          (println (output/colored :yellow (str "PENDING " (testing-vars-str m)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

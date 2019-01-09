@@ -2,6 +2,8 @@
 
 ## Added
 
+- Mark tests with `^:kaocha/pending` metadata to skip over them, and report them as "pending"
+
 ## Fixed
 
 ## Changed

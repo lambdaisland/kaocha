@@ -8,7 +8,8 @@
             [clojure.pprint :as pprint]
             [clojure.java.io :as io]
             [kaocha.output :as output]
-            [kaocha.classpath :as classpath]))
+            [kaocha.classpath :as classpath]
+            [clojure.test :as t]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -134,8 +135,23 @@
       result)))
 
 (defn run-testable [test test-plan]
-  (if (::skip test)
+  (cond
+    (::skip test)
     test
+
+    (-> test ::meta :kaocha/pending)
+    (do
+      (let [m {:type :kaocha/pending
+               :file (-> test ::meta :file)
+               :line (-> test ::meta :line)
+               :kaocha/testable test}]
+        (t/do-report m)
+        (assoc test
+               ::events [m]
+               :kaocha.result/count 1
+               :kaocha.result/pending 1)))
+
+    :else
     (as-> test %
       (plugin/run-hook :kaocha.hooks/pre-test % test-plan)
       (run % test-plan)
