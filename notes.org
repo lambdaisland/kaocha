@@ -64,6 +64,10 @@
    - file/line not (always) correct
    - need to manually add test dir to classpath
    - automatically pick a free port for the websocket
+** Boot
+   - [ ] Deal with dynamic classpath ([[https://github.com/lambdaisland/kaocha-boot/issues/1][#1]])
+** JUnit.xml
+   - [ ] Print non-leaf failures ([[https://github.com/lambdaisland/kaocha-junit-xml/issues/3][#1]])
 ** Internal
 - [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
 - [X] Run CI on different levels of Java and Clojure
