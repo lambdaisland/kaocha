@@ -200,7 +200,7 @@
      (or (some-> (:kaocha.testable/id testable) str (subs 1))
          (and (seq testing-vars)
               (reverse (map #(:name (meta %)) testing-vars))))
-     " (" file ":" line ")")))
+     " (" file' ":" line' ")")))
 
 (defn print-output [m]
   (let [output (get-in m [:kaocha/testable ::capture/output])

@@ -105,6 +105,29 @@
            (r/report-counters {:type :kaocha/pending})
            (type/report-count)))))
 
+(deftest testing-vars-str-test
+  (testing "getting info from testable"
+    (is (= "foo/bar (foo.clj:33)"
+           (r/testing-vars-str {:kaocha/testable
+                                {:kaocha.testable/meta
+                                 {:file "foo.clj"
+                                  :line 33}
+                                 :kaocha.testable/id :foo/bar}}))))
+
+  (testing "explicit file/line override"
+    (is (= "foo/bar (foo.clj:33)"
+           (r/testing-vars-str {:file "foo.clj"
+                                :line 33
+                                :kaocha/testable {:kaocha.testable/id :foo/bar
+                                                  :file "bar.clj"
+                                                  :line 44}}))))
+
+  (testing "clojure.test legacy compatiblity"
+    (is (= "(report-counters-test) (foo.clj:33)"
+           (r/testing-vars-str {:file "foo.clj"
+                                :line 33
+                                :testing-vars [#'report-counters-test]})))))
+
 (deftest tap-test
   (is (= "ok  (foo.clj:20)\n"
          (with-test-out-str
