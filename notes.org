@@ -1,39 +1,28 @@
 * Todos
 ** Test types
-- [ ] ClojureScript support
 - [ ] Expectations support
 - [ ] Fudje
 - [ ] improve Midje support
-- [X] Cucumber
 
 ** Major features
-- [ ] main namespace for cloverage
-- [ ] TAP reporter (provided by clojure.test?)
 - [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism (also necessary for parallellism)
 - [ ] parallelism (?)
 
 ** Bug fixes
 - [ ] Should --focus / :focus from CLI/REPL override focus in tests.edn?
-- [X] :kaocha.filter/skip-meta should do a meta merge, retaining :kaocha/skip unless ^:replace is specified.
-- [X] Default like src-paths, skip-meta not honored
-- [ ] Cucumber steps don't currently reload correctly in watch (due to cache) -> convert to use function definitions in ns
 - [ ] Exception in :each handler, what happens?
 
 ** Improvements
 - [ ] Allow filtering `--watch` e.g. to skip temp files
-- [X] Only forward events that clojure.test/report understands
 - [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
 - [ ] Watch changes to `tests.edn`
 - [ ] Clean output when progress bar used without output capturing
 - [ ] Support for test-ns-hook (?)
-- [ ] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
 - [ ] Capture stderr separately
 - [ ] Use SignalHandler instead of shutdownhooks
 - [ ] Run config hooks when doing --print-config
-- [X] Provide short plugin names on CLI when in the kaocha.plugin namespace
-- [ ] Make ids strings, much more flexible
 - [ ] Provide validation in defplugin, don't allow hooks which don't exist
-- [ ] Check CircleCI runner to see how to improve junit.xml output
+- [ ] Define hooks directly in tests.edn
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
@@ -43,6 +32,7 @@
 - [ ] Warn if plugin in config file is not a keyword
 - [ ] Fail fast if clojure-version < 1.9
 - [ ] Similarly kaocha-cljs requires ClojureScript 1.10 (?)
+
 ** Extra config options
 - [ ] make stack trace filtering configurable
 - [ ] Output reporter output to file (?)
@@ -54,23 +44,27 @@
 - [ ] Global pre/post hooks
 - [ ] test.check configuration
 - [ ] Detect side effects (see circleci.test)
+- [ ] min/max clojure/java version
 
 ** Cucumber
 - [ ] Better file/line numbers
 - [ ] detect load errors / step definition errors
 - [ ] --watch feature step/files
+- [ ] Cucumber steps don't currently reload correctly in watch (due to cache) -> convert to use function definitions in ns
 
 ** ClojureScript
-   - file/line not (always) correct
-   - need to manually add test dir to classpath
-   - automatically pick a free port for the websocket
+- [ ] file/line not (always) correct
+- [ ] need to manually add test dir to classpath
+- [ ] automatically pick a free port for the websocket
+
 ** Boot
-   - [ ] Deal with dynamic classpath ([[https://github.com/lambdaisland/kaocha-boot/issues/1][#1]])
+- [ ] Deal with dynamic classpath ([[https://github.com/lambdaisland/kaocha-boot/issues/1][#1]])
+
 ** JUnit.xml
-   - [ ] Print non-leaf failures ([[https://github.com/lambdaisland/kaocha-junit-xml/issues/3][#1]])
+- [ ] Print non-leaf failures ([[https://github.com/lambdaisland/kaocha-junit-xml/issues/3][#1]])
+
 ** Internal
 - [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
-- [X] Run CI on different levels of Java and Clojure
 
 ** Documentation
 - [ ] Kaocha reporter interface
@@ -84,6 +78,17 @@
   - ::caputer/buffer
 
 ** Done
+- [X] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
+- [X] Check CircleCI runner to see how to improve junit.xml output
+- [X] Only forward events that clojure.test/report understands
+- [X] Provide short plugin names on CLI when in the kaocha.plugin namespace
+- [X] Run CI on different levels of Java and Clojure
+- [X] ClojureScript support
+- [X] Cucumber
+- [X] main namespace for cloverage
+- [X] TAP reporter (provided by clojure.test?)
+- [X] :kaocha.filter/skip-meta should do a meta merge, retaining :kaocha/skip unless ^:replace is specified.
+- [X] Default like src-paths, skip-meta not honored
 - [X] Line number of exceptions, right now it shows the test var. (maybe ok because it's in the stack trace?)
 - [X] Use FIPP/puget for colored pretty printing
 - [X] repl/config merge overwrites values from tests.edn / extra-vals with default-config
