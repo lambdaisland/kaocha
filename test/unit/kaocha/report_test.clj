@@ -5,7 +5,8 @@
             [kaocha.test-util :refer [with-test-out-str]]
             [kaocha.output :as output]
             [kaocha.hierarchy :as hierarchy]
-            [clojure.test :as t]))
+            [clojure.test :as t]
+            [kaocha.history :as history]))
 
 (require 'kaocha.assertions)
 
@@ -210,6 +211,26 @@
                             :kaocha/testable {:kaocha.testable/id :foo/bar-test}
                             :kaocha.report/printed-expression "Oh no!"
                             :message "Numbers are not equal"})))))
+
+(deftest result-test
+  (is (= "[31m5 tests, 9 assertions, 2 errors, 1 pending, 3 failures.[m\n"
+         (with-test-out-str
+           (binding [history/*history* (atom [])]
+             (r/result {:type :summary :test 5 :pass 4 :fail 3 :error 2 :pending 1})))))
+
+  (is (= "[32m5 tests, 5 assertions, 0 failures.[m\n"
+         (with-test-out-str
+           (binding [history/*history* (atom [])]
+             (r/result {:type :summary :test 5 :pass 5 :fail 0 :error 0 :pending 0}))))))
+
+(deftest ^:kaocha/pending result-failures-test)
+(deftest ^:kaocha/pending result-deferred-test)
+(deftest ^:kaocha/pending result-pending-test)
+
+(deftest ^:kaocha/pending fail-fast-test)
+(deftest ^:kaocha/pending doc-printed-contexts-test)
+
+(deftest ^:kaocha/pending doc-test)
 
 (deftest tap-test
   (is (= "ok  (foo.clj:20)\n"
