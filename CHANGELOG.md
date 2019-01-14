@@ -2,7 +2,13 @@
 
 ## Added
 
-- Mark tests with `^:kaocha/pending` metadata to skip over them, and report them as "pending"
+- Mark tests with `^:kaocha/pending` metadata to skip over them, and report them
+  as "pending"
+- Added a "hooks" plugin (`:kaocha.plugin/hooks`), that allows hooking into
+  various parts of Kaocha's process using simple functions. This provides a more
+  lightweight alternative to end users for full fledged plugins.
+- The `pre-test` hook now runs earlier, so that `:kaocha.testable/skip` or
+  `:kaocha.testable/pending` can be set from the hook and still be recognized.
 
 ## Fixed
 

@@ -184,7 +184,16 @@
   (is (substring? output (:err m)))
   m)
 
+(Then "print output" [m]
+  (println "----out---------------------------------------")
+  (println (:out m))
+  (println "----err---------------------------------------")
+  (println (:err m))
+  m)
+
 #_
 (do
   (require 'kaocha.repl)
-  (kaocha.repl/run "integration"))
+  (kaocha.repl/run :plugins.hooks-plugin {:kaocha.plugin.capture-output/capture-output? false
+                                          }
+    ))

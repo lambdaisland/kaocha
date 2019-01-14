@@ -135,27 +135,28 @@
       result)))
 
 (defn run-testable [test test-plan]
-  (cond
-    (::skip test)
-    test
+  (let [test (plugin/run-hook :kaocha.hooks/pre-test test test-plan)]
+    (cond
+      (::skip test)
+      test
 
-    (-> test ::meta :kaocha/pending)
-    (do
-      (let [m {:type :kaocha/pending
-               :file (-> test ::meta :file)
-               :line (-> test ::meta :line)
-               :kaocha/testable test}]
-        (t/do-report m)
-        (assoc test
-               ::events [m]
-               :kaocha.result/count 1
-               :kaocha.result/pending 1)))
+      (or (:kaocha.testable/pending test)
+          (-> test ::meta :kaocha/pending))
+      (do
+        (let [m {:type :kaocha/pending
+                 :file (-> test ::meta :file)
+                 :line (-> test ::meta :line)
+                 :kaocha/testable test}]
+          (t/do-report m)
+          (assoc test
+                 ::events [m]
+                 :kaocha.result/count 1
+                 :kaocha.result/pending 1)))
 
-    :else
-    (as-> test %
-      (plugin/run-hook :kaocha.hooks/pre-test % test-plan)
-      (run % test-plan)
-      (plugin/run-hook :kaocha.hooks/post-test % test-plan))))
+      :else
+      (as-> test %
+        (run % test-plan)
+        (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."

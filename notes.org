@@ -1,8 +1,8 @@
 * Todos
 ** Test types
 - [ ] Expectations support
-- [ ] Fudje
 - [ ] improve Midje support
+- [ ] Fudje
 
 ** Major features
 - [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism (also necessary for parallellism)
@@ -57,9 +57,6 @@
 - [ ] need to manually add test dir to classpath
 - [ ] automatically pick a free port for the websocket
 
-** Boot
-- [ ] Deal with dynamic classpath ([[https://github.com/lambdaisland/kaocha-boot/issues/1][#1]])
-
 ** JUnit.xml
 - [ ] Print non-leaf failures ([[https://github.com/lambdaisland/kaocha-junit-xml/issues/3][#1]])
 
@@ -78,6 +75,7 @@
   - ::caputer/buffer
 
 ** Done
+- [X] Boot: Deal with dynamic classpath ([[https://github.com/lambdaisland/kaocha-boot/issues/1][#1]])
 - [X] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
 - [X] Check CircleCI runner to see how to improve junit.xml output
 - [X] Only forward events that clojure.test/report understands
@@ -188,7 +186,6 @@ Huzzaaah seems using the Compiler/LOADER rather than the contextclassloader seem
   - result counts in final result
 
 * Docker images
-
 - [[https://nextjournal.com/a/KYviFHeN9TQPpAoba5FmP/edit][OpenJDK 11]]
 - [[https://nextjournal.com/a/KYvsJbdUoW4J6LASmZvHX/edit][OpenJDK 9]]
 - [[https://nextjournal.com/a/KYvu2HZZytCyB9V6Kd656/edit][OpenJDK 8]]
@@ -202,15 +199,15 @@ docker tag $IMAGE lambdaisland/clojure:openjdk${JDK}
 docker push lambdaisland/clojure:openjdk${JDK}
 }
 
-IMAGE=eu.gcr.io/nextjournal-com/environment@sha256:98c079ac7708fc21185b2aae809e058e51219aa44b5319c7606f96a827830fd7
+IMAGE=docker.nextjournal.com/environment@sha256:3cf693dd52db9898f844c5b6c64a124d9c0612708e95dc1b1064408381be14d9
 JDK=11
 push_clojure_image
 
-IMAGE=eu.gcr.io/nextjournal-com/environment@sha256:2f11d0e4ff5150f2972747d9be64f541cd46b8772f1fb1a2bd6b76e3aa366a33
+IMAGE=docker.nextjournal.com/environment@sha256:e1fb6255d3b71afe9655193ac57f76be6f74960e3df9d63ac6bfbd208fd20cad
 JDK=9
 push_clojure_image
 
-IMAGE=eu.gcr.io/nextjournal-com/environment@sha256:96be10d0a10ceb8cabec300f1265ae87cd3e62a82c00c7073155a10b37911455
+IMAGE=docker.nextjournal.com/environment@sha256:32c81619aecfd70363c1341f17dd99701fbd157ea797a7880fabd8e71bca3b6e
 JDK=8
 push_clojure_image
 #+END_SRC

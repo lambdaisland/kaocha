@@ -66,8 +66,11 @@
 
 
 ;; HOOKS
+
+;; :cli-options
 ;; :config
 ;; :pre-load
 ;; :post-load
 ;; :pre-run
 ;; :post-run
+;; :wrap-run
