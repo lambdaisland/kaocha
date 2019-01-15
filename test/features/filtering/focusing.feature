@@ -4,7 +4,7 @@ Feature: Focusing on specific tests
   namespaces) using the `--focus` command line flag, or `:kaocha.filter/focus`
   key in test suite configuration.
 
-  Background:
+  Background: A simple test suite
     Given a file named "test/my/project/sample_test.clj" with:
       """clojure
       (ns my.project.sample-test

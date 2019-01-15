@@ -7,7 +7,7 @@ Feature: Skipping test based on ids
   Both of these take test ids or test group ids (e.g. the fully qualified name
   of a test var, or the name of a test namespace).
 
-  Background:
+  Background: A simple test suite
     Given a file named "test/my/project/sample_test.clj" with:
       """clojure
       (ns my.project.sample-test

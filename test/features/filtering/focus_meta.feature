@@ -8,7 +8,7 @@ Feature: Focusing based on metadata
   in test suite configuration, you can limit the tests being run to only those
   where the given metadata key has a truthy value associated with it.
 
-  Background:
+  Background: Some tests with metadata
     Given a file named "test/my/project/sample_test.clj" with:
       """clojure
       (ns ^:xxx my.project.sample-test

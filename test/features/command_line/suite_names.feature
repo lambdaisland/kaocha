@@ -4,7 +4,7 @@ Feature: Selecting test suites
   You can supply one or more of these ids on the command line to run only those
   test suites.
 
-  Background:
+  Background: Given two test suites, `:aaa` and `:bbb`
     Given a file named "tests.edn" with:
       """clojure
       #kaocha/v1

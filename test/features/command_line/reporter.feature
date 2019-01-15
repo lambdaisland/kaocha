@@ -7,7 +7,7 @@ Feature: `--reporter` option
   Reporters in the `kaocha.report` namespace can be specified without a
   namespace prefix.
 
-  Background:
+  Background: An example test
     Given a file named "test/my/project/reporter_test.clj" with:
       """clojure
       (ns my.project.reporter-test
