@@ -27,6 +27,7 @@ Full featured next generation test runner for Clojure.
 - [6. Focusing and Skipping](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/6-focusing-and-skipping)
 - [7. Plugins](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/7-plugins)
 - [8. Extending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/8-extending)
+- [Marking tests as pending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/marking-tests-as-pending)
 <!-- /docs-toc -->
 
 ## Features
@@ -58,7 +59,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-343"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-359"}}}}}
 ```
 
 Add a wrapper/binstub
