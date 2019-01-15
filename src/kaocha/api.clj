@@ -14,6 +14,10 @@
 ;; Prevent clj-refactor from "cleaning" these from the ns form
 (require 'kaocha.monkey-patch)
 
+(def ^:dynamic *active?*
+  "Is Kaocha currently active? i.e. loading or runnning tests."
+  false)
+
 (defmacro ^:private with-reporter [r & body]
   `(with-redefs [t/report ~r]
      ~@body))
@@ -71,7 +75,8 @@
             color?     (:kaocha/color? config)
             fail-fast? (:kaocha/fail-fast? config)
             history    (atom [])]
-        (binding [testable/*fail-fast?*   fail-fast?
+        (binding [*active?* true
+                  testable/*fail-fast?*   fail-fast?
                   history/*history*       history
                   output/*colored-output* color?]
           (let [config (resolve-reporter config)]
