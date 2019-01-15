@@ -15,6 +15,13 @@ Feature: Limit tests to Clojure/Java versions
   Specificty matters, a test with a max version of `"1.10" will also run on
   version `"1.10.2"`, whereas if the max version is `"1.10.0"` it will not.
 
+  Note that the Java version is based on the "java.runtime.version" system
+  property. Before Java 9 this was the so called "developer version", which
+  started with `1.`, e.g. `"1.8.0"`, so Java (JDK) versions effectivel jumped
+  from `1.8` to `9`.
+  [1](https://blogs.oracle.com/java-platform-group/a-new-jdk-9-version-string-scheme)
+  [2](https://en.wikipedia.org/wiki/Java_version_history#Versioning_change)
+
   Scenario: Enabling in `tests.edn`
     Given a file named "tests.edn" with:
     """ clojure
@@ -27,7 +34,7 @@ Feature: Limit tests to Clojure/Java versions
     (ns my.sample-test
       (:require [clojure.test :refer :all]))
 
-    (deftest ^{:max-java-version "7"} this-test-gets-skipped
+    (deftest ^{:max-java-version "1.7"} this-test-gets-skipped
       (is false))
 
     (deftest ^{:min-clojure-version "1.6.0"} this-test-runs
