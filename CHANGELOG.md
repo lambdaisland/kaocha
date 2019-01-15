@@ -2,6 +2,9 @@
 
 ## Added
 
+- Added a "version-filter" plugin, which will skip tests if their metadata
+  indicates they are not compatible with the Clojure or Java version being used.
+
 ## Fixed
 
 ## Changed

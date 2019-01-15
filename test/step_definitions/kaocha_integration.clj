@@ -5,7 +5,8 @@
             [clojure.test :refer :all]
             [kaocha.output :as output]
             [lambdaisland.cucumber.dsl :refer :all]
-            [me.raynes.fs :as fs])
+            [me.raynes.fs :as fs]
+            [clojure.test :as t])
   (:import java.io.File
            [java.nio.file Files OpenOption Path Paths]
            [java.nio.file.attribute FileAttribute PosixFilePermissions]))
@@ -185,15 +186,16 @@
   m)
 
 (Then "print output" [m]
-  (println "----out---------------------------------------")
-  (println (:out m))
-  (println "----err---------------------------------------")
-  (println (:err m))
+  (t/with-test-out
+    (println "----out---------------------------------------")
+    (println (:out m))
+    (println "----err---------------------------------------")
+    (println (:err m)))
   m)
 
 #_
 (do
   (require 'kaocha.repl)
-  (kaocha.repl/run :plugins.hooks-plugin {:kaocha.plugin.capture-output/capture-output? false
-                                          }
+  (kaocha.repl/run :plugins.version-filter {:kaocha.plugin.capture-output/capture-output? false
+                                            }
     ))
