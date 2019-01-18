@@ -2,6 +2,9 @@
 
 ## Added
 
+- Added a `pre-report` hook. This allows plugins to inspect and change test
+  events just before they are passed to the reporter.
+
 ## Fixed
 
 ## Changed

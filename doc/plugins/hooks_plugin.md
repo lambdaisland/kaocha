@@ -6,7 +6,7 @@ The hooks plugin allows hooking into Kaocha's process with arbitrary
 
   See the documentation for extending Kaocha for a description of the different
   hooks. The supported hooks are: pre-load, post-load, pre-run, post-run,
-  pre-test, post-test.
+  pre-test, post-test, pre-report.
 
 ## Implementing a hook
 

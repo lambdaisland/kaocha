@@ -74,3 +74,4 @@
 ;; :pre-run
 ;; :post-run
 ;; :wrap-run
+;; :pre-report
