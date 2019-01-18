@@ -158,6 +158,9 @@
         (is (match? [{:type :begin-test-var, :var var?}
                      {:type :pass}
                      {:type :pass}
-                     {:type :error, :file string?, :line pos-int?}
+                     {:type :error
+                      ;;:file string?
+                      ;;:line pos-int?
+                      }
                      {:type :end-test-var, :var var?}]
                     report))))))

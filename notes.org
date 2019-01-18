@@ -1,8 +1,8 @@
 * Todos
 ** Test types
-- [ ] Expectations support
-- [ ] improve Midje support
-- [ ] Fudje
+- [ ] |Expectations support
+- [ ] |improve Midje support
+- [ ] |Fudje
 
 ** Major features
 - [ ] Keep track of intermediate state so post-run hooks can still fire upon Ctrl-C + enables parallelism (also necessary for parallellism)
@@ -13,25 +13,23 @@
 - [ ] Exception in :each handler, what happens?
 
 ** Improvements
-- [ ] Allow filtering `--watch` e.g. to skip temp files
-- [ ] Make a distinction between load errors in the test file being loaded vs. in other namespaces.
-- [ ] Watch changes to `tests.edn`
+- [ ] |Allow filtering `--watch` e.g. to skip temp files
+- [ ] |Make a distinction between load errors in the test file being loaded vs. in other namespaces.
+- [ ] |Watch changes to `tests.edn`
 - [ ] Clean output when progress bar used without output capturing
-- [ ] Support for test-ns-hook (?)
+- [ ] |Support for test-ns-hook (?)
 - [ ] Capture stderr separately
-- [ ] Use SignalHandler instead of shutdownhooks
-- [ ] Run config hooks when doing --print-config
-- [ ] Provide validation in defplugin, don't allow hooks which don't exist
-- [ ] Define hooks directly in tests.edn
+- [ ] |Use SignalHandler instead of shutdownhooks
+- [ ] |Provide validation in defplugin, don't allow hooks which don't exist
 
 ** Friendly interface
 - [ ] Fail in a better way if source-paths don't exist (esp. in --watch)
-- [ ] Warn if --focus does not exist (maybe provide fat-finger hints?)
-- [ ] Provide a warning when no test namespaces are found (please check test-paths and ns-patterns)
-- [ ] Better error when plugin is not found. (currently: no method in multimethod -register)
-- [ ] Warn if plugin in config file is not a keyword
-- [ ] Fail fast if clojure-version < 1.9
-- [ ] Similarly kaocha-cljs requires ClojureScript 1.10 (?)
+- [ ] |Warn if --focus does not exist (maybe provide fat-finger hints?)
+- [ ] |Provide a warning when no test namespaces are found (please check test-paths and ns-patterns)
+- [ ] |Better error when plugin is not found. (currently: no method in multimethod -register)
+- [ ] |Warn if plugin in config file is not a keyword
+- [ ] |Fail fast if clojure-version < 1.9
+- [ ] |Similarly kaocha-cljs requires ClojureScript 1.10 (?)
 
 ** Extra config options
 - [ ] make stack trace filtering configurable
@@ -44,7 +42,6 @@
 - [ ] Global pre/post hooks
 - [ ] test.check configuration
 - [ ] Detect side effects (see circleci.test)
-- [ ] min/max clojure/java version
 
 ** Cucumber
 - [ ] Better file/line numbers
@@ -75,6 +72,9 @@
   - ::caputer/buffer
 
 ** Done
+- [X] min/max clojure/java version
+- [X] Run config hooks when doing --print-config
+- [X] Define hooks directly in tests.edn
 - [X] Boot: Deal with dynamic classpath ([[https://github.com/lambdaisland/kaocha-boot/issues/1][#1]])
 - [X] Provide shorthand `:randomize?` instead of `kaocha.plugin.random/randomize?`
 - [X] Check CircleCI runner to see how to improve junit.xml output
