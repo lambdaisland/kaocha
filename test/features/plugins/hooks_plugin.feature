@@ -6,7 +6,7 @@ Feature: Hooks plugin
 
   See the documentation for extending Kaocha for a description of the different
   hooks. The supported hooks are: pre-load, post-load, pre-run, post-run,
-  pre-test, post-test.
+  pre-test, post-test, pre-report.
 
   Scenario: Implementing a hook
     Given a file named "tests.edn" with:

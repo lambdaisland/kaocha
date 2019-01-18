@@ -170,7 +170,11 @@ first argument (possibly updated).
 
   ;; Allows "wrapping" the run function
   (wrap-run [run test-plan]
-    run))
+    run)
+
+  ;; Runs before the reporter
+  (pre-report [event]
+    event))
 ```
 
 ### Test types
