@@ -1,6 +1,7 @@
 (ns kaocha.plugin
   (:require [kaocha.output :as output]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [slingshot.slingshot :refer [try+ throw+]]))
 
 (def ^:dynamic *current-chain* [])
 
@@ -23,6 +24,10 @@
 
 (defmulti -register "Add your plugin to the stack"
   (fn [name plugins] name))
+
+(defmethod -register :default [name plugins]
+  (output/error "Couldn't load plugin " name)
+  (throw+ {:kaocha/early-exit 254} nil (str "Couldn't load plugin " name)))
 
 (defn register [name plugins]
   (try-load-third-party-lib name)
