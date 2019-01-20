@@ -19,15 +19,15 @@ Full featured next generation test runner for Clojure.
 ## Docs
 
 <!-- docs-toc -->
-- [1. Introduction](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/1-introduction)
-- [2. Installing](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/2-installing)
-- [3. Configuration](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/3-configuration)
-- [4. Running Kaocha CLI](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/4-running-kaocha-cli)
-- [5. Running Kaocha From the REPL](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/5-running-kaocha-from-the-repl)
-- [6. Focusing and Skipping](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/6-focusing-and-skipping)
-- [7. Plugins](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/7-plugins)
-- [8. Extending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/8-extending)
-- [Marking tests as pending](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/marking-tests-as-pending)
+- [1. Introduction](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/1-introduction)
+- [2. Installing](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/2-installing)
+- [3. Configuration](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/3-configuration)
+- [4. Running Kaocha CLI](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/4-running-kaocha-cli)
+- [5. Running Kaocha From the REPL](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/5-running-kaocha-from-the-repl)
+- [6. Focusing and Skipping](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/6-focusing-and-skipping)
+- [7. Plugins](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/7-plugins)
+- [8. Extending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/8-extending)
+- [Marking tests as pending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/marking-tests-as-pending)
 <!-- /docs-toc -->
 
 ## Features
