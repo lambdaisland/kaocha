@@ -8,7 +8,6 @@
   lambdaisland/deep-diff       {:mvn/version "0.0-25"}
   org.tcrawley/dynapath        {:mvn/version "1.0.0"}
   slingshot                    {:mvn/version "0.12.2"}
-  clojure.java-time            {:mvn/version "0.3.2"}
   hawk                         {:mvn/version "0.2.11"}
   expound                      {:mvn/version "0.7.2"}
   orchestra                    {:mvn/version "2018.12.06-2"}

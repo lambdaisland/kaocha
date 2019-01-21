@@ -1,10 +1,10 @@
 (ns kaocha.plugin.profiling
-  (:require [kaocha.plugin :as plugin :refer [defplugin]]
-            [java-time :as jt]
-            [kaocha.testable :as testable]
+  (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.java.io :as io])
-  (:import java.time.Instant))
+            [kaocha.plugin :as plugin :refer [defplugin]]
+            [kaocha.testable :as testable])
+  (:import java.time.Instant
+           java.time.temporal.ChronoUnit))
 
 (defn start [testable]
   (assoc testable ::start (Instant/now)))
@@ -12,9 +12,9 @@
 (defn stop [testable]
   (cond-> testable
     (::start testable)
-    (assoc ::duration (jt/time-between (::start testable)
-                                       (Instant/now)
-                                       :nanos))))
+    (assoc ::duration (.until (::start testable)
+                              (Instant/now)
+                              ChronoUnit/NANOS))))
 
 (defplugin kaocha.plugin/profiling
   (pre-run [test-plan]

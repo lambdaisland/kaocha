@@ -71,11 +71,6 @@
       <version>0.1.2</version>
     </dependency>
     <dependency>
-      <groupId>clojure.java-time</groupId>
-      <artifactId>clojure.java-time</artifactId>
-      <version>0.3.2</version>
-    </dependency>
-    <dependency>
       <groupId>orchestra</groupId>
       <artifactId>orchestra</artifactId>
       <version>2018.12.06-2</version>
