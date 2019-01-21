@@ -6,5 +6,5 @@ end
 
 Dir['doc/*.md'].sort.each do |f|
   title = File.read(f).each_line.first.sub(/^#+/, '').strip
-  puts "- [%s](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/doc/%s)" % [title, uslug(title)]
+  puts "- [%s](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/%s)" % [title, uslug(title)]
 end
