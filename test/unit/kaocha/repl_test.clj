@@ -1,7 +1,6 @@
 (ns kaocha.repl-test
   (:require [clojure.test :refer :all]
             [kaocha.repl :as repl]
-            [matcher-combinators.test]
             [kaocha.config :as config]))
 
 (deftest config-test

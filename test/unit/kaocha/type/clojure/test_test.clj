@@ -2,7 +2,6 @@
   (:require [clojure.test :refer :all]
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
-            [matcher-combinators.test]
             [kaocha.test-util :refer [with-test-ctx]]))
 
 (def test-suite {:kaocha.testable/type :kaocha.type/clojure.test

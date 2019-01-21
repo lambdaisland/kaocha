@@ -1,5 +1,6 @@
 (ns kaocha.plugin
-  (:require [kaocha.output :as output]))
+  (:require [kaocha.output :as output]
+            [clojure.string :as str]))
 
 (def ^:dynamic *current-chain* [])
 
@@ -48,17 +49,20 @@
   {:style/indent [1 :form [1]]}
   [id & hooks]
   (let [plugin-id (keyword id)
+        var-sym (symbol (str (name id) "-hooks"))
         [desc & hooks] (if (string? (first hooks))
                          hooks
                          (cons "" hooks))]
-    `(defmethod -register ~plugin-id [_# plugins#]
-       (conj plugins#
-             ~(into {:kaocha.plugin/id plugin-id
-                     :kaocha.plugin/description desc}
-                    (map (fn [[hook & fn-tail]]
-                           [(keyword "kaocha.hooks" (str hook))
-                            `(fn ~@fn-tail)]))
-                    hooks)))))
+    `(do
+       (def ~var-sym
+         ~(into {:kaocha.plugin/id plugin-id
+                 :kaocha.plugin/description desc}
+                (map (fn [[hook & fn-tail]]
+                       [(keyword "kaocha.hooks" (str hook))
+                        `(fn ~@fn-tail)]))
+                hooks))
+       (defmethod -register ~plugin-id [_# plugins#]
+         (conj plugins# ~var-sym)))))
 
 (comment
   (= (run-hook [{:foo inc} {:foo inc}] :foo 2)

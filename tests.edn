@@ -1,9 +1,13 @@
 #kaocha/v1
 {:plugins [:kaocha.plugin/profiling
-           :kaocha.plugin/print-invocations]
+           :kaocha.plugin/print-invocations
+           :kaocha.plugin/hooks]
+
  :tests   [{:id         :unit
             :test-paths ["test/shared" "test/unit"]}
            {:id                  :integration
             :type                :kaocha.type/cucumber
             :test-paths          ["test/features"]
-            :cucumber/glue-paths ["test/step_definitions"]}]}
+            :cucumber/glue-paths ["test/step_definitions"]}]
+
+ :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]}

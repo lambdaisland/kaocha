@@ -1,8 +1,7 @@
 (ns kaocha.api-test
   (:require [clojure.test :refer :all]
             [kaocha.api :refer :all]
-            [kaocha.test-util :refer [with-out-err]]
-            [matcher-combinators.test]))
+            [kaocha.test-util :refer [with-out-err]]))
 
 (deftest run-test
   (testing "allows API usage"

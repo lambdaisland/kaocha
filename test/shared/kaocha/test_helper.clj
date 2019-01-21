@@ -1,7 +1,6 @@
 (ns kaocha.test-helper
   (:require [clojure.test :as t]
             [kaocha.core-ext :refer :all]
-            [matcher-combinators.test]
             [matcher-combinators.result :as mc.result]
             [matcher-combinators.core :as mc.core]
             [matcher-combinators.model :as mc.model]

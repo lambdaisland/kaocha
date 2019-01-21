@@ -49,3 +49,8 @@
       :break
       (color/document printer ::long-sub long-sub)
       (show-trailing-whitespace remainder)])))
+
+;; Configured as a pre-load hook
+(defn load-assertions [config]
+  (require 'matcher-combinators.test)
+  config)

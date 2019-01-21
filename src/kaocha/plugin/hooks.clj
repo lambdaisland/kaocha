@@ -1,5 +1,6 @@
 (ns kaocha.plugin.hooks
-  (:require [kaocha.plugin :refer [defplugin]]))
+  (:require [kaocha.plugin :refer [defplugin]]
+            [kaocha.testable :as testable]))
 
 (defn update? [m k f]
   (if (contains? m k)
@@ -22,6 +23,7 @@
         hs))
 
 (defplugin kaocha.plugin/hooks
+  "Configure hooks directly in `tests.edn`."
   (config [config]
     (-> config
         (update? :kaocha.hooks/pre-load load-hooks)
@@ -50,5 +52,5 @@
   (post-test [testable test-plan]
     (reduce #(%2 %1 test-plan) testable (:kaocha.hooks/post-test test-plan)))
 
-  (pre-report [test-plan]
-    (reduce #(%2 %1) test-plan (:kaocha.hooks/pre-report test-plan))))
+  (pre-report [event]
+    (reduce #(%2 %1) event (:kaocha.hooks/pre-report testable/*test-plan*))))
