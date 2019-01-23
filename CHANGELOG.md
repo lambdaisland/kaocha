@@ -4,7 +4,9 @@
 
 - Added a `pre-report` hook. This allows plugins to inspect and change test
   events just before they are passed to the reporter.
-- Added a `:kaocha.plugin/notifier` plugin that pops up desktop notifications when a test run passes or fails.
+- Added a `:kaocha.plugin/notifier` plugin that pops up desktop notifications
+  when a test run passes or fails.
+- Ignore `--focus-meta` when none of the tests have this particular metadata.
 
 ## Fixed
 

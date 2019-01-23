@@ -1,4 +1,5 @@
 (ns kaocha.test-helper
+  (:refer-clojure :exclude [symbol])
   (:require [clojure.test :as t]
             [kaocha.core-ext :refer :all]
             [matcher-combinators.result :as mc.result]

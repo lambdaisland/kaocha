@@ -1,4 +1,5 @@
 (ns kaocha.type.clojure.test
+  (:refer-clojure :exclude [symbol])
   (:require [kaocha.core-ext :refer :all]
             [clojure.spec.alpha :as s]
             [kaocha.type.ns :as type.ns]

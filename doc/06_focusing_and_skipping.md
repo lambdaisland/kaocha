@@ -61,8 +61,31 @@ work. You can mark these with a metadata tag:
 To ignore such tests, add a `:skip-meta` key to the test suite config:
 
 ``` clojure
-#kaocha/v1 {:tests [{:id :unit
-                  :skip-meta [:pending]}]}
+#kaocha/v1
+{:tests [{:id :unit
+          :skip-meta [:pending]}]}
 ```
 
-This also works for metadata placed on the test's namespace.
+This also works for metadata placed on the test's namespace, or any other
+metadata that a given test type implementation exposes. For example
+kaocha-cucumber converts scenario tags into metadata.
+
+### Focusing on metadata: special case
+
+`--focus-meta` will only work if at least one test has this metadata tag. If not
+a single test matches then this metadata is ignored. Assuming no other filters
+are in effect this will result in running all tests.
+
+This way you can configure a certain key in `tests.edn` that you can use when
+you want to zone in on a specific test. Add the metadata to the test and only
+this test runs, remove it and the whole suite runs.
+
+``` clojure
+#kaocha/v1
+{:tests [{:focus-meta [:xxx]}]}
+```
+
+```clojure
+(deftest ^:xxx my-test
+  ,,,)
+```
