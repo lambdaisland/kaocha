@@ -16,5 +16,5 @@
     `(clojure.test/deftest ~name ~@body)
     `(do
        (let [var# (clojure.test/deftest ~name ~@body)]
-         (or (find-var 'kaocha.repl/run) (require 'kaocha.repl))
-         (kaocha.repl/run var#)))))
+         (or (find-ns 'kaocha.repl) (require 'kaocha.repl))
+         ((find-var 'kaocha.repl/run) var#)))))

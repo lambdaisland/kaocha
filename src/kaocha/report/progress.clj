@@ -8,10 +8,16 @@
 
 (def bar (atom nil))
 
-(defn format-bar [{:keys [label label-width failed?] :as bar}]
+(defn color [{:keys [failed? pending?]}]
+  (cond
+    failed?  :red
+    pending? :yellow
+    :else    :green))
+
+(defn format-bar [{:keys [label label-width] :as bar}]
   (str (format (str "%" label-width "s") label)
        ":   :percent% ["
-       (output/colored (if failed? :red :green) ":bar")
+       (output/colored (color bar) ":bar")
        "] :progress/:total"))
 
 (defn print-bar []
@@ -36,7 +42,7 @@
                                          (apply max))))
     (print-bar)))
 
-(defmethod progress :end-test-var [m]
+(defmethod progress :kaocha/end-test [m]
   (swap! bar pr/tick)
   (print-bar))
 
@@ -46,6 +52,10 @@
 
 (defmethod progress :kaocha/fail-type [m]
   (swap! bar assoc :failed? true)
+  (print-bar))
+
+(defmethod progress :kaocha/pending [m]
+  (swap! bar assoc :pending? true)
   (print-bar))
 
 (defmethod progress :error [m]

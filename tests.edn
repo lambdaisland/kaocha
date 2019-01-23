@@ -1,7 +1,8 @@
 #kaocha/v1
 {:plugins [:kaocha.plugin/profiling
            :kaocha.plugin/print-invocations
-           :kaocha.plugin/hooks]
+           :kaocha.plugin/hooks
+           :kaocha.plugin/notifier]
 
  :tests   [{:id         :unit
             :test-paths ["test/shared" "test/unit"]}

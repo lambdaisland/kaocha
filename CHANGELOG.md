@@ -4,6 +4,7 @@
 
 - Added a `pre-report` hook. This allows plugins to inspect and change test
   events just before they are passed to the reporter.
+- Added a `:kaocha.plugin/notifier` plugin that pops up desktop notifications when a test run passes or fails.
 
 ## Fixed
 
@@ -16,10 +17,6 @@
 - Added a "version-filter" plugin, which will skip tests if their metadata
   indicates they are not compatible with the Clojure or Java version being used.
 
-## Fixed
-
-## Changed
-
 # 0.0-359 (2019-01-15 / 53d06ab)
 
 ## Added
@@ -31,10 +28,6 @@
   lightweight alternative to end users for full fledged plugins.
 - The `pre-test` hook now runs earlier, so that `:kaocha.testable/skip` or
   `:kaocha.testable/pending` can be set from the hook and still be recognized.
-
-## Fixed
-
-## Changed
 
 # 0.0-343 (2018-12-31 / c38d94f)
 

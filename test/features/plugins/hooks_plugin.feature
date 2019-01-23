@@ -10,7 +10,7 @@ Feature: Hooks plugin
 
   Scenario: Implementing a hook
     Given a file named "tests.edn" with:
-    """
+    """ clojure
     #kaocha/v1
     {:plugins [:kaocha.plugin/hooks]
      :kaocha.hooks/pre-test [my.kaocha.hooks/sample-hook]}
