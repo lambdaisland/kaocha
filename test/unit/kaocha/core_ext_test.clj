@@ -1,4 +1,5 @@
 (ns kaocha.core-ext-test
+  (:refer-clojure :exclude [symbol])
   (:require [clojure.test :refer :all]
             [kaocha.core-ext :refer :all]))
 

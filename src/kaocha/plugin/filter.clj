@@ -1,6 +1,10 @@
 (ns kaocha.plugin.filter
+  (:refer-clojure :exclude [symbol])
   (:require [kaocha.plugin :as plugin :refer [defplugin]]
-            [kaocha.testable :as testable]))
+            [kaocha.testable :as testable]
+            [clojure.set :as set]
+            [kaocha.output :as output]
+            [kaocha.core-ext :refer [symbol]]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -28,6 +32,22 @@
    :focus-meta (if (seq (:focus-meta f2))
                  (:focus-meta f2)
                  (:focus-meta f1))})
+
+(defn truthy-keys [m]
+  (map key (filter val m)))
+
+(defn remove-missing-metadata-keys [focus-meta testable]
+  (let [used-meta  (into #{}
+                         (comp
+                          (map (comp truthy-keys ::testable/meta))
+                          cat
+                          (map keyword))
+                         (testable/test-seq testable))
+        focus-meta (set focus-meta)
+        unused     (set/difference focus-meta used-meta)]
+    (doseq [u unused]
+      (output/warn "No tests found with metadata key " u ". Ignoring --focus-meta " u "."))
+    (set/difference focus-meta unused)))
 
 (defn filter-testable [testable opts]
   (let [{:as opts
@@ -65,7 +85,7 @@
 
 (defplugin kaocha.plugin/filter
   (cli-options [opts]
-    (let [parse #(symbol (if (= \: (first %)) (subs % 1) %))]
+    (let [parse #(keyword (if (= \: (first %)) (subs % 1) %))]
       (conj opts
             [nil "--skip SYM" "Skip tests with this ID and their children."
              :parse-fn parse
@@ -90,10 +110,12 @@
 
   (post-load [test-plan]
     (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)
+          test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)
           filter-suite (fn [suite]
                          (filter-testable
-                          (cond-> suite
-                            (or (seq focus) (seq focus-meta))
-                            (dissoc :kaocha.filter/focus :kaocha.filter/focus-meta))
+                          (if (or (seq focus) (seq focus-meta))
+                            (dissoc suite :kaocha.filter/focus :kaocha.filter/focus-meta)
+                            (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan))
                           (filters test-plan)))]
-      (update test-plan :kaocha.test-plan/tests (partial map filter-suite)))))
+      (-> test-plan
+          (update :kaocha.test-plan/tests (partial map filter-suite))))))

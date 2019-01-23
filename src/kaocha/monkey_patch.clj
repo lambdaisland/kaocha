@@ -1,4 +1,5 @@
 (ns kaocha.monkey-patch
+  (:refer-clojure :exclude [symbol])
   (:require [clojure.string :as str]
             [clojure.test :as t]
             [kaocha.core-ext :refer :all]

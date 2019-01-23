@@ -1,4 +1,5 @@
 (ns kaocha.watch
+  (:refer-clojure :exclude [symbol])
   (:require [hawk.core :as hawk]
             [kaocha.api :as api]
             [kaocha.result :as result]

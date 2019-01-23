@@ -1,5 +1,6 @@
 (ns kaocha.core-ext
   "Core language extensions"
+  (:refer-clojure :exclude [symbol])
   (:import [java.util.regex Pattern]))
 
 (defn regex? [x]
@@ -33,3 +34,19 @@
   arguments to a map."
   [f & args]
   (apply f (apply concat (butlast args) (last args))))
+
+(defn symbol
+  "Backport from Clojure 1.10, symbol function that's a bit more lenient on its
+  inputs.
+
+  Returns a Symbol with the given namespace and name. Arity-1 works on strings,
+  keywords, and vars."
+  ^clojure.lang.Symbol
+  ([name]
+   (cond
+     (symbol? name) name
+     (instance? String name) (clojure.lang.Symbol/intern name)
+     (instance? clojure.lang.Var name) (.toSymbol ^clojure.lang.Var name)
+     (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
+     :else (throw (IllegalArgumentException. "no conversion to symbol"))))
+  ([ns name] (clojure.lang.Symbol/intern ns name)))
