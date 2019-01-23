@@ -147,7 +147,9 @@
                  :file (-> test ::meta :file)
                  :line (-> test ::meta :line)
                  :kaocha/testable test}]
+          (t/do-report (assoc m :type :kaocha/begin-test))
           (t/do-report m)
+          (t/do-report (assoc m :type :kaocha/end-test))
           (assoc test
                  ::events [m]
                  :kaocha.result/count 1

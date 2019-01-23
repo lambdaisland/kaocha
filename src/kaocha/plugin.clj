@@ -54,12 +54,16 @@
                          hooks
                          (cons "" hooks))]
     `(do
+       ~@(map (fn [[hook & fn-tail]]
+                `(defn ~(symbol (str (name id) "-" hook "-hook")) ~@fn-tail))
+              hooks)
+
        (def ~var-sym
          ~(into {:kaocha.plugin/id plugin-id
                  :kaocha.plugin/description desc}
-                (map (fn [[hook & fn-tail]]
+                (map (fn [[hook & _]]
                        [(keyword "kaocha.hooks" (str hook))
-                        `(fn ~@fn-tail)]))
+                        (symbol (str (name id) "-" hook "-hook"))]))
                 hooks))
        (defmethod -register ~plugin-id [_# plugins#]
          (conj plugins# ~var-sym)))))
