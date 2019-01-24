@@ -62,7 +62,7 @@ Feature: Desktop Notifications
     Then the output should contain:
     """
     ⛔️ Failing
-    1 tests, 1 assertions, 1 failures.
+    1 tests, 1 failures.
     true
     1
     critical
