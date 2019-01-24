@@ -95,13 +95,16 @@
 
 (defn apply-cli-args [config args]
   (if (seq args)
-    (update config
-            :kaocha/tests
-            (fn [tests]
-              (mapv #(if (contains? (set args) (:kaocha.testable/id %))
-                       %
-                       (assoc % :kaocha.testable/skip true))
-                    tests)))
+    (-> config
+        (assoc :kaocha/cli-args args)
+        (update :kaocha/tests
+                (fn [tests]
+                  (let [run-suite? (set args)]
+                    (mapv (fn [{suite-id :kaocha.testable/id :as suite}]
+                            (cond-> suite
+                              (not (run-suite? suite-id))
+                              (assoc :kaocha.testable/skip true)))
+                          tests)))))
     config))
 
 (defn resolve-reporter [reporter]

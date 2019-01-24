@@ -18,6 +18,12 @@
 (defn ns? [x]
   (instance? clojure.lang.Namespace x))
 
+(defn file? [x]
+  (instance? java.io.File x))
+
+(defn path? [x]
+  (instance? java.nio.file.Path x))
+
 (defn regex
   ([x & xs]
    (regex (apply str x xs)))

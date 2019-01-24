@@ -11,10 +11,25 @@
             [kaocha.testable :as testable]
             [kaocha.api :as api]))
 
-(defmacro deftest [name & body]
+(defmacro deftest
+  {:doc (:doc (meta #'clojure.test/deftest))
+   :arglists (:arglists (meta #'clojure.test/deftest))}
+  [name & body]
   (if kaocha.api/*active?*
     `(clojure.test/deftest ~name ~@body)
     `(do
        (let [var# (clojure.test/deftest ~name ~@body)]
          (or (find-ns 'kaocha.repl) (require 'kaocha.repl))
          ((find-var 'kaocha.repl/run) var#)))))
+
+(defmacro is
+  {:doc (:doc (meta #'clojure.test/is))
+   :arglists (:arglists (meta #'clojure.test/is))}
+  [& args]
+  `(clojure.test/is ~@args))
+
+(defmacro testing
+  {:doc (:doc (meta #'clojure.test/testing))
+   :arglists (:arglists (meta #'clojure.test/testing))}
+  [& args]
+  `(clojure.test/testing ~@args))

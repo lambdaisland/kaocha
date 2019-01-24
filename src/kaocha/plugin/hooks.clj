@@ -30,6 +30,7 @@
         (update? :kaocha.hooks/post-load load-hooks)
         (update? :kaocha.hooks/pre-run load-hooks)
         (update? :kaocha.hooks/post-run load-hooks)
+        (update? :kaocha.hooks/wrap-run load-hooks)
         (update? :kaocha.hooks/pre-test load-hooks)
         (update? :kaocha.hooks/post-test load-hooks)
         (update? :kaocha.hooks/pre-report load-hooks)))
@@ -45,6 +46,9 @@
 
   (post-run [test-plan]
     (reduce #(%2 %1) test-plan (:kaocha.hooks/post-run test-plan)))
+
+  (wrap-run [run test-plan]
+    (reduce #(%2 %1) run (:kaocha.hooks/wrap-run test-plan)))
 
   (pre-test [testable test-plan]
     (reduce #(%2 %1 test-plan) testable (:kaocha.hooks/pre-test test-plan)))
