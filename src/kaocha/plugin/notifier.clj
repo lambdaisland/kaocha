@@ -25,13 +25,14 @@
 
 (defn message [result]
   (let [{::result/keys [count pass fail error pending]} (result/testable-totals result)]
-    (str count " tests, "
-         (+ pass fail error) " assertions, "
+    (str count " tests"
          (when (pos-int? error)
-           (str error " errors, "))
+           (str ", " error " errors"))
          (when (pos-int? pending)
-           (str pending " pending, "))
-         fail " failures.")))
+           (str ", "pending " pending"))
+         (when (pos-int? fail)
+           (str ", " fail " failures"))
+         ".")))
 
 (defn title [result]
   (if (result/failed? result)

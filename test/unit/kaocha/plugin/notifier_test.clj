@@ -20,7 +20,7 @@
     (is (str/starts-with? (n/detect-command) "terminal-notifier"))))
 
 (deftest message-test
-  (is (= "3 tests, 7 assertions, 4 errors, 5 pending, 1 failures."
+  (is (= "3 tests, 4 errors, 5 pending, 1 failures."
          (n/message
           {:kaocha.result/tests [{:kaocha.testable/id :foo
                                   :kaocha.testable/type :foo/bar
