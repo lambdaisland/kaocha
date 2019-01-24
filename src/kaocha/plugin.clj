@@ -87,4 +87,6 @@
 ;; :pre-run
 ;; :post-run
 ;; :wrap-run
+;; :pre-test
+;; :post-test
 ;; :pre-report

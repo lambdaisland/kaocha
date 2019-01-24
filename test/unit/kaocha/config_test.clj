@@ -1,5 +1,5 @@
 (ns kaocha.config-test
-  (:require [clojure.test :refer :all]
+  (:require [kaocha.test :refer :all]
             [kaocha.config :as c]))
 
 (def rename-key @#'c/rename-key)
@@ -104,10 +104,15 @@
 (deftest apply-cli-args-test
   (is (= {:kaocha/tests
           [{:kaocha.testable/id :foo, :kaocha.testable/skip true}
-           {:kaocha.testable/id :bar}]}
+           {:kaocha.testable/id :bar}]
+          :kaocha/cli-args [:bar]}
          (c/apply-cli-args {:kaocha/tests [{:kaocha.testable/id :foo}
                                            {:kaocha.testable/id :bar}]}
-                           [:bar]))))
+                           [:bar])))
+
+  (is (= {:kaocha/tests [{:kaocha.testable/id :foo}]}
+         (c/apply-cli-args {:kaocha/tests [{:kaocha.testable/id :foo}]}
+                           []))))
 
 (defn rep1 [m] (println "rep1 called"))
 (defn rep2 [m] (println "rep2 called"))
