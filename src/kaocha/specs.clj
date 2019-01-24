@@ -39,8 +39,9 @@
 (s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
 
 (s/def :kaocha.test-plan/testable (s/and :kaocha/testable
-                                         (s/keys :req [:kaocha.testable/desc]
-                                                 :opt [:kaocha.test-plan/tests
+                                         (s/keys :req []
+                                                 :opt [:kaocha.testable/desc
+                                                       :kaocha.test-plan/tests
                                                        :kaacha.test-plan/load-error])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

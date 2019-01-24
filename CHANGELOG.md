@@ -7,10 +7,15 @@
 - Added a `:kaocha.plugin/notifier` plugin that pops up desktop notifications
   when a test run passes or fails.
 - Add the `wrap-run` hook to the hooks plugin.
+- Watch mode: re-run all tests by pressing "enter"
+- Watch mode: watch `tests.edn` for changes
+- Watch mode: ignore certain files with `:kaocha.watch/ignore [".*" ,,,]`
 
 ## Fixed
 
 - Preserve changes to the config made in a `pre-load` hook
+- Watch mode: if a namespace fails to load then report it clearly and fail the
+  test run, skipping any remaining tests.
 
 ## Changed
 
