@@ -6,8 +6,6 @@
   events just before they are passed to the reporter.
 - Added a `:kaocha.plugin/notifier` plugin that pops up desktop notifications
   when a test run passes or fails.
-- Ignore `--focus-meta` when none of the tests have this particular metadata.
-- Print a nicer message when a plugin can't be loaded (Daniel Compton)
 - Add the `wrap-run` hook to the hooks plugin.
 
 ## Fixed
@@ -15,6 +13,9 @@
 - Preserve changes to the config made in a `pre-load` hook
 
 ## Changed
+
+- Ignore `--focus-meta` when none of the tests have this particular metadata.
+- Print a nicer message when a plugin can't be loaded (Daniel Compton)
 
 # 0.0-367 (2019-01-16 / 514765b)
 
