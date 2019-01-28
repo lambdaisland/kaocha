@@ -19,7 +19,20 @@
             [kaocha.plugin :as plugin]
             [kaocha.config :as config]
             [kaocha.core-ext :refer :all])
-  (:import [java.nio.file FileSystems]))
+  (:import [java.nio.file FileSystems]
+           [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
+
+(defn make-queue []
+  (ArrayBlockingQueue. 1024))
+
+(defn qput [^BlockingQueue q x]
+  (.put q x))
+
+(defn qpoll [^BlockingQueue q]
+  (.poll q))
+
+(defn drain-queue! [q]
+  (doall (take-while identity (repeatedly #(qpoll q)))))
 
 (defn- try-run [config focus tracker]
   (let [config (if (seq focus)
@@ -36,12 +49,8 @@
     (println)
     result))
 
-(defn drain-queue! [q]
-  (doall (take-while identity (repeatedly #(.poll q)))))
-
 (defn track-reload! [tracker]
-  (binding [kaocha.api/*active?* true]
-    (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {}))))
+  (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {})))
 
 (defn print-scheduled-operations! [tracker focus]
   (let [unload (set (::ctn-track/unload tracker))
@@ -52,7 +61,7 @@
     (when (seq unload)
       (println "[watch] Unloading" unload))
     (when (seq load)
-      (println "[watch] Loading" unload))
+      (println "[watch] Loading" load))
     (when (seq reload)
       (println "[watch] Reloading" reload))
     (when (seq focus)
@@ -170,11 +179,11 @@ errors as test errors."
   (hawk/watch! [{:paths   watch-paths
                  :handler (fn [ctx event]
                             (when (= (:kind event) :modify)
-                              (.put q (:file event))))}]))
+                              (qput q (:file event))))}]))
 
 (defn run [config]
   (let [watch-paths (watch-paths config)
-        q           (java.util.concurrent.ArrayBlockingQueue. 1024)
+        q           (make-queue)
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload
@@ -193,6 +202,6 @@ errors as test errors."
     (future
       (while true
         (.readLine (io/reader System/in))
-        (.put q :enter)))
+        (qput q :enter)))
 
     @(promise)))
