@@ -54,7 +54,9 @@
                                               (str/starts-with? cl-name "clojure.main$")
 
                                               (str/starts-with? cl-name "orchestra.")
+                                              (str/starts-with? cl-name "nrepl.")
 
+                                              (str/starts-with? cl-name "kaocha.repl")
                                               (str/starts-with? cl-name "kaocha.plugin.capture_output")
                                               (str/starts-with? cl-name "kaocha.monkey_patch$")
                                               (str/starts-with? cl-name "kaocha.runner")
