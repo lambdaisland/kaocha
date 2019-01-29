@@ -14,6 +14,8 @@
   of `:kaocha.plugin.capture-output/capture-output? false`. Since this is a
   built-in plugin that's enabled by default it makes sense to provide a
   shorthand for this.
+- Added a `:kaocha.plugin/bindings` plugin that allows setting dynamic var
+  bindings from `tests.edn`
 
 ## Fixed
 
