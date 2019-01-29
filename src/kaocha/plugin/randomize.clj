@@ -1,5 +1,6 @@
 (ns kaocha.plugin.randomize
-  (:require [kaocha.plugin :as plugin :refer [defplugin]])
+  (:require [kaocha.plugin :as plugin :refer [defplugin]]
+            [kaocha.result :as result])
   (:import [java.util Random]))
 
 (defn rng [seed]
@@ -51,7 +52,7 @@
              (rng-sort rng)))
       test-plan))
 
-  (pre-run [test-plan]
-    (if (::randomize? test-plan)
-      (println "Randomized with --seed" (::seed test-plan)))
+  (post-run [test-plan]
+    (if (and (::randomize? test-plan) (result/failed? test-plan))
+      (print "\nRandomized with --seed" (::seed test-plan)))
     test-plan))

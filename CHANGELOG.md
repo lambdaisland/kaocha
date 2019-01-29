@@ -10,6 +10,10 @@
 - Watch mode: re-run all tests by pressing "enter"
 - Watch mode: watch `tests.edn` for changes
 - Watch mode: ignore certain files with `:kaocha.watch/ignore [".*" ,,,]`
+- To disable output capturing you can now use `:capture-output? false`, instead
+  of `:kaocha.plugin.capture-output/capture-output? false`. Since this is a
+  built-in plugin that's enabled by default it makes sense to provide a
+  shorthand for this.
 
 ## Fixed
 
@@ -21,6 +25,7 @@
 
 - Ignore `--focus-meta` when none of the tests have this particular metadata.
 - Print a nicer message when a plugin can't be loaded (Daniel Compton)
+- Only print random seed when test run failsg
 
 # 0.0-367 (2019-01-16 / 514765b)
 
