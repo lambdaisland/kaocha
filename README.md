@@ -25,9 +25,24 @@ Full featured next generation test runner for Clojure.
 - [4. Running Kaocha CLI](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/4-running-kaocha-cli)
 - [5. Running Kaocha From the REPL](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/5-running-kaocha-from-the-repl)
 - [6. Focusing and Skipping](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/6-focusing-and-skipping)
-- [7. Plugins](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/7-plugins)
-- [8. Extending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/8-extending)
+- [7. Watch mode](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/7-watch-mode)
+- [8. Plugins](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/8-plugins)
+- [9. Extending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/9-extending)
+- [`clojure.test` assertion extensions](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/-clojure-test-assertion-extensions)
+- [CLI: `--fail-fast` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-fail-fast-option)
+- [CLI: Print the Kaocha configuration](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-print-the-kaocha-configuration)
+- [CLI: `--reporter` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-reporter-option)
+- [CLI: Selecting test suites](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-selecting-test-suites)
+- [Focusing based on metadata](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/focusing-based-on-metadata)
+- [Focusing on specific tests](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/focusing-on-specific-tests)
+- [Skipping based on metadata](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/skipping-based-on-metadata)
+- [Skipping test based on ids](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/skipping-test-based-on-ids)
 - [Marking tests as pending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/marking-tests-as-pending)
+- [Plugin: Bindings](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-bindings)
+- [Plugin: Capture output](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-capture-output)
+- [Plugin: Hooks](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-hooks)
+- [Plugin: Notifier (desktop notifications)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-notifier-desktop-notifications-)
+- [Plugin: Clojure/Java Version filter](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-clojure-java-version-filter)
 <!-- /docs-toc -->
 
 ## Features
@@ -59,7 +74,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-367"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-389"}}}}}
 ```
 
 Add a wrapper/binstub
