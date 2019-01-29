@@ -281,18 +281,21 @@
 
   (is (= "\n    level1\n      level2"
          (with-test-out-str
-           (binding [t/*testing-contexts* ["level2" "level1"]]
-             (r/doc {:type :pass})))))
+           (with-redefs [r/doc-printed-contexts (atom nil)]
+             (binding [t/*testing-contexts* ["level2" "level1"]]
+               (r/doc {:type :pass}))))))
 
-  (is (= "[31m ERROR[m"
+  (is (= "\n    level1\n      level2[31m ERROR[m"
          (with-test-out-str
-           (binding [t/*testing-contexts* ["level2" "level1"]]
-             (r/doc {:type :error}))) ))
+           (with-redefs [r/doc-printed-contexts (atom nil)]
+             (binding [t/*testing-contexts* ["level2" "level1"]]
+               (r/doc {:type :error}))))))
 
-  (is (= "[31m FAIL[m"
+  (is (= "\n    level1\n      level2[31m FAIL[m"
          (with-test-out-str
-           (binding [t/*testing-contexts* ["level2" "level1"]]
-             (r/doc {:type :fail}))) ))
+           (with-redefs [r/doc-printed-contexts (atom nil)]
+             (binding [t/*testing-contexts* ["level2" "level1"]]
+               (r/doc {:type :fail}))))))
 
   (is (= "\n"
          (with-test-out-str
