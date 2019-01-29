@@ -1,4 +1,4 @@
-# Selecting test suites
+# CLI: Selecting test suites
 
 Each test suite has a unique id, given as a keyword in the test configuration.
   You can supply one or more of these ids on the command line to run only those

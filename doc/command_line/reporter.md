@@ -1,4 +1,4 @@
-# `--reporter` option
+# CLI: `--reporter` option
 
 The progress and summary printed by Kaocha are done by one or more "reporter"
   functions. A reporter can be specified with the `--reporter` option followed

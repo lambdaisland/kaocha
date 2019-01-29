@@ -1,4 +1,4 @@
-# `--fail-fast` option
+# CLI: `--fail-fast` option
 
 Kaocha by default runs all tests it can find, providing a final summary on
   failures and errors when all tests have finished. With the `--fail-fast`

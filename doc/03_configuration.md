@@ -103,8 +103,6 @@ This is what the `:unit` suite looks like after expansion:
 
 If you don't define any test suites than Kaocha assumes a single `:unit` test suite.
 
-
-
 ### :kaocha.type/clojure.test
 
 The main test suite type implemented at the moment is one for `clojure.test`,
@@ -142,6 +140,14 @@ or from the command line
 
 ``` shell
 bin/kaocha --plugin kaocha.plugin/profiling
+```
+
+For plugins in the `kaocha.plugin` namespace the namespace can be ommitted from
+the command line:
+
+
+``` shell
+bin/kaocha --plugin profiling
 ```
 
 Some plugins are needed for the normal functioning of Kaocha. These are added
@@ -225,6 +231,17 @@ integration:   100% [==================================================] 1/1
 19 test vars, 55 assertions, 0 failures.
 ```
 
+### `kaocha.report/tap`
+
+Reporter that outputs TAP (Test Anything Protocol). Useful for integrating with
+other tools. See also
+[kaocha-junit-xml](https://github.com/lambdaisland/kaocha-junit-xml).
+
+### `kaocha.report/debug`
+
+Prints the `clojure.test` style events map directly, with some keys like
+`:kaocha/testable` filtered out to prevent it from getting too noisy.
+
 ## Example
 
 You should be able to start with a simple `#kaocha/v1 {}`, and leave most
@@ -255,7 +272,8 @@ configuration at its default. This is merely an example of what's possible
  ;; Colorize output (use ANSI escape sequences).
  :color?      true
 
- ;; Watch the file system for changes and re-run.
+ ;; Watch the file system for changes and re-run. You can change this here to be
+ ;; on by default, then disable it when necessary with `--no-watch`.
  :watch?      false
 
  ;; Specifiy the reporter function that generates output. Must be a namespaced
@@ -264,8 +282,11 @@ configuration at its default. This is merely an example of what's possible
  ;; at a var containing a vector, then kaocha will call all referenced functions
  ;; for reporting.
  :reporter    kaocha.report/documentation
- 
- ;; Plugin specific configuration. Show the 10 slowest tests of each type, rather 
+
+ ;; Enable/disable output capturing.
+ :capture-output? true
+
+ ;; Plugin specific configuration. Show the 10 slowest tests of each type, rather
  ;; than only 3.
  :kaocha.plugin.profiling/count 10
  }}

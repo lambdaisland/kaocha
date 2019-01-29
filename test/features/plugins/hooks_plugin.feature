@@ -1,4 +1,4 @@
-Feature: Hooks plugin
+Feature: Plugin: Hooks
 
   The hooks plugin allows hooking into Kaocha's process with arbitrary
   functions. This is very similar to using writing a plugin, but requires less

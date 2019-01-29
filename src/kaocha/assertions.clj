@@ -3,7 +3,8 @@
             [clojure.test :as t]
             [kaocha.report :as report]
             [puget.color :as color]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [slingshot.slingshot :refer [try+ throw+]]))
 
 (defmethod t/assert-expr 'substring? [msg form]
   (let [[_ s1 s2] form]
@@ -49,6 +50,19 @@
       :break
       (color/document printer ::long-sub long-sub)
       (show-trailing-whitespace remainder)])))
+
+#_
+(defmethod t/assert-expr 'thrown+? [msg form]
+  (let [expr (second form)
+        body (nthnext form 2)]
+    `(try+
+      ~@body
+      (t/do-report {:type :fail, :message ~msg,
+                    :expected '~form, :actual nil})
+      (catch ~expr e#
+        (t/do-report {:type :pass, :message ~msg,
+                      :expected '~form, :actual e#})
+        e#))))
 
 ;; Configured as a pre-load hook
 (defn load-assertions [config]

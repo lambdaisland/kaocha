@@ -54,17 +54,19 @@
                 color?
                 fail-fast?
                 randomize?
+                capture-output?
                 watch?]} config
         tests            (some->> tests (mapv normalize-test-suite))]
     (cond-> {}
-      tests              (assoc :kaocha/tests (vary-meta tests assoc :replace true))
-      plugins            (assoc :kaocha/plugins plugins)
-      reporter           (assoc :kaocha/reporter (vary-meta reporter assoc :replace true))
-      (some? color?)     (assoc :kaocha/color? color?)
-      (some? fail-fast?) (assoc :kaocha/fail-fast? fail-fast?)
-      (some? watch?)     (assoc :kaocha/watch? watch?)
-      (some? randomize?) (assoc :kaocha.plugin.randomize/randomize? randomize?)
-      :->                (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
+      tests                   (assoc :kaocha/tests (vary-meta tests assoc :replace true))
+      plugins                 (assoc :kaocha/plugins plugins)
+      reporter                (assoc :kaocha/reporter (vary-meta reporter assoc :replace true))
+      (some? color?)          (assoc :kaocha/color? color?)
+      (some? fail-fast?)      (assoc :kaocha/fail-fast? fail-fast?)
+      (some? watch?)          (assoc :kaocha/watch? watch?)
+      (some? randomize?)      (assoc :kaocha.plugin.randomize/randomize? randomize?)
+      (some? capture-output?) (assoc :kaocha.plugin.capture-output/capture-output? capture-output?)
+      :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [opts tag value]
   (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")

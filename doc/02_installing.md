@@ -98,3 +98,7 @@ projects. The rest of the documentation assumes you can invoke Kaocha with
 
 lein kaocha "$@"
 ```
+
+### Boot
+
+See [kaocha-boot](https://github.com/lambdaisland/kaocha-boot) for instructions.

@@ -76,7 +76,13 @@
 
   (testing "normalizes test suites"
     (is (match? {:kaocha/tests [{:kaocha.testable/id :unit}]}
-                (c/normalize {:tests [{}]})))))
+                (c/normalize {:tests [{}]}))))
+
+  (testing "knows about randomize? and capture-output?"
+    (is (match? {:kaocha.plugin.capture-output/capture-output? :sentinel1
+                 :kaocha.plugin.randomize/randomize? :sentinel2}
+                (c/normalize {:capture-output? :sentinel1
+                              :randomize? :sentinel2})))))
 
 (deftest load-config-test []
   (testing "loads the config file in the project root"

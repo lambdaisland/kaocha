@@ -1,4 +1,4 @@
-# Print the Kaocha configuration
+# CLI: Print the Kaocha configuration
 
 A Kaocha test run starts with building up a Kaocha configuration map, based on
   default values, the contents of `tests.edn`, command line flags, and active

@@ -1,4 +1,4 @@
-Feature: Limit tests to Clojure/Java versions
+Feature: Plugin: Clojure/Java Version filter
 
   The `version-filter` plugin will look for test metadata specifying the minimum
   or maximum version of Clojure or Java the test is designed to work with, and
