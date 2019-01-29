@@ -18,7 +18,7 @@ or
 
 ``` clojure
 #kaocha/v1
-{:plugins [kaocha.plugin/profiling]}
+{:plugins [:kaocha.plugin/profiling]}
 ```
 
 ### Example output
@@ -78,7 +78,7 @@ or
 
 ``` clojure
 #kaocha/v1
-{:plugins [kaocha.plugin/print-invocations]}
+{:plugins [:kaocha.plugin/print-invocations]}
 ```
 
 ### Example output
