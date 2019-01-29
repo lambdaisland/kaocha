@@ -6,7 +6,9 @@
             [kaocha.output :as output]
             [kaocha.hierarchy :as hierarchy]
             [clojure.test :as t]
-            [kaocha.history :as history]))
+            [kaocha.history :as history]
+            [kaocha.testable :as testable]
+            [slingshot.slingshot :refer [try+]]))
 
 (require 'kaocha.assertions)
 
@@ -223,14 +225,78 @@
            (binding [history/*history* (atom [])]
              (r/result {:type :summary :test 5 :pass 5 :fail 0 :error 0 :pending 0}))))))
 
-(deftest ^:kaocha/pending result-failures-test)
-(deftest ^:kaocha/pending result-deferred-test)
-(deftest ^:kaocha/pending result-pending-test)
+(deftest result-failures-test
+  (is (= "\n[31mFAIL[m in foo/bar-test (foo.clj:42)\nit does the thing\nNumbers are not equal\nExpected:\n[36m  1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n[31m5 tests, 6 assertions, 1 failures.[m\n"
+         (with-test-out-str
+           (binding [
+                     history/*history* (atom [{:type :fail
+                                               :file "foo.clj"
+                                               :line 42
+                                               :kaocha/testable {:kaocha.testable/id :foo/bar-test}
+                                               :testing-contexts ["it does the thing"]
+                                               :expected '(= 1 (+ 1 1))
+                                               :actual '(not (= 1 2))
+                                               :message "Numbers are not equal"}])]
+             (r/result {:type :summary :test 5 :pass 5 :fail 1 :error 0 :pending 0}))))))
 
-(deftest ^:kaocha/pending fail-fast-test)
-(deftest ^:kaocha/pending doc-printed-contexts-test)
+(deftest fail-fast-test
+  (is (nil? (r/fail-fast {:type :fail})))
+  (is (= :caught (try
+                   (try+
+                    (binding [testable/*fail-fast?* true]
+                      (r/fail-fast {:type :fail}))
+                    (catch :kaocha/fail-fast e
+                      :caught))
+                   (catch Throwable e
+                     :not-caught)))))
 
-(deftest ^:kaocha/pending doc-test)
+(deftest doc-print-contexts-test
+  (is (= "\n    Level 1\n      Level 2A\n      Level 2B"
+         (with-redefs [r/doc-printed-contexts (atom nil)]
+           (with-out-str
+             (r/doc-print-contexts ["Level 2A" "Level 1"])
+             (r/doc-print-contexts ["Level 2B" "Level 1"]))))))
+
+(deftest doc-test
+  (is (= "--- xxx ---------------------------"
+         (with-test-out-str
+           (r/doc {:type :begin-test-suite
+                   :kaocha/testable {:kaocha.testable/desc "xxx"}}))))
+
+
+  (is (= "\nxxx"
+         (with-test-out-str
+           (r/doc {:type :begin-test-ns
+                   :kaocha/testable {:kaocha.testable/desc "xxx"}}))))
+
+  (is (= "\n"
+         (with-test-out-str
+           (r/doc {:type :end-test-ns
+                   :kaocha/testable {:kaocha.testable/desc "xxx"}}))))
+
+  (is (= "\n  xxx"
+         (with-test-out-str
+           (r/doc {:type :begin-test-var
+                   :kaocha/testable {:kaocha.testable/desc "xxx"}}))))
+
+  (is (= "\n    level1\n      level2"
+         (with-test-out-str
+           (binding [t/*testing-contexts* ["level2" "level1"]]
+             (r/doc {:type :pass})))))
+
+  (is (= "[31m ERROR[m"
+         (with-test-out-str
+           (binding [t/*testing-contexts* ["level2" "level1"]]
+             (r/doc {:type :error}))) ))
+
+  (is (= "[31m FAIL[m"
+         (with-test-out-str
+           (binding [t/*testing-contexts* ["level2" "level1"]]
+             (r/doc {:type :fail}))) ))
+
+  (is (= "\n"
+         (with-test-out-str
+           (r/doc {:type :summary})))))
 
 (deftest tap-test
   (is (= "ok  (foo.clj:20)\n"
