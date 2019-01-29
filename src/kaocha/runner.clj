@@ -102,7 +102,8 @@
 
       (:kaocha/watch? config)
       (do
-        ((jit kaocha.watch/run) config) 1) ; exit 1 because only an anomaly would break this loop
+        ((jit kaocha.watch/run) config)
+        @(promise))
 
       (:print-result options)
       (let [result (api/run (assoc config :kaocha/reporter []))

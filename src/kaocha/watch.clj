@@ -31,6 +31,9 @@
 (defn qpoll [^BlockingQueue q]
   (.poll q))
 
+(defn qtake [^BlockingQueue q]
+  (.take q))
+
 (defn drain-queue! [q]
   (doall (take-while identity (repeatedly #(qpoll q)))))
 
@@ -83,9 +86,15 @@
     (some #(.matches % path) patterns)))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
-  (let [f (.take q)]
-    (if (and (file? f) (glob? (.toPath f) ignore))
+  (let [f (qtake q)]
+    (cond
+      (and (file? f) (glob? (.toPath f) ignore))
       (recur q tracker watch-paths ignore)
+
+      (= :finish f)
+      [tracker f]
+
+      :else
       [(drain-and-rescan! q tracker watch-paths) f])))
 
 (defn reload-config [config]
@@ -99,39 +108,39 @@
         plugin-chain (plugin/load-all (concat (:kaocha/plugins config) plugin))]
     [config plugin-chain]))
 
-(defn run-loop [config tracker q watch-paths]
+(defn run-loop [finish? config tracker q watch-paths]
   (loop [tracker      tracker
          config       config
          plugin-chain plugin/*current-chain*
          focus        nil]
+    (when-not @finish?
+      (let [result  (try-run config focus tracker)
+            tracker (::tracker result)
+            error   (::error result)
+            ignore  (::ignore config)]
 
-    (let [result  (try-run config focus tracker)
-          tracker (::tracker result)
-          error   (::error result)
-          ignore  (::ignore config)]
+        (cond
+          error
+          (do
+            (println "[watch] Error reloading, all tests skipped.")
+            (let [[tracker _] (wait-and-rescan! q tracker watch-paths ignore)
+                  [config plugin-chain] (reload-config config)]
+              (recur tracker config plugin-chain nil)))
 
-      (cond
-        error
-        (do
-          (println "[watch] Error reloading, all tests skipped.")
-          (let [[tracker _] (wait-and-rescan! q tracker watch-paths ignore)
-                [config plugin-chain] (reload-config config)]
-            (recur tracker config plugin-chain nil)))
+          (and (seq focus) (not (result/failed? result)))
+          (do
+            (println "[watch] Failed tests pass, re-running all tests.")
+            (recur (drain-and-rescan! q tracker watch-paths) config plugin-chain nil))
 
-        (and (seq focus) (not (result/failed? result)))
-        (do
-          (println "[watch] Failed tests pass, re-running all tests.")
-          (recur (drain-and-rescan! q tracker watch-paths) config plugin-chain nil))
-
-        :else
-        (let [[tracker trigger] (wait-and-rescan! q tracker watch-paths ignore)
-              [config plugin-chain] (reload-config config)
-              focus (when-not (= :enter trigger)
-                      (->> result
-                           testable/test-seq
-                           (filter result/failed-one?)
-                           (map ::testable/id)))]
-          (recur tracker config plugin-chain focus))))))
+          :else
+          (let [[tracker trigger] (wait-and-rescan! q tracker watch-paths ignore)
+                [config plugin-chain] (reload-config config)
+                focus (when-not (= :enter trigger)
+                        (->> result
+                             testable/test-seq
+                             (filter result/failed-one?)
+                             (map ::testable/id)))]
+            (recur tracker config plugin-chain focus)))))))
 
 (defplugin kaocha.watch/plugin
   "This is an internal plugin, don't use it directly.
@@ -181,27 +190,35 @@ errors as test errors."
                             (when (= (:kind event) :modify)
                               (qput q (:file event))))}]))
 
-(defn run [config]
+(defn run* [config finish? q]
   (let [watch-paths (watch-paths config)
-        q           (make-queue)
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload
                                 :lambdaisland.tools.namespace.track/load))]
-    (future
-      (try
-        (run-loop config tracker q watch-paths)
-        (catch Throwable t
-          (.printStackTrace t))
-        (finally
-          (println "[watch] loop broken"))))
 
     (watch! q watch-paths)
     (watch! q [(get-in config [:kaocha/cli-options :config-file])])
 
     (future
-      (while true
-        (.readLine (io/reader System/in))
-        (qput q :enter)))
+      (let [stdin (io/reader System/in)]
+        (while (not @finish?)
+          (if (and (.ready stdin) (= (.read stdin) (long \newline)))
+            (qput q :enter)
+            (Thread/sleep 100)))))
 
-    @(promise)))
+    (try
+      (run-loop finish? config tracker q watch-paths)
+      (catch Throwable t
+        (.printStackTrace t))
+      (finally
+        (println "[watch] watching stopped.")))))
+
+(defn run [config]
+  (let [finish? (atom false)
+        q       (make-queue)]
+    (future
+      (run* config finish? q))
+    (fn []
+      (reset! finish? true)
+      (qput q :finish))))
