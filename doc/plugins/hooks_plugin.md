@@ -1,4 +1,4 @@
-# Hooks plugin
+# Plugin: Hooks
 
 The hooks plugin allows hooking into Kaocha's process with arbitrary
   functions. This is very similar to using writing a plugin, but requires less
@@ -12,7 +12,7 @@ The hooks plugin allows hooking into Kaocha's process with arbitrary
 
 - <em>Given </em> a file named "tests.edn" with:
 
-``` nil
+``` clojure
 #kaocha/v1
 {:plugins [:kaocha.plugin/hooks]
  :kaocha.hooks/pre-test [my.kaocha.hooks/sample-hook]}

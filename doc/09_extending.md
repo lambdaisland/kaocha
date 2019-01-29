@@ -1,4 +1,4 @@
-# 8. Extending
+# 9. Extending
 
 Kaocha is designed to be extensible and customizable, so that it can adapt to
 the needs of different projects, and so that it can act as a common base layer
@@ -177,6 +177,96 @@ first argument (possibly updated).
     event))
 ```
 
+### Tips for developing plugins
+
+Start with the boilerplate, i.e. a namespace + empty defplugin declaration.
+
+``` clojure
+(ns my.kaocha.plugin
+  (:require [kaocha.plugin :refer [defplugin]]))
+
+(defplugin my.kaocha/plugin
+  ,,,)
+```
+
+From there you could already add it to `tests.edn` and e.g. start in `--watch`
+and start iterating, but that's a pretty coarse workflow. For more fine-grained
+work you can use `kaocha.repl`, in particular `kaocha.repl/config` and
+`kaocha.repl/test-plan` (we should probably also add a `kaocha.repl/result` so
+you can inspect the final result data).
+
+So say you have a `pre-load` hook, and your plugin is enabled in `tests.edn`,
+then you can call `(kaocha.repl/test-plan)` and see the effects of your plugin.
+
+`defplugin` will actually define several vars, plus the final `defmethod` which
+registers the plugin. So you can test your hooks in isolation.
+
+``` clojure
+(defplugin my.kaocha/plugin
+  "Docstring"
+  (cli-options [opts] opts)
+  (config [config] config)
+  (pre-load [config] config))
+
+;; This defines
+(defn plugin-cli-options-hook [opts] opts)
+(defn plugin-config-hook [config] config)
+(defn plugin-pre-load-hook [config] config)
+
+(def plugin-hooks
+  {:kaocha.plugin/id :my.kaocha/plugin
+   :kaocha.plugin/description "Docstring"
+   :kaocha.hooks/cli-options plugin-cli-options-hook
+   :kaocha.hooks/config plugin-config-hook
+   :kaocha.hooks/pre-load plugin-pre-load-hook})
+
+(defmethod kaocha.plugin/-register :my.kaocha/plugin [chain]
+  (conj chain plugin-hooks))
+```
+
+So this is great for unit tests (test the hooks directly), and should be helpful
+when developing from the REPL as well.
+
+``` clojure
+(my.kaocha.plugin/plugin-config-hook (kaocha.repl/config))
+;; => ???
+```
+You may wonder why all this boilerplate, e.g. why does the `-register` method
+have to call `conj`, on the plugin chain, instead of just returning the map with
+hooks? The reason is this allows for plugins to do more complex things, like
+injecting multiple plugins at once, adding a plugin before or after an other
+one, or wrapping functions of other plugins.
+
+Now of course the question is: which hooks to use and what to do with them.
+Generally your hooks will fall into two categories, either you're just using a
+hook to cause some side effect at a certain point in the execution, or you're
+manipulating Kaocha's data structures to change its behavior.
+
+Kaocha is very data driven, so the idea is that e.g. by changing the config or
+test-plan you can change its behavior. For instance you can implement special
+test filtering with a `pre-test` hook that does `(assoc testable
+:kaocha.testable/skip true)` when a certain condition is met. Here you'll have
+to poke around the source a bit, look for the place where you would normally
+hack in your change, and then hope that there's a hook there and affordances to
+cause the right behavior.
+
+Final a general tip/best practice: if your plugin is in any way configurable,
+then it should use the `cli-options` and `config` hooks, in such a way that
+options specified on the CLI override those set in the config. The `cli-options`
+hooks defines your command line flags, then in the `config` hooks you can
+inspect `:kaocha/cli-options` in the config to find the flags used, and use them
+to update the config, or provide a default. Any following hooks then look at the
+config for the necessary settings (and so not directly at
+`:kaocha/cli-options`). You can look at the built-in plugins, most of them use
+this pattern.
+
+This is important because this way when a user uses `--print-config` they see
+those default values added by plugins, which they can copy to `tests.edn` and
+tweak. (you should use namespaced keywords based on the name of your plugin.)
+
+You should also check out `kaocha.test-util/with-test-ctx`, this is useful to
+isolate unit tests from Kaocha itself.
+
 ### Test types
 
 Kaocha is designed to be a universal tool, able to run any type of test suite
@@ -231,6 +321,10 @@ Some things to note:
 - you should structure your test types hierarchically, and use
   `kaocha.testable/load-testables` / `kaocha.testable/run-testables` to perform
   the recursion.
+- The inner most test type, the one where the recursion bottoms out (e.g. for
+  `clojure.test` these are the test vars) is known as a "leaf" type. You should
+  use `(kaocha.hierarchy/derive! :my.test/type :kaocha.testable.type/leaf)` to
+  mark it as such.
 - the `-run` implementation is responsible for calling `clojure.test/do-report`
 - `-load` transforms a config into a test-plan, so it should `dissoc
   :kaocha/tests` and `assoc :kaocha.test-plan/tests`

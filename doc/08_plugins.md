@@ -1,4 +1,4 @@
-# 7. Plugins
+# 8. Plugins
 
 This section describes plug-ins that are built-in but not enabled by default. Functionality of default plugins is described in the [Running Kaocha CLI](04_running_kaocha_cli.md) section.
 
@@ -92,3 +92,21 @@ FAIL in (clojure-test-summary-test) (kaocha/history_test.clj:5)
 
 bin/kaocha --focus 'kaocha.history-test/clojure-test-summary-test'
 ```
+
+## Notifier
+
+Pop up a system notifications whenever a test run fails or passes.
+
+See [Plugins: Notifier](plugins/notifier.md)
+
+## Version filter
+
+Skip tests that aren't compatible with the current version of Java or Clojure.
+
+See [Plugins: Version Filter](plugins/version_filter.md)
+
+## Hooks
+
+Write functions that hook into various parts of Kaocha
+
+See [Plugins: Hooks](plugins/hooks.md)

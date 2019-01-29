@@ -39,7 +39,7 @@
 - [ ] Provide inspect plugin with e.g. --print-test-ids
 - [ ] Timing info of config/load/run steps
 - [ ] Provide extra dynamic var bindings
-- [ ] Global pre/post hooks
+- [X] Global pre/post hooks
 - [ ] test.check configuration
 - [ ] Detect side effects (see circleci.test)
 

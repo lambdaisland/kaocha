@@ -74,4 +74,42 @@
 
        (merge file-and-line m)))))
 
+#_
+(defn assert-predicate
+  "Like clojure.test/assert-predicate, but get file/line from form metadata."
+  [msg form]
+  (let [args (rest form)
+        pred (first form)]
+    `(let [values# (list ~@args)
+           result# (apply ~pred values#)]
+       (if result#
+         (do-report {:type :pass, :message ~msg,
+                     :expected '~form, :actual (cons ~pred values#)
+                     :line ~(:line (or (meta (first form)) (meta form)))
+                     :file ~(:file (meta form))})
+         (do-report {:type :fail,
+                     :message ~msg,
+                     :expected '~form,
+                     :actual (list '~'not (cons '~pred values#))
+                     :line ~(:line (or (meta (first form)) (meta form)))
+                     :file ~(:file (meta form))}))
+       result#)))
+#_
+(defn assert-any
+  "Like clojure.test/assert-any, but get file/line from form metadata."
+  [msg form]
+  `(let [value# ~form]
+     (if value#
+       (do-report {:type :pass, :message ~msg,
+                   :expected '~form, :actual value#
+                   :line ~(:line (or (meta (first form)) (meta form)))
+                   :file ~(:file (meta form))})
+       (do-report {:type :fail, :message ~msg,
+                   :expected '~form, :actual value#
+                   :line ~(:line (or (meta (first form)) (meta form)))
+                   :file ~(:file (meta form))}))
+     value#))
+
 (alter-var-root #'t/do-report (constantly do-report))
+#_(alter-var-root #'t/assert-any (constantly assert-any))
+#_(alter-var-root #'t/assert-predicate (constantly assert-predicate))

@@ -38,8 +38,15 @@ output.
 
 For example, to see a colorful progress bar, use
 
-```
+``` shell
 bin/kaocha --reporter kaocha.report.progress/progress
+```
+
+Plugins in the `kaocha.plugin` namespace, and reporters in the `kaocha.report`
+namespace can be specified without the namespace.
+
+``` shell
+bin/kaocha --plugin profiling --reporter documentation
 ```
 
 ## Fail fast mode
@@ -64,21 +71,11 @@ base with the same seed you will always get the same test order. This way you
 can e.g. reproduce a test run that failed on a build server.
 
 ``` shell
-bin/kaocha --seed 10761431 
+bin/kaocha --seed 10761431
 ```
 
 Use `--no-randomize` to load suites in the order they are specified, and vars in
-the order they occur in the source.
-
-## Watch mode
-
-The `--watch` flag will tell Kaocha to watch both the test and source files for
-changes, and automatically re-run all tests.
-
-If any tests fail, then upon the next change first the failed tests will be run.
-Only when they pass is the complete suite run again.
-
-To shorten the feedback loop you can combine `--watch` with `--fail-fast`.
+the order they occur in the source. You can disable randomization in `tests.edn`
 
 ## Control output
 
@@ -108,4 +105,3 @@ structures (EDN) with `--print-config`, `--print-test-plan`, and
 --print-test-plan                 Load tests, build up a test plan, then print out the test plan and exit.
 --print-result                    Print the test result map as returned by the Kaocha API.
 ```
-

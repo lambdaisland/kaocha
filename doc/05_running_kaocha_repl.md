@@ -54,7 +54,7 @@ understand namespace and var objects.
 (run #'rand-ints-test)
 ```
 
-`(run)` without any arguments is equivalent to `(run *ns*)`. If you really want to run all test suites without discrimination, use [run-all](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/api/kaocha.repl#run-all).
+`(run)` without any arguments is equivalent to `(run *ns*)`. If you really want to run all test suites without discrimination, use [run-all](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/api/kaocha.repl#run-all).
 
 
 ## Passing configuration
@@ -87,3 +87,9 @@ redefines and runs the test in one go.
 
 When using CIDER this combines really well with
 `cider-pprint-eval-defun-at-point` (binding in CIDER 1.18.1: `C-c C-f`).
+
+## Config and Test plan
+
+The `(kaocha.repl/config)` and `(kaocha.config/test-plan)` functions are very
+useful when diagnosing issues, and can be helpful when developing plugins or
+test types.

@@ -1,4 +1,4 @@
-# Output capturing
+# Plugin: Capture output
 
 Kaocha has a plugin which will capture all output written to stdout or stderr
   during the test run. When tests pass this output is hidden, when they fail the
