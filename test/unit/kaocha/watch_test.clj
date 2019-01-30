@@ -123,6 +123,7 @@
 
     (Thread/sleep 100)
     (integration/spit-file m (str "test/" prefix "/bar_test.clj") (str "(ns " prefix ".bar-test (:require [clojure.test :refer :all])) (deftest xxx-test (is (= :xxx :zzz)))"))
+;;(w/qput q (.resolve (:dir m) (str "test/" prefix "/bar_test.clj")))
     (Thread/sleep 100)
     (reset! finish? true)
     (w/qput q :finish)
