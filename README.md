@@ -95,7 +95,7 @@ and source paths. Optionally set a reporter or load plugins.
           :test-paths ["test/unit"]
           :source-paths ["src"]}]
  ;; :reporter kaocha.report.progress/progress
- ;; :plugins [kaocha.plugin/profiling]
+ ;; :plugins [:kaocha.plugin/profiling]
  }
 ```
 
