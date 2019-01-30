@@ -108,6 +108,12 @@
       (str/replace #"-" "_")
       (str ".clj")))
 
+(defn spit-dir [m path]
+  (let [{:keys [dir] :as m} (test-dir-setup m)
+        path (join dir path)]
+    (mkdir path)
+    m))
+
 (defn spit-file [m path contents]
   (let [{:keys [dir] :as m} (test-dir-setup m)
         path (join dir path)]
