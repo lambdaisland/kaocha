@@ -68,6 +68,8 @@ This is no replacement for reading the docs, but if you're particularly
 impatient to try it out, or if you already know Kaocha and need a quick
 reference how to set up a new project, then this guide is for you.
 
+### Clojure CLI (tools.deps)
+
 Add Kaocha as a dependency, preferably under an alias.
 
 ``` clojure
@@ -77,7 +79,7 @@ Add Kaocha as a dependency, preferably under an alias.
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-389"}}}}}
 ```
 
-Add a wrapper/binstub
+Add a binstub called `bin/kaocha`
 
 ```
 mkdir -p bin
@@ -86,6 +88,50 @@ echo 'clojure -A:test -m kaocha.runner "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
 
+### Leiningen
+
+Add a profile and alias
+
+``` clojure
+;; project.clj
+(defproject my-proj "0.1.0"
+  :dependencies [,,,]
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "0.0-389"]]}}
+  :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
+```
+
+Add a binstub called `bin/kaocha`
+
+``` shell
+mkdir -p bin
+echo '#!/bin/bash' > bin/kaocha
+echo 'lein kaocha "$@"' >> bin/kaocha
+chmod +x bin/kaocha
+```
+
+### Boot
+
+In your `build.boot` add the Kaocha dependency, and import the Kaocha task
+
+``` clojure
+;; build.boot
+(set-env! :source-paths #{"src"}
+          :dependencies '[[lambdaisland/kaocha-boot "..."]])
+
+(require '[kaocha.boot-task :refer [kaocha]])
+```
+
+Add a binstub called `bin/kaocha`
+
+``` bash
+mkdir -p bin
+echo '#!/bin/bash' > bin/kaocha
+echo 'boot kaocha "$@"' >> bin/kaocha
+chmod +x bin/kaocha
+```
+
+### All tools
+
 Add a `tests.edn` at the root of the project, add a first test suite with test
 and source paths. Optionally set a reporter or load plugins.
 
@@ -93,9 +139,10 @@ and source paths. Optionally set a reporter or load plugins.
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["test/unit"]
-          :source-paths ["src"]}]
+          :source-paths ["src"]
+          :ns-patterns ["-test$"]}]
  ;; :reporter kaocha.report.progress/progress
- ;; :plugins [:kaocha.plugin/profiling]
+ ;; :plugins [:kaocha.plugin/profiling :kaocha.plugin/notifier]
  }
 ```
 
@@ -122,6 +169,11 @@ bin/kaocha --config-file tests_ci.edn
 # See all available options
 bin/kaocha --test-help
 ```
+
+## Third party projects
+
+* [kaocha-noyoda](https://github.com/magnars/kaocha-noyoda) Don't speak like
+  Yoda, write `(is (= actual expected))` instead of `(is (= expected actual))`
 
 ## Requirements
 
