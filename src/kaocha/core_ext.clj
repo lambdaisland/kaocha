@@ -19,7 +19,10 @@
   (instance? clojure.lang.Namespace x))
 
 (defn file? [x]
-  (instance? java.io.File x))
+  (and (instance? java.io.File x) (.isFile x)))
+
+(defn directory? [x]
+  (and (instance? java.io.File x) (.isDirectory x)))
 
 (defn path? [x]
   (instance? java.nio.file.Path x))

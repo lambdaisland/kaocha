@@ -1,24 +1,24 @@
 (ns kaocha.watch
   (:refer-clojure :exclude [symbol])
-  (:require [hawk.core :as hawk]
+  (:require [clojure.java.io :as io]
+            [clojure.set :as set]
+            [clojure.string :as str]
+            [clojure.test :as t]
+            [hawk.core :as hawk]
             [kaocha.api :as api]
-            [kaocha.result :as result]
+            [kaocha.config :as config]
+            [kaocha.core-ext :refer :all]
+            [kaocha.output :as output]
+            [kaocha.plugin :as plugin]
             [kaocha.plugin :refer [defplugin]]
-            [clojure.java.io :as io]
+            [kaocha.result :as result]
+            [kaocha.stacktrace :as stacktrace]
+            [kaocha.testable :as testable]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
             [lambdaisland.tools.namespace.file :as ctn-file]
             [lambdaisland.tools.namespace.parse :as ctn-parse]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
-            [lambdaisland.tools.namespace.track :as ctn-track]
-            [clojure.string :as str]
-            [clojure.set :as set]
-            [kaocha.testable :as testable]
-            [kaocha.stacktrace :as stacktrace]
-            [kaocha.output :as output]
-            [clojure.test :as t]
-            [kaocha.plugin :as plugin]
-            [kaocha.config :as config]
-            [kaocha.core-ext :refer :all])
+            [lambdaisland.tools.namespace.track :as ctn-track])
   (:import [java.nio.file FileSystems]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
@@ -89,6 +89,9 @@
   (let [f (qtake q)]
     (cond
       (and (file? f) (glob? (.toPath f) ignore))
+      (recur q tracker watch-paths ignore)
+
+      (directory? f)
       (recur q tracker watch-paths ignore)
 
       (= :finish f)
