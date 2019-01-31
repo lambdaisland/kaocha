@@ -46,6 +46,15 @@
                                          " (" (name (:kaocha.testable/type $)) ")")}
              $))))
 
+(defn normalize-plugin-names [plugins]
+  (mapv (fn [p]
+          (cond
+            (qualified-keyword? p) p
+            (simple-keyword? p) (keyword "kaocha.plugin" (name p))
+            :else
+            (throw (ex-info "Plugin name must be a keyword" {:plugins plugins}))))
+        plugins))
+
 (defn normalize [config]
   (let [default-config   (default-config)
         {:keys [tests

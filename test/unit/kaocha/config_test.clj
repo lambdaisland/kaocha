@@ -69,6 +69,12 @@
     (is (match? {:kaocha.testable/desc "foo (clojure.test)"}
                 (c/normalize-test-suite {:type :kaocha.type/clojure.test :id :foo})))))
 
+(deftest normalize-plugin-names-test
+  (is (= [:kaocha.plugin/foo :foo/bar]
+         (c/normalize-plugin-names [:foo :foo/bar])))
+
+  (is (thrown? clojure.lang.ExceptionInfo (c/normalize-plugin-names '[foo]))))
+
 (deftest normalize-test
   (testing "normalizes keys"
     (is (match? {:kaocha/color? false}

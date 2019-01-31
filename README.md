@@ -142,7 +142,7 @@ and source paths. Optionally set a reporter or load plugins.
           :source-paths ["src"]
           :ns-patterns ["-test$"]}]
  ;; :reporter kaocha.report.progress/progress
- ;; :plugins [:kaocha.plugin/profiling :kaocha.plugin/notifier]
+ ;; :plugins [:profiling :notifier]
  }
 ```
 

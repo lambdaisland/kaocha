@@ -36,10 +36,7 @@
 - [ ] Output reporter output to file (?)
 
 ** Plugin ideas
-- [ ] Provide inspect plugin with e.g. --print-test-ids
 - [ ] Timing info of config/load/run steps
-- [ ] Provide extra dynamic var bindings
-- [X] Global pre/post hooks
 - [ ] test.check configuration
 - [ ] Detect side effects (see circleci.test)
 
@@ -51,11 +48,10 @@
 
 ** ClojureScript
 - [ ] file/line not (always) correct
-- [ ] need to manually add test dir to classpath
-- [ ] automatically pick a free port for the websocket
+- [ ] |need to manually add test dir to classpath
+- [ ] |automatically pick a free port for the websocket
 
 ** JUnit.xml
-- [ ] Print non-leaf failures ([[https://github.com/lambdaisland/kaocha-junit-xml/issues/3][#1]])
 
 ** Internal
 - [ ] Add smoke tests for all reporters and plugins (anything that is loaded conditionally)
@@ -72,6 +68,10 @@
   - ::caputer/buffer
 
 ** Done
+- [X] Print non-leaf failures ([[https://github.com/lambdaisland/kaocha-junit-xml/issues/3][#1]])
+- [X] Provide inspect plugin with e.g. --print-test-ids
+- [X] Provide extra dynamic var bindings
+- [X] Global pre/post hooks
 - [X] min/max clojure/java version
 - [X] Run config hooks when doing --print-config
 - [X] Define hooks directly in tests.edn

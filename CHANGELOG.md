@@ -6,6 +6,9 @@
 
 ## Changed
 
+- Built in plugins in the `kaocha.plugin` can now be specified as simple (rather
+  than namespaced) keywords.
+
 # 0.0-389 (2019-01-29 / 152db39)
 
 ## Added
