@@ -5,6 +5,7 @@
             [kaocha.type.ns :as type.ns]
             [kaocha.testable :as testable]
             [kaocha.classpath :as classpath]
+            [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
             [clojure.java.io :as io]
             [clojure.test :as t]))
@@ -30,3 +31,5 @@
 (s/def :kaocha/source-paths (s/coll-of string?))
 (s/def :kaocha/test-paths (s/coll-of string?))
 (s/def :kaocha/ns-patterns (s/coll-of string?))
+
+(hierarchy/derive! :kaocha.type/clojure.test :kaocha.testable.type/suite)

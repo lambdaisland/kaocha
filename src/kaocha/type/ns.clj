@@ -3,6 +3,7 @@
   (:require [clojure.test :as t]
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
+            [kaocha.hierarchy :as hierarchy]
             [clojure.spec.alpha :as s]
             [kaocha.type.var]
             [kaocha.output :as output]
@@ -88,3 +89,5 @@
 
 (s/def :kaocha.ns/name simple-symbol?)
 (s/def :kaocha.ns/ns   ns?)
+
+(hierarchy/derive! :kaocha.type/ns :kaocha.testable.type/group)

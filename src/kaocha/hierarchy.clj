@@ -77,6 +77,16 @@
 
 ;; Testable types
 
+(defn suite?
+  "Top level testables are called suites, e.g. a suite of clojure.test tests."
+  [testable]
+  (isa? (:kaocha.testable/type testable) :kaocha.testable.type/suite))
+
+(defn group?
+  "Intermediary testables are called groups, e.g. a namespace of tests."
+  [testable]
+  (isa? (:kaocha.testable/type testable) :kaocha.testable.type/group))
+
 (defn leaf?
   "This is a leaf in the tree of testables, i.e. it's an actual test with
   assertions, not just a container for tests.
