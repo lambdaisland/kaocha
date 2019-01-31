@@ -8,6 +8,11 @@
 
 - Built in plugins in the `kaocha.plugin` can now be specified as simple (rather
   than namespaced) keywords.
+- The binding plugin has been removed, instead its functionality is now
+  built-in, which allowed us to address several issues.
+- Load errors now end in an immediate failure of the test run, instead of a
+  warning. They are reported as an error so plugins like the notifier and
+  junit.xml can display them.
 
 # 0.0-389 (2019-01-29 / 152db39)
 

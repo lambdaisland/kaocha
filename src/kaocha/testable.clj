@@ -9,7 +9,9 @@
             [clojure.java.io :as io]
             [kaocha.output :as output]
             [kaocha.classpath :as classpath]
-            [clojure.test :as t]))
+            [clojure.test :as t]
+            [kaocha.hierarchy :as hierarchy])
+  (:import [clojure.lang Compiler$CompilerException]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -67,7 +69,12 @@
       (output/warn "In :test-paths, no such file or directory: " path))
     (classpath/add-classpath path))
 
-  (-load testable))
+  (try
+    (-load testable)
+    (catch Throwable t
+      (if (hierarchy/suite? testable)
+        (assoc testable ::load-error t)
+        (throw t)))))
 
 (s/fdef load
   :args (s/cat :testable :kaocha/testable)
@@ -140,6 +147,23 @@
 (defn run-testable [test test-plan]
   (let [test (plugin/run-hook :kaocha.hooks/pre-test test test-plan)]
     (cond
+      (::load-error test)
+      (let [error (::load-error test)
+            m {:type :error
+               :actual (::load-error test)
+               :kaocha/testable test}
+            m (cond-> m
+                (instance? Compiler$CompilerException error)
+                (assoc :file (.-source ^Compiler$CompilerException error)
+                       :line (.-line ^Compiler$CompilerException error)))]
+        (t/do-report (assoc m :type :kaocha/begin-suite))
+        (t/do-report m)
+        (t/do-report (assoc m :type :kaocha/end-suite))
+        (assoc test
+               ::events [m]
+               :kaocha.result/count 1
+               :kaocha.result/error 1))
+
       (::skip test)
       test
 
@@ -166,14 +190,18 @@
 (defn run-testables
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-  (loop [result []
-         [test & testables] testables]
-    (if test
-      (let [r (run-testable test test-plan)]
-        (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-          (reduce into result [[r] testables])
-          (recur (conj result r) testables)))
-      result)))
+  (let [load-error? (some ::load-error testables)]
+    (loop [result []
+           [test & testables] testables]
+      (if test
+        (let [test (cond-> test
+                     (and load-error? (not (::load-error test)))
+                     (assoc ::skip true))
+              r (run-testable test test-plan)]
+          (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
+            (reduce into result [[r] testables])
+            (recur (conj result r) testables)))
+        result))))
 
 (defn test-seq [testable]
   (cons testable (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)

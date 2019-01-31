@@ -36,17 +36,11 @@
                    :kaocha.testable/meta #(= % (meta (resolve 'foo.bar-test/a-test)))}]}
                 test-plan)))
 
-  (util/expect-warning #"Could not locate foo/unknown_test"
-                       (is (match? {:kaocha.testable/type        :kaocha.type/ns
-                                    :kaocha.testable/id          :foo.unknown-test
-                                    :kaocha.testable/desc        "foo.unknown-test"
-                                    :kaocha.ns/name              'foo.unknown-test
-                                    :kaocha.test-plan/load-error #(instance? java.io.FileNotFoundException %)}
-
-                                   (testable/load {:kaocha.testable/type :kaocha.type/ns
-                                                   :kaocha.testable/id   :foo.unknown-test
-                                                   :kaocha.testable/desc "foo.unknown-test"
-                                                   :kaocha.ns/name       'foo.unknown-test})))))
+  (is (thrown? Exception
+               (testable/load {:kaocha.testable/type :kaocha.type/ns
+                               :kaocha.testable/id   :foo.unknown-test
+                               :kaocha.testable/desc "foo.unknown-test"
+                               :kaocha.ns/name       'foo.unknown-test}))))
 
 (deftest run-test
   (classpath/add-classpath "fixtures/a-tests")
