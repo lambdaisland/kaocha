@@ -64,12 +64,14 @@
                 fail-fast?
                 randomize?
                 capture-output?
-                watch?]} config
+                watch?
+                bindings]} config
         tests            (some->> tests (mapv normalize-test-suite))]
     (cond-> {}
       tests                   (assoc :kaocha/tests (vary-meta tests assoc :replace true))
       plugins                 (assoc :kaocha/plugins plugins)
       reporter                (assoc :kaocha/reporter (vary-meta reporter assoc :replace true))
+      bindings                (assoc :kaocha/bindings bindings)
       (some? color?)          (assoc :kaocha/color? color?)
       (some? fail-fast?)      (assoc :kaocha/fail-fast? fail-fast?)
       (some? watch?)          (assoc :kaocha/watch? watch?)
@@ -141,3 +143,21 @@
 
     :else
     reporter))
+
+(defn binding-map
+  "Get the dynamic bindings configured in the configuration, and turn them into a
+  var->value mapping to be used with [[clojure.core/with-bindings]].
+
+  This will ignore unkown vars/namespaces, because they may not have loaded yet."
+  ([config]
+   (binding-map config false))
+  ([config throw-errors?]
+   (into {}
+         (keep
+          (fn [[k v]]
+            (try
+              [(find-var k) v]
+              (catch java.lang.IllegalArgumentException e
+                (when throw-errors?
+                  (throw e))))))
+         (:kaocha/bindings config))))

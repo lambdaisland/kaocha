@@ -6,6 +6,8 @@
                                      "clojure.test$"
                                      "clojure.lang."
                                      "clojure.core"
+                                     "clojure.main"
+                                     "orchestra."
                                      "kaocha.monkey_patch"])
 
 (defn elide-element? [e]
