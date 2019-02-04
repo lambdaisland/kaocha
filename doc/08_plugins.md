@@ -2,7 +2,7 @@
 
 This section describes plug-ins that are built-in but not enabled by default. Functionality of default plugins is described in the [Running Kaocha CLI](04_running_kaocha_cli.md) section.
 
-For information on *writing* plugins, see the section on [extending Kaocha](08_extending.md).
+For information on *writing* plugins, see the section on [extending Kaocha](09_extending.md).
 
 ## Profiling
 
