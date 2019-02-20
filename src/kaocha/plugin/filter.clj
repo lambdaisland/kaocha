@@ -45,8 +45,9 @@
                          (testable/test-seq testable))
         focus-meta (set focus-meta)
         unused     (set/difference focus-meta used-meta)]
-    (doseq [u unused]
-      (output/warn "No tests found with metadata key " u ". Ignoring --focus-meta " u "."))
+    (when (:focus-meta-not-found (:kaocha/warnings testable) true)
+      (doseq [u unused]
+        (output/warn "No tests found with metadata key " u ". Ignoring --focus-meta " u ".")))
     (set/difference focus-meta unused)))
 
 (defn filter-testable [testable opts]

@@ -63,7 +63,8 @@
   [testable]
   (load-type+validate testable)
   (doseq [path (:kaocha/test-paths testable)]
-    (when-not (.exists (io/file path))
+    (when (and (:test-path-does-not-exist (:kaocha/warnings testable) true)
+               (not (.exists (io/file path))))
       (output/warn "In :test-paths, no such file or directory: " path))
     (classpath/add-classpath path))
 
