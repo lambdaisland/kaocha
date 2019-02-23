@@ -68,8 +68,6 @@ This is no replacement for reading the docs, but if you're particularly
 impatient to try it out, or if you already know Kaocha and need a quick
 reference how to set up a new project, then this guide is for you.
 
-
-
 ### Clojure CLI (tools.deps)
 
 Add Kaocha as a dependency, preferably under an alias.
