@@ -68,6 +68,8 @@ This is no replacement for reading the docs, but if you're particularly
 impatient to try it out, or if you already know Kaocha and need a quick
 reference how to set up a new project, then this guide is for you.
 
+
+
 ### Clojure CLI (tools.deps)
 
 Add Kaocha as a dependency, preferably under an alias.
@@ -132,14 +134,25 @@ chmod +x bin/kaocha
 
 ### All tools
 
-Add a `tests.edn` at the root of the project, add a first test suite with test
-and source paths. Optionally set a reporter or load plugins.
+By default, Kaocha assumes that:
+- source files are in the `src/` folder,
+- tests files are in the `test/` folder,
+- all test namespaces _names_ end with `-test`
+(eg. `my-project.core-test`).
+Also, the default test suite id is `:unit` (just `unit` on the command line).
 
+If your tests don't seem to run (outcome is `0 tests, 0 assertions, 0 failures`)
+you may need to write up your own configuration: add a `tests.edn` at the root
+of the project to configure actual test and source paths, and optionally set a
+reporter or load plugins (cf. Configuration in the
+[documentation](https://cljdoc.org/d/lambdaisland/kaocha/)).
+
+Example `test.edn`:
 ``` clojure
 #kaocha/v1
 {:tests [{:id :unit
           :test-paths ["test/unit"]
-          :source-paths ["src"]
+          :source-paths ["src-clj"]
           :ns-patterns ["-test$"]}]
  ;; :reporter kaocha.report.progress/progress
  ;; :plugins [:profiling :notifier]
