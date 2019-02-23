@@ -90,6 +90,6 @@ When using CIDER this combines really well with
 
 ## Config and Test plan
 
-The `(kaocha.repl/config)` and `(kaocha.config/test-plan)` functions are very
+The `(kaocha.repl/config)` and `(kaocha.repl/test-plan)` functions are very
 useful when diagnosing issues, and can be helpful when developing plugins or
 test types.
