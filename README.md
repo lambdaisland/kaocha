@@ -145,17 +145,21 @@ of the project to configure actual test and source paths, and optionally set a
 reporter or load plugins (cf. Configuration in the
 [documentation](https://cljdoc.org/d/lambdaisland/kaocha/)).
 
-Example `test.edn`:
+
+Example of a catch-all `test.edn` config file (should run all
+tests found in `src/` and `/test`, in any namespace).
 ``` clojure
 #kaocha/v1
-{:tests [{:id :unit
-          :test-paths ["test/unit"]
-          :source-paths ["src-clj"]
-          :ns-patterns ["-test$"]}]
- ;; :reporter kaocha.report.progress/progress
- ;; :plugins [:profiling :notifier]
+#kaocha/v1
+{:tests [{:id          :unit
+          :test-paths  ["test" "src"]
+          :ns-patterns [".*"]}]}
+          ;; :reporter kaocha.report.progress/progress
+          ;; :plugins [:profiling :notifier]
  }
 ```
+Warning: this is not an optimal configuration. To avoid extra churn, you should
+try and target only folders and namespaces that actually contain tests.
 
 Run your tests
 
