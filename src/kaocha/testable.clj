@@ -102,6 +102,9 @@
   Also performs validation, and lazy loading of the testable type's
   implementation."
   [testable test-plan]
+  (when (empty? (:kaocha.test-plan/tests testable))
+    (output/warn (str "No tests were found, make sure :test-paths and " 
+                      ":ns-patterns are configured correctly in tests.edn.")))
   (load-type+validate testable)
   (binding [*current-testable* testable]
     (let [run (plugin/run-hook :kaocha.hooks/wrap-run -run test-plan)
