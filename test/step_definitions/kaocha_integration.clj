@@ -50,6 +50,10 @@
   (is (substring? output (:out m)))
   m)
 
+(Then "stderr should contain:" [m output]
+  (is (substring? output (:err m)))
+  m)
+
 (Then "the output should be" [m output]
   (is (= (str/trim output) (str/trim (:out m))))
   m)
