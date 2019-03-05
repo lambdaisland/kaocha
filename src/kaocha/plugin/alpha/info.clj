@@ -1,6 +1,6 @@
 (ns kaocha.plugin.alpha.info
   (:require [kaocha.api :as api]
-            [kaocha.plugin :refer [defplugin]]
+            [kaocha.plugin :as plugin :refer [defplugin]]
             [kaocha.testable :as testable]
             [slingshot.slingshot :refer [throw+]]))
 
@@ -15,10 +15,11 @@
   (main [config]
     (cond
       (:print-test-ids (:kaocha/cli-options config))
-      (let [test-plan (api/test-plan config)]
-        (doseq [test (testable/test-seq test-plan)]
-          (println (:kaocha.testable/id test)))
-        (throw+ {:kaocha/early-exit 0}))
+      (binding [api/*active?* true]
+        (let [test-plan (api/test-plan (plugin/run-hook :kaocha.hooks/config config))]
+          (doseq [test (testable/test-seq test-plan)]
+            (println (:kaocha.testable/id test)))
+          (throw+ {:kaocha/early-exit 0})))
 
       (:print-env (:kaocha/cli-options config))
       (do

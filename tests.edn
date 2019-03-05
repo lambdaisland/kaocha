@@ -1,5 +1,6 @@
 #kaocha/v1
-{:plugins [:kaocha.plugin/profiling
+{:plugins [:kaocha.plugin.alpha/info
+           :kaocha.plugin/profiling
            :kaocha.plugin/print-invocations
            :kaocha.plugin/hooks
            :kaocha.plugin/notifier]

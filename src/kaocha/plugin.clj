@@ -41,7 +41,7 @@
             (if-let [step-fn (get plugin step)]
               (let [value (apply step-fn value extra-args)]
                 (when (nil? value)
-                  (output/warn "Plugin " (:id plugin) " hook " step " returned nil."))
+                  (output/warn "Plugin " (:kaocha.plugin/id plugin) " hook " step " returned nil."))
                 value)
               value))
           value
