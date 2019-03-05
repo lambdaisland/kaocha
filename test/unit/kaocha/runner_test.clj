@@ -7,6 +7,9 @@
   (with-out-err
     (apply #'runner/-main* args)))
 
+(deftest working-tools-cli?-test
+  (is (#'runner/working-tools-cli?)))
+
 (deftest main-test
   (testing "--test-help"
     (let [{:keys [out err result]} (-main "--test-help")]

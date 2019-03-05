@@ -9,7 +9,7 @@
             [kaocha.output :as output]
             [kaocha.api :as api]
             [kaocha.jit :refer [jit]]
-            [slingshot.slingshot :refer [try+]]
+            [slingshot.slingshot :refer [try+ throw+]]
             [kaocha.result :as result]
             [kaocha.plugin :as plugin]
             [clojure.java.io :as io]
@@ -119,7 +119,19 @@
               totals (result/totals (:kaocha.result/tests result))]
           (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))))))
 
+(defn- working-tools-cli?
+  "Check if the version of clojure.tools.cli in use is able to handle on/off
+  boolean flags."
+  []
+  (= {:foo true}
+     (:options
+      (cli/parse-opts ["--foo"] [[nil "--[no-]foo"]]))))
+
 (defn- -main* [& args]
+  (when-not (working-tools-cli?)
+    (output/error "org.clojure/tools.cli does not have all the capabilities that Kaocha needs. Make sure you are using version 0.3.6 or greater.")
+    (throw+ {:kaocha/early-exit 253}))
+
   (binding [clojure.spec/*explain-out* expound/printer]
     (let [{{:keys [config-file plugin]} :options}    (cli/parse-opts args cli-options)
           config                                     (-> config-file
