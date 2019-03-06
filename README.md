@@ -146,7 +146,7 @@ reporter or load plugins (cf. Configuration in the
 [documentation](https://cljdoc.org/d/lambdaisland/kaocha/)).
 
 
-Example of a catch-all `test.edn` config file (should run all
+Example of a catch-all `tests.edn` config file (should run all
 tests found in `src/` and `/test`, in any namespace).
 ``` clojure
 #kaocha/v1
