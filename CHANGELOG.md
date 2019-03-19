@@ -1,9 +1,5 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
 
 - Built in plugins in the `kaocha.plugin` can now be specified as simple (rather
@@ -13,6 +9,10 @@
 - Load errors now end in an immediate failure of the test run, instead of a
   warning. They are reported as an error so plugins like the notifier and
   junit.xml can display them.
+
+- dependency upgrades, this fixes an upstream issue with clj-diff
+- lambdaisland/deep-diff {:mvn/version "0.0-25"} -> {:mvn/version "0.0-29"}
+- orchestra {:mvn/version "2018.12.06-2"} -> {:mvn/version "2019.02.06-1"}
 
 # 0.0-389 (2019-01-29 / 152db39)
 
