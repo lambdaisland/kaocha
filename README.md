@@ -33,12 +33,12 @@ Full featured next generation test runner for Clojure.
 - [CLI: Print the Kaocha configuration](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-print-the-kaocha-configuration)
 - [CLI: `--reporter` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-reporter-option)
 - [CLI: Selecting test suites](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-selecting-test-suites)
+- [Configuration: Bindings](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/configuration-bindings)
 - [Focusing based on metadata](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/focusing-based-on-metadata)
 - [Focusing on specific tests](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/focusing-on-specific-tests)
 - [Skipping based on metadata](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/skipping-based-on-metadata)
 - [Skipping test based on ids](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/skipping-test-based-on-ids)
 - [Marking tests as pending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/marking-tests-as-pending)
-- [Plugin: Bindings](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-bindings)
 - [Plugin: Capture output](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-capture-output)
 - [Plugin: Hooks](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-hooks)
 - [Plugin: Notifier (desktop notifications)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-notifier-desktop-notifications-)
@@ -76,7 +76,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-389"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-409"}}}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -96,7 +96,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "0.0-389"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "0.0-409"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
