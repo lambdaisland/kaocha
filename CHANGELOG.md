@@ -4,10 +4,6 @@
 
 - Added a check to make sure org.clojure/tools.cli is up to date
 
-## Fixed
-
-## Changed
-
 # 0.0-409 (2019-03-19 / 8f177ea)
 
 ## Changed

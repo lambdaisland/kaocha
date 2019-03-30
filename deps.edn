@@ -3,7 +3,7 @@
  :deps
  {org.clojure/clojure          {:mvn/version "1.10.0"}
   org.clojure/spec.alpha       {:mvn/version "0.2.176"}
-  org.clojure/tools.cli        {:mvn/version "0.4.1"}
+  org.clojure/tools.cli        {:mvn/version "0.4.2"}
   lambdaisland/tools.namespace {:mvn/version "0.0-234"}
   lambdaisland/deep-diff       {:mvn/version "0.0-29"}
   org.tcrawley/dynapath        {:mvn/version "1.0.0"}
@@ -19,8 +19,8 @@
  {:test
   {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
                 lambdaisland/kaocha-cucumber  {:mvn/version "0.0-46"}
-                lambdaisland/kaocha-cloverage {:mvn/version "0.0-22"}
-                nubank/matcher-combinators    {:mvn/version "0.7.0"}
+                lambdaisland/kaocha-cloverage {:mvn/version "0.0-32"}
+                nubank/matcher-combinators    {:mvn/version "0.8.1"}
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
   :dev
