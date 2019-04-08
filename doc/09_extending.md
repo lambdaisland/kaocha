@@ -117,7 +117,7 @@ vector of plugin maps.
          :kaocha.hooks/pre-run
          (fn [test-plan]
            (println "run is starting!")
-           test-plan)]]}))
+           test-plan)}))
 ```
 
 Plugin names must be namespaced keywords. If your plugin is called
