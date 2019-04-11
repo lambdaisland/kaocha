@@ -48,7 +48,7 @@
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>deep-diff</artifactId>
-      <version>0.0-29</version>
+      <version>0.0-47</version>
     </dependency>
     <dependency>
       <groupId>slingshot</groupId>
