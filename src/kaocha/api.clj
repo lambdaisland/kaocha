@@ -83,6 +83,10 @@
           (with-bindings (config/binding-map config)
             (let [config (resolve-reporter config)]
               (let [test-plan (test-plan config)]
+                (when (empty? (:kaocha.test-plan/tests test-plan))
+                  (output/warn (str "No tests were found, make sure :test-paths and "
+                                    ":ns-patterns are configured correctly in tests.edn."))
+                  (throw+ {:kaocha/early-exit 0}))
 
                 ;; first time we ignored errors, now that everything is loaded
                 ;; vars must resolve
