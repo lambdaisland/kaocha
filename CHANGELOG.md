@@ -1,16 +1,19 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
+- Make sure "no tests found" warning only shows up when it really needs to.
+
 ## Changed
+
+- lambdaisland/deep-diff {:mvn/version "0.0-29"} -> {:mvn/version "0.0-47"}
+- nubank/matcher-combinators {:mvn/version "0.8.1"} -> {:mvn/version "0.9.0"}
 
 # 0.0-413 (2019-03-30 / 9477eaf)
 
 ## Added
 
-- Added a check to make sure org.clojure/tools.cli is up to date
+- Added a check to make sure org.clojure/tools.cli is up to date.
 
 # 0.0-409 (2019-03-19 / 8f177ea)
 

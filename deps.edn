@@ -5,7 +5,7 @@
   org.clojure/spec.alpha       {:mvn/version "0.2.176"}
   org.clojure/tools.cli        {:mvn/version "0.4.2"}
   lambdaisland/tools.namespace {:mvn/version "0.0-234"}
-  lambdaisland/deep-diff       {:mvn/version "0.0-29"}
+  lambdaisland/deep-diff       {:mvn/version "0.0-47"}
   org.tcrawley/dynapath        {:mvn/version "1.0.0"}
   slingshot                    {:mvn/version "0.12.2"}
   hawk                         {:mvn/version "0.2.11"}
@@ -20,7 +20,7 @@
   {:extra-deps {org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
                 lambdaisland/kaocha-cucumber  {:mvn/version "0.0-46"}
                 lambdaisland/kaocha-cloverage {:mvn/version "0.0-32"}
-                nubank/matcher-combinators    {:mvn/version "0.8.1"}
+                nubank/matcher-combinators    {:mvn/version "0.9.0"}
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 
   :dev
