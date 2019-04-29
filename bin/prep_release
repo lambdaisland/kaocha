@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function echo_info() {
    echo -en "[\033[0;32mINFO\033[0m] "

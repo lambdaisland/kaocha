@@ -83,7 +83,7 @@ Add a binstub called `bin/kaocha`
 
 ```
 mkdir -p bin
-echo '#!/bin/bash' > bin/kaocha
+echo '#!/usr/bin/env bash' > bin/kaocha
 echo 'clojure -A:test -m kaocha.runner "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
@@ -104,7 +104,7 @@ Add a binstub called `bin/kaocha`
 
 ``` shell
 mkdir -p bin
-echo '#!/bin/bash' > bin/kaocha
+echo '#!/usr/bin/env bash' > bin/kaocha
 echo 'lein kaocha "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
@@ -125,7 +125,7 @@ Add a binstub called `bin/kaocha`
 
 ``` bash
 mkdir -p bin
-echo '#!/bin/bash' > bin/kaocha
+echo '#!/usr/bin/env bash' > bin/kaocha
 echo 'boot kaocha "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
