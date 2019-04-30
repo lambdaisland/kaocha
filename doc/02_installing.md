@@ -37,7 +37,7 @@ namespace. This is what `bin/kaocha` by default looks like. Make sure to add
 `"$@"` so that any arguments to `bin/kaocha` are passed on to `kaocha.runner`.
 
 ``` shell
-#!/bin/bash
+#!/usr/bin/env bash
 
 clojure -A:test -m kaocha.runner "$@"
 ```
@@ -52,7 +52,7 @@ This script provides a useful place to encode extra flags or setup that is
 needed in order for tests to run correctly.
 
 ``` shell
-#!/bin/bash
+#!/usr/bin/env bash
 
 . secrets.env
 clojure -J-Xmx512m -A:dev:test -m kaocha.runner --config-file test/tests.edn "$@"
@@ -94,7 +94,7 @@ projects. The rest of the documentation assumes you can invoke Kaocha with
 `bin/kaocha`.
 
 ``` shell
-#!/bin/bash
+#!/usr/bin/env bash
 
 lein kaocha "$@"
 ```

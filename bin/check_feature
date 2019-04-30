@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 bin/run_feature "$@" 1>/tmp/kaocha_actual_out 2>/tmp/kaocha_actual_err
 
