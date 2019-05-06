@@ -291,6 +291,5 @@ configuration at its default. This is merely an example of what's possible
 
  ;; Plugin specific configuration. Show the 10 slowest tests of each type, rather
  ;; than only 3.
- :kaocha.plugin.profiling/count 10
- }}
+ :kaocha.plugin.profiling/count 10}
 ```
