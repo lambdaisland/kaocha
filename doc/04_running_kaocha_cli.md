@@ -86,7 +86,7 @@ By default Kaocha will capture any output that occurs on stdout or stderr during
 a test run. Only when a test fails is the captured output printed as part of the
 test result summary. This is generally what you want, since this way tests that
 pass don't generate distracting noise. If you do want all the output as it
-occurs, use `--no-capture`.
+occurs, use `--no-capture-output`.
 
 ## Debug information
 
