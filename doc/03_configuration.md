@@ -71,7 +71,7 @@ In Kaocha a test suite has a `:type` and an `:id`. Depending on the type it will
 also have other attributes like the directories to look for tests, or how to
 discern test from regular namespaces.
 
-Here's an example of a `tests.edn` defining two test suites: one names `:unit`,
+Here's an example of a `tests.edn` defining two test suites: one named `:unit`,
 which has its test files under `"test/unit"`, and one named `:features`, with
 its tests under `"test/features"`.
 
@@ -101,7 +101,7 @@ This is what the `:unit` suite looks like after expansion:
  :kaocha/test-paths    ["test/unit"]}
 ```
 
-If you don't define any test suites than Kaocha assumes a single `:unit` test suite.
+If you don't define any test suites then Kaocha assumes a single `:unit` test suite.
 
 ### :kaocha.type/clojure.test
 
@@ -145,7 +145,7 @@ or from the command line
 bin/kaocha --plugin kaocha.plugin/profiling
 ```
 
-For plugins in the `kaocha.plugin` namespace the namespace can be ommitted from
+For plugins in the `kaocha.plugin` namespace, the namespace can be ommitted from
 the command line:
 
 
@@ -190,7 +190,7 @@ Failures with complete output and error information, as well as a general
 summary are printed at the end (or when `Ctrl-C` is pressed). This is a great
 reporter for when you want it concise but still information-rich.
 
-This is a great all around reporter, it's concise but still rich in information.
+This is a great all-around reporter. It's concise, but still rich in information.
 
 ```
 [(.)(..F)(....)(..E..E)(...)(....)(.)(..)(............)(...)(...........)][(.....)]
