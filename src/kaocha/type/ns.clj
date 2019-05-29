@@ -9,12 +9,13 @@
             [kaocha.output :as output]
             [kaocha.type :as type]))
 
-(defn ->testable [ns-name]
-  {:kaocha.testable/type :kaocha.type/ns
+(defn testable [type-kw ns-name]
+  {:kaocha.testable/type type-kw
    :kaocha.testable/id   (keyword (str ns-name))
    :kaocha.testable/desc (str ns-name)
    :kaocha.ns/name       ns-name})
 
+(def ->testable (partial testable :kaocha.type/ns))
 (defmethod testable/-load :kaocha.type/ns [testable]
   ;; TODO If the namespace has a test-ns-hook function, call that:
   ;; if-let [v (find-var (symbol (:kaocha.ns/name testable) "test-ns-hook"))]
