@@ -16,37 +16,41 @@
    :kaocha.ns/name       ns-name})
 
 (def ->testable (partial testable :kaocha.type/ns))
+
+(defn required-ns [ns-name]
+  (when-not (find-ns ns-name)
+    (require ns-name))
+  ns-name)
+
 (defmethod testable/-load :kaocha.type/ns [testable]
   ;; TODO If the namespace has a test-ns-hook function, call that:
   ;; if-let [v (find-var (symbol (:kaocha.ns/name testable) "test-ns-hook"))]
 
-  (let [ns-name (:kaocha.ns/name testable)]
-    (when-not (find-ns ns-name)
-      (require ns-name))
-    (let [ns-obj          (the-ns ns-name)
-          ns-meta         (meta ns-obj)
-          each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]
-      (->> ns-obj
-           ns-publics
-           (filter (comp :test meta val))
-           (sort-by key)
-           (map (fn [[sym var]]
-                  (let [nsname    (:kaocha.ns/name testable)
-                        test-name (symbol (str nsname) (str sym))]
-                    {:kaocha.testable/type :kaocha.type/var
-                     :kaocha.testable/id   (keyword test-name)
-                     :kaocha.testable/meta (meta var)
-                     :kaocha.testable/desc (str sym)
-                     :kaocha.var/name      test-name
-                     :kaocha.var/var       var
-                     :kaocha.var/test      (:test (meta var))
-                     :kaocha.testable/wrap (if (::t/each-fixtures ns-meta)
-                                             [(fn [t] #(each-fixture-fn t))]
-                                             [])})))
-           (assoc testable
-                  :kaocha.testable/meta (meta ns-obj)
-                  :kaocha.ns/ns ns-obj
-                  :kaocha.test-plan/tests)))))
+  (let [ns-name         (-> testable :kaocha.ns/name required-ns testable)
+        ns-obj          (the-ns ns-name)
+        ns-meta         (meta ns-obj)
+        each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]
+    (->> ns-obj
+         ns-publics
+         (filter (comp :test meta val))
+         (sort-by key)
+         (map (fn [[sym var]]
+                (let [nsname    (:kaocha.ns/name testable)
+                      test-name (symbol (str nsname) (str sym))]
+                  {:kaocha.testable/type :kaocha.type/var
+                   :kaocha.testable/id   (keyword test-name)
+                   :kaocha.testable/meta (meta var)
+                   :kaocha.testable/desc (str sym)
+                   :kaocha.var/name      test-name
+                   :kaocha.var/var       var
+                   :kaocha.var/test      (:test (meta var))
+                   :kaocha.testable/wrap (if (::t/each-fixtures ns-meta)
+                                           [(fn [t] #(each-fixture-fn t))]
+                                           [])})))
+         (assoc testable
+                :kaocha.testable/meta (meta ns-obj)
+                :kaocha.ns/ns ns-obj
+                :kaocha.test-plan/tests))))
 
 (defn run-tests [testable test-plan fixture-fn]
   ;; It's not guaranteed the the fixture-fn returns the result of calling the
