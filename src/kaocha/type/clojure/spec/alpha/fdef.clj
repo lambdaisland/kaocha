@@ -1,25 +1,61 @@
 (ns kaocha.type.clojure.spec.alpha.fdef
-  (:require [kaocha.testable]
-            [kaocha.type.var]
-            [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest]
+            [clojure.string :as str]
+            [clojure.test :as test]
+            [expound.alpha :as expound]
+            [kaocha.result :as result]
+            [kaocha.testable :as testable]
+            [kaocha.type :as type]))
 
 (alias 'stc 'clojure.spec.test.check)
 
-(defn load-testable [sym {::stc/keys [num-tests max-size]
-                          :as        test-plan}]
+(defn stc-opt-key? [kw]
+  (some-> kw (namespace) (str/starts-with? "clojure.spec.test.check")))
+
+(defn stc-opt-keys [m]
+  (->> m (keys) (filter stc-opt-key?)))
+
+(defn stc-opts [m]
+  (->> m
+       (stc-opt-keys)
+       (select-keys m)))
+
+(defn load-testable [sym test-plan]
   (let [nsname    (namespace sym)
         test-name (str sym)
         var       (resolve sym)]
-    {:kaocha.testable/type :kaocha.type/clojure.spec.alpha.fdef
-     :kaocha.testable/id   (keyword test-name)
-     :kaocha.testable/meta (meta var)
-     :kaocha.testable/desc (str sym)
-     :kaocha.fdef/sym      sym
-     :kaocha.fdef/name     test-name
-     :kaocha.fdef/var      var
-     :kaocha.fdef/check-opts (select-keys test-plan )
-     ::stc/num-tests       num-tests
-     ::stc/max-size        max-size}))
+    {:kaocha.testable/type   :kaocha.type/clojure.spec.alpha.fdef
+     :kaocha.testable/id     (keyword test-name)
+     :kaocha.testable/meta   (meta var)
+     :kaocha.testable/desc   (str sym)
+     :kaocha.fdef/sym        sym
+     :kaocha.fdef/name       test-name
+     :kaocha.fdef/var        var
+     :kaocha.fdef/check-opts (stc-opts test-plan)}))
+
+(defn load-testables [syms]
+  (->> syms
+       (sort-by name)
+       (map load-testable)))
+
+(defn report-success [check-results]
+  (test/do-report
+   {:type    :pass
+    :message (str "Generative tests pass for "
+                  (str/join ", " (map :sym check-results)))}))
+
+(defn report-failure [check-results]
+  (doseq [failed-check (filter :failure check-results)]
+    (let [r       (stest/abbrev-result failed-check)
+          failure (:failure r)]
+      (test/do-report
+       {:type     :fail
+        :message  (expound/explain-results-str check-results)
+        :expected (->> r :spec rest (apply hash-map) :ret)
+        :actual   (if (instance? Throwable failure)
+                    failure
+                    (::stest/val failure))}))))
 
 (defmethod testable/-run :kaocha.type/clojure.spec.alpha.fdef
   [{the-var  :kaocha.fdef/var
@@ -28,31 +64,17 @@
     opts     :kaocha.fdef/check-opts
     :as      testable} test-plan]
   (type/with-report-counters
-    (let [results (stest/check sym ~opts)]
-      (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
-        (t/do-report {:type :begin-test-var, :var the-var})
-        (try
-          (test)
-          (catch clojure.lang.ExceptionInfo e
-            (when-not (:kaocha/fail-fast (ex-data e))
-              (t/do-report {:type                    :error
-                            :message                 "Uncaught exception, not in assertion."
-                            :expected                nil
-                            :actual                  e
-                            :kaocha.result/exception e})))
-          (catch Throwable e
-            (t/do-report {:type                    :error
-                          :message                 "Uncaught exception, not in assertion."
-                          :expected                nil
-                          :actual                  e
-                          :kaocha.result/exception e}))))
-      (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
-        (when (= pass error fail pending 0)
-          (binding [testable/*fail-fast?*    false
-                    testable/*test-location* {:file (:file the-meta) :line (:line the-meta)}]
-            (t/do-report {:type ::zero-assertions})))
-        (t/do-report {:type :end-test-var, :var the-var})
-        (merge testable {:kaocha.result/count 1} (type/report-count))))))
+    (let [check-results  (stest/check sym opts)
+          result-count   (count check-results)
+          checks-passed? (->> check-results (map :failure) (every? nil?))]
+      (if checks-passed?
+        (report-success check-results)
+        (report-failure check-results))
+      (merge testable {:kaocha.result/count result-count} (type/report-count)))))
+
+;; TODO: Why is this not defined in core?
+(s/def ::stc/opts (s/keys :opt [::stc/num-tests
+                                ::stc/max-size]))
 
 (s/def :kaocha.fdef/name :kaocha.var/name)
 (s/def :kaocha.fdef/var :kaocha.var/var)

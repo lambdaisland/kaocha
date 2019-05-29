@@ -3,6 +3,7 @@
             [clojure.spec.test.alpha :as stest]
             [kaocha.core-ext :as core]
             [kaocha.hierarchy :as hierarchy]
+            [kaocha.testable :as testable]
             [kaocha.type :as type]
             [kaocha.type.clojure.spec.alpha.fdef :as type.fdef]
             [kaocha.type.ns :as type.ns]))
@@ -14,8 +15,7 @@
         ns-obj  (the-ns ns-name)]
     (->> (stest/checkable-syms)
          (filter (partial core/in-namespace? ns-name))
-         (sort-by name)
-         (map type.fdef/load-testable)
+         (type.fdef/load-testables)
          (assoc testable
                 :kaocha.testable/meta (meta ns-obj)
                 :kaocha.ns/ns ns-obj
