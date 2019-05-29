@@ -11,8 +11,9 @@
             [clojure.test :as t]))
 
 (defmethod testable/-load :kaocha.type/clojure.test [testable]
-  (assoc (load/load-test-namespaces testable type.ns/->testable)
-         ::testable/desc (str (name (::testable/id testable)) " (clojure.test)")))
+  (-> testable
+      (load/load-namespaces :kaocha/test-paths type.ns/->testable)
+      (testable/add-desc "clojure.test")))
 
 (defmethod testable/-run :kaocha.type/clojure.test [testable test-plan]
   (t/do-report {:type :begin-test-suite})
