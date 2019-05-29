@@ -55,7 +55,7 @@
     (fixture-fn #(swap! result testable/run-testables test-plan))
     @result))
 
-(defmethod testable/-run :kaocha.type/ns [testable test-plan]
+(defn run-testable [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
     (type/with-report-counters
       (do-report {:type :begin-test-ns})
@@ -76,6 +76,9 @@
                                      tests)]
           (do-report {:type :end-test-ns})
           result)))))
+
+(defmethod testable/-run :kaocha.type/ns [testable test-plan]
+  (run-testable testable test-plan))
 
 (s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
                                      :kaocha.testable/id
