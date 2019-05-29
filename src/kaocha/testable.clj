@@ -17,6 +17,10 @@
   "Should testing terminate immediately upon failure or error?"
   nil)
 
+(defn add-desc [testable description]
+  (assoc testable ::desc
+         (str (name (::id testable)) " (" description ")")))
+
 (defn- try-require [n]
   (try
     (require n)
