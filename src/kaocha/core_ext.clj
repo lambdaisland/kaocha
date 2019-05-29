@@ -1,6 +1,7 @@
 (ns kaocha.core-ext
   "Core language extensions"
   (:refer-clojure :exclude [symbol])
+  (:require [clojure.string :as str])
   (:import [java.util.regex Pattern]))
 
 (defn regex? [x]
@@ -59,3 +60,6 @@
      (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
      :else (throw (IllegalArgumentException. "no conversion to symbol"))))
   ([ns name] (clojure.lang.Symbol/intern ns name)))
+
+(defn in-namespace? [ns-name sym-or-kw]
+  (-> sym-or-kw namespace (str/starts-with? ns-name)))
