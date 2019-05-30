@@ -1,12 +1,11 @@
 (ns kaocha.type.clojure.spec.test.ns
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
-            [kaocha.core-ext :as core]
             [kaocha.hierarchy :as hierarchy]
+            [kaocha.ns :as ns]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.type.clojure.spec.test.fdef :as type.fdef]
-            [kaocha.type.ns :as type.ns]))
+            [kaocha.type.clojure.spec.test.fdef :as type.fdef]))
 
 (defn ->testable [ns-name]
   {:kaocha.testable/type :kaocha.type/ns-spec-fdefs
@@ -15,10 +14,10 @@
    :kaocha.ns/name       ns-name})
 
 (defmethod testable/-load :kaocha.type/ns-spec-fdefs [testable]
-  (let [ns-name (-> testable :kaocha.ns/name type.ns/required-ns testable)
+  (let [ns-name (-> testable :kaocha.ns/name ns/required-ns testable)
         ns-obj  (the-ns ns-name)]
     (->> (stest/checkable-syms)
-         (filter (partial core/in-namespace? ns-name))
+         (filter (partial ns/starts-with-namespace? ns-name))
          (type.fdef/load-testables)
          (assoc testable
                 :kaocha.testable/meta (meta ns-obj)
@@ -26,7 +25,7 @@
                 :kaocha.test-plan/tests))))
 
 (defmethod testable/-run :kaocha.type/ns-spec-fdefs [testable test-plan]
-  (type.ns/run-testable testable test-plan))
+  (ns/run-testable testable test-plan))
 
 (s/def :kaocha.type/ns-spec-fdefs :kaocha.type/ns)
 

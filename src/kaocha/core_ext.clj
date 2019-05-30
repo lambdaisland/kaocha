@@ -60,6 +60,3 @@
      (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
      :else (throw (IllegalArgumentException. "no conversion to symbol"))))
   ([ns name] (clojure.lang.Symbol/intern ns name)))
-
-(defn in-namespace? [ns-name sym-or-kw]
-  (-> sym-or-kw namespace (str/starts-with? ns-name)))
