@@ -132,7 +132,7 @@
         :ret :kaocha.result/testable)
 
 (defn load-testables
-  "Load a collection of testables, returing a test-plan collection"
+  "Load a collection of testables, returning a test-plan collection"
   [testables]
   (loop [result []
          [test & testables] testables]

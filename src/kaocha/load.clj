@@ -33,4 +33,3 @@
          (namespace-testables paths-key testable ns-testable-fn platform)))
 
 (def load-test-namespaces   (partial load-namespaces :kaocha/test-paths))
-type.
