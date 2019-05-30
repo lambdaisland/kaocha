@@ -27,6 +27,10 @@
 (defmethod testable/-run :kaocha.type/ns-spec-fdefs [testable test-plan]
   (ns/run-testable testable test-plan))
 
-(s/def :kaocha.type/ns-spec-fdefs :kaocha.type/ns)
+(s/def :kaocha.type/ns-spec-fdefs (s/keys :req [:kaocha.testable/type
+                                                :kaocha.testable/id
+                                                :kaocha.ns/name]
+                                          :opt [:kaocha.ns/ns
+                                                :kaocha.test-plan/tests]))
 
 (hierarchy/derive! :kaocha.type/ns-spec-fdefs :kaocha.testable.type/group)
