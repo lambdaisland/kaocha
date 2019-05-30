@@ -42,15 +42,10 @@
                      [nil  "--num-tests NUM" "Test iterations per fdef"
                       :parse-fn #(Integer/parseInt %)]
                      [nil  "--max-size SIZE" "Maximum length of generated collections"
-                      :parse-fn #(Integer/parseInt %)]
-                     [nil  "--ns-pattern PATTERN" "Regex matching your project's namespaces"]))
+                      :parse-fn #(Integer/parseInt %)]))
   (config [config]
           (let [num-tests  (get-in config [:kaocha/cli-options :num-tests])
-                max-size   (get-in config [:kaocha/cli-options :max-size])
-                ns-pattern (get-in config [:kaocha/cli-options :ns-pattern])]
+                max-size   (get-in config [:kaocha/cli-options :max-size])]
             (assoc config
-                   ::ns-patterns [ns-pattern]
                    ::stc/num-tests num-tests
                    ::stc/max-size max-size))))
-
-(s/def ::ns-patterns :kaocha/ns-patterns)
