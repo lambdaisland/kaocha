@@ -2,29 +2,13 @@
   (:require [clojure.spec.alpha :as s]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
+            [kaocha.spec-test-check :as k-stc]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
             [kaocha.type.clojure.spec.test.fdef :as type.fdef]
             [kaocha.type.clojure.spec.test.ns :as type.spec.ns]))
 
 (alias 'stc 'clojure.spec.test.check)
-
-(defn stc-opt-key? [kw]
-  (some-> kw (namespace) (str/starts-with? "clojure.spec.test.check")))
-
-(defn stc-opt-keys [m]
-  (->> m (keys) (filter stc-opt-key?)))
-
-(defn stc-opts [m]
-  (->> m
-       (stc-opt-keys)
-       (select-keys m)))
-
-(def is-stc? (comp #{:kaocha.type/clojure.spec.test.check}
-                :kaocha.testable/type))
-
-(defn has-stc? [{:kaocha/keys [tests] :as config}]
-  (some is-stc? tests))
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.check
   [{::keys [syms] :as testable}]

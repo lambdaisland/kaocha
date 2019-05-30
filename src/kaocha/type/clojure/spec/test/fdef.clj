@@ -6,7 +6,8 @@
             [expound.alpha :as expound]
             [kaocha.result :as result]
             [kaocha.testable :as testable]
-            [kaocha.type :as type]))
+            [kaocha.type :as type]
+            [kaocha.spec-test-check :as k-stc]))
 
 (alias 'stc 'clojure.spec.test.check)
 
@@ -21,7 +22,7 @@
      :kaocha.fdef/sym        sym
      :kaocha.fdef/name       test-name
      :kaocha.fdef/var        var
-     :kaocha.fdef/check-opts (stc-opts test-plan)}))
+     :kaocha.fdef/check-opts (k-stc/opts test-plan)}))
 
 (defn load-testables [syms]
   (->> syms
@@ -60,10 +61,6 @@
         (report-success check-results)
         (report-failure check-results))
       (merge testable {:kaocha.result/count result-count} (type/report-count)))))
-
-;; TODO: Why is this not defined in core?
-(s/def ::stc/opts (s/keys :opt [::stc/num-tests
-                                ::stc/max-size]))
 
 (s/def :kaocha.fdef/name :kaocha.var/name)
 (s/def :kaocha.fdef/var :kaocha.var/var)

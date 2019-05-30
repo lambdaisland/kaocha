@@ -4,27 +4,27 @@
             [kaocha.plugin :refer [defplugin]]
             [kaocha.testable :as default-test-suite]
             [kaocha.type :as type]
-            kaocha.type.clojure.spec.test.check
-            [kaocha.type.clojure.spec.test.fdef :as type.fdef]
-            kaocha.type.clojure.test))
+            [kaocha.spec-test-check :as k-stc]
+            [kaocha.type.clojure.spec.test.check :as type.stc]
+            [kaocha.type.clojure.spec.test.fdef :as type.fdef]))
 
 (alias 'stc 'clojure.spec.test.check)
 (alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
 (defn tests-with-overridden-stc-opts [{:kaocha/keys [tests] :as config}]
   (map (fn [test]
-         (if (is-stc? test)
-           (update test merge (type.stc/stc-opts config))
+         (if (k-stc/is-stc? test)
+           (update test merge (k-stc/opts config))
            test))
        tests))
 
 (defn default-test-suite [config]
   (-> {:kaocha.testable/type    :kaocha.type/clojure.spec.test.check
        :kaocha.testable/id      :generative-fdef-checks
-       :kaocha/source-paths     ["src"],
        :kaocha.filter/skip-meta [:kaocha/skip]
+       :kaocha/source-paths     ["src"],
        ::type.stc/syms          :all-fdefs}
-      (merge (type.stc/stc-opts config))))
+      (merge (k-stc/opts config))))
 
 (defn overide-stc-settings [config]
   (assoc config :kaocha/tests (tests-with-overridden-stc-opts config)))
@@ -33,8 +33,8 @@
   (update config :kaocha/tests conj (default-test-suite config)))
 
 (defplugin kaocha.plugin.alpha/spec-test-check
-  (pre-load [config]
-            (if (has-stc? config)
+  (pre-load [{:kaocha/keys [tests] :as config}]
+            (if (k-stc/has-stc? tests)
               (overide-stc-settings config)
               (add-default-test-suite config)))
   (cli-options [opts]
