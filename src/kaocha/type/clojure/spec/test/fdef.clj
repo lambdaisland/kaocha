@@ -62,12 +62,12 @@
         (report-failure check-results))
       (merge testable {:kaocha.result/count result-count} (type/report-count)))))
 
-(s/def :kaocha.fdef/name qualified-symbol?)
-(s/def :kaocha.fdef/var var?)
-(s/def :kaocha.fdef/sym symbol?)
+(s/def :kaocha.spec.fdef/name qualified-symbol?)
+(s/def :kaocha.spec.fdef/var var?)
+(s/def :kaocha.spec.fdef/sym symbol?)
 
 (s/def :kaocha.type/clojure.spec.alpha.fdef
   (s/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
-                :kaocha.fdef/name
-                :kaocha.fdef/var]))
+                :kaocha.spec.fdef/name
+                :kaocha.spec.fdef/var]))
