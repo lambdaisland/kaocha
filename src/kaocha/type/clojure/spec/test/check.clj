@@ -20,16 +20,18 @@
       (testable/add-desc "clojure.spec.test.check")))
 
 (s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
-                    :all #{:all-fdefs}))
-(s/def ::checks (s/merge (s/keys :req [::syms]) ::stc/opts))
+                    :all #{:all-fdefs}
+                    :rest #{:other-fdefs}))
+(s/def ::check (s/merge (s/keys :opt [::syms]) ::stc/opts))
+(s/def ::checks (s/coll-of ::check))
 
 (s/def :kaocha.type/clojure.spec.test.check
-  (s/keys :req [:kaocha.testable/type
-                :kaocha.testable/id
-                :kaocha/ns-patterns
-                :kaocha/source-paths
-                ::checks]
-          :opt [:kaocha.filter/skip-meta]))
+  (s/merge (s/keys :req [:kaocha.testable/type
+                         :kaocha.testable/id
+                         :kaocha/source-paths]
+                   :opt [:kaocha.filter/skip-meta
+                         ::checks])
+           ::check))
 
 (hierarchy/derive! :kaocha.type/clojure.spec.test.check
                    :kaocha.testable.type/suite)
