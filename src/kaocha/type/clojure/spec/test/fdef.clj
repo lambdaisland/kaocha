@@ -7,22 +7,22 @@
             [kaocha.result :as result]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.spec-test-check :as k-stc]))
+            [kaocha.specs]))
 
 (alias 'stc 'clojure.spec.test.check)
 
-(defn load-testable [sym test-plan]
+(defn load-testable [sym {::stc/keys [opts] :as test-plan}]
   (let [nsname    (namespace sym)
         test-name (str sym)
         var       (resolve sym)]
-    {:kaocha.testable/type   :kaocha.type/clojure.spec.alpha.fdef
-     :kaocha.testable/id     (keyword test-name)
-     :kaocha.testable/meta   (meta var)
-     :kaocha.testable/desc   (str sym)
-     :kaocha.fdef/sym        sym
-     :kaocha.fdef/name       test-name
-     :kaocha.fdef/var        var
-     :kaocha.fdef/check-opts (k-stc/opts test-plan)}))
+    {:kaocha.testable/type  :kaocha.type/clojure.spec.alpha.fdef
+     :kaocha.testable/id    (keyword test-name)
+     :kaocha.testable/meta  (meta var)
+     :kaocha.testable/desc  (str sym)
+     :kaocha.spec.fdef/sym  sym
+     :kaocha.spec.fdef/name test-name
+     :kaocha.spec.fdef/var  var
+     ::stc/opts             opts}))
 
 (defn load-testables [syms]
   (->> syms
@@ -48,10 +48,10 @@
                     (::stest/val failure))}))))
 
 (defmethod testable/-run :kaocha.type/clojure.spec.alpha.fdef
-  [{the-var  :kaocha.fdef/var
-    sym      :kaocha.fdef/sym
+  [{the-var  :kaocha.spec.fdef/var
+    sym      :kaocha.spec.fdef/sym
     the-meta :kaocha.testable/meta
-    opts     :kaocha.fdef/check-opts
+    opts     ::stc/opts
     :as      testable} test-plan]
   (type/with-report-counters
     (let [check-results  (stest/check sym opts)

@@ -1,5 +1,6 @@
 (ns kaocha.specs
   (:require [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha]
             [clojure.spec.gen.alpha :as gen]
             [clojure.test :as t]
             [expound.alpha :as expound]))
@@ -70,6 +71,20 @@
 (s/def :kaocha.result/err string?)
 
 (s/def :kaocha.result/time nat-int?)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clojure.spec.test
+
+;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
+;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
+;; using flat maps with namespaced keys. ::stc/opts is a sub-map with
+;; un-namespaced keys, and that's now propagating out into this library.
+(alias 'stc 'clojure.spec.test.check)
+
+(s/def ::stc/num-tests nat-int?)
+(s/def ::stc/max-size nat-int?)
+(s/def ::stc/opts (s/keys :opt-un [::stc/num-tests
+                                   ::stc/max-size]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
