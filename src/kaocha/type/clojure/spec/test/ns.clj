@@ -1,11 +1,11 @@
-(ns kaocha.type.clojure.spec.alpha.ns
+(ns kaocha.type.clojure.spec.test.ns
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
             [kaocha.core-ext :as core]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.type.clojure.spec.alpha.fdef :as type.fdef]
+            [kaocha.type.clojure.spec.test.fdef :as type.fdef]
             [kaocha.type.ns :as type.ns]))
 
 (def ->testable (partial type.ns/testable :kaocha.type/ns))

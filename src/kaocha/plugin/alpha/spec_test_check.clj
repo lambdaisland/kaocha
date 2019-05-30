@@ -1,17 +1,17 @@
-(ns kaocha.plugin.alpha.spec-check
+(ns kaocha.plugin.alpha.spec-test-check
   (:require [clojure.spec.alpha :as s]
             [kaocha.hierarchy :as kaocha]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.testable :as default-test-suite]
-            [kaocha.type.clojure.test]
             [kaocha.type :as type]
-            [kaocha.type.clojure.spec.alpha.check]
-            [kaocha.type.clojure.spec.alpha.fdef :as type.fdef]))
+            kaocha.type.clojure.spec.test.check
+            [kaocha.type.clojure.spec.test.fdef :as type.fdef]
+            kaocha.type.clojure.test))
 
 (alias 'stc 'clojure.spec.test.check)
-(alias 'type.stc 'kaocha.type.clojure.spec.alpha.check)
+(alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
-(def is-spec-check? (comp #{:kaocha.type/clojure.spec.test.alpha.check}
+(def is-spec-check? (comp #{:kaocha.type/clojure.spec.test.check}
                        :kaocha.testable/type))
 
 (defn has-spec-check? [{:kaocha/keys [tests] :as config}]
@@ -25,7 +25,7 @@
        tests))
 
 (defn default-test-suite [{ns-patterns ::ns-patterns :as config}]
-  (-> {:kaocha.testable/type    :kaocha.type/clojure.spec.test.alpha.check
+  (-> {:kaocha.testable/type    :kaocha.type/clojure.spec.test.check
        :kaocha.testable/id      :generative
        :kaocha/ns-patterns      ns-patterns
        :kaocha/source-paths     ["src"],
@@ -39,7 +39,7 @@
 (defn add-default-test-suite [config]
   (update config :kaocha/tests conj (default-test-suite config)))
 
-(defplugin kaocha.plugin.alpha/spec-check
+(defplugin kaocha.plugin.alpha/spec-test-check
   (pre-load [config]
             (if (has-spec-check? config)
               (overide-spec-check-settings config)

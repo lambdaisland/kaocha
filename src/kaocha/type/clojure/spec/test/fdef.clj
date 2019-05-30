@@ -1,4 +1,4 @@
-(ns kaocha.type.clojure.spec.alpha.fdef
+(ns kaocha.type.clojure.spec.test.fdef
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
             [clojure.string :as str]
