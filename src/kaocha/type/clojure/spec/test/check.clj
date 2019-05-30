@@ -12,12 +12,12 @@
 (alias 'stc 'clojure.spec.test.check)
 
 (defn check-tests [{::keys [syms] :as check}]
-  (-> (condp = syms
-        :all-fdefs   (load/namespace-testables :kaocha/source-paths check
-                                               type.spec.ns/->testable)
-        :other-fdefs nil ;; TODO: this requires orchestration from the plugin
-        :else        (type.fdef/load-testables syms))
-      (testable/add-desc "clojure.spec.test.check")))
+  (let [check (update check :kaocha/ns-patterns #(or % [".*"]))]
+    (condp = syms
+      :all-fdefs   (load/namespace-testables :kaocha/source-paths check
+                                             type.spec.ns/->testable)
+      :other-fdefs nil ;; TODO: this requires orchestration from the plugin
+      :else        (type.fdef/load-testables syms))))
 
 (defn checks [{::keys [checks] :as testable}]
   (let [checks (or checks [{}])]
@@ -27,7 +27,8 @@
   (->> (checks testable)
        (check-tests)
        (apply conj)
-       (assoc testable :kaocha/tests)))
+       (assoc testable :kaocha/tests)
+       (testable/add-desc "clojure.spec.test.check")))
 
 (defmethod testable/-run :kaocha.type/clojure.spec.test.check [testable test-plan]
   (test-suite/run testable test-plan))
@@ -35,7 +36,7 @@
 (s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
                     :all #{:all-fdefs}
                     :rest #{:other-fdefs}))
-(s/def ::check (s/keys :opt [::syms ::stc/opts]))
+(s/def ::check (s/keys :opt [::syms ::stc/opts :kaocha/ns-patterns]))
 (s/def ::checks (s/coll-of ::check))
 
 (s/def :kaocha.type/clojure.spec.test.check
@@ -43,6 +44,7 @@
                          :kaocha.testable/id
                          :kaocha/source-paths]
                    :opt [:kaocha.filter/skip-meta
+                         :kaocha/ns-patterns
                          ::checks])
            ::check))
 
