@@ -21,7 +21,7 @@
              (filter (partial ns-match? ns-patterns)))
             test-paths))
 
-(defn load-namespaces [testable paths-key ns-testable-fn & [platform]]
+(defn load-namespaces [paths-key testable ns-testable-fn & [platform]]
   (let [test-paths  (paths-key testable)
         ns-patterns (map regex (:kaocha/ns-patterns testable))
         ns-names    (find-test-nss test-paths ns-patterns platform)
@@ -29,3 +29,6 @@
     (assoc testable
            :kaocha.test-plan/tests
            (testable/load-testables testables))))
+
+(def load-test-namespaces   (partial load-namespaces :kaocha/test-paths))
+(def load-source-namespaces (partial load-namespaces :kaocha/source-paths))

@@ -11,24 +11,23 @@
 (alias 'stc 'clojure.spec.test.check)
 (alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
-(defn overridden-stc-settings [{:kaocha/keys [tests] :as config}]
+(defn tests-with-overridden-stc-opts [{:kaocha/keys [tests] :as config}]
   (map (fn [test]
          (if (is-stc? test)
-           (update test merge (type.fdef/stc-opts config))
+           (update test merge (type.stc/stc-opts config))
            test))
        tests))
 
-(defn default-test-suite [{ns-patterns ::ns-patterns :as config}]
+(defn default-test-suite [config]
   (-> {:kaocha.testable/type    :kaocha.type/clojure.spec.test.check
-       :kaocha.testable/id      :generative
-       :kaocha/ns-patterns      ns-patterns
+       :kaocha.testable/id      :generative-fdef-checks
        :kaocha/source-paths     ["src"],
        :kaocha.filter/skip-meta [:kaocha/skip]
        ::type.stc/syms          :all-fdefs}
-      (merge (type.fdef/stc-opts config))))
+      (merge (type.stc/stc-opts config))))
 
 (defn overide-stc-settings [config]
-  (assoc config :kaocha/tests (overridden-stc-settings config)))
+  (assoc config :kaocha/tests (tests-with-overridden-stc-opts config)))
 
 (defn add-default-test-suite [config]
   (update config :kaocha/tests conj (default-test-suite config)))
