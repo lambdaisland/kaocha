@@ -2,11 +2,12 @@
   (:require [clojure.spec.alpha :as s]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
-            [kaocha.spec-test-check :as k-stc]
+            [kaocha.specs]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
             [kaocha.type.clojure.spec.test.fdef :as type.fdef]
-            [kaocha.type.clojure.spec.test.ns :as type.spec.ns]))
+            [kaocha.type.clojure.spec.test.ns :as type.spec.ns]
+            [kaocha.test-suite :as test-suite]))
 
 (alias 'stc 'clojure.spec.test.check)
 
@@ -28,10 +29,13 @@
        (apply conj)
        (assoc testable :kaocha/tests)))
 
+(defmethod testable/-run :kaocha.type/clojure.spec.test.check [testable test-plan]
+  (test-suite/run testable test-plan))
+
 (s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
                     :all #{:all-fdefs}
                     :rest #{:other-fdefs}))
-(s/def ::check (s/merge (s/keys :opt [::syms]) ::stc/opts))
+(s/def ::check (s/keys :opt [::syms ::stc/opts]))
 (s/def ::checks (s/coll-of ::check))
 
 (s/def :kaocha.type/clojure.spec.test.check
