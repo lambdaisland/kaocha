@@ -25,7 +25,7 @@
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.check [testable]
   (->> (checks testable)
-       (check-tests)
+       (map check-tests)
        (apply conj)
        (assoc testable :kaocha/tests)
        (testable/add-desc "clojure.spec.test.check")))
