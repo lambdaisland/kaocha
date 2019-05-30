@@ -12,10 +12,12 @@
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.check
   [{::keys [syms] :as testable}]
-  (-> (if (= syms :all-fdefs)
-        (load/load-namespaces testable :kaocha/source-paths type.spec.ns/->testable)
-        (assoc testable :kaocha.test-plan/tests (type.fdef/load-testables syms)))
-      (testable/add-desc "clojure.spec.alpha.check")))
+  (-> (condp = syms
+        :all-fdefs   (load/load-source-namespaces testable type.spec.ns/->testable)
+        :other-fdefs nil ;; TODO: this requires orchestration from the plugin
+        :else        (assoc testable :kaocha.test-plan/tests
+                            (type.fdef/load-testables syms)))
+      (testable/add-desc "clojure.spec.test.check")))
 
 (s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
                     :all #{:all-fdefs}))
