@@ -15,7 +15,7 @@
   (let [nsname    (namespace sym)
         test-name (str sym)
         var       (resolve sym)]
-    {:kaocha.testable/type  :kaocha.type/clojure.spec.alpha.fdef
+    {:kaocha.testable/type  :kaocha.type/clojure.spec.test.fdef
      :kaocha.testable/id    (keyword test-name)
      :kaocha.testable/meta  (meta var)
      :kaocha.testable/desc  (str sym)
@@ -47,7 +47,7 @@
                     failure
                     (::stest/val failure))}))))
 
-(defmethod testable/-run :kaocha.type/clojure.spec.alpha.fdef
+(defmethod testable/-run :kaocha.type/clojure.spec.test.fdef
   [{the-var  :kaocha.spec.fdef/var
     sym      :kaocha.spec.fdef/sym
     the-meta :kaocha.testable/meta
@@ -66,7 +66,7 @@
 (s/def :kaocha.spec.fdef/var var?)
 (s/def :kaocha.spec.fdef/sym symbol?)
 
-(s/def :kaocha.type/clojure.spec.alpha.fdef
+(s/def :kaocha.type/clojure.spec.test.fdef
   (s/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
                 :kaocha.spec.fdef/name
