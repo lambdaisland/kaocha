@@ -8,7 +8,11 @@
             [kaocha.type.clojure.spec.test.fdef :as type.fdef]
             [kaocha.type.ns :as type.ns]))
 
-(def ->testable (partial type.ns/testable :kaocha.type/ns))
+(defn ->testable [ns-name]
+  {:kaocha.testable/type :kaocha.type/ns-spec-fdefs
+   :kaocha.testable/id   (keyword (str ns-name))
+   :kaocha.testable/desc (str ns-name)
+   :kaocha.ns/name       ns-name})
 
 (defmethod testable/-load :kaocha.type/ns-spec-fdefs [testable]
   (let [ns-name (-> testable :kaocha.ns/name type.ns/required-ns testable)

@@ -9,13 +9,11 @@
             [kaocha.output :as output]
             [kaocha.type :as type]))
 
-(defn testable [type-kw ns-name]
-  {:kaocha.testable/type type-kw
+(defn ->testable [ns-name]
+  {:kaocha.testable/type :kaocha.type/ns
    :kaocha.testable/id   (keyword (str ns-name))
    :kaocha.testable/desc (str ns-name)
    :kaocha.ns/name       ns-name})
-
-(def ->testable (partial testable :kaocha.type/ns))
 
 (defn required-ns [ns-name]
   (when-not (find-ns ns-name)
