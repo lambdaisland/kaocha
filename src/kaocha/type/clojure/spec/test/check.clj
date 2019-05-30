@@ -12,21 +12,15 @@
 
 (defn check-tests [{::keys [syms] :as check}]
   (-> (condp = syms
-        :all-fdefs   (load/namespace-testables :kaocha/source-paths testable
+        :all-fdefs   (load/namespace-testables :kaocha/source-paths check
                                                type.spec.ns/->testable)
         :other-fdefs nil ;; TODO: this requires orchestration from the plugin
         :else        (type.fdef/load-testables syms))
       (testable/add-desc "clojure.spec.test.check")))
 
-(defn check-keys [testable]
-  (-> testable
-      (select-keys [::syms])
-      (merge (k-stc/opts testable))))
-
 (defn checks [{::keys [checks] :as testable}]
-  (let [checks    (or checks [{}])
-        top-level (check-keys testable)]
-    (map #(merge top-level %) checks)))
+  (let [checks (or checks [{}])]
+    (map #(merge testable %) checks)))
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.check [testable]
   (->> (checks testable)
