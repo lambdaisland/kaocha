@@ -12,7 +12,7 @@
 (alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
 (def is-stc? (comp #{:kaocha.type/clojure.spec.test.check}
-                   :kaocha.testable/type))
+                :kaocha.testable/type))
 
 (defn has-stc? [tests]
   (some is-stc? tests))
@@ -41,15 +41,15 @@
 
 (defplugin kaocha.plugin.alpha/spec-test-check
   (pre-load [{:kaocha/keys [tests] :as config}]
-            (if (k-stc/has-stc? tests)
-              (overide-stc-settings config)
-              (add-default-test-suite config)))
+    (if (has-stc? tests)
+      (overide-stc-settings config)
+      (add-default-test-suite config)))
   (cli-options [opts]
-               (conj opts
-                     [nil  "--num-tests NUM" "Test iterations per fdef"
-                      :parse-fn #(Integer/parseInt %)]
-                     [nil  "--max-size SIZE" "Maximum length of generated collections"
-                      :parse-fn #(Integer/parseInt %)]))
+    (conj opts
+          [nil  "--num-tests NUM" "Test iterations per fdef"
+           :parse-fn #(Integer/parseInt %)]
+          [nil  "--max-size SIZE" "Maximum length of generated collections"
+           :parse-fn #(Integer/parseInt %)]))
   (config [config]
     (let [num-tests (get-in config [:kaocha/cli-options :num-tests])
           max-size  (get-in config [:kaocha/cli-options :max-size])]
