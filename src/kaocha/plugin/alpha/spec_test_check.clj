@@ -11,15 +11,15 @@
 (alias 'stc 'clojure.spec.test.check)
 (alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
-(def is-spec-check? (comp #{:kaocha.type/clojure.spec.test.check}
-                       :kaocha.testable/type))
+(def is-stc? (comp #{:kaocha.type/clojure.spec.test.check}
+                :kaocha.testable/type))
 
-(defn has-spec-check? [{:kaocha/keys [tests] :as config}]
-  (some is-spec-check? tests))
+(defn has-stc? [{:kaocha/keys [tests] :as config}]
+  (some is-stc? tests))
 
-(defn overridden-spec-check-settings [{:kaocha/keys [tests] :as config}]
+(defn overridden-stc-settings [{:kaocha/keys [tests] :as config}]
   (map (fn [test]
-         (if (is-spec-check? test)
+         (if (is-stc? test)
            (update test merge (type.fdef/stc-opts config))
            test))
        tests))
@@ -33,16 +33,16 @@
        ::type.stc/syms          :all-fdefs}
       (merge (type.fdef/stc-opts config))))
 
-(defn overide-spec-check-settings [config]
-  (assoc config :kaocha/tests (overridden-spec-check-settings config)))
+(defn overide-stc-settings [config]
+  (assoc config :kaocha/tests (overridden-stc-settings config)))
 
 (defn add-default-test-suite [config]
   (update config :kaocha/tests conj (default-test-suite config)))
 
 (defplugin kaocha.plugin.alpha/spec-test-check
   (pre-load [config]
-            (if (has-spec-check? config)
-              (overide-spec-check-settings config)
+            (if (has-stc? config)
+              (overide-stc-settings config)
               (add-default-test-suite config)))
   (cli-options [opts]
                (conj opts
