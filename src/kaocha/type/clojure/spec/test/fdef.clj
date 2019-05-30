@@ -10,17 +10,6 @@
 
 (alias 'stc 'clojure.spec.test.check)
 
-(defn stc-opt-key? [kw]
-  (some-> kw (namespace) (str/starts-with? "clojure.spec.test.check")))
-
-(defn stc-opt-keys [m]
-  (->> m (keys) (filter stc-opt-key?)))
-
-(defn stc-opts [m]
-  (->> m
-       (stc-opt-keys)
-       (select-keys m)))
-
 (defn load-testable [sym test-plan]
   (let [nsname    (namespace sym)
         test-name (str sym)

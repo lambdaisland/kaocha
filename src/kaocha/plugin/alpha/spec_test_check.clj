@@ -11,12 +11,6 @@
 (alias 'stc 'clojure.spec.test.check)
 (alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
-(def is-stc? (comp #{:kaocha.type/clojure.spec.test.check}
-                :kaocha.testable/type))
-
-(defn has-stc? [{:kaocha/keys [tests] :as config}]
-  (some is-stc? tests))
-
 (defn overridden-stc-settings [{:kaocha/keys [tests] :as config}]
   (map (fn [test]
          (if (is-stc? test)
