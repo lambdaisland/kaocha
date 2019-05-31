@@ -13,14 +13,12 @@
 
 (defn load-testable [{::stc/keys [opts] :as test-plan} sym]
   (let [nsname    (namespace sym)
-        test-name (str sym)
         var       (resolve sym)]
     {:kaocha.testable/type  :kaocha.type/clojure.spec.test.fdef
-     :kaocha.testable/id    (keyword test-name)
+     :kaocha.testable/id    (keyword sym)
      :kaocha.testable/meta  (meta var)
      :kaocha.testable/desc  (str sym)
      :kaocha.spec.fdef/sym  sym
-     :kaocha.spec.fdef/name test-name
      :kaocha.spec.fdef/var  var
      ::stc/opts             opts}))
 
@@ -62,9 +60,8 @@
         (report-failure check-results))
       (merge testable {:kaocha.result/count result-count} (type/report-count)))))
 
-(s/def :kaocha.spec.fdef/name qualified-symbol?)
 (s/def :kaocha.spec.fdef/var var?)
-(s/def :kaocha.spec.fdef/sym symbol?)
+(s/def :kaocha.spec.fdef/sym qualified-symbol?)
 
 (s/def :kaocha.type/clojure.spec.test.fdef
   (s/keys :req [:kaocha.testable/type
