@@ -28,7 +28,7 @@
 (defn default-test-suite [{::stc/keys [opts] :as config}]
   {:kaocha.testable/type    :kaocha.type/clojure.spec.test.check
    :kaocha.testable/id      :generative-fdef-checks
-   :kaocha.filter/skip-meta [:kaocha/skip]
+   :kaocha.filter/skip-meta [:kaocha/skip :no-gen]
    :kaocha/source-paths     ["src"],
    ::type.stc/syms          :all-fdefs
    ::stc/opts               opts})
