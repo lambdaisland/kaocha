@@ -447,3 +447,10 @@
                                       (str/split (with-out-str
                                                    (fail-summary m))
                                                  #"\n"))))))
+
+(defn report-exception [e]
+  (t/do-report {:type                    :error
+                :message                 "Uncaught exception, not in assertion."
+                :expected                nil
+                :actual                  e
+                :kaocha.result/exception e}))

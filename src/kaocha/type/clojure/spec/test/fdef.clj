@@ -4,6 +4,7 @@
             [clojure.string :as str]
             [clojure.test :as test]
             [expound.alpha :as expound]
+            [kaocha.report :as report]
             [kaocha.result :as result]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
@@ -48,17 +49,22 @@
 (defmethod testable/-run :kaocha.type/clojure.spec.test.fdef
   [{the-var  :kaocha.spec.fdef/var
     sym      :kaocha.spec.fdef/sym
-    the-meta :kaocha.testable/meta
     opts     ::stc/opts
     :as      testable} test-plan]
   (type/with-report-counters
-    (let [check-results  (stest/check sym opts)
-          result-count   (count check-results)
-          checks-passed? (->> check-results (map :failure) (every? nil?))]
-      (if checks-passed?
-        (report-success check-results)
-        (report-failure check-results))
-      (merge testable {:kaocha.result/count result-count} (type/report-count)))))
+    (test/do-report {:type :begin-test-var, :var the-var})
+    (try (let [check-results  (stest/check sym {::stc/opts opts})
+               checks-passed? (->> check-results (map :failure) (every? nil?))]
+           (if checks-passed?
+             (report-success check-results)
+             (report-failure check-results)))
+         (catch clojure.lang.ExceptionInfo e
+           (when-not (:kaocha/fail-fast (ex-data e))
+             (report/report-exception e)))
+         (catch Throwable e
+           (report/report-exception e)))
+    (test/do-report {:type :end-test-var, :var the-var})
+    (merge testable {:kaocha.result/count 1} (type/report-count))))
 
 (s/def :kaocha.spec.fdef/var var?)
 (s/def :kaocha.spec.fdef/sym qualified-symbol?)
@@ -66,5 +72,4 @@
 (s/def :kaocha.type/clojure.spec.test.fdef
   (s/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
-                :kaocha.spec.fdef/name
                 :kaocha.spec.fdef/var]))
