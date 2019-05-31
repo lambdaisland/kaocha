@@ -18,7 +18,7 @@
         ns-obj  (the-ns ns-name)]
     (->> (stest/checkable-syms)
          (filter (partial ns/starts-with-namespace? ns-name))
-         (type.fdef/load-testables)
+         (type.fdef/load-testables testable)
          (assoc testable
                 :kaocha.testable/meta (meta ns-obj)
                 :kaocha.ns/ns ns-obj

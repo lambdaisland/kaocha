@@ -11,7 +11,7 @@
 
 (alias 'stc 'clojure.spec.test.check)
 
-(defn load-testable [sym {::stc/keys [opts] :as test-plan}]
+(defn load-testable [{::stc/keys [opts] :as test-plan} sym]
   (let [nsname    (namespace sym)
         test-name (str sym)
         var       (resolve sym)]
@@ -24,10 +24,10 @@
      :kaocha.spec.fdef/var  var
      ::stc/opts             opts}))
 
-(defn load-testables [syms]
+(defn load-testables [test-plan syms]
   (->> syms
        (sort-by name)
-       (map load-testable)))
+       (map #(load-testable test-plan %))))
 
 (defn report-success [check-results]
   (test/do-report
