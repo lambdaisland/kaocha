@@ -10,19 +10,19 @@
 
 (alias 'stc 'clojure.spec.test.check)
 
-(defn ->testable [{::stc/keys [opts] :as testable} ns-name]
-  {:kaocha.testable/type :kaocha.type/clojure.spec.test.ns
-   :kaocha.testable/id   (keyword (str ns-name))
-   :kaocha.testable/desc (str ns-name)
-   :kaocha.ns/name       ns-name
-   ::stc/opts            opts})
+(defn ->testable [check ns-name]
+  (->> {:kaocha.testable/type :kaocha.type/clojure.spec.test.ns
+        :kaocha.testable/id   (keyword (str ns-name))
+        :kaocha.testable/desc (str ns-name)
+        :kaocha.ns/name       ns-name}
+       (merge check)))
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.ns [testable]
   (let [ns-name (-> testable :kaocha.ns/name ns/required-ns)
         ns-obj  (the-ns ns-name)]
     (->> (stest/checkable-syms)
          (filter (partial ns/starts-with-namespace? ns-name))
-         (type.fdef/load-testables testable)
+         (type.fdef/load-testables)
          (assoc testable
                 :kaocha.testable/meta (meta ns-obj)
                 :kaocha.ns/ns ns-obj

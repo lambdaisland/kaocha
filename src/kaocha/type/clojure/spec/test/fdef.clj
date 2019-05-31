@@ -8,25 +8,24 @@
             [kaocha.result :as result]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.specs]))
+            [kaocha.specs]
+            [orchestra.spec.test :as orchestra]))
 
 (alias 'stc 'clojure.spec.test.check)
 
-(defn load-testable [{::stc/keys [opts] :as test-plan} sym]
-  (let [nsname    (namespace sym)
-        var       (resolve sym)]
-    {:kaocha.testable/type  :kaocha.type/clojure.spec.test.fdef
-     :kaocha.testable/id    (keyword sym)
-     :kaocha.testable/meta  (meta var)
-     :kaocha.testable/desc  (str sym)
-     :kaocha.spec.fdef/sym  sym
-     :kaocha.spec.fdef/var  var
-     ::stc/opts             opts}))
+(defn load-testable [sym]
+  (let [var (resolve sym)]
+    {:kaocha.testable/type :kaocha.type/clojure.spec.test.fdef
+     :kaocha.testable/id   (keyword sym)
+     :kaocha.testable/meta (meta var)
+     :kaocha.testable/desc (str sym)
+     :kaocha.spec.fdef/sym sym
+     :kaocha.spec.fdef/var var}))
 
-(defn load-testables [test-plan syms]
+(defn load-testables [syms]
   (->> syms
        (sort-by name)
-       (map #(load-testable test-plan %))))
+       (map load-testable)))
 
 (defn report-success [check-results]
   (test/do-report
@@ -47,10 +46,13 @@
                     (::stest/val failure))}))))
 
 (defmethod testable/-run :kaocha.type/clojure.spec.test.fdef
-  [{the-var  :kaocha.spec.fdef/var
-    sym      :kaocha.spec.fdef/sym
-    opts     ::stc/opts
-    :as      testable} test-plan]
+  [{the-var :kaocha.spec.fdef/var
+    sym     :kaocha.spec.fdef/sym
+    :as     testable}
+   {instrument?    ::stc/instrument?
+    check-asserts? ::stc/check-asserts?
+    opts           ::stc/opts
+    :as            test-plan}]
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
     (when check-asserts? (s/check-asserts true))
