@@ -52,6 +52,8 @@
     opts     ::stc/opts
     :as      testable} test-plan]
   (type/with-report-counters
+    (when instrument? (orchestra/instrument))
+    (when check-asserts? (s/check-asserts true))
     (test/do-report {:type :begin-test-var, :var the-var})
     (try (let [check-results  (stest/check sym {::stc/opts opts})
                checks-passed? (->> check-results (map :failure) (every? nil?))]
@@ -64,6 +66,8 @@
          (catch Throwable e
            (report/report-exception e)))
     (test/do-report {:type :end-test-var, :var the-var})
+    (when instrument? (orchestra/unstrument))
+    (when check-asserts? (s/check-asserts false))
     (merge testable {:kaocha.result/count 1} (type/report-count))))
 
 (s/def :kaocha.spec.fdef/var var?)

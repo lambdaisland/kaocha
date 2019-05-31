@@ -44,7 +44,11 @@
 
 (s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
                     :catch-all #{:all-fdefs :other-fdefs}))
-(s/def ::check (s/keys :opt [::syms ::stc/opts :kaocha/ns-patterns]))
+(s/def ::check (s/keys :opt [::syms
+                             ::stc/instrument?
+                             ::stc/check-asserts?
+                             ::stc/opts
+                             :kaocha/ns-patterns]))
 (s/def ::checks (s/coll-of ::check))
 
 (s/def :kaocha.type/clojure.spec.test.check

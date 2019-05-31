@@ -75,12 +75,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; clojure.spec.test
 
+(alias 'stc 'clojure.spec.test.check)
+
+(s/def ::stc/instrument? boolean?)
+(s/def ::stc/check-asserts? boolean?)
+
 ;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
 ;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
 ;; using flat maps with namespaced keys. ::stc/opts is a sub-map with
 ;; un-namespaced keys, and that's now propagating out into this library.
-(alias 'stc 'clojure.spec.test.check)
-
 (s/def ::stc/num-tests nat-int?)
 (s/def ::stc/max-size nat-int?)
 (s/def ::stc/opts (s/nilable (s/keys :opt-un [::stc/num-tests

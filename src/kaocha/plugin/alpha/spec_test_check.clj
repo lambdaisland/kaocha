@@ -46,12 +46,19 @@
       (add-default-test-suite config)))
   (cli-options [opts]
     (conj opts
+          [nil  "--[no-]instrumentation" "Turn on orchestra instrumentation during fdef checks"]
+          [nil  "--[no-]spec-asserts" "Run s/check-asserts during fdef checks"]
           [nil  "--num-tests NUM" "Test iterations per fdef"
            :parse-fn #(Integer/parseInt %)]
           [nil  "--max-size SIZE" "Maximum length of generated collections"
            :parse-fn #(Integer/parseInt %)]))
   (config [config]
-    (let [num-tests (get-in config [:kaocha/cli-options :num-tests])
-          max-size  (get-in config [:kaocha/cli-options :max-size])]
-      (assoc config ::stc/opts {:num-tests num-tests
-                                :max-size  max-size}))))
+          (let [num-tests       (get-in config [:kaocha/cli-options :num-tests])
+                max-size        (get-in config [:kaocha/cli-options :max-size])
+                instrumentation (get-in config [:kaocha/cli-options :instrumentation])
+                spec-asserts    (get-in config [:kaocha/cli-options :spec-asserts])]
+            (assoc config
+                   ::stc/opts {:num-tests num-tests
+                               :max-size  max-size}
+                   ::stc/instrument? instrumentation
+                   ::stc/check-asserts? spec-asserts))))
