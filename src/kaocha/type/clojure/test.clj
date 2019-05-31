@@ -13,7 +13,7 @@
 
 (defmethod testable/-load :kaocha.type/clojure.test [testable]
   (-> testable
-      (load/load-namespaces :kaocha/test-paths type.ns/->testable)
+      (load/load-test-namespaces type.ns/->testable)
       (testable/add-desc "clojure.test")))
 
 (defmethod testable/-run :kaocha.type/clojure.test [testable test-plan]
