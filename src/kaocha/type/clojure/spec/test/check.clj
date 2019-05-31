@@ -24,11 +24,11 @@
     (map #(merge testable %) checks)))
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.check [testable]
-  (->> (checks testable)
-       (map check-tests)
-       (apply concat)
-       (assoc testable :kaocha/tests)
-       (testable/add-desc "clojure.spec.test.check")))
+  (-> (checks testable)
+      (->> (map check-tests)
+           (apply concat)
+           (assoc testable :kaocha/tests))
+      (testable/add-desc "clojure.spec.test.check")))
 
 (defmethod testable/-run :kaocha.type/clojure.spec.test.check [testable test-plan]
   (test-suite/run testable test-plan))
