@@ -14,7 +14,7 @@
    :kaocha.ns/name       ns-name})
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.ns [testable]
-  (let [ns-name (-> testable :kaocha.ns/name ns/required-ns testable)
+  (let [ns-name (-> testable :kaocha.ns/name ns/required-ns)
         ns-obj  (the-ns ns-name)]
     (->> (stest/checkable-syms)
          (filter (partial ns/starts-with-namespace? ns-name))
