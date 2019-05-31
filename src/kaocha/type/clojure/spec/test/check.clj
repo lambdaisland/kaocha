@@ -34,8 +34,7 @@
   (test-suite/run testable test-plan))
 
 (s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
-                    :all #{:all-fdefs}
-                    :rest #{:other-fdefs}))
+                    :catch-all #{:all-fdefs :other-fdefs}))
 (s/def ::check (s/keys :opt [::syms ::stc/opts :kaocha/ns-patterns]))
 (s/def ::checks (s/coll-of ::check))
 
