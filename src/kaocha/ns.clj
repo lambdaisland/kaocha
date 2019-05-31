@@ -43,7 +43,7 @@
   ns-name)
 
 (defn starts-with-namespace? [ns-name sym-or-kw]
-  (-> sym-or-kw namespace (str/starts-with? ns-name)))
+  (-> sym-or-kw namespace (= (str ns-name))))
 
 (s/def :kaocha.ns/name simple-symbol?)
 (s/def :kaocha.ns/ns   ns?)
