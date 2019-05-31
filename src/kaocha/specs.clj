@@ -83,8 +83,8 @@
 
 (s/def ::stc/num-tests nat-int?)
 (s/def ::stc/max-size nat-int?)
-(s/def ::stc/opts (s/keys :opt-un [::stc/num-tests
-                                   ::stc/max-size]))
+(s/def ::stc/opts (s/nilable (s/keys :opt-un [::stc/num-tests
+                                              ::stc/max-size])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
