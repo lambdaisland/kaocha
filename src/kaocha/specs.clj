@@ -39,11 +39,11 @@
 
 (s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
 
-(s/def :kaocha.test-plan/testable (s/and :kaocha/testable
-                                         (s/keys :req []
-                                                 :opt [:kaocha.testable/desc
-                                                       :kaocha.test-plan/tests
-                                                       :kaacha.test-plan/load-error])))
+(s/def :kaocha.test-plan/testable (s/merge :kaocha/testable
+                                           (s/keys :req []
+                                                   :opt [:kaocha.testable/desc
+                                                         :kaocha.test-plan/tests
+                                                         :kaacha.test-plan/load-error])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
@@ -52,15 +52,15 @@
 
 (s/def :kaocha.result/tests (s/coll-of :kaocha.result/testable))
 
-(s/def :kaocha.result/testable (s/and :kaocha.test-plan/testable
-                                      (s/keys :opt [:kaocha.result/count
-                                                    :kaocha.result/tests
-                                                    :kaocha.result/pass
-                                                    :kaocha.result/error
-                                                    :kaocha.result/fail
-                                                    :kaocha.result/out
-                                                    :kaocha.result/err
-                                                    :kaocha.result/time])))
+(s/def :kaocha.result/testable (s/merge :kaocha.test-plan/testable
+                                        (s/keys :opt [:kaocha.result/count
+                                                      :kaocha.result/tests
+                                                      :kaocha.result/pass
+                                                      :kaocha.result/error
+                                                      :kaocha.result/fail
+                                                      :kaocha.result/out
+                                                      :kaocha.result/err
+                                                      :kaocha.result/time])))
 
 (s/def :kaocha.result/count nat-int?)
 (s/def :kaocha.result/pass nat-int?)
