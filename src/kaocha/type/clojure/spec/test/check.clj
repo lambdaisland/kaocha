@@ -1,5 +1,7 @@
 (ns kaocha.type.clojure.spec.test.check
+  (:refer-clojure :exclude [symbol])
   (:require [clojure.spec.alpha :as s]
+            [kaocha.core-ext :refer :all]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
             [kaocha.specs]
@@ -11,11 +13,18 @@
 
 (alias 'stc 'clojure.spec.test.check)
 
+(defn all-fdef-tests [{:kaocha/keys [source-paths ns-patterns]
+                       :or          {ns-pattens ["*"]}
+                       :as          testable}]
+  (let [ns-patterns (map regex ns-patterns)
+        ns-names    (load/find-test-nss source-paths ns-patterns)
+        testables   (map #(type.spec.ns/->testable testable %) ns-names)]
+    (testable/load-testables testables)))
+
 (defn check-tests [{::keys [syms] :as check}]
   (let [check (update check :kaocha/ns-patterns #(or % [".*"]))]
     (condp = syms
-      :all-fdefs   (load/namespace-testables :kaocha/source-paths check
-                                             type.spec.ns/->testable)
+      :all-fdefs   (all-fdef-tests check)
       :other-fdefs nil ;; TODO: this requires orchestration from the plugin
       :else        (type.fdef/load-testables syms))))
 
