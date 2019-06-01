@@ -4,13 +4,15 @@
             [clojure.string :as str]
             [clojure.test :as test]
             [expound.alpha :as expound]
+            [kaocha.hierarchy :as hierarchy]
             [kaocha.report :as report]
             [kaocha.result :as result]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.specs]
             [orchestra.spec.test :as orchestra]))
 
+;; This namespace does not actually exist, but is created by
+;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
 (defn load-testable [sym]

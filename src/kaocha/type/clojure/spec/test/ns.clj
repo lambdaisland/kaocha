@@ -1,13 +1,16 @@
 (ns kaocha.type.clojure.spec.test.ns
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
+            [clojure.spec.test.alpha]
+            [clojure.test :as t]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.ns :as ns]
-            [kaocha.specs]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
             [kaocha.type.clojure.spec.test.fdef :as type.fdef]))
 
+;; This namespace does not actually exist, but is created by
+;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
 (defn ->testable [check ns-name]

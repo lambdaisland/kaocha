@@ -1,18 +1,20 @@
 (ns kaocha.plugin.alpha.spec-test-check
   (:require [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha]
             [kaocha.hierarchy :as kaocha]
             [kaocha.plugin :refer [defplugin]]
+            [kaocha.specs]
             [kaocha.testable :as default-test-suite]
             [kaocha.type :as type]
-            [kaocha.specs]
             [kaocha.type.clojure.spec.test.check :as type.stc]
             [kaocha.type.clojure.spec.test.fdef :as type.fdef]))
 
+;; This namespace does not actually exist, but is created by
+;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
-(alias 'type.stc 'kaocha.type.clojure.spec.test.check)
 
 (def is-stc? (comp #{:kaocha.type/clojure.spec.test.check}
-                :kaocha.testable/type))
+                   :kaocha.testable/type))
 
 (defn has-stc? [tests]
   (some is-stc? tests))
