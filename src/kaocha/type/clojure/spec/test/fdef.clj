@@ -71,7 +71,7 @@
              (report/report-exception e)))
          (catch Throwable e
            (report/report-exception e)))
-    (test/do-report {:type :end-test-var, :var the-var})
+    (test/do-report {:type :end-stc-fdef, :var the-var})
     (when instrument? (orchestra/unstrument))
     (when check-asserts? (s/check-asserts false))
     (merge testable {:kaocha.result/count 1} (type/report-count))))
@@ -83,3 +83,7 @@
   (s/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
                 :kaocha.spec.fdef/var]))
+
+(hierarchy/derive! :kaocha.type/clojure.spec.test.fdef :kaocha.testable.type/leaf)
+(hierarchy/derive! :kaocha.stc/begin-fdef :kaocha/begin-test)
+(hierarchy/derive! :kaocha.stc/end-fdef :kaocha/end-test)

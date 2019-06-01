@@ -57,3 +57,5 @@
                                                        :kaocha.test-plan/tests]))
 
 (hierarchy/derive! :kaocha.type/clojure.spec.test.ns :kaocha.testable.type/group)
+(hierarchy/derive! :kaocha.stc/begin-ns :kaocha/begin-group)
+(hierarchy/derive! :kaocha.stc/end-ns :kaocha/end-group)
