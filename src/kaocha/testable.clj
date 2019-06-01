@@ -208,3 +208,15 @@
   (cons testable (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
                                                      (:kaocha.test-plan/tests testable)
                                                      (:kaocha.result/tests testable))))))
+
+(defn load-error? [testable]
+  (boolean (:kaocha.test-plan/load-error testable)))
+
+(defn handle-load-error [testable]
+  (when-let [load-error (:kaocha.test-plan/load-error testable)]
+    (t/do-report {:type                    :error
+                  :message                 "Failed to load namespace."
+                  :expected                nil
+                  :actual                  load-error
+                  :kaocha.result/exception load-error})
+    (assoc testable :kaocha.result/error 1)))

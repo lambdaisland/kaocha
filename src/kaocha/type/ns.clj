@@ -14,6 +14,13 @@
    :kaocha.testable/desc (str ns-name)
    :kaocha.ns/name       ns-name})
 
+(defn run-tests [testable test-plan fixture-fn]
+  ;; It's not guaranteed the the fixture-fn returns the result of calling the
+  ;; tests function, so we need to put it in a box for reference.
+  (let [result (atom (:kaocha.test-plan/tests testable))]
+    (fixture-fn #(swap! result testable/run-testables test-plan))
+    @result))
+
 (defmethod testable/-load :kaocha.type/ns [testable]
   ;; TODO If the namespace has a test-ns-hook function, call that:
   ;; if-let [v (find-var (symbol (:kaocha.ns/name testable) "test-ns-hook"))]
@@ -40,12 +47,26 @@
                                            [(fn [t] #(each-fixture-fn t))]
                                            [])})))
          (assoc testable
-                :kaocha.testable/meta (meta ns-obj)
-                :kaocha.ns/ns ns-obj
-                :kaocha.test-plan/tests))))
+           :kaocha.testable/meta (meta ns-obj)
+           :kaocha.ns/ns ns-obj
+           :kaocha.test-plan/tests))))
 
 (defmethod testable/-run :kaocha.type/ns [testable test-plan]
-  (ns/run-testable testable test-plan))
+  (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
+    (type/with-report-counters
+      (do-report {:type :begin-test-ns})
+      (if-let [testable (testable/handle-load-error testable)]
+        (do
+          (do-report {:type :end-test-ns})
+          testable)
+        (let [ns-meta         (:kaocha.testable/meta testable)
+              once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
+              tests           (run-tests testable test-plan once-fixture-fn)
+              result          (assoc (dissoc testable :kaocha.test-plan/tests)
+                                :kaocha.result/tests
+                                tests)]
+          (do-report {:type :end-test-ns})
+          result)))))
 
 (s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
                                      :kaocha.testable/id
