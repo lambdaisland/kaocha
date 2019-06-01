@@ -50,6 +50,7 @@
 (defmethod testable/-run :kaocha.type/clojure.spec.test.fdef
   [{the-var :kaocha.spec.fdef/var
     sym     :kaocha.spec.fdef/sym
+    wrap    :kaocha.testable/wrap
     :as     testable}
    {instrument?    ::stc/instrument?
     check-asserts? ::stc/check-asserts?
@@ -58,8 +59,9 @@
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
     (when check-asserts? (s/check-asserts true))
-    (test/do-report {:type :begin-test-var, :var the-var})
-    (try (let [check-results  (stest/check sym {::stc/opts opts})
+    (test/do-report {:type :begin-stc-fdef, :var the-var})
+    (try (let [test           (reduce #(%2 %1) (partial stest/check sym {::stc/opts opts}) wrap)
+               check-results  (test)
                checks-passed? (->> check-results (map :failure) (every? nil?))]
            (if checks-passed?
              (report-success check-results)
