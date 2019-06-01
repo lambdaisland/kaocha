@@ -25,8 +25,8 @@
   ;; TODO If the namespace has a test-ns-hook function, call that:
   ;; if-let [v (find-var (symbol (:kaocha.ns/name testable) "test-ns-hook"))]
 
-  (let [ns-name         (-> testable :kaocha.ns/name ns/required-ns)
-        ns-obj          (the-ns ns-name)
+  (let [ns-name         (:kaocha.ns/name testable)
+        ns-obj          (ns/required-ns ns-name)
         ns-meta         (meta ns-obj)
         each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]
     (->> ns-obj

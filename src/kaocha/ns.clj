@@ -11,7 +11,7 @@
 (defn required-ns [ns-name]
   (when-not (find-ns ns-name)
     (require ns-name))
-  ns-name)
+  (the-ns ns-name))
 
 (s/def :kaocha.ns/name simple-symbol?)
 (s/def :kaocha.ns/ns   ns?)

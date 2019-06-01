@@ -24,8 +24,8 @@
   (-> sym-or-kw namespace (= (str ns-name))))
 
 (defmethod testable/-load :kaocha.type/clojure.spec.test.ns [testable]
-  (let [ns-name (-> testable :kaocha.ns/name ns/required-ns)
-        ns-obj  (the-ns ns-name)]
+  (let [ns-name (:kaocha.ns/name testable)
+        ns-obj  (ns/required-ns ns-name)]
     (->> (stest/checkable-syms)
          (filter (partial ns/starts-with-namespace? ns-name))
          (type.fdef/load-testables)
