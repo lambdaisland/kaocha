@@ -59,4 +59,4 @@ git push
 echo "Building cljdoc"
 
 PROJECT=$(git remote get-url origin | sed 's/.*lambdaisland\/\([\.a-z-]\+\)\.git/\1/')
-curl -v -XPOST https://cljdoc.org/api/request-build2 -d project=lambdaisland/$PROJECT -d version=$VERSION 2>&1 | grep Location
+curl -v -XPOST https://cljdoc.org/api/request-build2 -d project=lambdaisland/$PROJECT -d version=$VERSION 2>&1 | grep -i location
