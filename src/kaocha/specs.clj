@@ -22,6 +22,8 @@
                                 :opt [:kaocha.testable/meta
                                       :kaocha.testable/wrap]))
 
+(s/def :kaocha.testable/meta (s/nilable map?))
+
 (s/def :kaocha.testable/type qualified-keyword?)
 
 (s/def :kaocha.testable/id keyword?)
@@ -29,7 +31,9 @@
 ;; Short description as used by the documentation reporter. No newlines.
 (s/def :kaocha.testable/desc string?)
 
-(s/def :kaocha.testable/wrap (s/coll-of fn? :into []))
+(s/def :kaocha.testable/wrap (s/with-gen
+                               (s/coll-of fn? :into [])
+                               (constantly (s/gen #{[]}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan
@@ -64,6 +68,7 @@
 (s/def :kaocha.result/count nat-int?)
 (s/def :kaocha.result/pass nat-int?)
 (s/def :kaocha.result/fail nat-int?)
+(s/def :kaocha.result/pending nat-int?)
 (s/def :kaocha.result/error nat-int?)
 
 (s/def :kaocha.result/out string?)

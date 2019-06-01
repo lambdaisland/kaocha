@@ -18,8 +18,11 @@
    ::fail    (apply + (map #(::fail % 0) rs))
    ::pending (apply + (map #(::pending % 0) rs))})
 
+(s/def ::result-map (s/keys :req [::count ::pass ::error ::fail ::pending]))
+
 (s/fdef sum
-        :ret (s/keys :req [::count ::pass ::error ::fail ::pending]))
+  :args (s/cat :args (s/* ::result-map))
+  :ret ::result-map)
 
 (declare testable-totals)
 
@@ -36,7 +39,8 @@
     (merge (sum) testable)))
 
 (s/fdef testable-totals
-        :ret (s/keys :req [::count ::pass ::error ::fail ::pending]))
+  :args (s/cat :testable :kaocha.result/testable)
+  :ret ::result-map)
 
 (defn failed?
   "Did this testable, or one of its children, fail or error?"
