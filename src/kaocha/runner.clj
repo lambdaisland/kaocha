@@ -66,7 +66,16 @@
     (str "lambdaisland/kaocha " (pr-str (some-> resource load-props :version)))))
 
 (defn run [{:keys [config errors options suites summary]}]
-  (let [all-suites     (into #{} (map :kaocha.testable/id) (:kaocha/tests config))
+  ;; TODO: we're calling the config hook here in multiple places, and it's also
+  ;; being called in `kaocha.api`. Given that we already need the fully expanded
+  ;; config here (since now we're potentially adding suites in the config hook),
+  ;; we should call it once at the top here, and pass the processed config into
+  ;; kaocha.api. Punting on that because it requires a coordinated update in
+  ;; kaocha.repl and kaocha-boot.
+  (let [all-suites     (into #{} (map :kaocha.testable/id)
+                             (->> config
+                                  (plugin/run-hook :kaocha.hooks/config)
+                                  :kaocha/tests))
         unknown-suites (set/difference (set suites) all-suites)]
     (cond
       (seq errors)
