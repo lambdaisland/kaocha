@@ -24,7 +24,7 @@
    (classloader-hierarchy (deref clojure.lang.Compiler/LOADER)))
   ([tip]
    (->> tip
-        (iterate #(.getParent %))
+        (iterate #(.getParent ^ClassLoader %))
         (take-while boolean))))
 
 (defn- modifiable-classloader?

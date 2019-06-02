@@ -11,7 +11,7 @@
                                      "kaocha.monkey_patch"])
 
 (defn elide-element? [e]
-  (some #(str/starts-with? (.getClassName e) %) *stacktrace-filters*))
+  (some #(str/starts-with? (.getClassName ^StackTraceElement e) %) *stacktrace-filters*))
 
 (defn print-stack-trace
   "Prints a Clojure-oriented stack trace of tr, a Throwable.
@@ -52,6 +52,6 @@
    (print-cause-trace tr nil))
   ([tr n]
    (print-stack-trace tr n)
-   (when-let [cause (.getCause tr)]
-     (print "Caused by: " )
+   (when-let [cause (.getCause ^Throwable tr)]
+     (print "Caused by: ")
      (recur cause n))))
