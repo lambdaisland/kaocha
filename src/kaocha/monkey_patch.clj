@@ -37,9 +37,9 @@
                            :kaocha/test-plan testable/*test-plan*} m)
         m          (plugin/run-hook :kaocha.hooks/pre-report m)
         test-fn    (:kaocha.var/test (:kaocha/testable m))
-        stacktrace (.getStackTrace (if (exception? (:actual m))
-                                     (:actual m)
-                                     (Thread/currentThread)))
+        stacktrace (if (exception? (:actual m))
+                     (.getStackTrace ^Throwable (:actual m))
+                     (.getStackTrace ^Thread (Thread/currentThread)))
         file-and-line
         (or testable/*test-location*
             (stacktrace-file-and-line (drop-while
