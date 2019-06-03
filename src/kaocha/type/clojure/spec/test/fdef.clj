@@ -4,13 +4,15 @@
             [clojure.string :as str]
             [clojure.test :as test]
             [expound.alpha :as expound]
+            [kaocha.hierarchy :as hierarchy]
             [kaocha.report :as report]
             [kaocha.result :as result]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.specs]
             [orchestra.spec.test :as orchestra]))
 
+;; This namespace does not actually exist, but is created by
+;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
 (defn load-testable [sym]
@@ -48,6 +50,7 @@
 (defmethod testable/-run :kaocha.type/clojure.spec.test.fdef
   [{the-var :kaocha.spec.fdef/var
     sym     :kaocha.spec.fdef/sym
+    wrap    :kaocha.testable/wrap
     :as     testable}
    {instrument?    ::stc/instrument?
     check-asserts? ::stc/check-asserts?
@@ -56,8 +59,9 @@
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
     (when check-asserts? (s/check-asserts true))
-    (test/do-report {:type :begin-test-var, :var the-var})
-    (try (let [check-results  (stest/check sym {::stc/opts opts})
+    (test/do-report {:type :kaocha.stc/begin-fdef, :var the-var})
+    (try (let [test           (reduce #(%2 %1) (partial stest/check sym {::stc/opts opts}) wrap)
+               check-results  (test)
                checks-passed? (->> check-results (map :failure) (every? nil?))]
            (if checks-passed?
              (report-success check-results)
@@ -67,7 +71,7 @@
              (report/report-exception e)))
          (catch Throwable e
            (report/report-exception e)))
-    (test/do-report {:type :end-test-var, :var the-var})
+    (test/do-report {:type :kaocha.stc/end-fdef, :var the-var})
     (when instrument? (orchestra/unstrument))
     (when check-asserts? (s/check-asserts false))
     (merge testable {:kaocha.result/count 1} (type/report-count))))
@@ -79,3 +83,7 @@
   (s/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
                 :kaocha.spec.fdef/var]))
+
+(hierarchy/derive! :kaocha.type/clojure.spec.test.fdef :kaocha.testable.type/leaf)
+(hierarchy/derive! :kaocha.stc/begin-fdef :kaocha/begin-test)
+(hierarchy/derive! :kaocha.stc/end-fdef :kaocha/end-test)

@@ -1,4 +1,6 @@
 (ns features.steps.kaocha-integration
+  ^{:clojure.tools.namespace.repl/load false
+    :clojure.tools.namespace.repl/unload false}
   (:require [clojure.java.io :as io]
             [clojure.java.shell :as shell]
             [clojure.string :as str]

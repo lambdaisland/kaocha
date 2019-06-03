@@ -28,3 +28,5 @@
 (s/def :kaocha/ns-patterns (s/coll-of string?))
 
 (hierarchy/derive! :kaocha.type/clojure.test :kaocha.testable.type/suite)
+(hierarchy/derive! :kaocha.type/ns :kaocha.testable.type/group)
+(hierarchy/derive! :kaocha.type/var :kaocha.testable.type/leaf)

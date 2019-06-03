@@ -1,6 +1,5 @@
 (ns kaocha.specs
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.test.alpha]
             [clojure.spec.gen.alpha :as gen]
             [clojure.test :as t]
             [expound.alpha :as expound]))
@@ -22,6 +21,8 @@
                                       :kaocha.testable/id]
                                 :opt [:kaocha.testable/meta
                                       :kaocha.testable/wrap]))
+
+(s/def :kaocha.testable/meta (s/nilable map?))
 
 (s/def :kaocha.testable/type qualified-keyword?)
 
@@ -65,6 +66,7 @@
 (s/def :kaocha.result/count nat-int?)
 (s/def :kaocha.result/pass nat-int?)
 (s/def :kaocha.result/fail nat-int?)
+(s/def :kaocha.result/pending nat-int?)
 (s/def :kaocha.result/error nat-int?)
 
 (s/def :kaocha.result/out string?)
@@ -75,19 +77,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; clojure.spec.test
 
-(alias 'stc 'clojure.spec.test.check)
+(when (find-ns 'clojure.spec.test.check)
+  (s/def :clojure.spec.test.check/instrument? (s/nilable boolean?))
+  (s/def :clojure.spec.test.check/check-asserts? (s/nilable boolean?))
 
-(s/def ::stc/instrument? (s/nilable boolean?))
-(s/def ::stc/check-asserts? (s/nilable boolean?))
-
-;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
-;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
-;; using flat maps with namespaced keys. ::stc/opts is a sub-map with
-;; un-namespaced keys, and that's now propagating out into this library.
-(s/def ::stc/num-tests (s/nilable nat-int?))
-(s/def ::stc/max-size (s/nilable nat-int?))
-(s/def ::stc/opts (s/nilable (s/keys :opt-un [::stc/num-tests
-                                              ::stc/max-size])))
+  ;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
+  ;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
+  ;; using flat maps with namespaced keys. :clojure.spec.test.check/opts is a sub-map with
+  ;; un-namespaced keys, and that's now propagating out into this library.
+  (s/def :clojure.spec.test.check/num-tests (s/nilable nat-int?))
+  (s/def :clojure.spec.test.check/max-size (s/nilable nat-int?))
+  (s/def :clojure.spec.test.check/opts (s/nilable (s/keys :opt-un [:clojure.spec.test.check/num-tests
+                                                                   :clojure.spec.test.check/max-size]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
