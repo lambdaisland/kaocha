@@ -31,9 +31,7 @@
 ;; Short description as used by the documentation reporter. No newlines.
 (s/def :kaocha.testable/desc string?)
 
-(s/def :kaocha.testable/wrap (s/with-gen
-                               (s/coll-of fn? :into [])
-                               (constantly (s/gen #{[]}))))
+(s/def :kaocha.testable/wrap (s/coll-of fn? :into []))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan

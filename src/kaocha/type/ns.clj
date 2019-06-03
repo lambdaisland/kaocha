@@ -73,5 +73,3 @@
                                      :kaocha.ns/name]
                                :opt [:kaocha.ns/ns
                                      :kaocha.test-plan/tests]))
-
-(hierarchy/derive! :kaocha.type/ns :kaocha.testable.type/group)

@@ -33,6 +33,7 @@
           (test)
           (catch clojure.lang.ExceptionInfo e
             (when-not (:kaocha/fail-fast (ex-data e))
+
               (report/report-exception e)))
           (catch Throwable e (report/report-exception e))))
       (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
@@ -58,4 +59,5 @@
                                :gen (fn []
                                       (gen/return (.setDynamic (Var/create))))))
 
-(hierarchy/derive! :kaocha.type/var :kaocha.testable.type/leaf)
+(hierarchy/derive! :kaocha/begin-var :kaocha/begin-test)
+(hierarchy/derive! :kaocha/end-var :kaocha/end-test)

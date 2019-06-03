@@ -39,7 +39,7 @@
     (merge (sum) testable)))
 
 (s/fdef testable-totals
-  :args (s/cat :testable :kaocha.result/testable)
+  ;;:args (s/cat :testable :kaocha.result/testable)
   :ret ::result-map)
 
 (defn failed?

@@ -240,7 +240,8 @@
              (r/result {:type :summary :test 5 :pass 5 :fail 1 :error 0 :pending 0}))))))
 
 (deftest fail-fast-test
-  (is (nil? (r/fail-fast {:type :fail})))
+  (is (nil? (binding [testable/*fail-fast?* false]
+              (r/fail-fast {:type :fail}))))
   (is (= :caught (try
                    (try+
                     (binding [testable/*fail-fast?* true]

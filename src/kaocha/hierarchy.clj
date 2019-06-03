@@ -21,14 +21,22 @@
 (derive! :summary :kaocha/known-key)
 (derive! :kaocha/pending :kaocha/known-key)
 
+;; Legacy, prefer :kaocha/begin-suite and :kaocha/end-suite.
+(derive! :begin-test-suite :kaocha/begin-suite)
+(derive! :end-test-suite :kaocha/end-suite)
+
 (derive! :begin-test-ns :kaocha/begin-group)
 (derive! :end-test-ns :kaocha/end-group)
 
 (derive! :kaocha/begin-group :kaocha/known-key)
 (derive! :kaocha/end-group :kaocha/known-key)
 
+;; Legacy, prefer :kaocha/begin-var and :kaocha/end-var.
 (derive! :begin-test-var :kaocha/begin-test)
 (derive! :end-test-var :kaocha/end-test)
+
+(derive! :kaocha/begin-var :kaocha/begin-test)
+(derive! :kaocha/end-var :kaocha/end-test)
 
 (derive! :kaocha/begin-test :kaocha/known-key)
 (derive! :kaocha/end-test :kaocha/known-key)
@@ -38,6 +46,7 @@
 (defn isa? [tag parent]
   (or (clojure.core/isa? tag parent)
       (clojure.core/isa? hierarchy tag parent)))
+
 
 ;; Test event types
 

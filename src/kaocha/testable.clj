@@ -75,7 +75,7 @@
 
   (try
     (-load testable)
-    (catch Throwable t
+    (catch Exception t
       (if (hierarchy/suite? testable)
         (assoc testable ::load-error t)
         (throw t)))))
@@ -158,12 +158,13 @@
                 (assoc :file (.-source ^Compiler$CompilerException error)
                        :line (.-line ^Compiler$CompilerException error)))]
         (t/do-report (assoc m :type :kaocha/begin-suite))
-        (t/do-report m)
+        (binding [*fail-fast?* false]
+          (t/do-report m))
         (t/do-report (assoc m :type :kaocha/end-suite))
         (assoc test
-               ::events [m]
-               :kaocha.result/count 1
-               :kaocha.result/error 1))
+          ::events [m]
+          :kaocha.result/count 1
+          :kaocha.result/error 1))
 
       (::skip test)
       test
@@ -179,9 +180,9 @@
           (t/do-report m)
           (t/do-report (assoc m :type :kaocha/end-test))
           (assoc test
-                 ::events [m]
-                 :kaocha.result/count 1
-                 :kaocha.result/pending 1)))
+            ::events [m]
+            :kaocha.result/count 1
+            :kaocha.result/pending 1)))
 
       :else
       (as-> test %
