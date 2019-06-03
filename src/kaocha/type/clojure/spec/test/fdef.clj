@@ -59,7 +59,7 @@
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
     (when check-asserts? (s/check-asserts true))
-    (test/do-report {:type :begin-stc-fdef, :var the-var})
+    (test/do-report {:type :kaocha.stc/begin-fdef, :var the-var})
     (try (let [test           (reduce #(%2 %1) (partial stest/check sym {::stc/opts opts}) wrap)
                check-results  (test)
                checks-passed? (->> check-results (map :failure) (every? nil?))]
@@ -71,7 +71,7 @@
              (report/report-exception e)))
          (catch Throwable e
            (report/report-exception e)))
-    (test/do-report {:type :end-stc-fdef, :var the-var})
+    (test/do-report {:type :kaocha.stc/end-fdef, :var the-var})
     (when instrument? (orchestra/unstrument))
     (when check-asserts? (s/check-asserts false))
     (merge testable {:kaocha.result/count 1} (type/report-count))))
