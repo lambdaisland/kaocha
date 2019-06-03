@@ -2,6 +2,8 @@
 
 ## Added
 
+- Type hints to eliminate reflection warnings.
+
 ## Fixed
 
 ## Changed
