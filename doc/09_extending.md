@@ -332,7 +332,7 @@ consists of namespaces, and each namespace contains test vars, so the hierarchy
 is `:kaocha.type/clojure.test` > `:kaocha.type/ns` > `:kaocha.type/var`.
 
 For Cucumber tests the hierarchy is `:kaocha.type/cucumber` >
-`:kaocha.type/cucumber-scenario` > `:kaocha.cucumber-feature`.
+`:kaocha.cucumber-feature` > `:kaocha.type/cucumber-scenario`.
 
 You could have more or fewer levels. The top one is always known as the suite,
 the bottom one as the leaf, the intermediate ones as groups.
@@ -411,7 +411,7 @@ This is an example of event types, and the keywords they derive from.
 Some notable parent types to inherit from
 
 - `:kaocha/known-key` all events we emit should eventually inherit from
-  known-key. Any event we receive that is not a know-key will be propagated to
+  known-key. Any event we receive that is not a known-key will be propagated to
   the original `clojure.test/report` multimethod, for compatibility with
   assertion libraries that emit their own custom events and extend the
   multimethod to handle them.

@@ -1,7 +1,7 @@
 (ns kaocha.type.clojure.spec.test.check
   (:refer-clojure :exclude [symbol])
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.test.alhpa]
+            [clojure.spec.test.alpha]
             [kaocha.core-ext :refer :all]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
