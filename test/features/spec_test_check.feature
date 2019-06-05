@@ -63,7 +63,7 @@ Feature: Automatic spec test check generation
       (defn-spec bad-fn boolean? [x int?]
         x)
       """
-    When I run `bin/kaocha --reporter kaocha.report/documentation --no-randomize`
+    When I run `bin/kaocha --reporter kaocha.report/documentation --no-randomize --no-color`
     Then the output should contain:
       """ text
       --- generative-fdef-checks (clojure.spec.test.check) ---------------------------
