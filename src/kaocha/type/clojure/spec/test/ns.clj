@@ -51,10 +51,10 @@
 
 (s/def :kaocha.type/clojure.spec.test.ns (s/keys :req [:kaocha.testable/type
                                                        :kaocha.testable/id
-                                                       :kaocha.ns/name
-                                                       ::stc/opts]
+                                                       :kaocha.ns/name]
                                                  :opt [:kaocha.ns/ns
-                                                       :kaocha.test-plan/tests]))
+                                                       :kaocha.test-plan/tests
+                                                       ::stc/opts]))
 
 (hierarchy/derive! :kaocha.type/clojure.spec.test.ns :kaocha.testable.type/group)
 (hierarchy/derive! :kaocha.stc/begin-ns :kaocha/begin-group)
