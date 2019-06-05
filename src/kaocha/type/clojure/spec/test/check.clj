@@ -27,7 +27,7 @@
     (testable/load-testables testables)))
 
 (defn check-tests [check]
-  (let [{::keys [syms] :as check} (merge check check-defaults)]
+  (let [{::keys [syms] :as check} (merge check-defaults check)]
     (condp = syms
       :all-fdefs   (all-fdef-tests check)
       :other-fdefs nil ;; TODO: this requires orchestration from the plugin
