@@ -15,6 +15,9 @@
 ;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
+(def check-defaults {:kaocha/ns-patterns [".*"]
+                     ::syms              :all-fdefs})
+
 (defn all-fdef-tests [{:kaocha/keys [source-paths ns-patterns]
                        :or          {ns-pattens ["*"]}
                        :as          testable}]
@@ -23,8 +26,8 @@
         testables   (map #(type.spec.ns/->testable testable %) ns-names)]
     (testable/load-testables testables)))
 
-(defn check-tests [{::keys [syms] :as check}]
-  (let [check (update check :kaocha/ns-patterns #(or % [".*"]))]
+(defn check-tests [check]
+  (let [{::keys [syms] :as check} (merge check check-defaults)]
     (condp = syms
       :all-fdefs   (all-fdef-tests check)
       :other-fdefs nil ;; TODO: this requires orchestration from the plugin
