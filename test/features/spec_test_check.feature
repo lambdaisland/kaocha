@@ -20,7 +20,7 @@ Feature: Automatic spec test check generation
         to select all the fdefs that were not specifically mentioned in other
         checks.
       - `:kaocha.type.clojure.spec.test.check/instrument?` Turn on orchestra
-          instrumentation during fdef checks
+        instrumentation during fdef checks
       - `:kaocha.type.clojure.spec.test.check/check-asserts?` Run
         s/check-asserts during fdef checks
       - `:clojure.spec.test.check/opts`: A map containing any of:
@@ -31,18 +31,19 @@ Feature: Automatic spec test check generation
   2. The `kaocha.plugin.alpha/spec-test-check` plugin
     - This provides a sane default test suite for automatically checking all of
       your fdefs. Spec test checking can be configured with more granularity in
-      tests.edn (see below), but the plugin exists for easy and simplistic CLI
+      tests.edn (as above), but the plugin exists for easy and simplistic CLI
       control.
     - Regardless of whether you add the test suite(s) to `tests.edn` yourself,
       you can also use this plugin to forceably override certain test
       parameters:
-        - `--[no-]stc-instrumentation`: See `:kaocha.type.clojure.spec.test.check/instrument?`
-        - `--[no-]stc-asserts`: See `:kaocha.type.clojure.spec.test.check/check-asserts?`
-        - `--stc-num-tests NUM`: See `:num-tests`
-        - `--stc-max-size SIZE`: See `:max-size`
-    - By default, this also adds `:no-gen` to `:kaocha.filter/skip-meta`. You
-      might want to decorate an fdef with `^:no-gen` if there is either no good
-      generator for one or more arguments or if the function is side-effectful.
+        - `--[no-]stc-instrumentation` = `:kaocha.type.clojure.spec.test.check/instrument?`
+        - `--[no-]stc-asserts` = `:kaocha.type.clojure.spec.test.check/check-asserts?`
+        - `--stc-num-tests NUM` = `:num-tests`
+        - `--stc-max-size SIZE` = `:max-size`
+    - By default, this plugin also adds `:no-gen` to `:kaocha.filter/skip-meta`.
+      You might want to decorate an fdef with `^:no-gen` if there is either no
+      good generator for one or more of its arguments or if the function is
+      side-effectful.
 
   Scenario: Detects and checks fdefs
     Given a file named "tests.edn" with:
