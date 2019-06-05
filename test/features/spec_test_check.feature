@@ -26,8 +26,8 @@ Feature: Automatic spec test check generation
       - `:clojure.spec.test.check/opts`: A map containing any of:
         - `:num-tests`: Test iterations per fdef
         - `:max-size`: Maximum length of generated collections
-    - All of the keys within each check can also be given in the top-level to be
-      merged by default into all checks.
+    - All of the keys within each check can also be given in the top-level test
+      suite map to be merged by default into all checks.
   2. The `kaocha.plugin.alpha/spec-test-check` plugin
     - This provides a sane default test suite for automatically checking all of
       your fdefs. Spec test checking can be configured with more granularity in
