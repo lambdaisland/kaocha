@@ -49,8 +49,7 @@ Feature: Automatic spec test check generation
       """ clojure
       #kaocha/v1
       {:tests [{:type :kaocha.type/clojure.spec.test.check
-                :id   :generative-fdef-checks
-                :source-paths  ["src"]}]}
+                :id   :generative-fdef-checks}]}
       """ 
     Given a file named "src/sample.clj" with:
       """ clojure
