@@ -6,6 +6,13 @@
 
 ## Fixed
 
+- Fix `--watch` when invoked without a `[:kaocha/cli-options :config-file]`,
+  either because `tests.edn` doesn't exist, or the config originated elsewhere.
+- Make `kaocha.repl/config` set `[:kaocha/cli-options :config-file]` if
+  applicable.
+- Handle exceptions in `--watch` higher up, to prevent certain errors from being
+  silently ignored.
+
 ## Changed
 
 # 0.0-418 (2019-04-11 / d445b44)

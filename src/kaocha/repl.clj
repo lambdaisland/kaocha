@@ -61,7 +61,8 @@ These will particularly come in handy when developing plugins."}
   (:require [kaocha.config :as config]
             [kaocha.plugin :as plugin]
             [kaocha.api :as api]
-            [kaocha.result :as result]))
+            [kaocha.result :as result]
+            [clojure.java.io :as io]))
 
 (defn config
   "Load the Kaocha configuration
@@ -78,7 +79,10 @@ These will particularly come in handy when developing plugins."}
   ([extra-config]
    (let [config-file (:config-file extra-config "tests.edn")
          config      (-> (config/load-config config-file)
-                         (config/merge-config (config/normalize extra-config)))
+                         (config/merge-config (config/normalize extra-config))
+                         (cond-> #_config
+                           (.exists (io/file config-file))
+                           (assoc-in [:kaocha/cli-options :config-file] config-file)))
          plugin-chain (plugin/load-all (:kaocha/plugins config))]
      (plugin/with-plugins plugin-chain
        (plugin/run-hook :kaocha.hooks/config config)))))

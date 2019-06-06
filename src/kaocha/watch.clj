@@ -18,7 +18,8 @@
             [lambdaisland.tools.namespace.file :as ctn-file]
             [lambdaisland.tools.namespace.parse :as ctn-parse]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
-            [lambdaisland.tools.namespace.track :as ctn-track])
+            [lambdaisland.tools.namespace.track :as ctn-track]
+            [clojure.stacktrace :as st])
   (:import [java.nio.file FileSystems]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
@@ -100,15 +101,16 @@
       :else
       [(drain-and-rescan! q tracker watch-paths) f])))
 
-(defn reload-config [config]
-  (let [{:kaocha/keys [cli-options cli-args]} config
-        {:keys [config-file plugin]}          cli-options
+(defn reload-config [config plugin-chain]
+  (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
+    (let [{:kaocha/keys [cli-options cli-args]} config
 
-        config       (-> config-file
-                         (config/load-config)
-                         (config/apply-cli-opts cli-options)
-                         (config/apply-cli-args cli-args))
-        plugin-chain (plugin/load-all (concat (:kaocha/plugins config) plugin))]
+          config       (-> config-file
+                           (config/load-config)
+                           (config/apply-cli-opts cli-options)
+                           (config/apply-cli-args cli-args))
+          plugin-chain (plugin/load-all (concat (:kaocha/plugins config) (:plugin cli-options)))]
+      [config plugin-chain])
     [config plugin-chain]))
 
 (defn run-loop [finish? config tracker q watch-paths]
@@ -127,7 +129,7 @@
           (do
             (println "[watch] Error reloading, all tests skipped.")
             (let [[tracker _] (wait-and-rescan! q tracker watch-paths ignore)
-                  [config plugin-chain] (reload-config config)]
+                  [config plugin-chain] (reload-config config plugin-chain)]
               (recur tracker config plugin-chain nil)))
 
           (and (seq focus) (not (result/failed? result)))
@@ -137,7 +139,7 @@
 
           :else
           (let [[tracker trigger] (wait-and-rescan! q tracker watch-paths ignore)
-                [config plugin-chain] (reload-config config)
+                [config plugin-chain] (reload-config config plugin-chain)
                 focus (when-not (= :enter trigger)
                         (->> result
                              testable/test-seq
@@ -201,7 +203,8 @@ errors as test errors."
                                 :lambdaisland.tools.namespace.track/load))]
 
     (watch! q watch-paths)
-    (watch! q [(get-in config [:kaocha/cli-options :config-file])])
+    (when-let [config-file (get-in config [:kaocha/cli-options :config-file])]
+      (watch! q #{config-file}))
 
     (future
       (let [stdin (io/reader System/in)]
@@ -210,18 +213,17 @@ errors as test errors."
             (qput q :enter)
             (Thread/sleep 100)))))
 
-    (try
-      (run-loop finish? config tracker q watch-paths)
-      (catch Throwable t
-        (.printStackTrace t))
-      (finally
-        (println "[watch] watching stopped.")))))
+    (run-loop finish? config tracker q watch-paths)))
 
 (defn run [config]
   (let [finish? (atom false)
         q       (make-queue)]
     (future
-      (run* config finish? q))
+      (try
+        (run* config finish? q)
+        (catch Throwable t
+          (st/print-cause-trace t)))
+      (println "[watch] watching stopped."))
     (fn []
       (reset! finish? true)
       (qput q :finish))))
