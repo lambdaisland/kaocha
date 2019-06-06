@@ -59,7 +59,7 @@
                             (overide-stc-settings config)
                             (add-default-test-suite config))]
       (assoc config
-        ::stc/opts {:num-tests num-tests
-                    :max-size  max-size}
-        ::stc/instrument? instrumentation
-        ::stc/check-asserts? spec-asserts))))
+             ::stc/opts {:num-tests num-tests
+                         :max-size  max-size}
+             ::stc/instrument? instrumentation
+             ::stc/check-asserts? spec-asserts))))

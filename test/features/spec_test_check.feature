@@ -56,11 +56,8 @@ Feature: Automatic spec test check generation
       (ns sample
         (:require [orchestra.core :refer [defn-spec]]))
 
-      (defn-spec ok-fn boolean? [x int?]
-        true)
-
-      (defn-spec bad-fn boolean? [x int?]
-        x)
+      (defn-spec ok-fn  boolean? [x int?] true)
+      (defn-spec bad-fn boolean? [x int?] x)
       """
     When I run `bin/kaocha --reporter kaocha.report/documentation --no-randomize --no-color`
     Then the output should contain:
