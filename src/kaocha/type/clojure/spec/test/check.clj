@@ -16,7 +16,7 @@
 (alias 'stc 'clojure.spec.test.check)
 
 (def check-defaults {:kaocha.spec.test.check/ns-patterns [".*"]
-                     ::syms :all-fdefs})
+                     :kaocha.spec.test.check/syms :all-fdefs})
 
 (defn all-fdef-tests [{:kaocha/keys [source-paths]
                        :kaocha.spec.test.check/keys [ns-patterns]
@@ -27,43 +27,47 @@
     (testable/load-testables testables)))
 
 (defn check-tests [check]
-  (let [{::keys [syms] :as check} (merge check-defaults check)]
+  (let [{syms :kaocha.spec.test.check/syms :as check} (merge check-defaults check)]
     (condp = syms
       :all-fdefs   (all-fdef-tests check)
       :other-fdefs nil ;; TODO: this requires orchestration from the plugin
       :else        (type.fdef/load-testables syms))))
 
-(defn checks [{::keys [checks] :as testable}]
+(defn checks [{checks :kaocha.spec.test.check/checks :as testable}]
   (let [checks (or checks [{}])]
     (map #(merge testable %) checks)))
 
-(defmethod testable/-load :kaocha.type/clojure.spec.test.check [testable]
+(defmethod testable/-load :kaocha.type/spec.test.check [testable]
   (-> (checks testable)
       (->> (map check-tests)
            (apply concat)
            (assoc testable :kaocha.test-plan/tests))
       (testable/add-desc "clojure.spec.test.check")))
 
-(defmethod testable/-run :kaocha.type/clojure.spec.test.check [testable test-plan]
+(defmethod testable/-run :kaocha.type/spec.test.check [testable test-plan]
   (test-suite/run testable test-plan))
 
-(s/def ::syms (s/or :given-symbols (s/coll-of symbol?)
-                    :catch-all #{:all-fdefs :other-fdefs}))
-(s/def ::check (s/keys :opt [::syms
-                             ::stc/instrument?
-                             ::stc/check-asserts?
-                             ::stc/opts
-                             :kaocha/ns-patterns]))
-(s/def ::checks (s/coll-of ::check))
+(s/def :kaocha.spec.test.check/syms
+  (s/or :given-symbols (s/coll-of symbol?)
+        :catch-all #{:all-fdefs :other-fdefs}))
 
-(s/def :kaocha.type/clojure.spec.test.check
+(s/def :kaocha.spec.test.check/check
+  (s/keys :opt [:kaocha.spec.test.check/syms
+                ::stc/instrument?
+                ::stc/check-asserts?
+                ::stc/opts
+                :kaocha.spec.test.check/ns-patterns]))
+
+(s/def :kaocha.spec.test.check/checks (s/coll-of :kaocha.spec.test.check/check))
+
+(s/def :kaocha.type/spec.test.check
   (s/merge (s/keys :req [:kaocha.testable/type
                          :kaocha.testable/id
                          :kaocha/source-paths]
                    :opt [:kaocha.filter/skip-meta
-                         :kaocha/ns-patterns
-                         ::checks])
-           ::check))
+                         :kaocha.spec.test.check/ns-patterns
+                         :kaocha.spec.test.check/checks])
+           :kaocha.spec.test.check/check))
 
-(hierarchy/derive! :kaocha.type/clojure.spec.test.check
+(hierarchy/derive! :kaocha.type/spec.test.check
                    :kaocha.testable.type/suite)

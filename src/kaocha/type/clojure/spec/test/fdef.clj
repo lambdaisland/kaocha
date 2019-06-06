@@ -17,7 +17,7 @@
 
 (defn load-testable [sym]
   (let [var (resolve sym)]
-    {:kaocha.testable/type :kaocha.type/clojure.spec.test.fdef
+    {:kaocha.testable/type :kaocha.type/spec.test.fdef
      :kaocha.testable/id   (keyword sym)
      :kaocha.testable/meta (meta var)
      :kaocha.testable/desc (str sym)
@@ -47,7 +47,7 @@
                     failure
                     (::stest/val failure))}))))
 
-(defmethod testable/-run :kaocha.type/clojure.spec.test.fdef
+(defmethod testable/-run :kaocha.type/spec.test.fdef
   [{the-var :kaocha.spec.fdef/var
     sym     :kaocha.spec.fdef/sym
     wrap    :kaocha.testable/wrap
@@ -81,11 +81,11 @@
 (s/def :kaocha.spec.fdef/var var?)
 (s/def :kaocha.spec.fdef/sym qualified-symbol?)
 
-(s/def :kaocha.type/clojure.spec.test.fdef
+(s/def :kaocha.type/spec.test.fdef
   (s/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
                 :kaocha.spec.fdef/var]))
 
-(hierarchy/derive! :kaocha.type/clojure.spec.test.fdef :kaocha.testable.type/leaf)
+(hierarchy/derive! :kaocha.type/spec.test.fdef :kaocha.testable.type/leaf)
 (hierarchy/derive! :kaocha.stc/begin-fdef :kaocha/begin-test)
 (hierarchy/derive! :kaocha.stc/end-fdef :kaocha/end-test)

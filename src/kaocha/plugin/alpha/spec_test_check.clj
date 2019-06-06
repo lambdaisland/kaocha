@@ -13,7 +13,7 @@
 ;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
-(def is-stc? (comp #{:kaocha.type/clojure.spec.test.check}
+(def is-stc? (comp #{:kaocha.type/spec.test.check}
                    :kaocha.testable/type))
 
 (defn has-stc? [tests]
@@ -28,12 +28,12 @@
        tests))
 
 (defn default-test-suite [{::stc/keys [opts] :as config}]
-  {:kaocha.testable/type    :kaocha.type/clojure.spec.test.check
-   :kaocha.testable/id      :generative-fdef-checks
-   :kaocha.filter/skip-meta [:kaocha/skip :no-gen]
-   :kaocha/source-paths     ["src"],
-   ::type.stc/syms          :all-fdefs
-   ::stc/opts               opts})
+  {:kaocha.testable/type        :kaocha.type/spec.test.check
+   :kaocha.testable/id          :generative-fdef-checks
+   :kaocha.filter/skip-meta     [:kaocha/skip :no-gen]
+   :kaocha/source-paths         ["src"],
+   :kaocha.spec.test.check/syms :all-fdefs
+   ::stc/opts                   opts})
 
 (defn overide-stc-settings [config]
   (assoc config :kaocha/tests (tests-with-overridden-stc-opts config)))

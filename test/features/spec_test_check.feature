@@ -6,23 +6,22 @@ Feature: Automatic spec test check generation
 
   There are two ways you can use this feature:
 
-  1. Adding `:kaocha.type/clojure.spec.test.check` test suites to your `tests.edn`:
-    - `:kaocha.testable/type` = :kaocha.type/clojure.spec.test.check
+  1. Adding `:kaocha.type/spec.test.check` test suites to your `tests.edn`:
+    - `:kaocha.testable/type` = :kaocha.type/spec.test.check
     - `:kaocha/source-paths`: Normally your fdefs are with your code, so this
       can probably be left defaulted at `["src"]`
-    - `:kaocha.type.clojure.spec.test.check/checks`: Optional. If you want to
+    - `:kaocha.spec.test.check/checks`: Optional. If you want to
       orchestrate multiple "sets" of checks with differing parameters, you can
       specify them here. This is a collection of checks, each check being a map
       which may contain the following optional keys:
-      - `:kaocha.type.clojure.spec.test.check/syms`: Currently your only options
-        are either `:all-fdefs` (default) or to provide a set of the symbols for
-        the fdefs which you want to test. Eventually we will add `:other-fdefs`
-        to select all the fdefs that were not specifically mentioned in other
-        checks.
-      - `:kaocha.type.clojure.spec.test.check/instrument?` Turn on orchestra
-        instrumentation during fdef checks
-      - `:kaocha.type.clojure.spec.test.check/check-asserts?` Run
-        s/check-asserts during fdef checks
+      - `:kaocha.spec.test.check/syms`: Currently your only options are either
+        `:all-fdefs` (default) or to provide a set of the symbols for the fdefs
+        which you want to test. Eventually we will add `:other-fdefs` to select
+        all the fdefs that were not specifically mentioned in other checks.
+      - `:kaocha.spec.test.check/instrument?` Turn on orchestra instrumentation
+        during fdef checks
+      - `:kaocha.spec.test.check/check-asserts?` Run s/check-asserts during fdef
+        checks
       - `:clojure.spec.test.check/opts`: A map containing any of:
         - `:num-tests`: Test iterations per fdef
         - `:max-size`: Maximum length of generated collections
@@ -36,8 +35,8 @@ Feature: Automatic spec test check generation
     - Regardless of whether you add the test suite(s) to `tests.edn` yourself,
       you can also use this plugin to forceably override certain test
       parameters:
-        - `--[no-]stc-instrumentation` = `:kaocha.type.clojure.spec.test.check/instrument?`
-        - `--[no-]stc-asserts` = `:kaocha.type.clojure.spec.test.check/check-asserts?`
+        - `--[no-]stc-instrumentation` = `:kaocha.spec.test.check/instrument?`
+        - `--[no-]stc-asserts` = `:kaocha.spec.test.check/check-asserts?`
         - `--stc-num-tests NUM` = `:num-tests`
         - `--stc-max-size SIZE` = `:max-size`
     - By default, this plugin also adds `:no-gen` to `:kaocha.filter/skip-meta`.
@@ -49,7 +48,7 @@ Feature: Automatic spec test check generation
     Given a file named "tests.edn" with:
       """ clojure
       #kaocha/v1
-      {:tests [{:type :kaocha.type/clojure.spec.test.check
+      {:tests [{:type :kaocha.type/spec.test.check
                 :id   :generative-fdef-checks}]}
       """
     Given a file named "src/sample.clj" with:

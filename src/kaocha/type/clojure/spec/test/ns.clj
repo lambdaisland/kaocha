@@ -14,7 +14,7 @@
 (alias 'stc 'clojure.spec.test.check)
 
 (defn ->testable [check ns-name]
-  (->> {:kaocha.testable/type :kaocha.type/clojure.spec.test.ns
+  (->> {:kaocha.testable/type :kaocha.type/spec.test.ns
         :kaocha.testable/id   (keyword (str ns-name))
         :kaocha.testable/desc (str ns-name)
         :kaocha.ns/name       ns-name}
@@ -23,7 +23,7 @@
 (defn starts-with-namespace? [ns-name sym-or-kw]
   (-> sym-or-kw namespace (= (str ns-name))))
 
-(defmethod testable/-load :kaocha.type/clojure.spec.test.ns [testable]
+(defmethod testable/-load :kaocha.type/spec.test.ns [testable]
   (let [ns-name (:kaocha.ns/name testable)
         ns-obj  (ns/required-ns ns-name)]
     (->> (stest/checkable-syms)
@@ -34,7 +34,7 @@
            :kaocha.ns/ns ns-obj
            :kaocha.test-plan/tests))))
 
-(defmethod testable/-run :kaocha.type/clojure.spec.test.ns [testable test-plan]
+(defmethod testable/-run :kaocha.type/spec.test.ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
     (type/with-report-counters
       (do-report {:type :kaocha.stc/begin-ns})
@@ -49,13 +49,13 @@
           (do-report {:type :kaocha.stc/end-ns})
           result)))))
 
-(s/def :kaocha.type/clojure.spec.test.ns (s/keys :req [:kaocha.testable/type
-                                                       :kaocha.testable/id
-                                                       :kaocha.ns/name]
-                                                 :opt [:kaocha.ns/ns
-                                                       :kaocha.test-plan/tests
-                                                       ::stc/opts]))
+(s/def :kaocha.type/spec.test.ns (s/keys :req [:kaocha.testable/type
+                                               :kaocha.testable/id
+                                               :kaocha.ns/name]
+                                         :opt [:kaocha.ns/ns
+                                               :kaocha.test-plan/tests
+                                               ::stc/opts]))
 
-(hierarchy/derive! :kaocha.type/clojure.spec.test.ns :kaocha.testable.type/group)
+(hierarchy/derive! :kaocha.type/spec.test.ns :kaocha.testable.type/group)
 (hierarchy/derive! :kaocha.stc/begin-ns :kaocha/begin-group)
 (hierarchy/derive! :kaocha.stc/end-ns :kaocha/end-group)
