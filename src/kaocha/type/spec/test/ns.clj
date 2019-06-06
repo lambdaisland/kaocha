@@ -1,4 +1,4 @@
-(ns kaocha.type.clojure.spec.test.ns
+(ns kaocha.type.spec.test.ns
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]
             [clojure.spec.test.alpha]
@@ -7,7 +7,7 @@
             [kaocha.ns :as ns]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.type.clojure.spec.test.fdef :as type.fdef]))
+            [kaocha.type.spec.test.fdef :as type.fdef]))
 
 ;; This namespace does not actually exist, but is created by
 ;; requiring clojure.spec.test.alpha

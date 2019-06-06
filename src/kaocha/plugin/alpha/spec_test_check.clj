@@ -6,8 +6,8 @@
             [kaocha.specs]
             [kaocha.testable :as default-test-suite]
             [kaocha.type :as type]
-            [kaocha.type.clojure.spec.test.check :as type.stc]
-            [kaocha.type.clojure.spec.test.fdef :as type.fdef]))
+            [kaocha.type.spec.test.check :as type.stc]
+            [kaocha.type.spec.test.fdef :as type.fdef]))
 
 ;; This namespace does not actually exist, but is created by
 ;; requiring clojure.spec.test.alpha

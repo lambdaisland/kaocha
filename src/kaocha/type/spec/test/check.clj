@@ -1,4 +1,4 @@
-(ns kaocha.type.clojure.spec.test.check
+(ns kaocha.type.spec.test.check
   (:refer-clojure :exclude [symbol])
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha]
@@ -8,8 +8,8 @@
             [kaocha.test-suite :as test-suite]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
-            [kaocha.type.clojure.spec.test.fdef :as type.fdef]
-            [kaocha.type.clojure.spec.test.ns :as type.spec.ns]))
+            [kaocha.type.spec.test.fdef :as type.fdef]
+            [kaocha.type.spec.test.ns :as type.spec.ns]))
 
 ;; This namespace does not actually exist, but is created by
 ;; requiring clojure.spec.test.alpha
