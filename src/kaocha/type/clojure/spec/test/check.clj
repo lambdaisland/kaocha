@@ -15,11 +15,11 @@
 ;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
-(def check-defaults {:kaocha/ns-patterns [".*"]
-                     ::syms              :all-fdefs})
+(def check-defaults {:kaocha.spec.test.check/ns-patterns [".*"]
+                     ::syms :all-fdefs})
 
-(defn all-fdef-tests [{:kaocha/keys [source-paths ns-patterns]
-                       :or          {ns-pattens ["*"]}
+(defn all-fdef-tests [{:kaocha/keys [source-paths]
+                       :kaocha.spec.test.check/keys [ns-patterns]
                        :as          testable}]
   (let [ns-patterns (map regex ns-patterns)
         ns-names    (load/find-test-nss source-paths ns-patterns)
