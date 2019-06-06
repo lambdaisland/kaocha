@@ -44,7 +44,7 @@ Feature: Automatic spec test check generation
       good generator for one or more of its arguments or if the function is
       side-effectful.
 
-  Scenario: Detects and checks fdefs
+  Scenario: Detects and checks fdefs using tests.edn
     Given a file named "tests.edn" with:
       """ clojure
       #kaocha/v1
@@ -68,7 +68,7 @@ Feature: Automatic spec test check generation
         sample/ok-fn
 
 
-      FAIL in sample/bad-fn (sample.clj:7)
+      FAIL in sample/bad-fn (sample.clj:5)
       == Checked sample/bad-fn ====================
 
       -- Function spec failed -----------
@@ -90,3 +90,20 @@ Feature: Automatic spec test check generation
         actual: 0
       2 tests, 2 assertions, 1 failures.
       """
+
+  Scenario: Plugin: kaocha.plugin.alpha/spec-test-check
+    Given a file named "src/sample.clj" with:
+      """ clojure
+      (ns sample
+        (:require [orchestra.core :refer [defn-spec]]))
+
+      (defn-spec ok-fn  keyword? [k keyword?] k)
+      (defn-spec bad-fn boolean? [k keyword?] (ok-fn k))
+      """
+    When I run `bin/kaocha --reporter kaocha.report/documentation --no-randomize --no-color --plugin kaocha.plugin.alpha/spec-test-check`
+    Then the output should contain:
+      """ text
+      sample
+        sample/bad-fn FAIL
+        sample/ok-fn
+      """"
