@@ -380,6 +380,11 @@ The `-run` method for a leaf test should also take care of wrapping the core
 test logic in any wrapping functions provided by `:kaocha.testable/wrap` on the
 testable. This is important for output capturing to work correctly.
 
+You should check that when your test fails, you get the right file and line
+number in the output. Kaocha tries to detect this from the stacktrace, but that
+doesn't always work. (see the `kaocha.monkey-patch` namespace). Alternatively
+bind `kaocha.testable/*test-location*` to a map with `:file` and `:line`.
+
 Before invoking the actual test logic, check for `:kaocha.testable/load-error`,
 and if it's there then signal a test error and finish. You can do this with the
 `kaocha.testable/handle-load-error` helper.

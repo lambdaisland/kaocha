@@ -51,7 +51,7 @@ Feature: Automatic spec test check generation
       #kaocha/v1
       {:tests [{:type :kaocha.type/clojure.spec.test.check
                 :id   :generative-fdef-checks}]}
-      """ 
+      """
     Given a file named "src/sample.clj" with:
       """ clojure
       (ns sample
@@ -70,26 +70,26 @@ Feature: Automatic spec test check generation
       sample
         sample/bad-fn FAIL
         sample/ok-fn
-      
-      
-      FAIL in sample/bad-fn (test_suite.clj:7)
+
+
+      FAIL in sample/bad-fn (sample.clj:7)
       == Checked sample/bad-fn ====================
-      
+
       -- Function spec failed -----------
-      
+
         (sample/bad-fn 0)
-      
+
       returned an invalid value.
-      
+
         0
-      
+
       should satisfy
-      
+
         boolean?
-      
+
       -------------------------
       Detected 1 error
-      
+
       expected: boolean?
         actual: 0
       2 tests, 2 assertions, 1 failures.
