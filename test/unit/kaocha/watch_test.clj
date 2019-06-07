@@ -57,7 +57,7 @@
        {:kaocha/tests [{:kaocha.testable/id :foo}]}
        (let [tmp-file (File/createTempFile "tests" ".edn")]
          (spit tmp-file "#kaocha/v1 {:tests [{:id :foo}]}")
-         (first (w/reload-config {:kaocha/cli-options {:config-file (str tmp-file)}}))))))
+         (first (w/reload-config {:kaocha/cli-options {:config-file (str tmp-file)}} []))))))
 
 (deftest watch-test
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
@@ -111,4 +111,4 @@
     (reset! finish? true)
     (w/qput q :finish)
 
-    (is (= "[]\n0 tests, 0 assertions, 0 failures.\n\n[watch] watching stopped.\n" @out-str))))
+    (is (= "[]\n0 tests, 0 assertions, 0 failures.\n\n" @out-str))))
