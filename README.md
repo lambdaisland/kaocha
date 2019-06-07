@@ -204,8 +204,10 @@ bin/kaocha --test-help
 
 Kaocha requirements Clojure 1.9 or later.
 
+<!-- license-epl -->
 ## License
-
-&copy; Arne Brasseur 2018
-
+&nbsp;
+Copyright &copy; 2018-2019 Arne Brasseur
+&nbsp;
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
+<!-- /license-epl -->
