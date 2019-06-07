@@ -16,6 +16,16 @@ Full featured next generation test runner for Clojure.
 | [deep-diff](https://github.com/lambdaisland/deep-diff) | [![CircleCI](https://circleci.com/gh/lambdaisland/deep-diff.svg?style=svg)](https://circleci.com/gh/lambdaisland/deep-diff) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/deep-diff)](https://cljdoc.org/d/lambdaisland/deep-diff) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/deep-diff.svg)](https://clojars.org/lambdaisland/deep-diff) | [![codecov](https://codecov.io/gh/lambdaisland/deep-diff/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/deep-diff) |
 <!-- /projects -->
 
+## Need help?
+
+Are you
+
+- reporting a bug? -> [File an issue](https://github.com/lambdaisland/kaocha/issues)
+- looking for support? -> [Post to the forum](https://clojureverse.org/c/projects/kaocha)
+- looking to contribute? -> Create a pull request or start by discussing your plans [on the forum](https://clojureverse.org/c/projects/kaocha)
+
+There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/CCY2V0U6A-1559819261.002300/) channel on Clojurians Slack (sign up [here](http://clojurians.net/)), where users can help each other.
+
 ## Docs
 
 <!-- docs-toc -->
