@@ -33,17 +33,9 @@
           (test)
           (catch clojure.lang.ExceptionInfo e
             (when-not (:kaocha/fail-fast (ex-data e))
-              (t/do-report {:type                    :error
-                            :message                 "Uncaught exception, not in assertion."
-                            :expected                nil
-                            :actual                  e
-                            :kaocha.result/exception e})))
-          (catch Throwable e
-            (t/do-report {:type                    :error
-                          :message                 "Uncaught exception, not in assertion."
-                          :expected                nil
-                          :actual                  e
-                          :kaocha.result/exception e}))))
+
+              (report/report-exception e)))
+          (catch Throwable e (report/report-exception e))))
       (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
         (when (= pass error fail pending 0)
           (binding [testable/*fail-fast?* false
@@ -67,4 +59,5 @@
                                :gen (fn []
                                       (gen/return (.setDynamic (Var/create))))))
 
-(hierarchy/derive! :kaocha.type/var :kaocha.testable.type/leaf)
+(hierarchy/derive! :kaocha/begin-var :kaocha/begin-test)
+(hierarchy/derive! :kaocha/end-var :kaocha/end-test)

@@ -22,6 +22,8 @@
                                 :opt [:kaocha.testable/meta
                                       :kaocha.testable/wrap]))
 
+(s/def :kaocha.testable/meta (s/nilable map?))
+
 (s/def :kaocha.testable/type qualified-keyword?)
 
 (s/def :kaocha.testable/id keyword?)
@@ -38,11 +40,11 @@
 
 (s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
 
-(s/def :kaocha.test-plan/testable (s/and :kaocha/testable
-                                         (s/keys :req []
-                                                 :opt [:kaocha.testable/desc
-                                                       :kaocha.test-plan/tests
-                                                       :kaacha.test-plan/load-error])))
+(s/def :kaocha.test-plan/testable (s/merge :kaocha/testable
+                                           (s/keys :req []
+                                                   :opt [:kaocha.testable/desc
+                                                         :kaocha.test-plan/tests
+                                                         :kaacha.test-plan/load-error])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
@@ -51,25 +53,42 @@
 
 (s/def :kaocha.result/tests (s/coll-of :kaocha.result/testable))
 
-(s/def :kaocha.result/testable (s/and :kaocha.test-plan/testable
-                                      (s/keys :opt [:kaocha.result/count
-                                                    :kaocha.result/tests
-                                                    :kaocha.result/pass
-                                                    :kaocha.result/error
-                                                    :kaocha.result/fail
-                                                    :kaocha.result/out
-                                                    :kaocha.result/err
-                                                    :kaocha.result/time])))
+(s/def :kaocha.result/testable (s/merge :kaocha.test-plan/testable
+                                        (s/keys :opt [:kaocha.result/count
+                                                      :kaocha.result/tests
+                                                      :kaocha.result/pass
+                                                      :kaocha.result/error
+                                                      :kaocha.result/fail
+                                                      :kaocha.result/out
+                                                      :kaocha.result/err
+                                                      :kaocha.result/time])))
 
 (s/def :kaocha.result/count nat-int?)
 (s/def :kaocha.result/pass nat-int?)
 (s/def :kaocha.result/fail nat-int?)
+(s/def :kaocha.result/pending nat-int?)
 (s/def :kaocha.result/error nat-int?)
 
 (s/def :kaocha.result/out string?)
 (s/def :kaocha.result/err string?)
 
 (s/def :kaocha.result/time nat-int?)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; clojure.spec.test
+
+(when (find-ns 'clojure.spec.test.check)
+  (s/def :clojure.spec.test.check/instrument? (s/nilable boolean?))
+  (s/def :clojure.spec.test.check/check-asserts? (s/nilable boolean?))
+
+  ;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
+  ;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
+  ;; using flat maps with namespaced keys. :clojure.spec.test.check/opts is a sub-map with
+  ;; un-namespaced keys, and that's now propagating out into this library.
+  (s/def :clojure.spec.test.check/num-tests (s/nilable nat-int?))
+  (s/def :clojure.spec.test.check/max-size (s/nilable nat-int?))
+  (s/def :clojure.spec.test.check/opts (s/nilable (s/keys :opt-un [:clojure.spec.test.check/num-tests
+                                                                   :clojure.spec.test.check/max-size]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers

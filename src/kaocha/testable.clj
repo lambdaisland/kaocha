@@ -17,6 +17,10 @@
   "Should testing terminate immediately upon failure or error?"
   nil)
 
+(defn add-desc [testable description]
+  (assoc testable ::desc
+         (str (name (::id testable)) " (" description ")")))
+
 (defn- try-require [n]
   (try
     (require n)
@@ -71,7 +75,7 @@
 
   (try
     (-load testable)
-    (catch Throwable t
+    (catch Exception t
       (if (hierarchy/suite? testable)
         (assoc testable ::load-error t)
         (throw t)))))
@@ -128,7 +132,7 @@
         :ret :kaocha.result/testable)
 
 (defn load-testables
-  "Load a collection of testables, returing a test-plan collection"
+  "Load a collection of testables, returning a test-plan collection"
   [testables]
   (loop [result []
          [test & testables] testables]
@@ -154,12 +158,13 @@
                 (assoc :file (.-source ^Compiler$CompilerException error)
                        :line (.-line ^Compiler$CompilerException error)))]
         (t/do-report (assoc m :type :kaocha/begin-suite))
-        (t/do-report m)
+        (binding [*fail-fast?* false]
+          (t/do-report m))
         (t/do-report (assoc m :type :kaocha/end-suite))
         (assoc test
-               ::events [m]
-               :kaocha.result/count 1
-               :kaocha.result/error 1))
+          ::events [m]
+          :kaocha.result/count 1
+          :kaocha.result/error 1))
 
       (::skip test)
       test
@@ -175,9 +180,9 @@
           (t/do-report m)
           (t/do-report (assoc m :type :kaocha/end-test))
           (assoc test
-                 ::events [m]
-                 :kaocha.result/count 1
-                 :kaocha.result/pending 1)))
+            ::events [m]
+            :kaocha.result/count 1
+            :kaocha.result/pending 1)))
 
       :else
       (as-> test %
@@ -204,3 +209,15 @@
   (cons testable (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
                                                      (:kaocha.test-plan/tests testable)
                                                      (:kaocha.result/tests testable))))))
+
+(defn load-error? [testable]
+  (boolean (:kaocha.test-plan/load-error testable)))
+
+(defn handle-load-error [testable]
+  (when-let [load-error (:kaocha.test-plan/load-error testable)]
+    (t/do-report {:type                    :error
+                  :message                 "Failed to load namespace."
+                  :expected                nil
+                  :actual                  load-error
+                  :kaocha.result/exception load-error})
+    (assoc testable :kaocha.result/error 1)))

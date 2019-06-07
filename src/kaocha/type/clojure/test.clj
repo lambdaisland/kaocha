@@ -7,22 +7,17 @@
             [kaocha.classpath :as classpath]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
+            [kaocha.test-suite :as test-suite]
             [clojure.java.io :as io]
             [clojure.test :as t]))
 
 (defmethod testable/-load :kaocha.type/clojure.test [testable]
-  (assoc (load/load-test-namespaces testable type.ns/->testable)
-         ::testable/desc (str (name (::testable/id testable)) " (clojure.test)")))
+  (-> testable
+      (load/load-test-namespaces type.ns/->testable)
+      (testable/add-desc "clojure.test")))
 
 (defmethod testable/-run :kaocha.type/clojure.test [testable test-plan]
-  (t/do-report {:type :begin-test-suite})
-  (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
-        testable (-> testable
-                     (dissoc :kaocha.test-plan/tests)
-                     (assoc :kaocha.result/tests results))]
-    (t/do-report {:type :end-test-suite
-                  :kaocha/testable testable})
-    testable))
+  (test-suite/run testable test-plan))
 
 (s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
                                                :kaocha/test-paths
@@ -33,3 +28,5 @@
 (s/def :kaocha/ns-patterns (s/coll-of string?))
 
 (hierarchy/derive! :kaocha.type/clojure.test :kaocha.testable.type/suite)
+(hierarchy/derive! :kaocha.type/ns :kaocha.testable.type/group)
+(hierarchy/derive! :kaocha.type/var :kaocha.testable.type/leaf)

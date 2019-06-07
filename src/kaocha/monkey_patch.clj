@@ -63,7 +63,8 @@
                                               (str/starts-with? cl-name "kaocha.watch")
                                               (str/starts-with? cl-name "kaocha.api")
                                               (str/starts-with? cl-name "kaocha.testable")
-                                              (str/starts-with? cl-name "kaocha.type.")))
+                                              (str/starts-with? cl-name "kaocha.type.")
+                                              (str/starts-with? cl-name "kaocha.test_suite")))
                                        stacktrace))
             (and test-fn (test-file-and-line stacktrace test-fn)))]
     (report

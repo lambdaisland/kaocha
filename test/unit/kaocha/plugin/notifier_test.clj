@@ -97,7 +97,7 @@
               (n/notifier-config-hook {:kaocha/cli-options {:notifications false}}))))
 
 (deftest notifier-post-run-hook-test
-  (let [gen-file-name #(str "/tmp/" (gensym (str (namespace `_))))
+  (let [gen-file-name #(str "/tmp/" (gensym (str (namespace `_) "-" (rand-int 10000))))
         f1 (gen-file-name)
         f2 (gen-file-name)]
 

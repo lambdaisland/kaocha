@@ -150,13 +150,12 @@
     (print ")")
     (flush)))
 
-;; TODO these really should be :kaocha/{begin,end}-test-suite
-(defmethod dots* :begin-test-suite [_]
+(defmethod dots* :kaocha/begin-suite [_]
   (t/with-test-out
     (print "[")
     (flush)))
 
-(defmethod dots* :end-test-suite [_]
+(defmethod dots* :kaocha/end-suite [_]
   (t/with-test-out
     (print "]")
     (flush)))
@@ -363,7 +362,7 @@
 (defmulti doc :type :hierarchy #'hierarchy/hierarchy)
 (defmethod doc :default [_])
 
-(defmethod doc :begin-test-suite [m]
+(defmethod doc :kaocha/begin-suite [m]
   (t/with-test-out
     (reset! doc-printed-contexts (list))
     (print "---" (-> m :kaocha/testable :kaocha.testable/desc) "---------------------------")
@@ -447,3 +446,10 @@
                                       (str/split (with-out-str
                                                    (fail-summary m))
                                                  #"\n"))))))
+
+(defn report-exception [e]
+  (t/do-report {:type                    :error
+                :message                 "Uncaught exception, not in assertion."
+                :expected                nil
+                :actual                  e
+                :kaocha.result/exception e}))

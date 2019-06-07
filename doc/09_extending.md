@@ -287,7 +287,8 @@ It will then validate the suite configuration using the
 `:kaocha.type/clojure.test` spec, so a custom test suite implementation must
 register a Clojure spec with the same name as the suite type.
 
-Finally a test suite implements two multimethods, one that handles Kaocha's load stage, and one that handles the run stage.
+Finally a test suite implements two multimethods, one that handles Kaocha's load
+stage, and one that handles the run stage.
 
 Here's a skeleton example of a test suite.
 
@@ -314,27 +315,134 @@ Here's a skeleton example of a test suite.
 (s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
                                                :kaocha/test-paths
                                                :kaocha/ns-patterns]))
+
+
+(hierarchy/derive! :kaocha.type/clojure.test :kaocha.testable.type/suite)
 ```
 
-Some things to note:
+### Tips for developing test types
 
-- you should structure your test types hierarchically, and use
-  `kaocha.testable/load-testables` / `kaocha.testable/run-testables` to perform
-  the recursion.
-- The inner most test type, the one where the recursion bottoms out (e.g. for
-  `clojure.test` these are the test vars) is known as a "leaf" type. You should
-  use `(kaocha.hierarchy/derive! :my.test/type :kaocha.testable.type/leaf)` to
-  mark it as such.
-- the `-run` implementation is responsible for calling `clojure.test/do-report`
-- `-load` transforms a config into a test-plan, so it should `dissoc
-  :kaocha/tests` and `assoc :kaocha.test-plan/tests`
-- `-run` transforms a test-plan into a test result, so it should `dissoc
-  :kaocha.test-plan/tests`, and `assoc :kaocha.result/tests`.
-- `-load` is responsible for adding the test directories to the classpath (if
-  this applies for your test type). The helpers in `kaocha.load` will come in
-  handy for this.
-- When in doubt study the existing implementations.
+Start by thinking about the hierarchy of your test types. You typically have a
+top level "test suite" type, an intermediate "group" type, and the actual
+individual tests, called the "leaf" type. You can think of suite/group/leaf
+corresponding to directory/file/test, although it doesn't have to be that way.
 
+For instance for clojure.test one or more directories for a suite, this suite
+consists of namespaces, and each namespace contains test vars, so the hierarchy
+is `:kaocha.type/clojure.test` > `:kaocha.type/ns` > `:kaocha.type/var`.
+
+For Cucumber tests the hierarchy is `:kaocha.type/cucumber` >
+`:kaocha.cucumber-feature` > `:kaocha.type/cucumber-scenario`.
+
+You could have more or fewer levels. The top one is always known as the suite,
+the bottom one as the leaf, the intermediate ones as groups.
+
+For each test type you implement `kaocha.testable/-run`, and for the suite and
+groups you implement `kaocha.testable/-load`. Then you use
+`kaocha.testable/load-testables` / `kaocha.testable/run-testables` to perform
+the recursion.
+
+Use `kaocha.hierarchy/derive!` to mark your test types as suite/group/leaf.
+
+```
+(hierarchy/derive! :kaocha.type/clojure.test :kaocha.testable.type/suite)
+(hierarchy/derive! :kaocha.type/ns :kaocha.testable.type/group)
+(hierarchy/derive! :kaocha.type/var :kaocha.testable.type/leaf)
+```
+
+When implementing `-load` your job is to transform a configuration testable into
+a test-plan testable, so you should should `dissoc :kaocha/tests` and `assoc
+:kaocha.test-plan/tests`.
+
+`-load` is responsible for adding the test directories to the classpath (if this
+applies for your test type). The helpers in `kaocha.load` will come in handy for
+this.
+
+If an error occurs while loading files then signal that by adding the
+`:kaocha.testable/load-error` to the testable, with as value the caught
+exception. You'll deal with signaling the error to the user during the `-run`
+step.
+
+The `-run` implementation generally starts by calling `clojure.test/do-report`
+with a "begin" event, then it runs either the contained
+`:kaocha.test-plan/tests` (for a suite/group), or runs the actual test, and then
+calls `clojure.test/do-report` agin with an `:end` event.
+
+The return value from `-run` is a `:kaocha.result/testable`, which is like a
+`:kaocha.test-plan/testable`, but has (for a suite/group test)
+`:kaocha.result/tests` rather than `:kaocha.test-plan/tests`, or has (for a leaf
+test) result stats (count, error, fail, pass, pending) added.
+
+To gather result stats you can use `kaocha.type/with-report-counters` /
+`kaocha.type/report-count`.
+
+The `-run` method for a leaf test should also take care of wrapping the core
+test logic in any wrapping functions provided by `:kaocha.testable/wrap` on the
+testable. This is important for output capturing to work correctly.
+
+You should check that when your test fails, you get the right file and line
+number in the output. Kaocha tries to detect this from the stacktrace, but that
+doesn't always work. (see the `kaocha.monkey-patch` namespace). Alternatively
+bind `kaocha.testable/*test-location*` to a map with `:file` and `:line`.
+
+Before invoking the actual test logic, check for `:kaocha.testable/load-error`,
+and if it's there then signal a test error and finish. You can do this with the
+`kaocha.testable/handle-load-error` helper.
+
+During the recursive invocations of `-run` `clojure.test` style events are
+emitted by calling `clojure.test/do-report`. Rather than reusing pre-existing
+generic event types you should come up with event types that are specific to
+your test type, then use `kaocha.hierarchy/derive!` to attach semantics to them.
+
+This is an example of event types, and the keywords they derive from.
+
+``` clojure
+:foo-test/begin-suite   :kaocha/begin-suite
+:foo-test/begin-ns      :kaocha/begin-group
+
+:foo-test/begin-test    :kaocha/begin-test
+:foo-test/assert-failed :kaocha/fail-type
+:foo-test/precondition-failed :kaocha/fail-type
+:foo-test/end-test      :kaocha/end-test
+
+:foo-test/begin-test    :kaocha/begin-test
+:pass                   :kaocha/known-key
+:foo-test/end-test      :kaocha/end-test
+
+:foo-test/end-ns        :kaocha/end-group
+:foo-test/end-suite     :kaocha/end-suite
+```
+
+Some notable parent types to inherit from
+
+- `:kaocha/known-key` all events we emit should eventually inherit from
+  known-key. Any event we receive that is not a known-key will be propagated to
+  the original `clojure.test/report` multimethod, for compatibility with
+  assertion libraries that emit their own custom events and extend the
+  multimethod to handle them.
+
+- `:kaocha/fail-type` anything that fails the test should inherit from
+  `fail-type`. Reporters that don't know about specific failure types can still
+  use this to do some reporting of failures, print captured output, etc.
+
+- `:kaocha/deferred` events that inherit from `deferred` are saved up during the
+  test run, and will be sent to `clojure.test/report` during the summary step.
+  This is how we make sure that the details of test failures are only printed
+  all the way at the end during the `:summary` step, rather than immediately as
+  they happen.
+
+In general we try to use properly namespaced event types, but because Kaocha is
+built on top of clojure.test (for better or for worse), we still use some of the
+non-namespaced names used by clojure.test like `:pass`, `:fail`, `:error`. The
+main reason is to keep (some) compatibility with reporters written for
+`clojure.test` that are not Kaocha-aware. However there's no really good way to
+do this, either we limit ourselves to the scope of `clojure.test`'s reporting
+(which we don't want to do), or we go for a more semantically rich set of
+events, but cause pre-existing reporters to misbehave.
+
+We are well on the path to the latter, and so we will likely drop more of these
+non-namespaced ones in favor of kaocha-specific ones, and drop support for
+legacy reporters alltogether.
 
 ### Reporters
 
