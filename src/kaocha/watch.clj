@@ -204,7 +204,8 @@ errors as test errors."
 
     (watch! q watch-paths)
     (when-let [config-file (get-in config [:kaocha/cli-options :config-file])]
-      (watch! q #{config-file}))
+      (when (.exists (io/file config-file))
+        (watch! q #{config-file})))
 
     (future
       (let [stdin (io/reader System/in)]
@@ -216,14 +217,18 @@ errors as test errors."
     (run-loop finish? config tracker q watch-paths)))
 
 (defn run [config]
-  (let [finish? (atom false)
-        q       (make-queue)]
-    (future
-      (try
-        (run* config finish? q)
-        (catch Throwable t
-          (st/print-cause-trace t)))
-      (println "[watch] watching stopped."))
-    (fn []
-      (reset! finish? true)
-      (qput q :finish))))
+  (let [finish?   (atom false)
+        q         (make-queue)
+        finish!   (fn []
+                    (reset! finish? true)
+                    (qput q :finish))
+        exit-code (future
+                    (try
+                      (run* config finish? q)
+                      0
+                      (catch Throwable t
+                        (st/print-cause-trace t)
+                        -3)
+                      (finally
+                        (println "[watch] watching stopped."))))]
+    [exit-code finish!]))

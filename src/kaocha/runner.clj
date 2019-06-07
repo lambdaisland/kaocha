@@ -101,9 +101,8 @@
         -2)
 
       (:kaocha/watch? config)
-      (do
-        ((jit kaocha.watch/run) config)
-        @(promise))
+      (let [[exit-code finish!] ((jit kaocha.watch/run) config)]
+        @exit-code)
 
       (:print-result options)
       (let [result (api/run (assoc config :kaocha/reporter []))
