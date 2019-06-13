@@ -74,7 +74,7 @@ bbb-test
 
 
 
-## Specifying an unkown suite
+## Specifying an unknown suite
 
 - <em>When </em> I run `bin/kaocha suite-name`
 
