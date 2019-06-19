@@ -149,15 +149,17 @@
   var->value mapping to be used with [[clojure.core/with-bindings]].
 
   This will ignore unkown vars/namespaces, because they may not have loaded yet."
-  ([config]
-   (binding-map config false))
-  ([config throw-errors?]
-   (into {}
-         (keep
-          (fn [[k v]]
-            (try
-              [(find-var k) v]
-              (catch java.lang.IllegalArgumentException e
-                (when throw-errors?
-                  (throw e))))))
-         (:kaocha/bindings config))))
+  [config]
+  (into {}
+        (keep
+         (fn [[k v]]
+           (try
+             ;; already loaded
+             [(find-var k) v]
+             (catch java.lang.IllegalArgumentException e
+               ;; not loaded yet, try to load
+               (when-let [ns (namespace k)]
+                 (require (symbol ns)))
+               ;; let exceptions bubble
+               [(find-var k v)]))))
+        (:kaocha/bindings config)))
