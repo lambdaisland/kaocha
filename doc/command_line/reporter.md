@@ -6,11 +6,9 @@ The progress and summary printed by Kaocha are done by one or more "reporter"
 
   Reporters in the `kaocha.report` namespace can be specified without a
   namespace prefix.
-  
-## Built-in reporters
 
-See the [`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj) 
-namespace for built-in reportes.
+  See the [`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj)
+  namespace for built-in reporters.
 
 ## Background: An example test
 
@@ -75,6 +73,3 @@ my.project.reporter-test
 ``` nil
 ERROR: Failed to resolve reporter var: does/not-exist
 ```
-
-
-

@@ -7,6 +7,10 @@ Feature: CLI: `--reporter` option
   Reporters in the `kaocha.report` namespace can be specified without a
   namespace prefix.
 
+  See the
+  [`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj)
+  namespace for built-in reporters.
+
   Background: An example test
     Given a file named "test/my/project/reporter_test.clj" with:
       """clojure
