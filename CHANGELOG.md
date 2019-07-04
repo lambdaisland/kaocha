@@ -23,6 +23,9 @@
 
 ## Changed
 
+- When providing dynamic var bindings in `tests.edn`, we now try to load the
+  given namespaces before setting the bindings.
+
 # 0.0-418 (2019-04-11 / d445b44)
 
 ## Fixed
@@ -51,7 +54,6 @@
 - Load errors now end in an immediate failure of the test run, instead of a
   warning. They are reported as an error so plugins like the notifier and
   junit.xml can display them.
-
 - dependency upgrades, this fixes an upstream issue with clj-diff
 - lambdaisland/deep-diff {:mvn/version "0.0-25"} -> {:mvn/version "0.0-29"}
 - orchestra {:mvn/version "2018.12.06-2"} -> {:mvn/version "2019.02.06-1"}

@@ -88,28 +88,25 @@
                                     ":ns-patterns are configured correctly in tests.edn."))
                   (throw+ {:kaocha/early-exit 0}))
 
-                ;; first time we ignored errors, now that everything is loaded
-                ;; vars must resolve
-                (with-bindings (config/binding-map config :throw-errors)
-                  (when (find-ns 'matcher-combinators.core)
-                    (require 'kaocha.matcher-combinators))
+                (when (find-ns 'matcher-combinators.core)
+                  (require 'kaocha.matcher-combinators))
 
-                  (with-reporter (:kaocha/reporter test-plan)
-                    (with-shutdown-hook (fn []
-                                          (println "^C")
-                                          (binding [history/*history* history]
-                                            (t/do-report (history/clojure-test-summary))))
-                      (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
-                        (binding [testable/*test-plan* test-plan]
-                          (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
-                                result-tests    (testable/run-testables test-plan-tests test-plan)
-                                result          (plugin/run-hook :kaocha.hooks/post-run
-                                                                 (-> test-plan
-                                                                     (dissoc :kaocha.test-plan/tests)
-                                                                     (assoc :kaocha.result/tests result-tests)))]
-                            (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
-                            (-> result
-                                result/testable-totals
-                                result/totals->clojure-test-summary
-                                t/do-report)
-                            result))))))))))))))
+                (with-reporter (:kaocha/reporter test-plan)
+                  (with-shutdown-hook (fn []
+                                        (println "^C")
+                                        (binding [history/*history* history]
+                                          (t/do-report (history/clojure-test-summary))))
+                    (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
+                      (binding [testable/*test-plan* test-plan]
+                        (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
+                              result-tests    (testable/run-testables test-plan-tests test-plan)
+                              result          (plugin/run-hook :kaocha.hooks/post-run
+                                                               (-> test-plan
+                                                                   (dissoc :kaocha.test-plan/tests)
+                                                                   (assoc :kaocha.result/tests result-tests)))]
+                          (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
+                          (-> result
+                              result/testable-totals
+                              result/totals->clojure-test-summary
+                              t/do-report)
+                          result)))))))))))))
