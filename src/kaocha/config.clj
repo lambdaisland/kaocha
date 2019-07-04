@@ -149,17 +149,26 @@
   var->value mapping to be used with [[clojure.core/with-bindings]].
 
   This will ignore unkown vars/namespaces, because they may not have loaded yet."
-  [config]
-  (into {}
-        (keep
-         (fn [[k v]]
-           (try
-             ;; already loaded
-             [(find-var k) v]
-             (catch java.lang.IllegalArgumentException e
-               ;; not loaded yet, try to load
-               (when-let [ns (namespace k)]
-                 (require (symbol ns)))
-               ;; let exceptions bubble
-               [(find-var k v)]))))
-        (:kaocha/bindings config)))
+  ([config]
+   (binding-map config false))
+  ([config throw-errors?]
+   (into {}
+         (keep
+          (fn [[k v]]
+            (try
+              ;; already loaded
+              [(find-var k) v]
+              (catch java.lang.IllegalArgumentException e
+                (try
+                  ;; not loaded yet, try to load
+                  (when-let [ns (namespace k)]
+                    (require (symbol ns)))
+                  [(find-var k) v]
+                  ;; Still no good? Possibly ignore because we add more
+                  ;; directories to the classpath during the load phase, and
+                  ;; then try again.
+                  (catch java.io.FileNotFoundException e ;; require failed
+                    (when throw-errors? (throw e)))
+                  (catch java.lang.IllegalArgumentException e ;; find-var failed
+                    (when throw-errors? (throw e))))))))
+         (:kaocha/bindings config))))

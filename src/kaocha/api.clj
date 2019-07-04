@@ -91,22 +91,26 @@
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 
-                (with-reporter (:kaocha/reporter test-plan)
-                  (with-shutdown-hook (fn []
-                                        (println "^C")
-                                        (binding [history/*history* history]
-                                          (t/do-report (history/clojure-test-summary))))
-                    (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
-                      (binding [testable/*test-plan* test-plan]
-                        (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
-                              result-tests    (testable/run-testables test-plan-tests test-plan)
-                              result          (plugin/run-hook :kaocha.hooks/post-run
-                                                               (-> test-plan
-                                                                   (dissoc :kaocha.test-plan/tests)
-                                                                   (assoc :kaocha.result/tests result-tests)))]
-                          (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
-                          (-> result
-                              result/testable-totals
-                              result/totals->clojure-test-summary
-                              t/do-report)
-                          result)))))))))))))
+                ;; The load stage adds directories to the classpath, so at this
+                ;; point all vars that are being bound need to exist, if not we
+                ;; throw.
+                (with-bindings (config/binding-map config :throw-errors)
+                  (with-reporter (:kaocha/reporter test-plan)
+                    (with-shutdown-hook (fn []
+                                          (println "^C")
+                                          (binding [history/*history* history]
+                                            (t/do-report (history/clojure-test-summary))))
+                      (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
+                        (binding [testable/*test-plan* test-plan]
+                          (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
+                                result-tests    (testable/run-testables test-plan-tests test-plan)
+                                result          (plugin/run-hook :kaocha.hooks/post-run
+                                                                 (-> test-plan
+                                                                     (dissoc :kaocha.test-plan/tests)
+                                                                     (assoc :kaocha.result/tests result-tests)))]
+                            (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
+                            (-> result
+                                result/testable-totals
+                                result/totals->clojure-test-summary
+                                t/do-report)
+                            result))))))))))))))
