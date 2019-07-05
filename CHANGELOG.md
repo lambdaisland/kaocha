@@ -8,11 +8,10 @@
 
 # 0.0-529 (2019-07-04 / 975bbc6)
 
-## Added
-
 ## Fixed
 
-## Changed
+- Be smarter about loading namespaces and resolving vars for dynamic bindings
+  set in `tests.edn`
 
 # 0.0-521 (2019-06-19 / b652f99)
 
