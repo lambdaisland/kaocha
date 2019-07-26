@@ -9,15 +9,26 @@ For example:
 - Skip tests marked as slow
 - Focus on a test that previously failed
 
-You can skip tests, or focus on tests, either based on the test ID, or on test
+You can skip tests, or focus on tests, either based on a test `ID`, or on test
 or namespace metadata, based on four command line flags and configuration keys.
 
 ``` shell
---skip SYM                        Skip tests with this ID and their children.
---focus SYM                       Only run this test, skip others.
---skip-meta SYM                   Skip tests where this metadata key is truthy.
---focus-meta SYM                  Only run tests where this metadata key is truthy.
+--skip SYM-OR-KW                  Skip tests with this ID and their children.
+--focus SYM-OR-KW                 Only run this test, skip others.
+--skip-meta SYM-OR-KW             Skip tests where this metadata key is truthy.
+--focus-meta SYM-OR-KW            Only run tests where this metadata key is truthy.
 ```
+
+## Matching
+
+Before running Kaocha builds a test plan where all tests are
+identified by a test `ID` keyword.  The command line then
+canonicalises any IDs you supply into this keyword form, before
+matching them for focussing or skipping.
+
+### On a test suite
+
+Assuming you have a test suite `:unit` specified in `tests.edn`:
 
 ``` clojure
 #kaocha/v1
@@ -28,24 +39,29 @@ or namespace metadata, based on four command line flags and configuration keys.
           :focus-meta [...]}]}
 ```
 
-## Matching
-
-### On id
-
-A test id is a namespaced symbol, for clojure.test tests this is the
-fully qualified name of the test var. You can skip or focus on such a test
-either by providing its full name, or just the namespace part.
-
-So you can run a single test with
+You can focus on this by running:
 
 ``` shell
-bin/kaocha --focus com.my.project-test/foo-test
+bin/kaocha --focus :unit
 ```
 
-To run all tests in that namespace, use
+### On a namespace
+
+If you have tests in a namespace `com.my.project-test` and you want to
+run them all you can focus on them with the command:
 
 ``` shell
 bin/kaocha --focus com.my.project-test
+```
+
+### On a test var
+
+Assuming you have a test var defined with for example `clojure.test`
+`deftest`, you can focus on it by supplying its fully qualified name
+like so:
+
+``` shell
+bin/kaocha --focus com.my.project-test/foo-test
 ```
 
 ### On metadata
@@ -64,6 +80,12 @@ To ignore such tests, add a `:skip-meta` key to the test suite config:
 #kaocha/v1
 {:tests [{:id :unit
           :skip-meta [:pending]}]}
+```
+
+And then run via the command:
+
+``` shell
+bin/kaocha --focus :unit
 ```
 
 This also works for metadata placed on the test's namespace, or any other
