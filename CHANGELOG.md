@@ -4,6 +4,10 @@
 
 ## Fixed
 
+- The `kaocha.report.progress/progress` progress bar reporter now allows the
+  appropriate exception to be reported when there is a syntax error in Clojure
+  source code. Was formerly throwing NullPointerException.
+
 ## Changed
 
 # 0.0-529 (2019-07-04 / 975bbc6)

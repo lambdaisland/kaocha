@@ -59,7 +59,8 @@
   (print-bar))
 
 (defmethod progress :error [m]
-  (swap! bar assoc :failed? true)
-  (print-bar))
+  (when @bar
+    (swap! bar assoc :failed? true)
+    (print-bar)))
 
 (def report [progress report/result])
