@@ -1,5 +1,13 @@
 # Unreleased
 
+## Added
+
+## Fixed
+
+- The `kaocha.report.progress/progress` progress bar reporter now allows the
+  appropriate exception to be reported when there is a syntax error in Clojure
+  source code. Was formerly throwing NullPointerException.
+
 ## Changed
 
 - Consolidate `kaocha.hierarchy`, so it can be used for kaocha-cljs
