@@ -10,9 +10,6 @@
             [clojure.string :as str])
   (:import [clojure.lang Var]))
 
-(hierarchy/derive! ::zero-assertions :kaocha/known-key)
-(hierarchy/derive! ::zero-assertions :kaocha/fail-type)
-
 (defmethod report/fail-summary ::zero-assertions [{:keys [testing-contexts testing-vars] :as m}]
   (println "\nFAIL in" (report/testing-vars-str m))
   (when (seq testing-contexts)
@@ -33,7 +30,6 @@
           (test)
           (catch clojure.lang.ExceptionInfo e
             (when-not (:kaocha/fail-fast (ex-data e))
-
               (report/report-exception e)))
           (catch Throwable e (report/report-exception e))))
       (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]

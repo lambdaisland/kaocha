@@ -9,12 +9,6 @@
             [fipp.engine :as fipp]
             [puget.color :as color]))
 
-(hierarchy/derive! :mismatch :kaocha/fail-type)
-(hierarchy/derive! :mismatch :kaocha/known-key)
-
-(hierarchy/derive! :matcher-combinators/mismatch :kaocha/fail-type)
-(hierarchy/derive! :matcher-combinators/mismatch :kaocha/known-key)
-
 (def print-handlers {'matcher_combinators.model.Mismatch
                      (fn [printer expr]
                        (printer/print-mismatch printer {:- (:expected expr)

@@ -43,10 +43,28 @@
 
 (derive! :kaocha/deferred :kaocha/known-key)
 
+(derive! :kaocha.report/one-arg-eql :kaocha/known-key)
+(derive! :kaocha.report/one-arg-eql :kaocha/fail-type)
+
+(derive! :kaocha.type.var/zero-assertions :kaocha/known-key)
+(derive! :kaocha.type.var/zero-assertions :kaocha/fail-type)
+
+;; Older versions of Matcher-combinators
+(derive! :mismatch :kaocha/fail-type)
+(derive! :mismatch :kaocha/known-key)
+
+(derive! :matcher-combinators/mismatch :kaocha/fail-type)
+(derive! :matcher-combinators/mismatch :kaocha/known-key)
+
+;; Extra keys used by ClojureScript
+(derive! :begin-run-tests :kaocha/known-key)
+(derive! :end-run-tests :kaocha/known-key)
+(derive! :begin-test-all-vars :kaocha/known-key)
+(derive! :end-test-all-vars :kaocha/known-key)
+
 (defn isa? [tag parent]
   (or (clojure.core/isa? tag parent)
       (clojure.core/isa? hierarchy tag parent)))
-
 
 ;; Test event types
 
