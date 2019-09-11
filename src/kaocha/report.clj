@@ -237,7 +237,6 @@
                    :actual '~form})
     (t/assert-predicate msg form)))
 
-(hierarchy/derive! ::one-arg-eql :kaocha/fail-type)
 
 (defmethod print-expr '= [m]
   (let [printer (output/printer)]

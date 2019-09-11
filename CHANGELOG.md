@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- Consolidate `kaocha.hierarchy`, so it can be used for kaocha-cljs
 
 # 0.0-529 (2019-07-04 / 975bbc6)
 
