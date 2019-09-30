@@ -114,7 +114,7 @@ It takes the following configuration options.
   _strings_ that get intepreted as regular expressions (do not prepend with
   `#`). If one of them matches the namespace name then this namespace is
   considered a test namespace, and will get loaded as part of Kaocha's "load"
-  step. 
+  step.
   Defaults to `["-test$"]`
 - `:source-paths`: vector of paths containing source code under test. This
   is used to determine which files to watch for changes, and can be used by
@@ -244,6 +244,50 @@ other tools. See also
 
 Prints the `clojure.test` style events map directly, with some keys like
 `:kaocha/testable` filtered out to prevent it from getting too noisy.
+
+## Profiles
+
+Sometimes a single fixed configuration is not enough. If you run tests in
+different contexts, for instance locally vs on a build server, or you need to
+support more than one workflow, then it can be useful to be able to vary the
+configuration.
+
+For these cases [Aero](https://github.com/juxt/aero) has the concept of
+profiles. Here's a typical example. When used locally you want to use a colorful
+progress bar, but on CI you want plain text output.
+
+``` clojure
+#kaocha/v1
+{:reporter #profile {:default kaocha.report/documentation
+                     :ci kaocha.report.progress/progress}
+ :color? #profile {:default true :ci false}}
+```
+
+This will work out of the box, since Kaocha will pick up on te `CI` environment
+variable that is set by all major CI providers, but you can also specify the
+profile explicitly.
+
+```
+bin/kaocha --profile :ci
+```
+
+Note that profile combines quite nicely with other Aero reader tags like
+`#merge` and `#include`.
+
+```
+#kaocha/v1
+#merge
+[{}
+ #profile {:ci {:reporter kaocha.report/documentation
+                :color? false}}]
+```
+
+```
+#kaocha/v1
+#profile
+{:ci #include "tests.ci.edn"
+ :default #include "tests.defaults.edn"}
+```
 
 ## Example
 

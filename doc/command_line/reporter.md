@@ -7,7 +7,8 @@ The progress and summary printed by Kaocha are done by one or more "reporter"
   Reporters in the `kaocha.report` namespace can be specified without a
   namespace prefix.
 
-  See the [`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj)
+  See the
+  [`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj)
   namespace for built-in reporters.
 
 ## Background: An example test

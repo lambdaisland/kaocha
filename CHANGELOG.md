@@ -2,6 +2,9 @@
 
 ## Added
 
+- Added the `--profile` command line flag, which gets passed to Aero's `#profile
+  {}` tagged literal reader. Defaults to `:ci` when `CI=true`.
+
 ## Fixed
 
 ## Changed

@@ -92,9 +92,14 @@
   ([]
    (load-config "tests.edn"))
   ([path]
-   (let [file (io/file path)]
+   (load-config path {}))
+  ([path opts]
+   (let [file (io/file path)
+         profile (:profile opts (if (= (System/getenv "CI") "true")
+                                  :ci
+                                  :default))]
      (if (.exists file)
-       (aero/read-config file)
+       (aero/read-config file {:profile profile})
        (default-config)))))
 
 (defn apply-cli-opts [config options]

@@ -48,6 +48,8 @@
                     kw
                     (keyword "kaocha.plugin" s))))
     :assoc-fn accumulate]
+   [nil "--profile KEYWORD"     "Configuration profile. Defaults to :default or :ci."
+    :parse-fn parse-kw]
    [nil "--version"             "Print version information and quit."]
 
    ;; Clojure CLI tools intercepts --help, so we add --test-help, but in other
@@ -141,22 +143,25 @@
     (throw+ {:kaocha/early-exit 253}))
 
   (binding [clojure.spec/*explain-out* expound/printer]
-    (let [{{:keys [config-file plugin]} :options}    (cli/parse-opts args cli-options)
-          config                                     (-> config-file
-                                                         (or "tests.edn")
-                                                         config/load-config)
-          plugin-chain                               (plugin/load-all (concat (:kaocha/plugins config) plugin))
-          cli-options                                (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
+    (let [{{:keys [config-file plugin profile]} :options} (cli/parse-opts args cli-options)
+          config                                          (-> config-file
+                                                              (or "tests.edn")
+                                                              (config/load-config (if profile
+                                                                                    {:profile profile}
+                                                                                    {})))
+          plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
+          cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
+
           {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
           config                                     (-> config
                                                          (config/apply-cli-opts options)
                                                          (config/apply-cli-args (map parse-kw arguments)))
           suites                                     (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
-        (run {:config config
+        (run {:config  config
               :options options
-              :errors errors
-              :suites suites
+              :errors  errors
+              :suites  suites
               :summary (str "USAGE:\n\n"
                             "bin/kaocha [OPTIONS]... [TEST-SUITE]...\n\n"
                             summary
