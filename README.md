@@ -165,7 +165,7 @@ tests found in `src/` and `/test`, in any namespace).
           :test-paths  ["test" "src"]
           :ns-patterns [".*"]}]}
           ;; :reporter kaocha.report.progress/progress
-          ;; :plugins [:profiling :notifier]
+          ;; :plugins [:kaocha.plugin/profiling :kaocha.plugin/notifier]
  }
 ```
 Warning: this is not an optimal configuration. To avoid extra churn, you should
