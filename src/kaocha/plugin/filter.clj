@@ -109,13 +109,15 @@
         (seq focus-meta) (assoc :kaocha.filter/focus-meta focus-meta))))
 
   (post-load [test-plan]
-    (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)
-          test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)
-          filter-suite (fn [suite]
-                         (filter-testable
-                          (if (or (seq focus) (seq focus-meta))
-                            (dissoc suite :kaocha.filter/focus :kaocha.filter/focus-meta)
-                            (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan))
-                          (filters test-plan)))]
-      (-> test-plan
-          (update :kaocha.test-plan/tests (partial map filter-suite))))))
+    (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)]
+      (when (and (seq focus) (empty? (filter (set focus) (map :testable/id (testable/test-seq test-plan)))))
+        (output/warn ":focus " focus " did not match any tests."))
+      (let [test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)
+            filter-suite (fn [suite]
+                           (filter-testable
+                            (if (or (seq focus) (seq focus-meta))
+                              (dissoc suite :kaocha.filter/focus :kaocha.filter/focus-meta)
+                              (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan))
+                            (filters test-plan)))]
+        (-> test-plan
+            (update :kaocha.test-plan/tests (partial map filter-suite)))))))
