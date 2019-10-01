@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix regression, only show the `--focus` warning when applicable
 
 # 0.0-549 (2019-10-01 / aff529c)
 
