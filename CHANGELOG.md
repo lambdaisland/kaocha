@@ -6,13 +6,7 @@
   {}` tagged literal reader. Defaults to `:ci` when `CI=true`.
 - Output a warning when `--focus TESTABLE-ID` does not match any tests.
 
-## Fixed
-
-## Changed
-
 # 0.0-541 (2019-09-11 / c97a2cb)
-
-## Added
 
 ## Fixed
 
