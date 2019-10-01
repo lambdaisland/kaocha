@@ -39,8 +39,10 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [8. Plugins](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/8-plugins)
 - [9. Extending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/9-extending)
 - [`clojure.test` assertion extensions](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/-clojure-test-assertion-extensions)
+- [Capability check for org.clojure/tools.cli If a project's dependency](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/capability-check-for-org-clojure-tools-cli-if-a-project-s-dependency)
 - [CLI: `--fail-fast` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-fail-fast-option)
 - [CLI: Print the Kaocha configuration](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-print-the-kaocha-configuration)
+- [CLI: `--profile` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-profile-option)
 - [CLI: `--reporter` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-reporter-option)
 - [CLI: Selecting test suites](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-selecting-test-suites)
 - [Configuration: Bindings](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/configuration-bindings)
@@ -53,6 +55,7 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [Plugin: Hooks](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-hooks)
 - [Plugin: Notifier (desktop notifications)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-notifier-desktop-notifications-)
 - [Plugin: Clojure/Java Version filter](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-clojure-java-version-filter)
+- [Automatic spec test check generation](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/automatic-spec-test-check-generation)
 <!-- /docs-toc -->
 
 ## Features
@@ -86,7 +89,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-541"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "0.0-549"}}}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -106,7 +109,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "0.0-541"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "0.0-549"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
