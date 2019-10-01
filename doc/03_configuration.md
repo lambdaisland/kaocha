@@ -263,7 +263,7 @@ progress bar, but on CI you want plain text output.
  :color? #profile {:default true :ci false}}
 ```
 
-This will work out of the box, since Kaocha will pick up on te `CI` environment
+This will work out of the box, since Kaocha will pick up on the `CI` environment
 variable that is set by all major CI providers, but you can also specify the
 profile explicitly.
 
