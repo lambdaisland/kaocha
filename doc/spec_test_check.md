@@ -40,9 +40,9 @@ Kaocha can discover all of your fdefs and generate `clojure.spec.test.check`
         - `--stc-num-tests NUM` = `:num-tests`
         - `--stc-max-size SIZE` = `:max-size`
     - By default, this plugin also adds `:no-gen` to `:kaocha.filter/skip-meta`.
-      You might want to decorate an fdef with `^:no-gen` if there is either no
-      good generator for one or more of its arguments or if the function is
-      side-effectful.
+      You might want to decorate an fdef-ed function with `^:no-gen` if there is
+      either no good generator for one or more of its arguments or if the
+      function is side-effectful.
 
 ## Detects and checks fdefs using tests.edn
 
