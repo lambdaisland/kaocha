@@ -39,7 +39,7 @@ output.
 For example, to see a colorful progress bar, use
 
 ``` shell
-bin/kaocha --reporter kaocha.report.progress/progress
+bin/kaocha --reporter kaocha.report.progress/report
 ```
 
 Plugins in the `kaocha.plugin` namespace, and reporters in the `kaocha.report`
