@@ -217,10 +217,10 @@ kaocha.type.var-test
       early exit - exception ERROR
 ```
 
-### `kaocha.report.progress/progress`
+### `kaocha.report.progress/report`
 
-CLI: `--reporter kaocha.report.progress/progress`
-Config: `{:kaocha/reporter [kaocha.report.progress/progress]}`
+CLI: `--reporter kaocha.report.progress/report`
+Config: `{:kaocha/reporter [kaocha.report.progress/report]}`
 
 Prints a separate progress bar for each test suite, with progress percentage,
 and the completed/total number of test vars.

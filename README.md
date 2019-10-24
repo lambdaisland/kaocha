@@ -167,7 +167,7 @@ tests found in `src/` and `/test`, in any namespace).
 {:tests [{:id          :unit
           :test-paths  ["test" "src"]
           :ns-patterns [".*"]}]}
-          ;; :reporter kaocha.report.progress/progress
+          ;; :reporter kaocha.report.progress/report
           ;; :plugins [:kaocha.plugin/profiling :kaocha.plugin/notifier]
  }
 ```
