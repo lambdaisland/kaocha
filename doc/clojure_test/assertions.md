@@ -1,6 +1,6 @@
 # `clojure.test` assertion extensions
 
-\When running `clojure.test` based tests through Kaocha, some of the behavior
+When running `clojure.test` based tests through Kaocha, some of the behavior
   is a little different. Kaocha tries to detect certain scenarios that are
   likely mistakes which make a test pass trivially, and turns them into errors
   so you can investigate and see what's up.
