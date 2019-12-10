@@ -4,6 +4,8 @@
 
 - Fix an issue with the Kaocha keyword hierarchy where two keys had an ancestor
   via two different paths, causing problems when trying to `underive`.
+- Make the version-filter plugin work with non-numeric version segments, as in
+  `"1.8.0_212-20190523183340.buildslave.jdk8u"`
 
 # 0.0-554 (2019-10-01 / fc5d93a)
 

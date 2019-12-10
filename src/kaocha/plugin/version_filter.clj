@@ -20,7 +20,11 @@
 
 (defn version-vector [v]
   (let [v (first (str/split v #"\+"))]
-    (mapv #(Integer/parseInt (re-find #"^\d+" %))
+    ;; if the segment starts with digits then parse those and compare them
+    ;; numerically, else keep the segment and compare it as a string.
+    (mapv #(if-let [num (re-find #"^\d+" %)]
+             (Integer/parseInt num)
+             %)
           (clojure.string/split v #"\."))))
 
 (defn java-version []
