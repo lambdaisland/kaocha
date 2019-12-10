@@ -80,7 +80,7 @@
 
   See [FileSystem/getPathMatcher](https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String))
   for a description of the patterns, these are similar but not the same as
-  typical shell glob patterns. "
+  typical shell glob patterns."
   [path patterns]
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]

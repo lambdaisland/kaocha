@@ -1,10 +1,9 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix an issue with the Kaocha keyword hierarchy where two keys had an ancestor
+  via two different paths, causing problems when trying to `underive`.
 
 # 0.0-554 (2019-10-01 / fc5d93a)
 

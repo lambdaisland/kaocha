@@ -16,10 +16,12 @@
 (derive! :error :kaocha/known-key)
 (derive! :begin-test-suite :kaocha/known-key)
 (derive! :end-test-suite :kaocha/known-key)
-(derive! :begin-test-var :kaocha/known-key)
-(derive! :end-test-var :kaocha/known-key)
 (derive! :summary :kaocha/known-key)
 (derive! :kaocha/pending :kaocha/known-key)
+
+;; derived indirectly through :kaocha/begin-test and :kaocha/end-test
+;; (derive! :begin-test-var :kaocha/known-key)
+;; (derive! :end-test-var :kaocha/known-key)
 
 ;; Legacy, prefer :kaocha/begin-suite and :kaocha/end-suite.
 (derive! :begin-test-suite :kaocha/begin-suite)
