@@ -53,17 +53,17 @@ used in `#kaocha/v1 {}`, rather than using fully qualified keywords.
 Configuration is read with [Aero](https://github.com/juxt/aero), meaning you
 have access to reader literals like `#env`, `#merge`, `#ref`, and `#include`.
 
-Additionally kaocha supports an extra `#k/meta-merge` reader tag, that
+Additionally kaocha supports an extra `#meta-merge` reader tag, that
 works similarly to aero's `#merge` but will merge a whole subtree with
 the semantics of
 [meta-merge](https://github.com/weavejester/meta-merge).  This is
 particularly useful for configuring a cascade of includes that
 selectively augment and override a base configuration.  e.g. imagine a
-base tests.edn file with a `#k/meta-merge` and an `#include`:
+base tests.edn file with a `#meta-merge` and an `#include`:
 
 ```
 #kaocha/v1
-#k/meta-merge [{:tests [{:id         :unit
+#meta-merge [{:tests [{:id         :unit
               :test-paths ["test/unit"]}
              {:id         :features
              :test-paths ["test/features"]}]
@@ -78,7 +78,7 @@ This setup would allow developers to maintain their own private
 `tests.user.edn` file and augment the above configuration with for example
 their own set of plugins such as the notifier etc.
 
-The primary advantage to using the `#k/meta-merge` tag over aero's
+The primary advantage to using the `#meta-merge` tag over aero's
 `#merge` is that meta-merge will do a deep merge of the tree; meaning
 developers can more easily inherit changes to the base configuration.
 

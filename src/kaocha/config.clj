@@ -6,9 +6,6 @@
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]]))
 
-(defmethod aero/reader 'k/meta-merge [opts _tag value]
-  (apply meta-merge value))
-
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
@@ -82,14 +79,17 @@
       (some? capture-output?) (assoc :kaocha.plugin.capture-output/capture-output? capture-output?)
       :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
 
-(defmethod aero/reader 'kaocha [opts tag value]
+(defmethod aero/reader 'kaocha [_opts _tag value]
   (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")
   (-> (default-config)
       (merge-config (normalize value))))
 
-(defmethod aero/reader 'kaocha/v1 [opts tag value]
+(defmethod aero/reader 'kaocha/v1 [_opts _tag value]
   (-> (default-config)
       (merge-config (normalize value))))
+
+(defmethod aero/reader 'meta-merge [_opts _tag value]
+  (apply meta-merge value))
 
 (defn load-config
   ([]

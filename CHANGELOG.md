@@ -2,9 +2,8 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- Added `#meta-merge` reader literal for `tests.edn`. (thanks
+  [@RickyMoynihan](https://github.com/RickMoynihan))
 
 # 0.0-565 (2019-12-10 / 72be8ec)
 
