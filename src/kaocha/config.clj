@@ -6,13 +6,16 @@
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]]))
 
+(defmethod aero/reader 'k/meta-merge [opts _tag value]
+  (apply meta-merge value))
+
+(defn default-config []
+  (aero/read-config (io/resource "kaocha/default_config.edn")))
+
 (defn- rename-key [m old-key new-key]
   (if (contains? m old-key)
     (assoc (dissoc m old-key) new-key (get m old-key))
     m))
-
-(defn default-config []
-  (aero/read-config (io/resource "kaocha/default_config.edn")))
 
 (defn replace-by-default [config k]
   (if-let [v (get config k)]
