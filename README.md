@@ -163,7 +163,6 @@ Example of a catch-all `tests.edn` config file (should run all
 tests found in `src/` and `/test`, in any namespace).
 ``` clojure
 #kaocha/v1
-#kaocha/v1
 {:tests [{:id          :unit
           :test-paths  ["test" "src"]
           :ns-patterns [".*"]}]}
