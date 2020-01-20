@@ -20,8 +20,10 @@
             [lambdaisland.tools.namespace.reload :as ctn-reload]
             [lambdaisland.tools.namespace.track :as ctn-track]
             [clojure.stacktrace :as st])
-  (:import [java.nio.file FileSystems]
+  (:import [java.nio.file FileSystems PathMatcher]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
+
+(set! *warn-on-reflection* true)
 
 (defn make-queue []
   (ArrayBlockingQueue. 1024))
@@ -84,12 +86,12 @@
   [path patterns]
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
-    (some #(.matches % path) patterns)))
+    (some #(.matches ^PathMatcher % path) patterns)))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
     (cond
-      (and (file? f) (glob? (.toPath f) ignore))
+      (and (file? f) (glob? (.toPath ^java.io.File f) ignore))
       (recur q tracker watch-paths ignore)
 
       (directory? f)
