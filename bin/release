@@ -2,6 +2,11 @@
 
 set -e
 
+function echo_error() {
+    echo -en "[\033[0;31mERROR\033[0m] "
+    echo "$@"
+}
+
 if [[ ! -z "$(git status --porcelain)" ]]; then
     echo "Repo not clean.
 
@@ -12,6 +17,12 @@ $(git status --short)
 $(git diff)"
 
     exit 1
+fi
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" != "master" ]]; then
+    echo_error "On branch $BRANCH, release must be on master."
+    exit 1;
 fi
 
 if [[ -f tests.edn ]]; then
