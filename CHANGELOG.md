@@ -1,10 +1,11 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- Breaking change! Focus/skip options are now applied in two passes, once for
+  options in `tests.edn`, once for command-line/REPL options. The result is that
+  command line options can only narrow the set of tests to be run. (thanks
+  [@otwieracz](https://github.com/otwieracz))
 
 # 0.0-573 (2020-01-13 / 156d084)
 

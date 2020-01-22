@@ -4,6 +4,14 @@
             [kaocha.plugin.filter :as f]
             [kaocha.testable :as testable]))
 
+(defn flat-test-seq [t]
+  (cons t (mapcat flat-test-seq (:kaocha.test-plan/tests t))))
+
+(defn skipped-tests [testable]
+  (into {}
+        (for [{:kaocha.testable/keys [id skip]} (flat-test-seq testable)]
+          [id (boolean skip)])))
+
 (deftest matches?-test
   (is (f/matches? {:kaocha.testable/id :foo.bar/baz}
                   '[foo.bar/baz]
@@ -63,69 +71,142 @@
           {:kaocha.test-plan/tests [{:kaocha.testable/meta {:xxx true}}]}))))
 
 (deftest filter-testable-test
-  (is (= (f/filter-testable {:kaocha.testable/id :foo.bar/baz}
-                            {:skip '[foo.bar]})
-         #:kaocha.testable{:id :foo.bar/baz, :skip true}))
+  (is (= #:kaocha.testable
+         {:id :foo.bar/baz, :skip true}
+         (f/filter-testable {:kaocha.testable/id :foo.bar/baz}
+                            {:skip '[foo.bar]})))
 
-  (is (= (f/filter-testable {:kaocha.testable/id :x/_1
+  (is (= {:kaocha.testable/id     :x/_1
+          :kaocha.test-plan/tests [#:kaocha.testable{:id :y/_1, :skip true}]}
+         (f/filter-testable {:kaocha.testable/id     :x/_1
                              :kaocha.test-plan/tests [{:kaocha.testable/id :y/_1}]}
-                            {:skip '[y/_1]})
-         {:kaocha.testable/id :x/_1
-          :kaocha.test-plan/tests [#:kaocha.testable{:id :y/_1, :skip true}]}))
+                            {:skip '[y/_1]})))
 
-  (is (= (f/filter-testable {:kaocha.testable/id :x/_1
+  (is (= {:kaocha.testable/id :x/_1, :kaocha.test-plan/tests [#:kaocha.testable{:id :y/_1}]}
+         (f/filter-testable {:kaocha.testable/id     :x/_1
                              :kaocha.test-plan/tests [{:kaocha.testable/id :y/_1}]}
-                            {:focus '[x/_1]})
-         {:kaocha.testable/id :x/_1, :kaocha.test-plan/tests [#:kaocha.testable{:id :y/_1}]}))
+                            {:focus '[x/_1]})))
 
-  (is (= (f/filter-testable {:kaocha.testable/id :x/_1
+  (is (= {:kaocha.testable/id     :x/_1,
+          :kaocha.test-plan/tests [#:kaocha.testable{:id   :y/_1
+                                                     :skip true}
+                                   #:kaocha.testable{:id :z/_1}]}
+
+         (f/filter-testable {:kaocha.testable/id     :x/_1
                              :kaocha.test-plan/tests [{:kaocha.testable/id :y/_1}
                                                       {:kaocha.testable/id :z/_1}]}
-                            {:focus '[z/_1]})
+                            {:focus '[z/_1]})))
 
-         {:kaocha.testable/id :x/_1,
-          :kaocha.test-plan/tests [#:kaocha.testable{:id :y/_1
-                                                     :skip true}
-                                   #:kaocha.testable{:id :z/_1}]}))
+  (is (= {:kaocha.testable/id     :x/_1
+          :kaocha.test-plan/tests [{:kaocha.testable/id   :y/_1
+                                    :kaocha.testable/skip true}
+                                   {:kaocha.testable/id :y/_2
+                                    :kaocha.test-plan/tests
+                                    [{:kaocha.testable/id   :z/_1
+                                      :kaocha.testable/skip true}
+                                     {:kaocha.testable/id :z/_2}]}]}
+         (f/filter-testable {:kaocha.testable/id     :x/_1
+                             :kaocha.test-plan/tests [{:kaocha.testable/id :y/_1}
+                                                      {:kaocha.testable/id :y/_2
+                                                       :kaocha.test-plan/tests
+                                                       [{:kaocha.testable/id :z/_1}
+                                                        {:kaocha.testable/id :z/_2}]}]}
+                            {:focus '[y/_2] :skip '[z/_1]})))
 
-  (is (= (f/filter-testable {:kaocha.testable/id :x/_1
-                             :kaocha.test-plan/tests       [{:kaocha.testable/id :y/_1}
-                                                            {:kaocha.testable/id :y/_2
-                                                             :kaocha.test-plan/tests
-                                                             [{:kaocha.testable/id :z/_1}
-                                                              {:kaocha.testable/id :z/_2}]}]}
-                            {:focus '[y/_2] :skip '[z/_1]})
-         {:kaocha.testable/id :x/_1
-          :kaocha.test-plan/tests       [{:kaocha.testable/id   :y/_1
-                                          :kaocha.testable/skip true}
-                                         {:kaocha.testable/id :y/_2
-                                          :kaocha.test-plan/tests
-                                          [{:kaocha.testable/id   :z/_1
-                                            :kaocha.testable/skip true}
-                                           {:kaocha.testable/id :z/_2}]}]}))
-
-  (is (= (f/filter-testable {:kaocha.testable/id     :x
+  (is (= {:kaocha.testable/id     :x,
+          :kaocha.test-plan/tests [{:kaocha.testable/id     :y,
+                                    :kaocha.test-plan/tests [#:kaocha.testable{:id :z}
+                                                             #:kaocha.testable{:id :z/_2}]}]}
+         (f/filter-testable {:kaocha.testable/id     :x
                              :kaocha.test-plan/tests [{:kaocha.testable/id :y
                                                        :kaocha.test-plan/tests
                                                        [{:kaocha.testable/id :z}
                                                         {:kaocha.testable/id :z/_2}]}]}
-                            {:focus '[z]})
-         {:kaocha.testable/id :x,
-          :kaocha.test-plan/tests [{:kaocha.testable/id :y,
-                                    :kaocha.test-plan/tests [#:kaocha.testable{:id :z}
-                                                             #:kaocha.testable{:id :z/_2}]}]}))
-  (is (= (f/filter-testable {:kaocha.testable/id     :x
+                            {:focus '[z]})))
+  (is (= {:kaocha.testable/id  :x,
+          :kaocha.filter/focus [:z/_2],
+          :kaocha.test-plan/tests
+          [{:kaocha.testable/id :y
+            :kaocha.test-plan/tests
+            [#:kaocha.testable{:id   :z
+                               :skip true}
+             #:kaocha.testable{:id :z/_2}]}]}
+         (f/filter-testable {:kaocha.testable/id     :x
                              :kaocha.filter/focus    [:z/_2]
                              :kaocha.test-plan/tests [{:kaocha.testable/id :y
                                                        :kaocha.test-plan/tests
                                                        [{:kaocha.testable/id :z}
                                                         {:kaocha.testable/id :z/_2}]}]}
-                            {})
-         {:kaocha.testable/id :x,
-          :kaocha.filter/focus [:z/_2],
-          :kaocha.test-plan/tests
-          [{:kaocha.testable/id :y
-            :kaocha.test-plan/tests
-            [#:kaocha.testable{:id :z
-                               :skip true}
-             #:kaocha.testable{:id :z/_2}]}]})))
+                            {})))
+
+
+  ;; These cases need more hammock time to figure out what the "right" behavior should be
+  #_
+  (is (= {:base false
+          :x    false
+          :a    false :b false
+          :y    false
+          :c    true  :d false}
+         (skipped-tests (f/filter-testable {:kaocha.testable/id     :base
+                                            :kaocha.test-plan/tests [{:kaocha.testable/id     :x
+                                                                      :kaocha.test-plan/tests [{:kaocha.testable/id :a}
+                                                                                               {:kaocha.testable/id   :b
+                                                                                                :kaocha.testable/meta {:foo true}}]}
+                                                                     {:kaocha.testable/id     :y
+                                                                      :kaocha.test-plan/tests [{:kaocha.testable/id :c}
+                                                                                               {:kaocha.testable/id   :d
+                                                                                                :kaocha.testable/meta {:foo true}}]}]}
+                                           {:focus      [:x]
+                                            :focus-meta [:foo]}))
+
+         )))
+
+
+(deftest filter-focus-and-focus-meta-separately-test
+  (is (= {:kaocha.test-plan/tests [{:kaocha.testable/id :negative
+                                    :kaocha.test-plan/tests
+                                    [{:kaocha.testable/id :foo.bar-test
+                                      :kaocha.test-plan/tests [{:kaocha.testable/id :foo.bar-test/some-positive-test
+                                                                :kaocha.testable/meta {:positive true}
+                                                                :kaocha.testable/skip true}
+                                                               {:kaocha.testable/id :foo.bar-test/some-negative-test
+                                                                :kaocha.testable/meta {:negative true}}
+                                                               {:kaocha.testable/id :foo.bar-test/some-random-test
+                                                                :kaocha.testable/meta {:random true}
+                                                                :kaocha.testable/skip true}]}]
+                                    :kaocha.testable/skip true}
+                                   {:kaocha.testable/id :positive
+                                    :kaocha.test-plan/tests [{:kaocha.testable/id :foo.bar-test
+                                                              :kaocha.test-plan/tests
+                                                              [{:kaocha.testable/id :foo.bar-test/some-positive-test
+                                                                :kaocha.testable/meta {:positive true}}
+                                                               {:kaocha.testable/id :foo.bar-test/some-negative-test
+                                                                :kaocha.testable/meta {:negative true}
+                                                                :kaocha.testable/skip true}
+                                                               {:kaocha.testable/id :foo.bar-test/some-random-test
+                                                                :kaocha.testable/meta {:random true}
+                                                                :kaocha.testable/skip true}]}]}]
+          :kaocha.filter/focus #{:positive}
+          :kaocha.filter/focus-meta #{}}
+         (f/filter-post-load-hook {:kaocha.test-plan/tests [{:kaocha.testable/id :negative
+                                                             :kaocha.test-plan/tests [{:kaocha.testable/id :foo.bar-test
+                                                                                       :kaocha.test-plan/tests
+                                                                                       [{:kaocha.testable/id :foo.bar-test/some-positive-test
+                                                                                         :kaocha.testable/meta {:positive true}}
+                                                                                        {:kaocha.testable/id :foo.bar-test/some-negative-test
+                                                                                         :kaocha.testable/meta {:negative true}}
+                                                                                        {:kaocha.testable/id :foo.bar-test/some-random-test
+                                                                                         :kaocha.testable/meta {:random true}}]}]
+                                                             :kaocha.filter/focus-meta #{:negative}}
+                                                            {:kaocha.testable/id :positive
+                                                             :kaocha.test-plan/tests [{:kaocha.testable/id :foo.bar-test
+                                                                                       :kaocha.test-plan/tests
+                                                                                       [{:kaocha.testable/id :foo.bar-test/some-positive-test
+                                                                                         :kaocha.testable/meta {:positive true}}
+                                                                                        {:kaocha.testable/id :foo.bar-test/some-negative-test
+                                                                                         :kaocha.testable/meta {:negative true}}
+                                                                                        {:kaocha.testable/id :foo.bar-test/some-random-test
+                                                                                         :kaocha.testable/meta {:random true}}]}]
+                                                             :kaocha.filter/focus-meta #{:positive}}]
+                                   :kaocha.filter/focus #{:positive}}))))
+

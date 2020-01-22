@@ -61,12 +61,25 @@
                        (update :kaocha.test-plan/tests (partial map #(filter-testable % opts))))))
         skip-test (fn []
                     (assoc testable ::testable/skip true))]
-
     (cond
       (or (seq focus) (seq focus-meta))
       (cond
+        ;; - postiive
+        ;;   - foo ^:a
+        ;;   - bar ^:b
+        ;; --focus positive --focus-meta a
+        ;;
         (matches? testable focus focus-meta)
         (recurse (dissoc opts :focus :focus-meta))
+
+        ;; Is it better to split this?
+        ;; e.g. focus-meta inside
+
+        ;; (matches? testable focus #{})
+        ;; (recurse (dissoc opts :focus))
+
+        ;; (matches? testable #{} focus-meta)
+        ;; (recurse (dissoc opts :focus-meta))
 
         (some #(matches? % focus focus-meta) (testable/test-seq testable))
         (recurse)
@@ -114,10 +127,10 @@
         (output/warn ":focus " focus " did not match any tests."))
       (let [test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)
             filter-suite (fn [suite]
-                           (filter-testable
-                            (if (or (seq focus) (seq focus-meta))
-                              (dissoc suite :kaocha.filter/focus :kaocha.filter/focus-meta)
-                              (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan))
-                            (filters test-plan)))]
+                           (let [suite (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)]
+                             (-> suite
+                                 (filter-testable {})
+                                 (dissoc :kaocha.filter/focus :kaocha.filter/focus-meta)
+                                 (filter-testable (filters test-plan)))))]
         (-> test-plan
             (update :kaocha.test-plan/tests (partial map filter-suite)))))))
