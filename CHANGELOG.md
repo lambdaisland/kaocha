@@ -1,10 +1,10 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix support for dynamic bindings with `set!` in watch mode. (thanks
+  [@frenchy64](https://github.com/frenchy64))
+- Fixes support for `:config` hooks in the hooks plugin.
 
 # 0.0-581 (2020-01-22 / be2bd38)
 

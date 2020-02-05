@@ -25,15 +25,17 @@
 (defplugin kaocha.plugin/hooks
   "Configure hooks directly in `tests.edn`."
   (config [config]
-    (-> config
-        (update? :kaocha.hooks/pre-load load-hooks)
-        (update? :kaocha.hooks/post-load load-hooks)
-        (update? :kaocha.hooks/pre-run load-hooks)
-        (update? :kaocha.hooks/post-run load-hooks)
-        (update? :kaocha.hooks/wrap-run load-hooks)
-        (update? :kaocha.hooks/pre-test load-hooks)
-        (update? :kaocha.hooks/post-test load-hooks)
-        (update? :kaocha.hooks/pre-report load-hooks)))
+    (let [config (-> config
+                     (update? :kaocha.hooks/config load-hooks)
+                     (update? :kaocha.hooks/pre-load load-hooks)
+                     (update? :kaocha.hooks/post-load load-hooks)
+                     (update? :kaocha.hooks/pre-run load-hooks)
+                     (update? :kaocha.hooks/post-run load-hooks)
+                     (update? :kaocha.hooks/wrap-run load-hooks)
+                     (update? :kaocha.hooks/pre-test load-hooks)
+                     (update? :kaocha.hooks/post-test load-hooks)
+                     (update? :kaocha.hooks/pre-report load-hooks))]
+      (reduce #(%2 %1) config (:kaocha.hooks/config config))))
 
   (pre-load [config]
     (reduce #(%2 %1) config (:kaocha.hooks/pre-load config)))
