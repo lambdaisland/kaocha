@@ -222,7 +222,7 @@ errors as test errors."
         finish!   (fn []
                     (reset! finish? true)
                     (qput q :finish))
-        exit-code (future
+        bfn       (bound-fn []
                     (try
                       (run* config finish? q)
                       0
@@ -230,5 +230,6 @@ errors as test errors."
                         (st/print-cause-trace t)
                         -3)
                       (finally
-                        (println "[watch] watching stopped."))))]
+                        (println "[watch] watching stopped."))))
+        exit-code (future (bfn))]
     [exit-code finish!]))
