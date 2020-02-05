@@ -28,12 +28,12 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.0</version>
+      <version>1.10.1</version>
     </dependency>
     <dependency>
       <groupId>expound</groupId>
       <artifactId>expound</artifactId>
-      <version>0.7.2</version>
+      <version>0.8.4</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.tcrawley</groupId>
       <artifactId>dynapath</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>hawk</groupId>
