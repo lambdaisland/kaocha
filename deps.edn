@@ -1,17 +1,17 @@
 {:paths ["src" "resources"]
 
  :deps
- {org.clojure/clojure          {:mvn/version "1.10.1"}
+ {org.clojure/clojure          {:mvn/version "1.10.0"}
   org.clojure/spec.alpha       {:mvn/version "0.2.176"}
   org.clojure/tools.cli        {:mvn/version "0.4.2"}
   lambdaisland/tools.namespace {:mvn/version "0.0-234"}
   lambdaisland/deep-diff       {:mvn/version "0.0-47"}
-  org.tcrawley/dynapath        {:mvn/version "1.1.0"}
+  org.tcrawley/dynapath        {:mvn/version "1.0.0"}
   slingshot                    {:mvn/version "0.12.2"}
   hawk                         {:mvn/version "0.2.11"}
-  expound                      {:mvn/version "0.8.4"}
+  expound                      {:mvn/version "0.7.2"}
   orchestra                    {:mvn/version "2019.02.06-1"}
-  aero                         {:mvn/version "1.1.5"}
+  aero                         {:mvn/version "1.1.3"}
   progrock                     {:mvn/version "0.1.2"}
   meta-merge                   {:mvn/version "1.0.0"}}
 
