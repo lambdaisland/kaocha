@@ -112,3 +112,38 @@
     (w/qput q :finish)
 
     (is (= "[]\n0 tests, 0 assertions, 0 failures.\n\n" @out-str))))
+
+(deftest watch-set-dynamic-vars-test
+  ; sanity test for #133. Should succeed when this file
+  ; is checked via ./bin/kaocha with --watch mode
+  (is (do (set! *warn-on-reflection* false)
+          true))
+  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
+        config (-> (config/load-config config-file)
+                   (assoc-in [:kaocha/cli-options :config-file] (str config-file))
+                   (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
+                   (assoc-in [:kaocha/tests 0 :kaocha/test-paths] [(str test-dir)]))
+        prefix (str (gensym "foo"))
+        finish? (atom false)
+        exit-code (promise)
+        out-str (promise)]
+    (integration/spit-file m "tests.edn" (prn-str config))
+    (integration/spit-file m (str "test/" prefix "/bar_test.clj") (str "(ns " prefix ".bar-test (:require [clojure.test :refer :all])) (deftest xxx-test (is (do (set! *warn-on-reflection* true) true)))"))
+
+    (future (deliver out-str (util/with-test-out-str
+                               (t/with-test-out
+                                 (util/with-test-ctx
+                                   (let [[ec finish!] (w/run config)]
+                                     (loop []
+                                       (Thread/sleep 100)
+                                       (if @finish?
+                                         (finish!)
+                                         (recur)))
+                                     (deliver exit-code @ec)))))))
+
+    (Thread/sleep 500)
+    (reset! finish? true)
+
+    (is (= "[(.)]\n1 tests, 1 assertions, 0 failures.\n\n[watch] watching stopped.\n"
+           @out-str))
+    (is (= 0 @exit-code))))
