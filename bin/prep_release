@@ -20,7 +20,7 @@ fi
 
 git clean -xfd -e bin
 
-VERSION="0.0-$(git rev-list --count HEAD)"
+VERSION=${VERSION:-"0.0-$(git rev-list --count HEAD)"}
 
 echo_info "Bumping version to $VERSION"
 

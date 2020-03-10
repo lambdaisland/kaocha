@@ -2,6 +2,9 @@
 
 ## Added
 
+- Added support in the reporter for the `=?` macro as used in Expectations
+  (thanks [@dharrigan](https://github.com/dharrigan) 🎉)
+
 ## Fixed
 
 ## Changed

@@ -33,7 +33,7 @@ if [[ -d features ]]; then
     bin/check_features
 fi
 
-VERSION="0.0-$(git rev-list --count HEAD)"
+VERSION=${VERSION:-"0.0-$(git rev-list --count HEAD)"}
 
 bin/prep_release
 git push --tags
