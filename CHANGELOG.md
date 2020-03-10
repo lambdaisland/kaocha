@@ -5,10 +5,6 @@
 - Added support in the reporter for the `=?` macro as used in Expectations
   (thanks [@dharrigan](https://github.com/dharrigan) 🎉)
 
-## Fixed
-
-## Changed
-
 # 0.0-590 (2020-02-05 / 70d314f)
 
 ## Fixed
