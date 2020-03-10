@@ -237,8 +237,7 @@
                    :actual '~form})
     (t/assert-predicate msg form)))
 
-
-(defmethod print-expr '= [m]
+(defn print-expression [m]
   (let [printer (output/printer)]
     ;; :actual is of the form (not (= ...))
 
@@ -265,6 +264,12 @@
         :break
         "Actual:" :line
         [:nest (output/format-doc (:actual m) printer)]]))))
+
+(defmethod print-expr '= [m]
+  (print-expression m))
+
+(defmethod print-expr '=? [m]
+  (print-expression m))
 
 (defmulti fail-summary :type :hierarchy #'hierarchy/hierarchy)
 
