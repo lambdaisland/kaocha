@@ -59,7 +59,7 @@ RELEASE_NOTES=$(mktemp /tmp/${PROJECT}_${VERSION}_release_notes_XXXXXXXXXX.md)
 } |ed $RELEASE_NOTES
 
 git add -A
-git commit -m `cat $RELEASE_NOTES`
+git commit -m "$(cat $RELEASE_NOTES)"
 git tag v$VERSION
 
 git show v$VERSION
