@@ -41,15 +41,25 @@ sed '/^ *$/d' -i pom.xml # https://dev.clojure.org/jira/browse/TDEPS-29
 echo_info "Updating CHANGELOG"
 
 {
-    echo "1d"
-    echo "1i"
+    echo '1d'
+    echo '1i'
     echo "# ${VERSION} ($(date --rfc-3339=date) / $(git rev-parse --short HEAD))"
-    echo "."
-    echo "wq"
+    echo '.'
+    echo 'wq'
 } | ed CHANGELOG.md
 
+RELEASE_NOTES=$(mktemp /tmp/${PROJECT}_${VERSION}_release_notes_XXXXXXXXXX.md)
+
+{
+    echo 'r CHANGELOG.md'
+    echo '/^# /'
+    echo '/^# /'
+    echo '.,$d'
+    echo 'wq'
+} |ed $RELEASE_NOTES
+
 git add -A
-git commit -m "Release v$VERSION"
+git commit -m `cat $RELEASE_NOTES`
 git tag v$VERSION
 
 git show v$VERSION
