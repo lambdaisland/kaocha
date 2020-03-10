@@ -2,6 +2,14 @@
 
 ## Added
 
+## Fixed
+
+## Changed
+
+# 0.0-597 (2020-03-10 / 746943b)
+
+## Added
+
 - Added support in the reporter for the `=?` macro as used in Expectations
   (thanks [@dharrigan](https://github.com/dharrigan) 🎉)
 
