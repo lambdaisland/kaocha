@@ -137,7 +137,7 @@
   (loop [result []
          [test & testables] testables]
     (if test
-      (let [r (if (::skip test)
+      (let [r (if (or (::skip test) (::load-error test))
                 test
                 (load test))]
         (if (and *fail-fast?* (:kaocha.test-plan/load-error r))
@@ -150,10 +150,20 @@
     (cond
       (::load-error test)
       (let [error (::load-error test)
-            m {:type :error
-               :actual (::load-error test)
-               :kaocha/testable test}
+            m (if-let [message (::load-error-message test)]
+                {:type :error
+                 :message message
+                 :kaocha/testable test}
+                {:type :error
+                 :actual (::load-error test)
+                 :kaocha/testable test})
             m (cond-> m
+                (::load-error-file test)
+                (assoc :file (::load-error-file test))
+
+                (::load-error-line test)
+                (assoc :line (::load-error-line test))
+
                 (instance? Compiler$CompilerException error)
                 (assoc :file (.-source ^Compiler$CompilerException error)
                        :line (.-line ^Compiler$CompilerException error)))]
@@ -162,9 +172,9 @@
           (t/do-report m))
         (t/do-report (assoc m :type :kaocha/end-suite))
         (assoc test
-          ::events [m]
-          :kaocha.result/count 1
-          :kaocha.result/error 1))
+               ::events [m]
+               :kaocha.result/count 1
+               :kaocha.result/error 1))
 
       (::skip test)
       test
@@ -180,9 +190,9 @@
           (t/do-report m)
           (t/do-report (assoc m :type :kaocha/end-test))
           (assoc test
-            ::events [m]
-            :kaocha.result/count 1
-            :kaocha.result/pending 1)))
+                 ::events [m]
+                 :kaocha.result/count 1
+                 :kaocha.result/pending 1)))
 
       :else
       (as-> test %
