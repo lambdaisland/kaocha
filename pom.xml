@@ -63,7 +63,7 @@
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>tools.namespace</artifactId>
-      <version>0.0-234</version>
+      <version>0.0-237</version>
     </dependency>
     <dependency>
       <groupId>progrock</groupId>
