@@ -1,10 +1,9 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Namespaces where the ns form can not be read by tools.readers are now reported
+  as a test failure, rather than being quietly ignored.
 
 # 0.0-597 (2020-03-10 / 746943b)
 

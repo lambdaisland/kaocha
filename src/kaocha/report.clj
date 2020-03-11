@@ -294,7 +294,7 @@
     (println message))
   (if-let [expr (::printed-expression m)]
     (print expr)
-    (let [actual (:actual m)]
+    (when-let [actual (:actual m)]
       (print "Exception: ")
       (if (throwable? actual)
         (stacktrace/print-cause-trace actual t/*stack-trace-depth*)
