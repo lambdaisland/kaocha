@@ -16,11 +16,11 @@
     (catch java.io.FileNotFoundException e
       false)))
 
-(defn try-load-third-party-lib [type]
-  (if (qualified-keyword? type)
-    (when-not (try-require (symbol (str (namespace type) "." (name type))))
-      (try-require (symbol (namespace type))))
-    (try-require (symbol (name type)))))
+(defn try-load-third-party-lib [plugin-name]
+  (if (qualified-keyword? plugin-name)
+    (when-not (try-require (symbol (str (namespace plugin-name) "." (name plugin-name))))
+      (try-require (symbol (namespace plugin-name))))
+    (try-require (symbol (name plugin-name)))))
 
 (defmulti -register "Add your plugin to the stack"
   (fn [name plugins] name))
@@ -29,9 +29,15 @@
   (output/error "Couldn't load plugin " name)
   (throw+ {:kaocha/early-exit 254} nil (str "Couldn't load plugin " name)))
 
-(defn register [name plugins]
-  (try-load-third-party-lib name)
-  (-register name plugins))
+(defn register [plugin-name plugin-stack]
+  (let [plugin-name (if (and (simple-keyword? plugin-name)
+                             (not (str/includes? "." (name plugin-name))))
+                      ;; Namespaces without a period are not valid, we treat these as
+                      ;; kaocha.plugin.*
+                      (keyword "kaocha.plugin" (name plugin-name))
+                      plugin-name)]
+    (try-load-third-party-lib plugin-name)
+    (-register plugin-name plugin-stack)))
 
 (defn load-all [names]
   (reduce #(register %2 %1) [] (distinct names)))

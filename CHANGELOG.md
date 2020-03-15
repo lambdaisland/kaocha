@@ -2,6 +2,10 @@
 
 ## Added
 
+- Kaocha's own plugins can now use a simple keyword in `tests.edn`, e.g.
+  `:notifier` instead of `:kaocha.plugin/notifier`, similar to what we do on the
+  command line.
+
 ## Fixed
 
 ## Changed
