@@ -16,7 +16,7 @@ Full featured next generation test runner for Clojure.
 | [deep-diff](https://github.com/lambdaisland/deep-diff) | [![CircleCI](https://circleci.com/gh/lambdaisland/deep-diff.svg?style=svg)](https://circleci.com/gh/lambdaisland/deep-diff) | [![cljdoc badge](https://cljdoc.org/badge/lambdaisland/deep-diff)](https://cljdoc.org/d/lambdaisland/deep-diff) | [![Clojars Project](https://img.shields.io/clojars/v/lambdaisland/deep-diff.svg)](https://clojars.org/lambdaisland/deep-diff) | [![codecov](https://codecov.io/gh/lambdaisland/deep-diff/branch/master/graph/badge.svg)](https://codecov.io/gh/lambdaisland/deep-diff) |
 <!-- /projects -->
 
-## 考察 (考察) [kǎo chá]
+## 考察 [kǎo chá]
 
 - to inspect
 - to observe and study
