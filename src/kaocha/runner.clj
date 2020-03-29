@@ -1,21 +1,22 @@
 (ns kaocha.runner
   "Main entry point for command line use."
   (:gen-class)
-  (:require [clojure.pprint :as pprint]
+  (:require [clojure.java.io :as io]
+            [clojure.pprint :as pprint]
             [clojure.set :as set]
+            [clojure.spec.alpha :as clojure.spec]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [kaocha.config :as config]
-            [kaocha.output :as output]
-            [kaocha.api :as api]
-            [kaocha.jit :refer [jit]]
-            [slingshot.slingshot :refer [try+ throw+]]
-            [kaocha.result :as result]
-            [kaocha.plugin :as plugin]
-            [clojure.java.io :as io]
-            [clojure.spec.alpha :as clojure.spec]
             [expound.alpha :as expound]
-            [orchestra.spec.test :as orchestra]))
+            [kaocha.api :as api]
+            [kaocha.config :as config]
+            [kaocha.jit :refer [jit]]
+            [kaocha.output :as output]
+            [kaocha.plugin :as plugin]
+            [kaocha.result :as result]
+            [kaocha.specs :as specs]
+            [orchestra.spec.test :as orchestra]
+            [slingshot.slingshot :refer [try+ throw+]]))
 
 (orchestra/instrument)
 
