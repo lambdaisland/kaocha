@@ -6,9 +6,9 @@
   `:notifier` instead of `:kaocha.plugin/notifier`, similar to what we do on the
   command line.
 
-## Fixed
-
 ## Changed
+
+- Bumped several dependencies: org.clojure/spec.alpha, org.clojure/tools.cli, and aero
 
 # 0.0-601 (2020-03-11 / 6b88d96)
 
