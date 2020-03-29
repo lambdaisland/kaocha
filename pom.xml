@@ -38,12 +38,12 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>spec.alpha</artifactId>
-      <version>0.2.176</version>
+      <version>0.2.187</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
-      <version>0.4.2</version>
+      <version>1.0.194</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
@@ -58,7 +58,7 @@
     <dependency>
       <groupId>aero</groupId>
       <artifactId>aero</artifactId>
-      <version>1.1.3</version>
+      <version>1.1.6</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
