@@ -11,6 +11,11 @@
                   :kaocha/plugins])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; global
+
+(s/def :kaocha/plugins (s/coll-of keyword?))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; config
 
 (s/def :kaocha/config (s/keys :req ~(conj global-opts :kaocha/tests)))
