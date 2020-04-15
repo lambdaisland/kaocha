@@ -1,4 +1,4 @@
-# Kaocha
+<p align="center"><img src="kaocha.png"></p>
 
 Full featured next generation test runner for Clojure.
 
