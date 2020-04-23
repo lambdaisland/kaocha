@@ -30,17 +30,19 @@
   (throw+ {:kaocha/early-exit 254} nil (str "Couldn't load plugin " name)))
 
 (defn register [plugin-name plugin-stack]
-  (let [plugin-name (if (and (simple-keyword? plugin-name)
-                             (not (str/includes? "." (name plugin-name))))
-                      ;; Namespaces without a period are not valid, we treat these as
-                      ;; kaocha.plugin.*
-                      (keyword "kaocha.plugin" (name plugin-name))
-                      plugin-name)]
-    (try-load-third-party-lib plugin-name)
-    (-register plugin-name plugin-stack)))
+  (try-load-third-party-lib plugin-name)
+  (-register plugin-name plugin-stack))
+
+(defn normalize-name [plugin-name]
+  (if (and (simple-keyword? plugin-name)
+           (not (str/includes? "." (name plugin-name))))
+    ;; Namespaces without a period are not valid, we treat these as
+    ;; kaocha.plugin/*
+    (keyword "kaocha.plugin" (name plugin-name))
+    plugin-name))
 
 (defn load-all [names]
-  (reduce #(register %2 %1) [] (distinct names)))
+  (reduce #(register %2 %1) [] (distinct (map normalize-name names))))
 
 (defn run-hook* [plugins step value & extra-args]
   (reduce (fn [value plugin]

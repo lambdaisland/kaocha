@@ -24,6 +24,12 @@ Full featured next generation test runner for Clojure.
 
 See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cnen/entry/89b3f694bb3a4fd49e3241c6bd1cb79f) for an audio sample.
 
+<!-- opencollective -->
+### Support Lambda Island Open Source
+
+If you find value in our work please consider [becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute)
+<!-- /opencollective -->
+
 ## Need help?
 
 Are you

@@ -4,6 +4,9 @@
 
 ## Fixed
 
+- Fixed an issue where plugin names where not correctly normalized before
+  deduplication, leading to potentially having a plugin twice in the stack
+
 ## Changed
 
 # 1.0-612 (2020-03-29 / 06293c8)
