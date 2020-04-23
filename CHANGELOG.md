@@ -2,6 +2,13 @@
 
 ## Added
 
+- An Orchestra plugin `:kaocha.plugin/orchestra` for instrumenting
+  functions specs with [Orchestra](https://github.com/jeaye/orchestra)
+- A Preloads plugin `:kaocha.plugin/preloads` for requiring namespaces
+  before Kaocha loads test suites. This is useful for requiring spec
+  namespaces or other side-effecting namespaces that are not required
+  by test code.
+
 ## Fixed
 
 - Fixed an issue where plugin names where not correctly normalized before
