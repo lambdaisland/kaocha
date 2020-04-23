@@ -1,4 +1,4 @@
-# Kaocha
+<p align="center"><img src="kaocha.png"></p>
 
 Full featured next generation test runner for Clojure.
 
@@ -23,6 +23,12 @@ Full featured next generation test runner for Clojure.
 - on-the-spot investigation
 
 See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cnen/entry/89b3f694bb3a4fd49e3241c6bd1cb79f) for an audio sample.
+
+<!-- opencollective -->
+### Support Lambda Island Open Source
+
+If you find value in our work please consider [becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute)
+<!-- /opencollective -->
 
 ## Need help?
 
