@@ -4,11 +4,14 @@ orbs:
   kaocha: lambdaisland/kaocha@dev:first
   clojure: lambdaisland/clojure@dev:first
 
-commands:
-  checkout_and_run:
+jobs:
+  test:
     parameters:
+      os:
+        type: executor
       clojure_version:
         type: string
+    executor: << parameters.os >>
     steps:
       - checkout
       - clojure/with_cache:
@@ -27,27 +30,11 @@ commands:
           flags: integration
           file: target/coverage/integration*/codecov.json
 
-jobs:
-  java-11-clojure-1_10:
-    executor: clojure/openjdk11
-    steps: [{checkout_and_run: {clojure_version: "1.10.0"}}]
-
-  java-9-clojure-1_9:
-    executor: clojure/openjdk9
-    steps: [{checkout_and_run: {clojure_version: "1.9.0"}}]
-
-  java-8-clojure-1_10:
-    executor: clojure/openjdk8
-    steps: [{checkout_and_run: {clojure_version: "1.10.0"}}]
-
-  java-8-clojure-1_9:
-    executor: clojure/openjdk8
-    steps: [{checkout_and_run: {clojure_version: "1.9.0"}}]
-
 workflows:
   kaocha_test:
     jobs:
-      - java-11-clojure-1_10
-      - java-9-clojure-1_9
-      - java-8-clojure-1_10
-      - java-8-clojure-1_9
+      - test:
+          matrix:
+            parameters:
+              os: [clojure/openjdk11, clojure/openjdk8]
+              clojure_version: ["1.9.0", "1.10.1"]
