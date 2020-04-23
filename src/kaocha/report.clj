@@ -411,7 +411,17 @@
 
 (defn debug [m]
   (t/with-test-out
-    (prn (cond-> (select-keys m [:type :file :line :var :ns :expected :actual :message :kaocha/testable :debug])
+    (prn (cond-> (select-keys m [:type
+                                 :file
+                                 :line
+                                 :var
+                                 :ns
+                                 :expected
+                                 :actual
+                                 :message
+                                 :kaocha/testable
+                                 :debug
+                                 ::printed-expression])
            (:kaocha/testable m)
            (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type])))))
 
