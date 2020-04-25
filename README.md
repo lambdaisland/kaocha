@@ -27,7 +27,9 @@ See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cn
 <!-- opencollective -->
 ### Support Lambda Island Open Source
 
-If you find value in our work please consider [becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute)
+Kaocha and its sub-projects are part of a growing collection of quality Clojure libraries and
+tools released on the Lambda Island label. If you find value in our work please
+consider [becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute)
 <!-- /opencollective -->
 
 ## Need help?
