@@ -1,4 +1,4 @@
-Plugin: Orchestra (spec instrumentation)
+Feature: Orchestra (spec instrumentation)
 
   You can enable spec instrumentation of your functions before running
   tests with the `:kaocha.plugin/orchestra` plugin. This uses the
@@ -13,15 +13,17 @@ Plugin: Orchestra (spec instrumentation)
   Scenario: Enabling Orchestra
     Given a file named "tests.edn" with:
     """ clojure
-    #kaocha/v1 {:plugins [:kaocha.plugin/orchestra
-                          :kaocha.plugin/preloads]
-                :kaocha.plugin.preloads/ns-names [thanks.spec]}
+    #kaocha/v1
+    {:plugins [:orchestra
+               :preloads]
+     :kaocha.plugin.preloads/ns-names [my.specs]
+     :color? false}
     """
     And a file named "test/orchestra_test.clj" with:
     """ clojure
     (ns orchestra-test
       (:require [clojure.test :refer :all]
-                ))
+                [clojure.spec.alpha :as s]))
 
     (defn simple-fn []
       "x")
@@ -31,24 +33,27 @@ Plugin: Orchestra (spec instrumentation)
     (deftest spec-fail-test
       (is (= "x" (simple-fn))))
     """
-    And a file named "src/spec.clj" with:
+    And a file named "src/my/specs.clj" with:
     """ clojure
-    (ns spec
+    (ns my.specs
       (:require [clojure.spec.alpha :as s]))
 
     (s/def :simple/int int?)
     """
     When I run `bin/kaocha`
-    And I run `cat /tmp/kaocha.txt`
     Then the output should contain:
-    ``` nil
-    ⛔️ Failing
-    1 tests, 1 failures.
-    true
-    1
-    critical
-    ```
+    """
+    ERROR in orchestra-test/spec-fail-test (orchestra_test.clj:11)
+    Exception: clojure.lang.ExceptionInfo: Call to orchestra-test/simple-fn did not conform to spec:
+    orchestra_test.clj:11
 
+    -- Spec failed --------------------
 
+    Return value
 
+      "x"
 
+    should satisfy
+
+      int?
+    """
