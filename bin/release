@@ -37,7 +37,7 @@ if [[ -f ".VERSION_PREFIX" ]]; then
     VERSION=$(cat .VERSION_PREFIX | sed s/\n//)
 fi
 
-VERSION="${VERSION:-"0.0"}-$(git rev-list --count HEAD)"
+VERSION="${VERSION:-"0.0"}.$(git rev-list --count HEAD)"
 
 bin/prep_release
 git push --tags
