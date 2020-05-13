@@ -29,10 +29,6 @@ if [[ -f tests.edn ]]; then
     bin/kaocha
 fi
 
-if [[ -d features ]]; then
-    bin/check_features
-fi
-
 if [[ -f ".VERSION_PREFIX" ]]; then
     VERSION=$(cat .VERSION_PREFIX | sed s/\n//)
 fi

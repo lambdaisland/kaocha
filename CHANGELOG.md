@@ -2,9 +2,8 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- Added a `:kaocha.testable/skip-add-classpath?` flag on the test suite to
+  prevent Kaocha from modifying the classpath
 
 # 1.0.629 (2020-05-02 / 6275298)
 

@@ -222,10 +222,43 @@ bin/kaocha --test-help
 
 Kaocha requirements Clojure 1.9 or later.
 
+<!-- contributing -->
+### Contributing
+
+Everyone has a right to submit patches to this projects, and thus become a contributor.
+
+Contributors MUST
+
+- adhere to the [LambdaIsland Clojure Style Guide](https://nextjournal.com/lambdaisland/clojure-style-guide)
+- write patches that solve a problem. Start by stating the problem, then supply a minimal solution. `*`
+- agree to license their contributions as MPLv2.
+- not break the contract with downstream consumers. `**`
+- not break the tests.
+
+Contributors SHOULD
+
+- update the CHANGELOG and README.
+- add tests for new functionality.
+
+If you submit a pull request that adheres to these rules, then it will almost
+certainly be merged immediately. However some things may require more
+consideration. If you add new dependencies, or significantly increase the API
+surface, then we need to decide if these changes are in line with the project's
+goals. In this case you can start by [writing a
+pitch](https://nextjournal.com/lambdaisland/pitch-template), and collecting
+feedback on it.
+
+`*` This goes for features too, a feature needs to solve a problem. State the problem it solves, then supply a minimal solution.
+
+`**` As long as this project has not seen a public release (i.e. is not on Clojars)
+we may still consider making breaking changes, if there is consensus that the
+changes are justified.
+<!-- /contributing -->
+
 <!-- license-epl -->
 ## License
-&nbsp;
-Copyright &copy; 2018-2019 Arne Brasseur
-&nbsp;
+
+Copyright &copy; 2018-2020 Arne Brasseur and contributors
+
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
 <!-- /license-epl -->

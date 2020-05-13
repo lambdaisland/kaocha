@@ -56,7 +56,7 @@
   (throw (ex-info (str "No implementation of "
                        `load
                        " for "
-                       (pr-str (:kaocha.testable/type testable)))
+                       (pr-str (::type testable)))
                   {:kaocha.error/reason         :kaocha.error/missing-method
                    :kaocha.error/missing-method `load
                    :kaocha/testable             testable})))
@@ -71,7 +71,8 @@
   (doseq [path (:kaocha/test-paths testable)]
     (when-not (.exists (io/file path))
       (output/warn "In :test-paths, no such file or directory: " path))
-    (classpath/add-classpath path))
+    (when-not (::skip-add-classpath? testable)
+      (classpath/add-classpath path)))
 
   (try
     (-load testable)
@@ -119,11 +120,11 @@
           result (run testable test-plan)]
       (if-let [history history/*history*]
         (assoc result
-          ::events
-          (filter (fn [event]
-                    (= (get-in event [:kaocha/testable ::id])
-                       (::id testable)))
-                  @history))
+               ::events
+               (filter (fn [event]
+                         (= (get-in event [:kaocha/testable ::id])
+                            (::id testable)))
+                       @history))
         result))))
 
 (s/fdef run
@@ -196,8 +197,8 @@
 
       :else
       (as-> test %
-        (run % test-plan)
-        (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
+            (run % test-plan)
+            (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."
