@@ -2,9 +2,8 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- The hooks plugin now understands two new hooks at the test suite level,
+  `:kaocha.hooks/before` and `:kaocha.hooks/after`
 
 # 1.0.632 (2020-05-13 / 149d913)
 
