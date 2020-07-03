@@ -88,6 +88,12 @@ redefines and runs the test in one go.
 When using CIDER this combines really well with
 `cider-pprint-eval-defun-at-point` (binding in CIDER 1.18.1: `C-c C-f`).
 
+## Live reload at the REPL
+
+To enable live reloading of tests in your REPL session, you can call 
+`(kaocha.watch/run (kaocha.repl/config))`. This will use all your standard 
+config options, including watching the tests.edn file.
+
 ## Config and Test plan
 
 The `(kaocha.repl/config)` and `(kaocha.repl/test-plan)` functions are very
