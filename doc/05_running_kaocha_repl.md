@@ -93,3 +93,8 @@ When using CIDER this combines really well with
 The `(kaocha.repl/config)` and `(kaocha.repl/test-plan)` functions are very
 useful when diagnosing issues, and can be helpful when developing plugins or
 test types.
+
+## Live reload at the REPL
+
+To enable live reloading of tests in your REPL session, you can call 
+`(kaocha.watch/run (kaocha.repl/config))`.
