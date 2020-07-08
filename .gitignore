@@ -1,7 +1,5 @@
 .cpcache
 .nrepl-port
 target
-repl
-repl_sessions
 node_modules
 package-lock.json
