@@ -55,11 +55,11 @@ Feature: Plugin: Hooks
   Scenario: Implementing a test-suite specific hook
     Given a file named "tests.edn" with:
     """ clojure
-#kaocha/v1
-{:plugins [:kaocha.plugin/hooks]
- :tests [{:id :unit
-          :kaocha.hooks/before [my.kaocha.hooks/sample-before-hook]
-          :kaocha.hooks/after  [my.kaocha.hooks/sample-after-hook]}]}
+    #kaocha/v1
+    {:plugins [:kaocha.plugin/hooks]
+     :tests [{:id :unit
+              :kaocha.hooks/before [my.kaocha.hooks/sample-before-hook]
+              :kaocha.hooks/after  [my.kaocha.hooks/sample-after-hook]}]}
     """
     And a file named "src/my/kaocha/hooks.clj" with:
     """ clojure

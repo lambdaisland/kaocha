@@ -1,5 +1,5 @@
 (ns kaocha.plugin.hooks-test
-  (:require [kaocha.test :refer :all]
+  (:require [clojure.test :refer :all]
             [kaocha.plugin.hooks :as hooks]
             [kaocha.testable :as testable]
             [kaocha.test-util :as util]

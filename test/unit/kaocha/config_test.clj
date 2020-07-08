@@ -1,5 +1,5 @@
 (ns kaocha.config-test
-  (:require [kaocha.test :refer :all]
+  (:require [clojure.test :refer :all]
             [kaocha.config :as c]))
 
 (def rename-key @#'c/rename-key)
