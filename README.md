@@ -105,7 +105,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.632"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.641"}}}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -125,7 +125,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.632"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.641"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
