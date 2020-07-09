@@ -68,3 +68,20 @@ there's a lot you can do without having to restart Kaocha.
 - enable extra plugins
 - set a fixed seed (when debugging ordering issue)
 - switch to a different reporter
+
+## Configuring the watcher
+
+Kaocha uses [Hawk](https://github.com/wkf/hawk) to watch the filesystem for
+changes. By default Hawk will pick a mechanism suitable for your operating
+system, but if that doesn't cut it for some reason you can switch to using
+polling instead.
+
+Use the `:kaocha.watch/hawk-opts` configuration key to pass options to Hawk.
+Currently it understands `:watcher` (`:java`, `:barbary`, `:polling`) and
+`:sensitivity` (`:high`, `:medium`, `:low`, only applies to `:polling`).
+
+```
+#kaocha/v1
+{:kaocha.watch/hawk-opts {:watcher :polling
+                          :sensitivity :medium}}
+```

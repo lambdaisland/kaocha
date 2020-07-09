@@ -4,6 +4,7 @@
 
 - The hooks plugin now understands two new hooks at the test suite level,
   `:kaocha.hooks/before` and `:kaocha.hooks/after`
+- Make the Hawk filesystem watcher configurable with `:kaocha.watch/hawk-opts`
 
 # 1.0.632 (2020-05-13 / 149d913)
 

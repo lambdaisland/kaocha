@@ -189,23 +189,25 @@ errors as test errors."
               (map io/file))
         (:kaocha/tests config)))
 
-(defn watch! [q watch-paths]
-  (hawk/watch! [{:paths   watch-paths
+(defn watch! [q watch-paths hawk-opts]
+  (hawk/watch! hawk-opts
+               [{:paths   watch-paths
                  :handler (fn [ctx event]
                             (when (= (:kind event) :modify)
                               (qput q (:file event))))}]))
 
 (defn run* [config finish? q]
-  (let [watch-paths (watch-paths config)
+  (let [hawk-opts (::hawk-opts config {})
+        watch-paths (watch-paths config)
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload
                                 :lambdaisland.tools.namespace.track/load))]
 
-    (watch! q watch-paths)
+    (watch! q watch-paths hawk-opts)
     (when-let [config-file (get-in config [:kaocha/cli-options :config-file])]
       (when (.exists (io/file config-file))
-        (watch! q #{config-file})))
+        (watch! q #{config-file} hawk-opts)))
 
     (future
       (let [stdin (io/reader System/in)]
