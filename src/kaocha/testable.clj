@@ -17,6 +17,16 @@
   "Should testing terminate immediately upon failure or error?"
   nil)
 
+(def ^:dynamic *config* nil)
+(def ^:dynamic *test-plan* nil)
+(def ^:dynamic *current-testable* nil)
+
+(def ^:dynamic *test-location*
+  "Can be bound by a test type to override detecting the current line/file from
+  the stacktrace in case of failure. The value should be a map with keys `:file`
+  and `:line`."
+  nil)
+
 (defn add-desc [testable description]
   (assoc testable ::desc
          (str (name (::id testable)) " (" description ")")))
@@ -75,7 +85,17 @@
       (classpath/add-classpath path)))
 
   (try
-    (-load testable)
+    (binding [*current-testable* testable]
+      (let [suite? (hierarchy/suite? testable)
+            testable (if suite?
+                       (plugin/run-hook :kaocha.hooks/pre-load-suite testable *config*)
+                       testable)]
+        (binding [*current-testable* testable]
+          (let [testable (-load testable)]
+            (binding [*current-testable* testable]
+              (if suite?
+                (plugin/run-hook :kaocha.hooks/post-load-suite testable *config*)
+                testable))))))
     (catch Exception t
       (if (hierarchy/suite? testable)
         (assoc testable ::load-error t)
@@ -84,15 +104,6 @@
 (s/fdef load
   :args (s/cat :testable :kaocha/testable)
   :ret :kaocha.test-plan/testable)
-
-(def ^:dynamic *current-testable* nil)
-(def ^:dynamic *test-plan* nil)
-
-(def ^:dynamic *test-location*
-  "Can be bound by a test type to override detecting the current line/file from
-  the stacktrace in case of failure. The value should be a map with keys `:file`
-  and `:line`."
-  nil)
 
 (defmulti -run
   "Given a test-plan, perform the tests, returning the test results."

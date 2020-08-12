@@ -2,6 +2,11 @@
 
 ## Added
 
+- Add two new hooks, `:kaocha.hooks/pre-load-suite`,
+  `:kaocha.hooks/post-load-suite`
+- Extend the hooks plugin to allow for `:kaocha.hooks/pre-load` and
+  `:kaocha.hooks/post-load` hooks to be defined on the suite level
+
 ## Fixed
 
 ## Changed

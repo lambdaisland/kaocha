@@ -59,3 +59,17 @@
      (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
      :else (throw (IllegalArgumentException. "no conversion to symbol"))))
   ([ns name] (clojure.lang.Symbol/intern ns name)))
+
+;; 1.10 backport
+(when-not (resolve 'clojure.core/requiring-resolve)
+  ;; using defn generates a warning even when not evaluated
+  (intern *ns*
+          ^{:doc "Resolves namespace-qualified sym per 'resolve'. If initial resolve
+  fails, attempts to require sym's namespace and retries."}
+          'requiring-resolve
+          (fn [sym]
+            (if (qualified-symbol? sym)
+              (or (resolve sym)
+                  (do (-> sym namespace symbol require)
+                      (resolve sym)))
+              (throw (IllegalArgumentException. (str "Not a qualified symbol: " sym)))))))

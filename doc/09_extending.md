@@ -174,7 +174,16 @@ first argument (possibly updated).
 
   ;; Runs before the reporter
   (pre-report [event]
-    event))
+    event)
+
+  ;; Runs before each test suite gets loaded, gets passed the suite (testable)
+  (pre-load-suite [suite]
+    suite)
+
+  ;; Runs after each test suite gets loaded, gets passed the suite (testable)
+  (post-load-suite [suite]
+    suite)
+    )
 ```
 
 ### Tips for developing plugins

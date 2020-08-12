@@ -78,6 +78,7 @@
             history    (atom [])]
         (binding [*active?*               true
                   testable/*fail-fast?*   fail-fast?
+                  testable/*config*       config
                   history/*history*       history
                   output/*colored-output* color?]
           (with-bindings (config/binding-map config)
