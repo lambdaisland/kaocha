@@ -97,7 +97,7 @@ bin/kaocha --focus 'kaocha.history-test/clojure-test-summary-test'
 
 Pop up a system notifications whenever a test run fails or passes.
 
-See [Plugins: Notifier](plugins/notifier.md)
+See [Plugins: Notifier](plugins/notifier_plugin.md)
 
 ## Version filter
 
@@ -109,4 +109,4 @@ See [Plugins: Version Filter](plugins/version_filter.md)
 
 Write functions that hook into various parts of Kaocha
 
-See [Plugins: Hooks](plugins/hooks.md)
+See [Plugins: Hooks](plugins/hooks_plugin.md)
