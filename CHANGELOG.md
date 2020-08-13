@@ -2,14 +2,18 @@
 
 ## Added
 
-- Add two new hooks, `:kaocha.hooks/pre-load-suite`,
-  `:kaocha.hooks/post-load-suite`
-- Extend the hooks plugin to allow for `:kaocha.hooks/pre-load` and
-  `:kaocha.hooks/post-load` hooks to be defined on the suite level
-
-## Fixed
+- Add two new hooks, `:kaocha.hooks/pre-load-test`,
+  `:kaocha.hooks/post-load-test`
+- Extend the hooks plugin to allow for `:kaocha.hooks/pre-load-test`,
+  `:kaocha.hooks/pre-test` / `:kaocha.hooks/post-test` and
+  `:kaocha.hooks/post-load-test` hooks to be defined on the testable (i.e. on
+  the test suite)
 
 ## Changed
+
+- `:kaocha.hooks/before` / `:kaocha.hooks/after` now get converted to
+  `:kaocha.hooks/pre-test` / `:kaocha.hooks/post-test` hooks. The former are
+  considered deprecated but will continue to work.
 
 # 1.0.641 (2020-07-09 / ec75d9c)
 

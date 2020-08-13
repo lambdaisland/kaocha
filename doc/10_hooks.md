@@ -3,8 +3,8 @@
 Kaocha aims to be flexible and adaptable, so that you are able to do things with
 it that the authors did not anticipate. We achieve this goal by being
 data-driven, and by providing hooks. Data-driven means that Kaocha's behavior is
-determined by plain data structures. By changing these data structures you can
-change how Kaocha behaves.
+determined by plain data structures. By manipulating these data structures you
+can change how Kaocha behaves.
 
 With hooks you supply a function which gets called at a specific point within
 Kaocha's process, the function gets passed some data structure, typically a
@@ -25,9 +25,9 @@ Kaocha using hook functions and the hooks plugin provides an easier alternative.
 This chapter will focus on the latter, project-level customization using the
 hooks plugin. In [Chapter 9](09_extending.md) we talked about the data
 structures that Kaocha uses, and about implementing plugins. It provides some
-important background since to use hooks well you need to understand a bit how
-Kaocha's process works. It's a good idea to read through at least the "Concepts**
-section, and perhaps refer to it later on.
+important background since to use hooks well you need to have some understanding
+of how Kaocha's process works. It's a good idea to read through at least the
+"Concepts" section, and perhaps refer to it later on.
 
 **Note that hooks/plugins are not the only way to extend Kaocha. If you want to
 customize how Kaocha reports test run events on the command line then the
@@ -133,18 +133,32 @@ on certain conditions. Here's an example hook that skips all tests that have
  :kaocha.plugin/hooks [myproject.kaocha-hooks/my-pre-test-hook]}
 ```
 
+## pre-load-test / post-load-test
+
+The `pre-load-test` / `post-load-test` hooks are called before and after each
+individual test (testable) gets loaded. They are called with the testable and a
+`config`.
+
+Like `pre-test` / `post-test` it is up to you to filter out the testables you
+are interested in, possibly using `kaocha.hierarchy`.
+
+These hooks will fire for each test suite, and should fire for each group and
+leaf testable, but this relies on the test suite type implementation yielding
+control back to Kaocha when loading each level of tests, which may not always be
+true.
+
 ## Suite level hooks
 
 Generally hooks are always declared at the top level of your test configuration
-(`tests.edn`), but two hooks can also be declared on a test suite. These are
-`pre-load` and `post-load`. When declared like this they will be called
-before/after that specific suite gets loaded. Their arity is different from the
-regular `pre-load/post-load`, they receive two arguments, the testable (test
-suite), and the config.
+(`tests.edn`), but the testable-level hooks can also be declared on a test
+suite. These are `pre-load-test`, `post-load-test`, `pre-test`, `post-test`.
+When declared like this they will be called before/after that specific suite
+gets loaded or run.
 
-These were added to support kaocha-cljs2, so that it's possible to add hooks
-that perform ClojureScript compilation and set up a JS runtime before
-continuing.
+``` clojure
+#kaocha/v1
+{:tests [{:kaocha/pre-load-test [...]}]}
+```
 
 ## Special purpose hooks
 

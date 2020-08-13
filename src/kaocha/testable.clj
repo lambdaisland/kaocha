@@ -87,15 +87,11 @@
   (try
     (binding [*current-testable* testable]
       (let [suite? (hierarchy/suite? testable)
-            testable (if suite?
-                       (plugin/run-hook :kaocha.hooks/pre-load-suite testable *config*)
-                       testable)]
+            testable (plugin/run-hook :kaocha.hooks/pre-load-test testable *config*)]
         (binding [*current-testable* testable]
           (let [testable (-load testable)]
             (binding [*current-testable* testable]
-              (if suite?
-                (plugin/run-hook :kaocha.hooks/post-load-suite testable *config*)
-                testable))))))
+              (plugin/run-hook :kaocha.hooks/post-load-test testable *config*))))))
     (catch Exception t
       (if (hierarchy/suite? testable)
         (assoc testable ::load-error t)
@@ -208,8 +204,8 @@
 
       :else
       (as-> test %
-            (run % test-plan)
-            (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
+        (run % test-plan)
+        (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
 (defn run-testables
   "Run a collection of testables, returning a result collection."
