@@ -8,6 +8,8 @@
   `:kaocha.hooks/pre-test` / `:kaocha.hooks/post-test` and
   `:kaocha.hooks/post-load-test` hooks to be defined on the testable (i.e. on
   the test suite)
+- The `:post-summary` hook can now be used through the hooks plugin (before it
+  was only available to plugins)
 
 ## Changed
 
