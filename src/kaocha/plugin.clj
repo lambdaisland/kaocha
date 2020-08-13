@@ -98,5 +98,7 @@
 ;; :pre-test
 ;; :post-test
 ;; :pre-report
-;; :pre-load-suite
-;; :post-load-suite
+;; :pre-load-test
+;; :post-load-test
+;; :post-summary
+;; :main

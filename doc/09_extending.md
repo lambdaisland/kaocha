@@ -131,6 +131,8 @@ To take the boilerplate out of writing plugins you are encouraged to use the
 These are all the hooks a plugin can implement. Note that each must return its
 first argument (possibly updated).
 
+The [hooks chapter](10_hooks.md) has more information about most of these hooks.
+
 ``` clojure
 (ns my.kaocha.plugin
   (:require [kaocha.plugin :as p]))
@@ -138,11 +140,13 @@ first argument (possibly updated).
 (p/defplugin my.kaocha/plugin
   ;; Install extra CLI options and flags.
   (cli-options [opts]
-    opts)
+    (conj opts [nil "--my-plugin-option" "Does something plugin specific."]))
 
-  ;; Alter the configuration. Useful for setting default values.
+  ;; Alter the configuration. Useful for setting default values and processing cli-options.
   (config [config]
-    config)
+    (if (:my-plugin-option (:kaocha/cli-options config))
+      (assoc config ::some-flag true)
+      config))
 
   ;; Runs before the load step
   (pre-load [config]
@@ -155,6 +159,14 @@ first argument (possibly updated).
   ;; Runs before the run step
   (pre-run [test-plan]
     test-plan)
+
+  ;; Runs before each individual test gets loaded, gets passed the testable
+  (pre-load-test [testable config]
+    testable)
+
+  ;; Runs after each individual test has been loaded, gets passed the testable
+  (post-load-test [testable config]
+    testable)
 
   ;; Runs before each individual test
   (pre-test [test test-plan]
@@ -176,14 +188,21 @@ first argument (possibly updated).
   (pre-report [event]
     event)
 
-  ;; Runs before each test suite gets loaded, gets passed the suite (testable)
-  (pre-load-suite [suite]
-    suite)
+  ;; Runs right before kaocha.runner calls kaocha.api/run. This is for plugins
+  ;; that optionally do something else besides running tests, like printing
+  ;; informational messages and then exiting. For this throw+ a
+  ;; {:kaocha/early-exit}.
+  (main [config]
+    (if (:do-other-thing (:kaocha/cli-options config))
+      (do
+        (... do other thing ...)
+        (throw+ {:kaocha/early-exit 0}))
+      config))
 
-  ;; Runs after each test suite gets loaded, gets passed the suite (testable)
-  (post-load-suite [suite]
-    suite)
-    )
+  ;; Gets called after the run is finished and the summary has been printed/reported.
+  ;; Gets passed the test result map (test plan with results).
+  (post-summary [test-result]
+    ))
 ```
 
 ### Tips for developing plugins

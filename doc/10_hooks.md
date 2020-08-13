@@ -160,6 +160,9 @@ gets loaded or run.
 {:tests [{:kaocha/pre-load-test [...]}]}
 ```
 
+These can be used for instance with kaocha-cljs2 to prepare the ClojureScript
+compilation and JavaScript runtime.
+
 ## Special purpose hooks
 
 ### wrap-run
@@ -178,6 +181,9 @@ In particular this wraps `kaocha.testable/-run`, so it receives a two argument f
     (run testable test-plan)))
 ```
 
+`wrap-run` is used by the output capturing plugin (on by default) to rebind
+`*out*` and `*err*` during tests.
+
 ### Pre-report
 
 Kaocha reporters are based on Clojure.test reporters, they are functions that
@@ -186,3 +192,22 @@ information to the terminal.
 
 The `pre-report` hook allows you to modify these events before they are passed
 to the reporter. They receive a single argument, the event map.
+
+An example use case is the [kaocha-noyoda
+plugin](https://github.com/magnars/kaocha-noyoda), which changes the assertion
+order from `(= actual expected)` to `(= expected actual)`.
+
+### Post-summary
+
+This is the final hooks that gets called, it runs after the finally summary has
+been printed (after the `:summary` event has fired).
+
+```
+107 tests, 265 assertions, 0 failures.
+```
+
+The profiling plugin uses this hook to print out a list of the slowest tests.
+
+Note that this hook only runs when Kaocha is invoked through `kaocha.runner`, so
+through the command line. It does not get run when invoked via `kaocha.repl` or
+`kaocha.api`.

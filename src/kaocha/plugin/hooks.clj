@@ -60,6 +60,7 @@
                      (update? :kaocha.hooks/pre-test load-hooks)
                      (update? :kaocha.hooks/post-test load-hooks)
                      (update? :kaocha.hooks/pre-report load-hooks)
+                     (update? :kaocha.hooks/post-summary load-hooks)
                      load-testable-level-hooks
                      (update? :kaocha/tests #(mapv (comp load-testable-level-hooks rename-aliases) %)))]
       (reduce #(%2 %1) config (:kaocha.hooks/config config))))
@@ -100,4 +101,7 @@
       (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/post-test test-plan))))
 
   (pre-report [event]
-    (reduce #(%2 %1) event (:kaocha.hooks/pre-report testable/*test-plan*))))
+    (reduce #(%2 %1) event (:kaocha.hooks/pre-report testable/*test-plan*)))
+
+  (post-summary [summary]
+    (reduce #(%2 %1) summary (:kaocha.hooks/post-summary testable/*test-plan*))))
