@@ -21,6 +21,13 @@
 - the `post-summary` hook will also be called when invoked via `kaocha.repl`
 - `kaocha.testable/test-seq` only returns actual testables, not a top level
   config/test-plan map
+- Bumped Orchestra and Expound, this pulled in a breaking change in Orchestra
+  where it no longer includes the explained spec error in the exception message.
+  To accomodate for this the Orchestra plugin has been updated so the
+  explanation appears in the reported output.
+- Only instrument lambdaisland/kaocha namespaces with Orchestra. For
+  instrumentation of your own code or third party libraries use the `:orchestra`
+  plugin.
 
 # 1.0.641 (2020-07-09 / ec75d9c)
 
