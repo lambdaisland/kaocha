@@ -13,7 +13,8 @@
   :pre-release-hook (fn [opts]
                       (doseq [file (filter #(str/ends-with? % ".md") (file-seq (io/file "doc")))]
                         (release/update-versions-in file (:module-versions opts)))
-                      (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed"))})
+                      (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed")
+                      opts)})
 
 
 ;; Local Variables:
