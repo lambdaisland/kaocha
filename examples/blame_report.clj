@@ -26,7 +26,8 @@
                                                                                      (replace \- \_)
                                                                                      (replace \. \/))
                                                                                  ".cljc"))))
-                                                      "file:" ""))))))))
+                                                      "file:" "")))))))
+  result)
 
 
 (comment

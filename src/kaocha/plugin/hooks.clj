@@ -92,16 +92,16 @@
 
   (pre-test [testable test-plan]
     (as-> testable $
-      (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/pre-test test-plan))
-      (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/pre-test testable))))
+          (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/pre-test test-plan))
+          (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/pre-test testable))))
 
   (post-test [testable test-plan]
     (as-> testable $
-      (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/post-test testable))
-      (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/post-test test-plan))))
+          (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/post-test testable))
+          (reduce #(%2 %1 test-plan) $ (:kaocha.hooks/post-test test-plan))))
 
   (pre-report [event]
     (reduce #(%2 %1) event (:kaocha.hooks/pre-report testable/*test-plan*)))
 
-  (post-summary [summary]
-    (reduce #(%2 %1) summary (:kaocha.hooks/post-summary testable/*test-plan*))))
+  (post-summary [test-result]
+    (reduce #(%2 %1) test-result (:kaocha.hooks/post-summary test-result))))
