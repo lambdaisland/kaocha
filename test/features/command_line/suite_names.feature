@@ -50,7 +50,7 @@ Feature: CLI: Selecting test suites
       bbb-test
       """
 
-  Scenario: Specifying an unkown suite
+  Scenario: Specifying an unknown suite
     When I run `bin/kaocha suite-name`
     Then the output should contain:
       """
