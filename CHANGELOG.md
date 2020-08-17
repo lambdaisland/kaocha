@@ -8,11 +8,9 @@
 
 # 1.0.663 (2020-08-17 / 2a815a3)
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix `post-summary` when used from  hooks plugin
 
 # 1.0.658 (2020-08-17 / 22ef88c)
 
