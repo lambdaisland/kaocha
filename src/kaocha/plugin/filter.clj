@@ -10,10 +10,11 @@
   (update m k (fnil conj []) v))
 
 (defn matches? [{:as testable
-                 ::testable/keys [id meta]}
+                 ::testable/keys [id meta aliases]}
                 filters meta-filters]
   (or (some #(= (keyword %) id) filters)
       (some #(= (str %) (namespace id)) filters)
+      (seq (filter (set aliases) (map keyword filters)))
       (some #(get meta (keyword %)) meta-filters)))
 
 (defn filters [{:as testable
@@ -123,7 +124,7 @@
 
   (post-load [test-plan]
     (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)]
-      (when (and (seq focus) (empty? (filter (set focus) (map ::testable/id (testable/test-seq test-plan)))))
+      (when (and (seq focus) (empty? (filter #(matches? % focus nil) (testable/test-seq test-plan))))
         (output/warn ":focus " focus " did not match any tests."))
       (let [test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)
             filter-suite (fn [suite]

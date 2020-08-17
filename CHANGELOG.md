@@ -10,6 +10,8 @@
   the test suite)
 - The `:post-summary` hook can now be used through the hooks plugin (before it
   was only available to plugins)
+- Allow test type implementations to add `:kaocha.testable/aliases` to
+  testables, these can be used when focusing/skipping
 
 ## Changed
 
