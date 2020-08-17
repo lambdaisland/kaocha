@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+# Wrapper script for babashka to be dropped into projects, will run `bb` from
+# the PATH if it exists, or otherwise download it and store it inside the
+# project. When using the system `bb` it will do a version check and warn if the
+# version is older than what is requested.
+#
+# Will look for a `bb_deps.edn` and run that through `clojure` to compute a
+# classpath.
+#
+# Will use rlwrap if it is available.
+
+name=babashka
+babashka_version="0.1.3"
+store_dir="$(pwd)/.store"
+install_dir="${store_dir}/$name-$babashka_version"
+
+system_bb="$(which bb)"
+set -e
+
+# https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
+if [[ -f "$system_bb" ]]; then
+    bb_path="$system_bb"
+elif [[ -f "$install_dir/bb" ]]; then
+    bb_path="$install_dir/bb"
+else
+    case "$(uname -s)" in
+        Linux*)     platform=linux;;
+        Darwin*)    platform=macos;;
+    esac
+
+    echo "$name $babashka_version not found, installing to $install_dir..."
+    download_url="https://github.com/borkdude/babashka/releases/download/v$babashka_version/babashka-$babashka_version-$platform-amd64.zip"
+
+    mkdir -p $install_dir
+    echo -e "Downloading $download_url."
+    curl -o bb.zip -sL "$download_url"
+    unzip -qqo "bb.zip" -d $install_dir
+    rm "bb.zip"
+    bb_path="$install_dir/bb"
+fi
+
+set +e
+actual_version="$($bb_path --version | sed 's/babashka v//')"
+
+vercomp $actual_version $babashka_version
+case $? in
+     0) ;;  # =
+     1) ;;  # >
+     2) echo "WARNING: babashka version is $actual_version, expected $babashka_version" ;;  # <
+esac
+set -e
+
+try_exec_rlwrap() {
+    if [ -x "$(command -v rlwrap)" ]; then
+        exec "rlwrap" "$@"
+    else
+        exec "$@"
+    fi
+}
+
+deps_clj="$(pwd)/.store/deps.clj"
+
+ensure_deps_clj() {
+    if [[ ! -f "${deps_clj}" ]]; then
+        mkdir -p "${store_dir}"
+        curl -sL https://raw.githubusercontent.com/borkdude/deps.clj/master/deps.clj -o "${deps_clj}"
+    fi
+}
+
+if [[ -f bb_deps.edn ]]; then
+    ensure_deps_clj
+    # Note this will install clojure-tools in ~/.deps.clj/ClojureTools
+    cp="$($bb_path $deps_clj -Srepro -Sdeps-file bb_deps.edn -Spath)"
+    try_exec_rlwrap "$bb_path" "-cp" "${cp}" "$@"
+else
+    try_exec_rlwrap "$bb_path" "$@"
+fi

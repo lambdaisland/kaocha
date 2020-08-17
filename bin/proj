@@ -1,0 +1,21 @@
+#!bin/bb
+
+(ns proj (:require [lioss.main :as lioss]
+                   [lioss.subshell :as subshell]
+                   [clojure.java.io :as io]
+                   [clojure.string :as str]
+                   [lioss.release :as release]))
+
+(lioss/main
+ {:license        :epl
+  :inception-year 2018
+  :description    "Full featured next generation test runner for Clojure."
+  :pre-release-hook (fn [opts]
+                      (doseq [file (filter #(str/ends-with? % ".md") (file-seq (io/file "doc")))]
+                        (release/update-versions-in % (:module-versions opts)))
+                      (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed"))})
+
+
+;; Local Variables:
+;; mode:clojure
+;; End:
