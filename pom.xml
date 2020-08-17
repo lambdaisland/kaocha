@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemalocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.0.641</version>
+  <version>1.0.658</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -22,18 +22,13 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>11b4934494d40ea69450f04221208097a0b64d9d</tag>
+    <tag>0d9ade85f48e9aea6aea1f546f71ae78bcb3344c</tag>
   </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
       <version>1.10.1</version>
-    </dependency>
-    <dependency>
-      <groupId>expound</groupId>
-      <artifactId>expound</artifactId>
-      <version>0.8.4</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -51,14 +46,19 @@
       <version>0.0-47</version>
     </dependency>
     <dependency>
-      <groupId>slingshot</groupId>
-      <artifactId>slingshot</artifactId>
-      <version>0.12.2</version>
-    </dependency>
-    <dependency>
       <groupId>aero</groupId>
       <artifactId>aero</artifactId>
       <version>1.1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>orchestra</groupId>
+      <artifactId>orchestra</artifactId>
+      <version>2020.07.12-1</version>
+    </dependency>
+    <dependency>
+      <groupId>slingshot</groupId>
+      <artifactId>slingshot</artifactId>
+      <version>0.12.2</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
@@ -66,19 +66,9 @@
       <version>0.0-237</version>
     </dependency>
     <dependency>
-      <groupId>progrock</groupId>
-      <artifactId>progrock</artifactId>
-      <version>0.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>orchestra</groupId>
-      <artifactId>orchestra</artifactId>
-      <version>2019.02.06-1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.tcrawley</groupId>
-      <artifactId>dynapath</artifactId>
-      <version>1.1.0</version>
+      <groupId>meta-merge</groupId>
+      <artifactId>meta-merge</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>hawk</groupId>
@@ -86,9 +76,19 @@
       <version>0.2.11</version>
     </dependency>
     <dependency>
-      <groupId>meta-merge</groupId>
-      <artifactId>meta-merge</artifactId>
-      <version>1.0.0</version>
+      <groupId>progrock</groupId>
+      <artifactId>progrock</artifactId>
+      <version>0.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.tcrawley</groupId>
+      <artifactId>dynapath</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>expound</groupId>
+      <artifactId>expound</artifactId>
+      <version>0.8.5</version>
     </dependency>
   </dependencies>
   <build>
@@ -109,10 +109,24 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Git-Revision>11b4934494d40ea69450f04221208097a0b64d9d</Git-Revision>
+              <git-revision>0d9ade85f48e9aea6aea1f546f71ae78bcb3344c</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
