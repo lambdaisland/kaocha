@@ -31,7 +31,7 @@ Feature: Orchestra (spec instrumentation)
     (s/fdef simple-fn :ret :simple/int)
 
     (deftest spec-fail-test
-      (is (= "x" (simple-fn))))
+      (is (= "x" (simple-fn)) "Just testing simple-fn"))
     """
     And a file named "src/my/specs.clj" with:
     """ clojure
@@ -44,16 +44,23 @@ Feature: Orchestra (spec instrumentation)
     Then the output should contain:
     """
     ERROR in orchestra-test/spec-fail-test (orchestra_test.clj:11)
-    Exception: clojure.lang.ExceptionInfo: Call to orchestra-test/simple-fn did not conform to spec:
+    Just testing simple-fn
+    Call to #'orchestra-test/simple-fn did not conform to spec.
     orchestra_test.clj:11
 
     -- Spec failed --------------------
-
-    Return value
 
       "x"
 
     should satisfy
 
       int?
+
+    -- Relevant specs -------
+
+    :simple/int:
+      clojure.core/int?
+
+    -------------------------
+    Detected 1 error
     """

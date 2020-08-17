@@ -4,7 +4,7 @@
   (:require [clojure.java.io :as io]
             [clojure.pprint :as pprint]
             [clojure.set :as set]
-            [clojure.spec.alpha :as clojure.spec]
+            [clojure.spec.alpha :as spec]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
             [expound.alpha :as expound]
@@ -18,7 +18,10 @@
             [orchestra.spec.test :as orchestra]
             [slingshot.slingshot :refer [try+ throw+]]))
 
-(orchestra/instrument)
+(orchestra/instrument
+ (filter #(or (str/starts-with? (str %) "kaocha.")
+              (str/starts-with? (str %) "lambdaisland."))
+         (map ns-name (all-ns))))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -143,7 +146,7 @@
     (output/error "org.clojure/tools.cli does not have all the capabilities that Kaocha needs. Make sure you are using version 0.3.6 or greater.")
     (throw+ {:kaocha/early-exit 253}))
 
-  (binding [clojure.spec/*explain-out* expound/printer]
+  (binding [spec/*explain-out* expound/printer]
     (let [{{:keys [config-file plugin profile]} :options} (cli/parse-opts args cli-options)
           config                                          (-> config-file
                                                               (or "tests.edn")

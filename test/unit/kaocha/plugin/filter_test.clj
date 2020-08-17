@@ -1,6 +1,5 @@
 (ns kaocha.plugin.filter-test
-  (:require [clojure.test :refer [is]]
-            [kaocha.test :refer [deftest]]
+  (:require [clojure.test :refer [deftest is]]
             [kaocha.plugin.filter :as f]
             [kaocha.testable :as testable]))
 
@@ -68,7 +67,8 @@
   (is (= #{:xxx}
          (f/remove-missing-metadata-keys
           [:xxx :yyy]
-          {:kaocha.test-plan/tests [{:kaocha.testable/meta {:xxx true}}]}))))
+          {:kaocha.test-plan/tests [{:kaocha.testable/id :abc
+                                     :kaocha.testable/meta {:xxx true}}]}))))
 
 (deftest filter-testable-test
   (is (= #:kaocha.testable
@@ -209,4 +209,3 @@
                                                                                          :kaocha.testable/meta {:random true}}]}]
                                                              :kaocha.filter/focus-meta #{:positive}}]
                                    :kaocha.filter/focus #{:positive}}))))
-
