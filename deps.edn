@@ -9,8 +9,8 @@
   org.tcrawley/dynapath        {:mvn/version "1.1.0"}
   slingshot                    {:mvn/version "0.12.2"}
   hawk                         {:mvn/version "0.2.11"}
-  expound                      {:mvn/version "0.8.4"}
-  orchestra                    {:mvn/version "2019.02.06-1"}
+  expound                      {:mvn/version "0.8.5"}
+  orchestra                    {:mvn/version "2020.07.12-1"}
   aero                         {:mvn/version "1.1.6"}
   progrock                     {:mvn/version "0.1.2"}
   meta-merge                   {:mvn/version "1.0.0"}}
