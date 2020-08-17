@@ -47,9 +47,9 @@
                                            [(fn [t] #(each-fixture-fn t))]
                                            [])})))
          (assoc testable
-           :kaocha.testable/meta (meta ns-obj)
-           :kaocha.ns/ns ns-obj
-           :kaocha.test-plan/tests))))
+                :kaocha.testable/meta (meta ns-obj)
+                :kaocha.ns/ns ns-obj
+                :kaocha.test-plan/tests))))
 
 (defmethod testable/-run :kaocha.type/ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]

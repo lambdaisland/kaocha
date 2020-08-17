@@ -224,9 +224,13 @@
         result))))
 
 (defn test-seq [testable]
-  (cons testable (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
-                                                     (:kaocha.test-plan/tests testable)
-                                                     (:kaocha.result/tests testable))))))
+  (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
+                                               (:kaocha.test-plan/tests testable)
+                                               (:kaocha.result/tests testable))))
+    ;; When calling test-seq on the top level test-plan/result, don't include
+    ;; the outer map. When running on an actual testable, do include it.
+    (:kaocha.testable/id testable)
+    (cons testable)))
 
 (defn load-error? [testable]
   (boolean (:kaocha.test-plan/load-error testable)))

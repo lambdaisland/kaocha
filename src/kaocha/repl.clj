@@ -150,10 +150,11 @@ These will particularly come in handy when developing plugins."}
                                [{} args])
          config (-> (config config-opts)
                     (update :kaocha.filter/focus into (map testable-id) tests))]
-     (-> (api/run config)
-         :kaocha.result/tests
-         result/totals))))
-
+     (->> config
+          api/run
+          (plugin/run-hook :kaocha.hooks/post-summary)
+          :kaocha.result/tests
+          result/totals))))
 
 (defn run-all
   "Do a full Kaocha test run

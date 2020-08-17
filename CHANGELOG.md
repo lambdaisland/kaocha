@@ -18,6 +18,9 @@
 - `:kaocha.hooks/before` / `:kaocha.hooks/after` now get converted to
   `:kaocha.hooks/pre-test` / `:kaocha.hooks/post-test` hooks. The former are
   considered deprecated but will continue to work.
+- the `post-summary` hook will also be called when invoked via `kaocha.repl`
+- `kaocha.testable/test-seq` only returns actual testables, not a top level
+  config/test-plan map
 
 # 1.0.641 (2020-07-09 / ec75d9c)
 
