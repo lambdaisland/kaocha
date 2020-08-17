@@ -54,6 +54,7 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [7. Watch mode](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/7-watch-mode)
 - [8. Plugins](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/8-plugins)
 - [9. Extending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/9-extending)
+- [10. Hooks](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/10-hooks)
 - [`clojure.test` assertion extensions](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/-clojure-test-assertion-extensions)
 - [Capability check for org.clojure/tools.cli If a project's dependency](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/capability-check-for-org-clojure-tools-cli-if-a-project-s-dependency)
 - [CLI: `--fail-fast` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-fail-fast-option)
@@ -70,6 +71,7 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [Plugin: Capture output](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-capture-output)
 - [Plugin: Hooks](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-hooks)
 - [Plugin: Notifier (desktop notifications)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-notifier-desktop-notifications-)
+- [Orchestra (spec instrumentation)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/orchestra-spec-instrumentation-)
 - [Plugin: Clojure/Java Version filter](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-clojure-java-version-filter)
 - [Automatic spec test check generation](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/automatic-spec-test-check-generation)
 <!-- /docs-toc -->
@@ -105,7 +107,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.641"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.658"}}}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -125,7 +127,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.641"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.658"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 

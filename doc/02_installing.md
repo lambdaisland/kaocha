@@ -9,7 +9,7 @@ The main namespace for use at the command line is `kaocha.runner`, regardless of
 For example:
 
 ``` shell
-clojure -Sdeps '{:deps {lambdaisland/kaocha {:mvn/version "1.0.641"}}}' -m kaocha.runner --test-help
+clojure -Sdeps '{:deps {lambdaisland/kaocha {:mvn/version "1.0.658"}}}' -m kaocha.runner --test-help
 ```
 
 Below are instructions on the recommended way to set things up for various build tools.
@@ -22,7 +22,7 @@ In `deps.edn`, create a `test` "alias" (profile) that loads the `lambdaisland/ka
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.641"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.658"}}}}}
 ```
 
 Other dependencies that are only used for tests like test framework or assertion
@@ -79,7 +79,7 @@ alias that activates the profile, and invokes `lein run -m kaocha.runner`.
 ``` clojure
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.641"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.658"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
