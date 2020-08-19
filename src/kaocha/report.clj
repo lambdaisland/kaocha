@@ -339,7 +339,8 @@
   (when (and testable/*fail-fast?*
              (hierarchy/fail-type? m)
              (not (:kaocha.result/exception m))) ;; prevent handled exceptions from being re-thrown
-    (throw+ {:kaocha/fail-fast true})))
+    (throw+ {:kaocha/fail-fast true
+             :caused-by m})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
