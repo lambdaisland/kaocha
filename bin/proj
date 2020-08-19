@@ -6,15 +6,22 @@
                    [clojure.string :as str]
                    [lioss.release :as release]))
 
+(defn update-docs [opts]
+  (doseq [file (filter #(str/ends-with? % ".md") (file-seq (io/file "doc")))]
+    (release/update-versions-in file (:module-versions opts)))
+  (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed")
+  opts)
+
+;; TODO: run the cucumber to markdown code from here
+
 (lioss/main
  {:license        :epl
   :inception-year 2018
   :description    "Full featured next generation test runner for Clojure."
-  :pre-release-hook (fn [opts]
-                      (doseq [file (filter #(str/ends-with? % ".md") (file-seq (io/file "doc")))]
-                        (release/update-versions-in file (:module-versions opts)))
-                      (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed")
-                      opts)})
+  :pre-release-hook update-docs
+  :commands ["update-docs"
+             {:description "Update the ToC and version strings in md files"
+              :command update-docs}]})
 
 
 ;; Local Variables:
