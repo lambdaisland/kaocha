@@ -2,9 +2,7 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- Added internal diagnostics
 
 # 1.0.663 (2020-08-17 / 2a815a3)
 
