@@ -1,6 +1,5 @@
 (ns kaocha.plugin.notifier-test
-  (:require [clojure.test :refer [is]]
-            [kaocha.test :refer [deftest]]
+  (:require [clojure.test :refer :all]
             [kaocha.plugin.notifier :as n]
             [clojure.string :as str]
             [clojure.java.io :as io]))

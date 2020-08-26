@@ -86,12 +86,13 @@
 
   (try
     (binding [*current-testable* testable]
-      (let [suite? (hierarchy/suite? testable)
-            testable (plugin/run-hook :kaocha.hooks/pre-load-test testable *config*)]
-        (binding [*current-testable* testable]
-          (let [testable (-load testable)]
-            (binding [*current-testable* testable]
-              (plugin/run-hook :kaocha.hooks/post-load-test testable *config*))))))
+      (let [testable (plugin/run-hook :kaocha.hooks/pre-load-test testable *config*)]
+        (if (::skip testable)
+          testable
+          (binding [*current-testable* testable]
+            (let [testable (-load testable)]
+              (binding [*current-testable* testable]
+                (plugin/run-hook :kaocha.hooks/post-load-test testable *config*)))))))
     (catch Exception t
       (if (hierarchy/suite? testable)
         (assoc testable ::load-error t)

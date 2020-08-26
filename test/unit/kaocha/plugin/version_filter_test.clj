@@ -1,6 +1,5 @@
 (ns kaocha.plugin.version-filter-test
-  (:require [clojure.test :refer [is]]
-            [kaocha.test :refer [deftest]]
+  (:require [clojure.test :refer :all]
             [kaocha.plugin.version-filter :as v]))
 
 (defmacro with-java-version

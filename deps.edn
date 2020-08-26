@@ -18,8 +18,8 @@
  :aliases
  {:test
   {:extra-deps {org.clojure/test.check        {:mvn/version "1.0.0"}
-                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-53"}
-                lambdaisland/kaocha-cloverage {:mvn/version "1.0-45"}
+                lambdaisland/kaocha-cucumber  {:mvn/version "0.0-53" :exclusions [lambdaisland/kaocha]}
+                lambdaisland/kaocha-cloverage {:mvn/version "1.0-45" :exclusions [lambdaisland/kaocha]}
                 nubank/matcher-combinators    {:mvn/version "1.5.1"}
                 akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}}}
 

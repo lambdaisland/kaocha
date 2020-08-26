@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- Prevent loading of test suites that are excluded from the run
 
 # 1.0.669 (2020-08-19 / 13abc37)
 

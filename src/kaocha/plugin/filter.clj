@@ -122,6 +122,28 @@
         (seq skip-meta)  (assoc :kaocha.filter/skip-meta skip-meta)
         (seq focus-meta) (assoc :kaocha.filter/focus-meta focus-meta))))
 
+  ;; In an earlier pass already filter at the test suite level. We don't have
+  ;; the full test plan yet, but if a suite itself matches any of the focus/skip
+  ;; directives then we can already apply that, thus possibly preventing the
+  ;; loading of suites that won't run in this test run anyway.
+  (pre-load [config]
+    (let [{:keys [focus focus-meta skip skip-meta]} (:kaocha/cli-options config)
+          focus-suites (->> config
+                            :kaocha/tests
+                            (filter #(matches? % focus focus-meta))
+                            (map :kaocha.testable/id)
+                            set)]
+      (update config
+              :kaocha/tests
+              (fn [suites]
+                (mapv (fn [suite]
+                        (if (or (matches? suite skip skip-meta)
+                                (and (seq focus-suites)
+                                     (not (contains? focus-suites (:kaocha.testable/id suite)))))
+                          (assoc suite :kaocha.testable/skip true)
+                          suite))
+                      suites)))))
+
   (post-load [test-plan]
     (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)]
       (when (and (seq focus) (empty? (filter #(matches? % focus nil) (testable/test-seq test-plan))))
