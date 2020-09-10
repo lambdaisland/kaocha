@@ -111,6 +111,22 @@ Write functions that hook into various parts of Kaocha
 
 See [Plugins: Hooks](plugins/hooks_plugin.md)
 
+## Orchestra
+
+Instrument functions with [Orchestra](https://github.com/jeaye/orchestra).
+
+See [Plugins: Hooks](plugins/orchestra_plugin.md)
+
+## Preloads
+
+Preload namespaces. Useful for loading specs and installing instrumentation.
+
+``` clojure
+#kaocha/v1
+{:plugins [:preloads]
+ :kaocha.plugin.preloads/ns-names [my.acme.specs]}
+```
+
 ## Debug
 
 Inspect Kaocha's process by printing out a message at every single hook. This is

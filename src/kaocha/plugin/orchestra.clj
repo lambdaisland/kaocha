@@ -1,4 +1,6 @@
 (ns kaocha.plugin.orchestra
+  "Instrument/unstrument namespaces with Orchestra, to get validation of function
+  arguments and return values based on clojure.spec.alpha."
   (:require [kaocha.plugin :refer [defplugin]]
             [orchestra.spec.test :as orchestra]
             [clojure.spec.alpha :as spec]))
