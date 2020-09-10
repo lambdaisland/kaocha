@@ -2,9 +2,8 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- Added `:kaocha.plugin/debug` for easy introspection of Kaocha's machinery
+- Added docstrings and markdown docs for the Orchestra and Preloads plugins
 
 # 1.0.672 (2020-08-26 / ff68cf5)
 
