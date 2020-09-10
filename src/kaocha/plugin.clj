@@ -88,6 +88,22 @@
 
 ;; HOOKS
 
+(def all-hooks
+  [:kaocha.hooks/cli-options
+   :kaocha.hooks/config
+   :kaocha.hooks/pre-load
+   :kaocha.hooks/post-load
+   :kaocha.hooks/pre-run
+   :kaocha.hooks/post-run
+   :kaocha.hooks/wrap-run
+   :kaocha.hooks/pre-test
+   :kaocha.hooks/post-test
+   :kaocha.hooks/pre-report
+   :kaocha.hooks/pre-load-test
+   :kaocha.hooks/post-load-test
+   :kaocha.hooks/post-summary
+   :kaocha.hooks/main])
+
 ;; :cli-options
 ;; :config
 ;; :pre-load

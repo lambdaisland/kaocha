@@ -127,7 +127,7 @@
   ;; directives then we can already apply that, thus possibly preventing the
   ;; loading of suites that won't run in this test run anyway.
   (pre-load [config]
-    (let [{:keys [focus focus-meta skip skip-meta]} (:kaocha/cli-options config)
+    (let [{:kaocha.filter/keys [focus focus-meta skip skip-meta]} config
           focus-suites (->> config
                             :kaocha/tests
                             (filter #(matches? % focus focus-meta))
@@ -145,7 +145,7 @@
                       suites)))))
 
   (post-load [test-plan]
-    (let [{:keys [focus focus-meta]} (:kaocha/cli-options test-plan)]
+    (let [{:kaocha.filter/keys [focus focus-meta]} (:kaocha/cli-options test-plan)]
       (when (and (seq focus) (empty? (filter #(matches? % focus nil) (testable/test-seq test-plan))))
         (output/warn ":focus " focus " did not match any tests."))
       (let [test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)

@@ -110,3 +110,22 @@ See [Plugins: Version Filter](plugins/version_filter.md)
 Write functions that hook into various parts of Kaocha
 
 See [Plugins: Hooks](plugins/hooks_plugin.md)
+
+## Debug
+
+Inspect Kaocha's process by printing out a message at every single hook. This is
+mostly intended for people working on Kaocha or Kaocha plugins, but can be
+useful in general as a debugging aid when Kaocha doesn't behave the way you
+would expect.
+
+Every time a hook fires, it prints the name of the hook, and a subset of keys of
+the first argument passed to the hook (usually the testable). It only prints
+some keys so the output isn't too noisy. By defaults only prints
+`:kaocha.testable/id` and `:kaocha.testable/type`, or for `pre-report` it prints
+`:type`, `:file`, `:line`.
+
+To customize which keys to print, use Kaocha's "bindings" functionality, in `tests.edn`.
+
+``` clojure
+:kaocha/bindings {kaocha.plugin.debug/*keys* [,,,]}
+```

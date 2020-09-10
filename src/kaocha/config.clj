@@ -56,7 +56,7 @@
         plugins))
 
 (defn normalize [config]
-  (let [default-config   (default-config)
+  (let [default-config (default-config)
         {:keys [tests
                 plugins
                 reporter
@@ -66,7 +66,7 @@
                 capture-output?
                 watch?
                 bindings]} config
-        tests            (some->> tests (mapv normalize-test-suite))]
+        tests (some->> tests (mapv normalize-test-suite))]
     (cond-> {}
       tests                   (assoc :kaocha/tests (vary-meta tests assoc :replace true))
       plugins                 (assoc :kaocha/plugins plugins)
