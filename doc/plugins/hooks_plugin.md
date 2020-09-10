@@ -1,19 +1,24 @@
+<!-- This document is generated based on a corresponding .feature file, do not edit directly -->
+
 # Plugin: Hooks
 
 The hooks plugin allows hooking into Kaocha's process with arbitrary
-  functions. This is very similar to using writing a plugin, but requires less
-  boilerplate.
+functions. This is very similar to using writing a plugin, but requires less
+boilerplate.
 
-  See the documentation for extending Kaocha for a description of the different
-  hooks. The supported hooks are: pre-load, post-load, pre-run, post-run,
-  pre-test, post-test, pre-report.
+See the documentation for extending Kaocha for a description of the different
+hooks. The supported hooks are: config, pre-load, post-load, pre-run, post-run, wrap-run,
+pre-test, post-test, pre-report, post-summary.
 
-  The hooks plugin also provides two extra hooks at the test suite level,
-  `:kaocha.hooks/before` and `:kaocha.hooks/after`, which run respectively
-  before any pre-test, and after any post-test hooks.
+The hooks plugin also provides hooks at the test suite level, which in order
+are `:kaocha.hooks/pre-load-test`, `:kaocha.hooks/post-load-test`,
+`:kaocha.hooks/pre-test`, `:kaocha.hooks/post-test`.
 
-  Hooks can be specified as a fully qualified symbol, or a collection thereof.
-  The referenced namespaces will be loaded during the config phase.
+Hooks can be specified as a fully qualified symbol referencing a function, or
+a collection thereof. The referenced namespaces will be loaded during the
+config phase. It's also possible to have functions directly inline, but due to
+limitations of the EDN reader this is of limited use, and you are generally
+better off sticking your hooks into a proper namespace.
 
 ## Implementing a hook
 

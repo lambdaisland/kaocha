@@ -1,12 +1,14 @@
+<!-- This document is generated based on a corresponding .feature file, do not edit directly -->
+
 # Focusing based on metadata
 
 You can limit the test run based on test's metadata. How to associate metadata
-  with a test depends on the test type, for `clojure.test` type tests metadata
-  can be associated with a test var or test namespace.
+with a test depends on the test type, for `clojure.test` type tests metadata
+can be associated with a test var or test namespace.
 
-  Using the `--focus-meta` command line flag, or `:kaocha.filter/focus-meta` key
-  in test suite configuration, you can limit the tests being run to only those
-  where the given metadata key has a truthy value associated with it.
+Using the `--focus-meta` command line flag, or `:kaocha.filter/focus-meta` key
+in test suite configuration, you can limit the tests being run to only those
+where the given metadata key has a truthy value associated with it.
 
 ## Background: Some tests with metadata
 

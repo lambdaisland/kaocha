@@ -1,13 +1,15 @@
+<!-- This document is generated based on a corresponding .feature file, do not edit directly -->
+
 # CLI: `--profile` option
 
 The `--profile KEYWORD` flags sets the profile that is used to read the
-  `tests.edn` configuration file. By using the `#profile {}` tagged reader
-  literal you can provide different configuration values for different
-  scenarios.
+`tests.edn` configuration file. By using the `#profile {}` tagged reader
+literal you can provide different configuration values for different
+scenarios.
 
-  If the `CI` environment value is set to `"true"`, as is the case on most CI
-  platforms, then the profile will default to `:ci`. Otherwise it defaults to
-  `:default`.
+If the `CI` environment value is set to `"true"`, as is the case on most CI
+platforms, then the profile will default to `:ci`. Otherwise it defaults to
+`:default`.
 
 ## Specifying profile on the command line
 

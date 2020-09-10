@@ -1,11 +1,13 @@
+<!-- This document is generated based on a corresponding .feature file, do not edit directly -->
+
 # Skipping test based on ids
 
 You can tell Kaocha to completely ignore certain tests or test groups, either
-  with the `--skip` command line flag, or the `:kaocha.filter/skip` test suite
-  configuration key.
+with the `--skip` command line flag, or the `:kaocha.filter/skip` test suite
+configuration key.
 
-  Both of these take test ids or test group ids (e.g. the fully qualified name
-  of a test var, or the name of a test namespace).
+Both of these take test ids or test group ids (e.g. the fully qualified name
+of a test var, or the name of a test namespace).
 
 ## Background: A simple test suite
 

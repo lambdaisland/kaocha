@@ -1,14 +1,16 @@
+<!-- This document is generated based on a corresponding .feature file, do not edit directly -->
+
 # Orchestra (spec instrumentation)
 
 You can enable spec instrumentation of your functions before running
-  tests with the `:kaocha.plugin/orchestra` plugin. This uses the
-  [Orchestra](https://github.com/jeaye/orchestra) library to instrument
-  `:args`, `:ret`, and `:fn` specs.
+tests with the `:kaocha.plugin/orchestra` plugin. This uses the
+[Orchestra](https://github.com/jeaye/orchestra) library to instrument
+`:args`, `:ret`, and `:fn` specs.
 
-  You can use the `:kaocha.plugin/preloads` plugin to ensure namespaces
-  are required (similar to ClojureScript's preloads feature). This is
-  useful to ensure that your specs required before the orchestra plugin
-  instruments your functions.
+You can use the `:kaocha.plugin/preloads` plugin to ensure namespaces
+are required (similar to ClojureScript's preloads feature). This is
+useful to ensure that your specs required before the orchestra plugin
+instruments your functions.
 
 ## Enabling Orchestra
 
@@ -36,7 +38,7 @@ You can enable spec instrumentation of your functions before running
 (s/fdef simple-fn :ret :simple/int)
 
 (deftest spec-fail-test
-  (is (= "x" (simple-fn))))
+  (is (= "x" (simple-fn)) "Just testing simple-fn"))
 ```
 
 
@@ -56,18 +58,25 @@ You can enable spec instrumentation of your functions before running
 
 ``` nil
 ERROR in orchestra-test/spec-fail-test (orchestra_test.clj:11)
-Exception: clojure.lang.ExceptionInfo: Call to orchestra-test/simple-fn did not conform to spec:
+Just testing simple-fn
+Call to #'orchestra-test/simple-fn did not conform to spec.
 orchestra_test.clj:11
 
 -- Spec failed --------------------
-
-Return value
 
   "x"
 
 should satisfy
 
   int?
+
+-- Relevant specs -------
+
+:simple/int:
+  clojure.core/int?
+
+-------------------------
+Detected 1 error
 ```
 
 

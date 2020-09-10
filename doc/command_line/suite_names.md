@@ -1,8 +1,10 @@
+<!-- This document is generated based on a corresponding .feature file, do not edit directly -->
+
 # CLI: Selecting test suites
 
 Each test suite has a unique id, given as a keyword in the test configuration.
-  You can supply one or more of these ids on the command line to run only those
-  test suites.
+You can supply one or more of these ids on the command line to run only those
+test suites.
 
 ## Background: Given two test suites, `:aaa` and `:bbb`
 
