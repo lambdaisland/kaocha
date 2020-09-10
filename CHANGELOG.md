@@ -5,6 +5,13 @@
 - Added `:kaocha.plugin/debug` for easy introspection of Kaocha's machinery
 - Added docstrings and markdown docs for the Orchestra and Preloads plugins
 
+## Fixed
+
+- In the filter plugin's pre-load early filtering of test suites, check flags
+  provided directly in the config, instead of only checking command line
+  arguments. This fixes kaocha.repl invocations like
+  `(kaocha.repl/run {:kaocha.filter/skip [:unit]})`
+
 # 1.0.672 (2020-08-26 / ff68cf5)
 
 ## Changed
