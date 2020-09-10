@@ -78,7 +78,8 @@
   ;; we should call it once at the top here, and pass the processed config into
   ;; kaocha.api. Punting on that because it requires a coordinated update in
   ;; kaocha.repl and kaocha-boot.
-  (let [all-suites     (into #{} (map :kaocha.testable/id)
+  (let [all-suites     (into #{}
+                             (map :kaocha.testable/id)
                              (->> config
                                   (plugin/run-hook :kaocha.hooks/config)
                                   :kaocha/tests))
