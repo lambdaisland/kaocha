@@ -20,8 +20,10 @@
             [lambdaisland.tools.namespace.reload :as ctn-reload]
             [lambdaisland.tools.namespace.track :as ctn-track]
             [clojure.stacktrace :as st])
-  (:import [java.nio.file FileSystems]
+  (:import [java.nio.file FileSystems PathMatcher]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
+
+(set! *warn-on-reflection* true)
 
 (defn make-queue []
   (ArrayBlockingQueue. 1024))
@@ -84,12 +86,12 @@
   [path patterns]
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
-    (some #(.matches % path) patterns)))
+    (some #(.matches ^PathMatcher % path) patterns)))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
     (cond
-      (and (file? f) (glob? (.toPath f) ignore))
+      (and (file? f) (glob? (.toPath ^java.io.File f) ignore))
       (recur q tracker watch-paths ignore)
 
       (directory? f)
@@ -147,6 +149,15 @@
                              (map ::testable/id)))]
             (recur tracker config plugin-chain focus)))))))
 
+
+(defn- focus-changed-namespaces [tests candidates]
+  (map (fn [t]
+         (if (contains? candidates (:kaocha.ns/name t))
+           t
+           (assoc t :kaocha.testable/skip true)))
+       tests))
+
+
 (defplugin kaocha.watch/plugin
   "This is an internal plugin, don't use it directly.
 
@@ -155,8 +166,11 @@ care of reloading namespaces inside a Kaocha run, so we can report any load
 errors as test errors."
   (pre-load [{::keys [tracker focus] :as config}]
     (print-scheduled-operations! tracker focus)
-    (let [tracker    (track-reload! tracker)
-          config     (assoc config ::tracker tracker)
+    (let [loaded     (::ctn-track/load tracker)
+          tracker    (track-reload! tracker)
+          config     (assoc config
+                            ::tracker tracker
+                            ::loaded loaded)
           error      (::ctn-reload/error tracker)
           error-ns   (::ctn-reload/error-ns tracker)
           load-error (::ctn-file/load-error tracker)]
@@ -166,6 +180,14 @@ errors as test errors."
             (update :kaocha/tests
                     (partial map (fn [t] (assoc t :kaocha.testable/skip true)))))
         config)))
+
+  (pre-run [{::keys [only-run-changed? loaded]
+             :as test-plan}]
+    (let [candidates (set loaded)]
+      (update test-plan :kaocha.test-plan/tests
+              (fn [suites]
+                (for [suite suites]
+                  (update suite :kaocha.test-plan/tests focus-changed-namespaces candidates)))))) 
 
   (pre-test [test test-plan]
     (if-let [error (::error test-plan)]
@@ -178,7 +200,10 @@ errors as test errors."
                :kaocha.result/count 1
                :kaocha.result/error 1
                ::testable/skip-remaining? true))
-      test)))
+      test))
+
+  
+  )
 
 (defn watch-paths [config]
   (into #{}
@@ -235,3 +260,34 @@ errors as test errors."
                         (println "[watch] watching stopped."))))
         exit-code (future (bfn))]
     [exit-code finish!]))
+
+
+(comment
+
+  (require 'kaocha.repl)
+  (def config (kaocha.repl/config))
+
+  (def paths (watch-paths config))
+
+  (def tracker (-> (ctn-track/tracker)
+                   (ctn-dir/scan-dirs paths)
+                   (dissoc :lambdaisland.tools.namespace.track/unload
+                           :lambdaisland.tools.namespace.track/load)))
+
+  (select-keys (ctn-dir/scan-dirs tracker paths)
+               [:lambdaisland.tools.namespace.track/unload
+                :lambdaisland.tools.namespace.track/load])
+  ;; , e e
+  ;; C-M-x
+  ;; , e p
+
+  (kaocha.repl/test-plan {:kaocha.filter/focus [:kaocha.watch-test]})
+
+
+  ;; - run changed tests (or dependency changed) first
+  ;; - run only changed tests (or dependency changed)
+
+  )
+
+
+

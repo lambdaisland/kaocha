@@ -13,5 +13,5 @@
             :test-paths          ["test/shared"
                                   "test/features"]
             :cucumber/glue-paths ["test/step_definitions"]}]
-
+ ;; :kaocha.watch/only-run-changed? true
  :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]}

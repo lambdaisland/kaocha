@@ -21,7 +21,7 @@
 
 (defn longest-substring [s1 s2]
   (transduce (comp (map #(subs s1 0 (inc %)))
-                   (take-while #(.contains s2 %)))
+                   (take-while #(.contains ^String s2 %)))
              x-last
              nil
              (range (count s1))))
