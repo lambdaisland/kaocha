@@ -52,12 +52,8 @@
           [nil "--stc-max-size SIZE"        "spec.test.check: Maximum length of generated collections"
            :parse-fn #(Integer/parseInt %)]))
   (config [{:kaocha/keys [tests] :as config}]
-    (let [num-tests       (get-in config
-                                  [:kaocha/cli-options :stc-num-tests]
-                                  (get-in config [::stc/opts :num-tests]))
-          max-size        (get-in config
-                                  [:kaocha/cli-options :stc-max-size]
-                                  (get-in config [::stc/opts :max-size]))
+    (let [num-tests       (get-in config [:kaocha/cli-options :stc-num-tests])
+          max-size        (get-in config [:kaocha/cli-options :stc-max-size])
           instrumentation (get-in config
                                   [:kaocha/cli-options :stc-instrumentation]
                                   (::stc/instrument? config))
