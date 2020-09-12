@@ -7,7 +7,8 @@
             [kaocha.testable :as default-test-suite]
             [kaocha.type :as type]
             [kaocha.type.spec.test.check :as type.stc]
-            [kaocha.type.spec.test.fdef :as type.fdef]))
+            [kaocha.type.spec.test.fdef :as type.fdef]
+            [clojure.string :as str]))
 
 ;; This namespace does not actually exist, but is created by
 ;; requiring clojure.spec.test.alpha
@@ -35,7 +36,7 @@
    :kaocha.spec.test.check/syms :all-fdefs
    ::stc/opts                   opts})
 
-(defn overide-stc-settings [config]
+(defn override-stc-settings [config]
   (assoc config :kaocha/tests (tests-with-overridden-stc-opts config)))
 
 (defn add-default-test-suite [config]
@@ -44,19 +45,27 @@
 (defplugin kaocha.plugin.alpha/spec-test-check
   (cli-options [opts]
     (conj opts
-          [nil  "--[no-]stc-instrumentation" "spec.test.check: Turn on orchestra instrumentation during fdef checks"]
-          [nil  "--[no-]stc-asserts"         "spec.test.check: Run s/check-asserts during fdef checks"]
-          [nil  "--stc-num-tests NUM"        "spec.test.check: Test iterations per fdef"
+          [nil "--[no-]stc-instrumentation" "spec.test.check: Turn on orchestra instrumentation during fdef checks"]
+          [nil "--[no-]stc-asserts"         "spec.test.check: Run s/check-asserts during fdef checks"]
+          [nil "--stc-num-tests NUM"        "spec.test.check: Test iterations per fdef"
            :parse-fn #(Integer/parseInt %)]
-          [nil  "--stc-max-size SIZE"        "spec.test.check: Maximum length of generated collections"
+          [nil "--stc-max-size SIZE"        "spec.test.check: Maximum length of generated collections"
            :parse-fn #(Integer/parseInt %)]))
   (config [{:kaocha/keys [tests] :as config}]
-    (let [num-tests       (get-in config [:kaocha/cli-options :stc-num-tests])
-          max-size        (get-in config [:kaocha/cli-options :stc-max-size])
-          instrumentation (get-in config [:kaocha/cli-options :stc-instrumentation])
-          spec-asserts    (get-in config [:kaocha/cli-options :stc-asserts])
+    (let [num-tests       (get-in config
+                                  [:kaocha/cli-options :stc-num-tests]
+                                  (get-in config [::stc/opts :num-tests]))
+          max-size        (get-in config
+                                  [:kaocha/cli-options :stc-max-size]
+                                  (get-in config [::stc/opts :max-size]))
+          instrumentation (get-in config
+                                  [:kaocha/cli-options :stc-instrumentation]
+                                  (::stc/instrument? config))
+          spec-asserts    (get-in config
+                                  [:kaocha/cli-options :stc-asserts]
+                                  (::stc/check-asserts? config))
           config          (if (has-stc? tests)
-                            (overide-stc-settings config)
+                            (override-stc-settings config)
                             (add-default-test-suite config))]
       (assoc config
              ::stc/opts (->> {:num-tests num-tests

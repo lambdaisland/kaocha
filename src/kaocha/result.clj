@@ -9,7 +9,7 @@
    ::fail    (apply - (map :fail [after before]))
    ::pending (apply - (map :pending [after before]))})
 
-(defn sum
+(defn ^:no-gen sum
   "Sum up kaocha result maps."
   [& rs]
   {::count   (apply + (map #(::count % 0) rs))
@@ -31,7 +31,7 @@
   [testables]
   (apply sum (map testable-totals testables)))
 
-(defn testable-totals
+(defn ^:no-gen testable-totals
   "Return a map of summed up results for a testable, including descendants."
   [testable]
   (if-let [testables (::tests testable)]
