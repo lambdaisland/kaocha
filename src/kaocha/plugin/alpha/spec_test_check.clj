@@ -1,26 +1,20 @@
 (ns kaocha.plugin.alpha.spec-test-check
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha]
             [clojure.spec.test.alpha]
-            [kaocha.hierarchy :as kaocha]
             [kaocha.plugin :refer [defplugin]]
-            [kaocha.specs]
-            [kaocha.testable :as default-test-suite]
-            [kaocha.type :as type]
-            [kaocha.type.spec.test.check :as type.stc]
-            [kaocha.type.spec.test.fdef :as type.fdef]
-            [clojure.string :as str]))
+            [kaocha.specs]))
 
 ;; This namespace does not actually exist, but is created by
 ;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
-(def is-stc? (comp #{:kaocha.type/spec.test.check}
-                   :kaocha.testable/type))
+(def ^:private is-stc? (comp #{:kaocha.type/spec.test.check}
+                             :kaocha.testable/type))
 
-(defn has-stc? [tests]
+(defn ^:private has-stc? [tests]
   (some is-stc? tests))
 
-(defn tests-with-overridden-stc-opts
+(defn ^:private tests-with-overridden-stc-opts
   [{:kaocha/keys [tests] ::stc/keys [opts] :as config}]
   (map (fn [test]
          (if (is-stc? test)
@@ -28,7 +22,7 @@
            test))
        tests))
 
-(defn default-test-suite [{::stc/keys [opts] :as config}]
+(defn ^:private default-test-suite [{::stc/keys [opts] :as config}]
   {:kaocha.testable/type        :kaocha.type/spec.test.check
    :kaocha.testable/id          :generative-fdef-checks
    :kaocha.filter/skip-meta     [:kaocha/skip :no-gen]
@@ -36,10 +30,10 @@
    :kaocha.spec.test.check/syms :all-fdefs
    ::stc/opts                   opts})
 
-(defn override-stc-settings [config]
+(defn ^:private override-stc-settings [config]
   (assoc config :kaocha/tests (tests-with-overridden-stc-opts config)))
 
-(defn add-default-test-suite [config]
+(defn ^:private add-default-test-suite [config]
   (update config :kaocha/tests conj (default-test-suite config)))
 
 (defplugin kaocha.plugin.alpha/spec-test-check

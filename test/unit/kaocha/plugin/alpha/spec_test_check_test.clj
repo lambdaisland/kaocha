@@ -1,5 +1,5 @@
 (ns kaocha.plugin.alpha.spec-test-check-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
             [clojure.tools.cli :as cli]
             [kaocha.plugin :as plugin]))
 
