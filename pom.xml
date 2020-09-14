@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.0.681</version>
+  <version>1.0.690</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -22,7 +22,7 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>b8b474e13f47dfb10f8c556ed0db9995e91253fc</tag>
+    <tag>17100c1c810803ae5bddb82380b6e4cf5c4cc9c4</tag>
   </scm>
   <dependencies>
     <dependency>
@@ -114,7 +114,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>b8b474e13f47dfb10f8c556ed0db9995e91253fc</git-revision>
+              <git-revision>17100c1c810803ae5bddb82380b6e4cf5c4cc9c4</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
