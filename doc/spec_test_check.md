@@ -20,9 +20,9 @@ which may contain the following optional keys:
 `:all-fdefs` (default) or to provide a set of the symbols for the fdefs
 which you want to test. Eventually we will add `:other-fdefs` to select
 all the fdefs that were not specifically mentioned in other checks.
-- `:kaocha.spec.test.check/instrument?` Turn on orchestra instrumentation
+- `:clojure.spec.test.check/instrument?` Turn on orchestra instrumentation
 during fdef checks
-- `:kaocha.spec.test.check/check-asserts?` Run s/check-asserts during fdef
+- `:clojure.spec.test.check/check-asserts?` Run s/check-asserts during fdef
 checks
 - `:clojure.spec.test.check/opts`: A map containing any of:
 - `:num-tests`: Test iterations per fdef
@@ -37,8 +37,8 @@ control.
 - Regardless of whether you add the test suite(s) to `tests.edn` yourself,
 you can also use this plugin to forceably override certain test
 parameters:
-- `--[no-]stc-instrumentation` = `:kaocha.spec.test.check/instrument?`
-- `--[no-]stc-asserts` = `:kaocha.spec.test.check/check-asserts?`
+- `--[no-]stc-instrumentation` = `:clojure.spec.test.check/instrument?`
+- `--[no-]stc-asserts` = `:clojure.spec.test.check/check-asserts?`
 - `--stc-num-tests NUM` = `:num-tests`
 - `--stc-max-size SIZE` = `:max-size`
 - By default, this plugin also adds `:no-gen` to `:kaocha.filter/skip-meta`.

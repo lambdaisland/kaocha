@@ -1,5 +1,6 @@
 #kaocha/v1
 {:plugins [:kaocha.plugin.alpha/info
+           :kaocha.plugin.alpha/spec-test-check
            :profiling
            :print-invocations
            :hooks
@@ -14,4 +15,7 @@
                                   "test/features"]
             :cucumber/glue-paths ["test/step_definitions"]}]
 
- :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]}
+ :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
+
+ :clojure.spec.test.check/instrument? true
+ :clojure.spec.test.check/check-asserts? true}

@@ -71,7 +71,7 @@
                    :kaocha.error/missing-method `load
                    :kaocha/testable             testable})))
 
-(defn load
+(defn ^:no-gen load
   "Given a testable, load the specified tests, producing a test-plan.
 
   Also performs validation, and lazy loading of the testable type's
@@ -116,7 +116,7 @@
                    :kaocha.error/missing-method `run
                    :kaocha/testable             testable})))
 
-(defn run
+(defn ^:no-gen run
   "Given a test-plan, perform the tests, returning the test results.
 
   Also performs validation, and lazy loading of the testable type's
