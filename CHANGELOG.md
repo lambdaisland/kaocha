@@ -1,10 +1,9 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- fdef/spec based tests via plugin: honor `:clojure.spec.test.check/instrument?`
+  and `:clojure.spec.test.check/check-asserts?` from `tests.edn`
 
 # 1.0.681 (2020-09-10 / 5031360)
 
