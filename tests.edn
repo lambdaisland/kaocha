@@ -17,5 +17,9 @@
 
  :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
 
+ :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []}
+
  :clojure.spec.test.check/instrument? true
- :clojure.spec.test.check/check-asserts? true}
+ :clojure.spec.test.check/check-asserts? true
+
+ :reporter kaocha.report/documentation}
