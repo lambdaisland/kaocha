@@ -78,7 +78,7 @@
                                                       :kaocha.result/time])))
 
 (s/def ::small-int (s/with-gen nat-int?
-                     (constantly (or (resolve `clojure.test.check.generators/small-integer)
+                     (constantly (or (some-> (resolve `clojure.test.check.generators/small-integer) deref)
                                      (s/gen nat-int?)))))
 
 (s/def :kaocha.result/count ::small-int)
