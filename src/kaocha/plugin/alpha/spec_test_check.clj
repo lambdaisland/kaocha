@@ -45,22 +45,25 @@
            :parse-fn #(Integer/parseInt %)]
           [nil "--stc-max-size SIZE"        "spec.test.check: Maximum length of generated collections"
            :parse-fn #(Integer/parseInt %)]))
-  (config [{:kaocha/keys [tests] :as config}]
-    (let [num-tests       (get-in config [:kaocha/cli-options :stc-num-tests])
-          max-size        (get-in config [:kaocha/cli-options :stc-max-size])
-          instrumentation (get-in config
-                                  [:kaocha/cli-options :stc-instrumentation]
-                                  (::stc/instrument? config))
-          spec-asserts    (get-in config
-                                  [:kaocha/cli-options :stc-asserts]
-                                  (::stc/check-asserts? config))
-          config          (if (has-stc? tests)
-                            (override-stc-settings config)
-                            (add-default-test-suite config))]
-      (assoc config
-             ::stc/opts (->> {:num-tests num-tests
-                              :max-size  max-size}
-                             (filter second)
-                             (into {}))
-             ::stc/instrument? instrumentation
-             ::stc/check-asserts? spec-asserts))))
+  (config [{:kaocha/keys [tests cli-args] :as config}]
+    (if (and (seq cli-args)
+             (not (some #{:generative-fdef-checks} cli-args)))
+      config
+      (let [num-tests       (get-in config [:kaocha/cli-options :stc-num-tests])
+            max-size        (get-in config [:kaocha/cli-options :stc-max-size])
+            instrumentation (get-in config
+                                    [:kaocha/cli-options :stc-instrumentation]
+                                    (::stc/instrument? config))
+            spec-asserts    (get-in config
+                                    [:kaocha/cli-options :stc-asserts]
+                                    (::stc/check-asserts? config))
+            config          (if (has-stc? tests)
+                              (override-stc-settings config)
+                              (add-default-test-suite config))]
+        (assoc config
+               ::stc/opts (->> {:num-tests num-tests
+                                :max-size  max-size}
+                               (filter second)
+                               (into {}))
+               ::stc/instrument? instrumentation
+               ::stc/check-asserts? spec-asserts)))))
