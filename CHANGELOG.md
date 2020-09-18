@@ -3,6 +3,8 @@
 ## Fixed
 
 - Fix documentation table of contents
+- Make Ctrl-C (SIGINT) handling more reliable, so you can always short-circuit
+  Kaocha to see your failing tests.
 
 # 1.0.690 (2020-09-14 / 8a12b69)
 

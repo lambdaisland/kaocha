@@ -22,6 +22,18 @@
   `(with-redefs [t/report ~r]
      ~@body))
 
+(defmacro ^{:author "Colin Jones"} set-signal-handler!
+  [signal f]
+  (if (try (Class/forName "sun.misc.Signal")
+           (catch Throwable e))
+    `(try
+       (sun.misc.Signal/handle
+        (sun.misc.Signal. ~signal)
+        (proxy [sun.misc.SignalHandler] []
+          (handle [signal#] (~f signal#))))
+       (catch Throwable e#))
+    false))
+
 (defmacro ^:private with-shutdown-hook [f & body]
   `(let [runtime#     (java.lang.Runtime/getRuntime)
          on-shutdown# (Thread. ~f)]
@@ -97,21 +109,39 @@
                 ;; throw.
                 (with-bindings (config/binding-map config :throw-errors)
                   (with-reporter (:kaocha/reporter test-plan)
-                    (with-shutdown-hook (fn []
-                                          (println "^C")
-                                          (binding [history/*history* history]
-                                            (t/do-report (history/clojure-test-summary))))
-                      (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
-                        (binding [testable/*test-plan* test-plan]
-                          (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
-                                result-tests    (testable/run-testables test-plan-tests test-plan)
-                                result          (plugin/run-hook :kaocha.hooks/post-run
-                                                                 (-> test-plan
-                                                                     (dissoc :kaocha.test-plan/tests)
-                                                                     (assoc :kaocha.result/tests result-tests)))]
-                            (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
-                            (-> result
-                                result/testable-totals
-                                result/totals->clojure-test-summary
-                                t/do-report)
-                            result))))))))))))))
+                    (let [on-exit (fn []
+                                    (try
+                                      ;; Force reset printing to stdout, since we
+                                      ;; don't know where in the process we've
+                                      ;; been interrupted, output capturing may
+                                      ;; still be in effect.
+                                      (System/setOut
+                                       (java.io.PrintStream.
+                                        (java.io.BufferedOutputStream.
+                                         (java.io.FileOutputStream. java.io.FileDescriptor/out))))
+                                      (binding [history/*history* history]
+                                        (t/do-report (history/clojure-test-summary)))
+                                      (catch Throwable t
+                                        (println "Exception in exit (SIGINT/ShutDown) handler")
+                                        (prn t)
+                                        (System/exit 1))))]
+                      ;; Prefer a signal handler, but accept a shutdown hook
+                      (with-shutdown-hook (if (set-signal-handler! "INT" (fn [_]
+                                                                           (on-exit)
+                                                                           (System/exit 1)))
+                                            (fn [])
+                                            on-exit)
+                        (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
+                          (binding [testable/*test-plan* test-plan]
+                            (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
+                                  result-tests    (testable/run-testables test-plan-tests test-plan)
+                                  result          (plugin/run-hook :kaocha.hooks/post-run
+                                                                   (-> test-plan
+                                                                       (dissoc :kaocha.test-plan/tests)
+                                                                       (assoc :kaocha.result/tests result-tests)))]
+                              (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
+                              (-> result
+                                  result/testable-totals
+                                  result/totals->clojure-test-summary
+                                  t/do-report)
+                              result)))))))))))))))
