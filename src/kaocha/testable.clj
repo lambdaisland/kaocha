@@ -203,6 +203,10 @@
                  :kaocha.result/count 1
                  :kaocha.result/pending 1)))
 
+      (and (hierarchy/group? test)
+           (empty? (remove :kaocha.testable/skip (:kaocha.test-plan/tests test))))
+      test
+
       :else
       (as-> test %
         (run % test-plan)

@@ -8,6 +8,10 @@
 - Make spec-test-check plugin honor commond line arguments, so you can run only
   the generated test suite.
 
+## Changed
+
+- Don't run group tests (e.g. namespace) when there are no tests inside it that
+  would run (empty or all tests skipped)
 
 # 1.0.690 (2020-09-14 / 8a12b69)
 
