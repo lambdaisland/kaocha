@@ -1,8 +1,11 @@
 (ns kaocha.specs
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
             [clojure.test :as t]
             [expound.alpha :as expound]))
+
+(try
+  (require 'clojure.test.check.generators)
+  (catch java.io.FileNotFoundException _))
 
 (def global-opts [:kaocha/reporter
                   :kaocha/color?
@@ -36,7 +39,10 @@
 ;; Short description as used by the documentation reporter. No newlines.
 (s/def :kaocha.testable/desc string?)
 
-(s/def :kaocha.testable/wrap (s/coll-of fn? :into []))
+(s/def :kaocha.testable/wrap
+  (s/with-gen
+    (s/coll-of fn? :into [])
+    #(s/gen #{[]})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan
@@ -50,6 +56,9 @@
                                                    :opt [:kaocha.testable/desc
                                                          :kaocha.test-plan/tests
                                                          :kaacha.test-plan/load-error])))
+
+(s/def :kaacha.test-plan/load-error (s/with-gen #(instance? Throwable %)
+                                      #(s/gen #{(ex-info {:oops "not good"} "load error")})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
@@ -68,11 +77,15 @@
                                                       :kaocha.result/err
                                                       :kaocha.result/time])))
 
-(s/def :kaocha.result/count nat-int?)
-(s/def :kaocha.result/pass nat-int?)
-(s/def :kaocha.result/fail nat-int?)
-(s/def :kaocha.result/pending nat-int?)
-(s/def :kaocha.result/error nat-int?)
+(s/def ::small-int (s/with-gen nat-int?
+                     (constantly (or (resolve `clojure.test.check.generators/small-integer)
+                                     (s/gen nat-int?)))))
+
+(s/def :kaocha.result/count ::small-int)
+(s/def :kaocha.result/pass ::small-int)
+(s/def :kaocha.result/fail ::small-int)
+(s/def :kaocha.result/pending ::small-int)
+(s/def :kaocha.result/error ::small-int)
 
 (s/def :kaocha.result/out string?)
 (s/def :kaocha.result/err string?)

@@ -23,16 +23,22 @@
 (defn starts-with-namespace? [ns-name sym-or-kw]
   (-> sym-or-kw namespace (= (str ns-name))))
 
+(ns/required-ns 'kaocha.result)
+
+(stest/checkable-syms)
+
+(type.fdef/load-testables '[kaocha.result/sum])
+
 (defmethod testable/-load :kaocha.type/spec.test.ns [testable]
   (let [ns-name (:kaocha.ns/name testable)
-        ns-obj  (ns/required-ns ns-name)]
-    (->> (stest/checkable-syms)
-         (filter (partial starts-with-namespace? ns-name))
-         (type.fdef/load-testables)
-         (assoc testable
-                :kaocha.testable/meta (meta ns-obj)
-                :kaocha.ns/ns ns-obj
-                :kaocha.test-plan/tests))))
+        ns-obj  (ns/required-ns ns-name)
+        tests   (->> (stest/checkable-syms)
+                     (filter (partial starts-with-namespace? ns-name))
+                     (type.fdef/load-testables))]
+    (assoc testable
+           :kaocha.testable/meta (meta ns-obj)
+           :kaocha.ns/ns ns-obj
+           :kaocha.test-plan/tests tests)))
 
 (defmethod testable/-run :kaocha.type/spec.test.ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]

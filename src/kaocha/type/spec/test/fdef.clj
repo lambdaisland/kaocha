@@ -60,19 +60,20 @@
     (when instrument? (orchestra/instrument))
     (when check-asserts? (s/check-asserts true))
     (test/do-report {:type :kaocha.stc/begin-fdef, :var the-var})
-    (try (let [location       (select-keys (meta the-var) [:file :line])
-               test           (reduce #(%2 %1) (partial stest/check sym {::stc/opts opts}) wrap)
-               check-results  (test)
-               checks-passed? (->> check-results (map :failure) (every? nil?))]
-           (binding [testable/*test-location* location]
-             (if checks-passed?
-               (report-success check-results)
-               (report-failure check-results))))
-         (catch clojure.lang.ExceptionInfo e
-           (when-not (:kaocha/fail-fast (ex-data e))
-             (report/report-exception e)))
-         (catch Throwable e
-           (report/report-exception e)))
+    (try
+      (let [location       (select-keys (meta the-var) [:file :line])
+            test           (reduce #(%2 %1) (partial stest/check sym {::stc/opts opts}) wrap)
+            check-results  (test)
+            checks-passed? (->> check-results (map :failure) (every? nil?))]
+        (binding [testable/*test-location* location]
+          (if checks-passed?
+            (report-success check-results)
+            (report-failure check-results))))
+      (catch clojure.lang.ExceptionInfo e
+        (when-not (:kaocha/fail-fast (ex-data e))
+          (report/report-exception e)))
+      (catch Throwable e
+        (report/report-exception e)))
     (test/do-report {:type :kaocha.stc/end-fdef, :var the-var})
     (when instrument? (orchestra/unstrument))
     (when check-asserts? (s/check-asserts false))

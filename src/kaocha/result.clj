@@ -9,7 +9,7 @@
    ::fail    (apply - (map :fail [after before]))
    ::pending (apply - (map :pending [after before]))})
 
-(defn ^:no-gen sum
+(defn sum
   "Sum up kaocha result maps."
   [& rs]
   {::count   (apply + (map #(::count % 0) rs))
@@ -39,7 +39,8 @@
     (merge (sum) testable)))
 
 (s/fdef testable-totals
-  ;;:args (s/cat :testable :kaocha.result/testable)
+  :args (s/cat :testable (s/or :group (s/keys :req [:kaocha.result/tests])
+                               :leaf (s/keys :opt [::count ::pass ::error ::fail ::pending])))
   :ret ::result-map)
 
 (defn failed?
