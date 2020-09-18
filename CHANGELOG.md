@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix documentation table of contents
 
 # 1.0.690 (2020-09-14 / 8a12b69)
 
