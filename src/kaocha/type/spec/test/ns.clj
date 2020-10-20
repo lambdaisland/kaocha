@@ -27,14 +27,14 @@
 
 (stest/checkable-syms)
 
-(type.fdef/load-testables '[kaocha.result/sum])
+(type.fdef/load-testables '[kaocha.result/sum] {})
 
 (defmethod testable/-load :kaocha.type/spec.test.ns [testable]
   (let [ns-name (:kaocha.ns/name testable)
         ns-obj  (ns/required-ns ns-name)
         tests   (->> (stest/checkable-syms)
                      (filter (partial starts-with-namespace? ns-name))
-                     (type.fdef/load-testables))]
+                     (type.fdef/load-testables testable))]
     (assoc testable
            :kaocha.testable/meta (meta ns-obj)
            :kaocha.ns/ns ns-obj

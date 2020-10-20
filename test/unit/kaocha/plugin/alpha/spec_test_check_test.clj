@@ -1,9 +1,14 @@
 (ns kaocha.plugin.alpha.spec-test-check-test
-  (:require [clojure.test :refer [deftest testing is]]
+  (:require [clojure.spec.test.alpha]
+            [clojure.test :refer [deftest testing is]]
             [clojure.tools.cli :as cli]
-            [kaocha.plugin :as plugin]))
+            [kaocha.plugin :as plugin]
+            [matcher-combinators.test]
+            [kaocha.plugin.alpha.spec-test-check :as spec-test-check]))
 
 (alias 'stc 'clojure.spec.test.check)
+
+(def suite @#'spec-test-check/default-stc-suite)
 
 (defn run-plugin-hook
   [hook init & extra-args]
@@ -32,56 +37,90 @@
                                        cli-opts)))))))
 
 (deftest config-test
+  (is (= {:kaocha/tests [suite]}
+         (run-plugin-hook :kaocha.hooks/config {})))
+
   (testing "::stc/instrument?"
-    (is (match? {::stc/instrument? nil}
-                (run-plugin-hook :kaocha.hooks/config {})))
-    (is (match? {::stc/instrument? true}
-                (run-plugin-hook :kaocha.hooks/config {::stc/instrument? true})))
-    (is (match? {::stc/instrument? false}
-                (run-plugin-hook :kaocha.hooks/config
-                                 {::stc/instrument? false})))
-    (is (match? {::stc/instrument? nil}
-                (run-plugin-hook :kaocha.hooks/config {:kaocha/cli-options {}})))
-    (is (match? {::stc/instrument? true}
-                (run-plugin-hook :kaocha.hooks/config
-                                 {:kaocha/cli-options {:stc-instrumentation
-                                                       true}})))
-    (is (match? {::stc/instrument? false}
-                (run-plugin-hook :kaocha.hooks/config
-                                 {:kaocha/cli-options {:stc-instrumentation
-                                                       false}}))))
+    (is (= {:kaocha/tests     [(assoc suite ::stc/instrument? true)]
+            ::stc/instrument? true}
+           (run-plugin-hook :kaocha.hooks/config {::stc/instrument? true})))
+    (is (= {:kaocha/tests     [(assoc suite ::stc/instrument? false)]
+            ::stc/instrument? false}
+           (run-plugin-hook :kaocha.hooks/config {::stc/instrument? false})))
+    (is (= {:kaocha/tests       [(assoc suite ::stc/instrument? true)]
+            ::stc/instrument?   true
+            :kaocha/cli-options {:stc-instrumentation true}}
+           (run-plugin-hook :kaocha.hooks/config
+                            {:kaocha/cli-options {:stc-instrumentation true}})))
+    (is (= {:kaocha/tests       [(assoc suite ::stc/instrument? false)]
+            ::stc/instrument?   false
+            :kaocha/cli-options {:stc-instrumentation false}}
+           (run-plugin-hook
+            :kaocha.hooks/config
+            {:kaocha/cli-options {:stc-instrumentation false}}))))
+
   (testing "::stc/check-asserts?"
-    (is (match? {::stc/check-asserts? nil}
-                (run-plugin-hook :kaocha.hooks/config {})))
-    (is (match? {::stc/check-asserts? true}
-                (run-plugin-hook :kaocha.hooks/config
-                                 {::stc/check-asserts? true})))
-    (is (match? {::stc/check-asserts? true}
-                (run-plugin-hook :kaocha.hooks/config
-                                 {::stc/check-asserts? true
-                                  :kaocha/cli-options  {}})))
-    (is (match? {::stc/check-asserts? false}
-                (run-plugin-hook :kaocha.hooks/config
-                                 {::stc/check-asserts? true
-                                  :kaocha/cli-options  {:stc-asserts false}}))))
+    (is (= {:kaocha/tests        [(assoc suite ::stc/check-asserts? true)]
+            ::stc/check-asserts? true}
+           (run-plugin-hook :kaocha.hooks/config {::stc/check-asserts? true})))
+    (is (= {:kaocha/tests        [(assoc suite ::stc/check-asserts? false)]
+            ::stc/check-asserts? false}
+           (run-plugin-hook :kaocha.hooks/config {::stc/check-asserts? false})))
+    (is (= {:kaocha/tests        [(assoc suite ::stc/check-asserts? true)]
+            ::stc/check-asserts? true
+            :kaocha/cli-options  {:stc-asserts true}}
+           (run-plugin-hook :kaocha.hooks/config
+                            {:kaocha/cli-options {:stc-asserts true}})))
+    (is (= {:kaocha/tests        [(assoc suite ::stc/check-asserts? false)]
+            ::stc/check-asserts? false
+            :kaocha/cli-options  {:stc-asserts false}}
+           (run-plugin-hook :kaocha.hooks/config
+                            {:kaocha/cli-options {:stc-asserts false}}))))
+
   (testing "::stc/opts"
-    (testing "when there is no existing test suite"
-      (is (match? {::stc/opts {}} (run-plugin-hook :kaocha.hooks/config {})))
-      (is (match? {::stc/opts {:num-tests 5}}
-                  (run-plugin-hook :kaocha.hooks/config
-                                   {:kaocha/cli-options {:stc-num-tests 5}})))
-      (is (match? {::stc/opts {}} (run-plugin-hook :kaocha.hooks/config {})))
-      (is (match? {::stc/opts {:max-size 5}}
-                  (run-plugin-hook :kaocha.hooks/config
-                                   {:kaocha/cli-options {:stc-max-size 5}}))))
-    (testing "when there is no existing test suite"
-      (is (match? {::stc/opts {:num-tests 5}}
-                  (run-plugin-hook
-                   :kaocha.hooks/config
-                   {:kaocha/tests       [{::stc/opts {:num-tests 1000}}]
-                    :kaocha/cli-options {:stc-num-tests 5}})))
-      (is (match? {::stc/opts {:max-size 5}}
-                  (run-plugin-hook
-                   :kaocha.hooks/config
-                   {:kaocha/tests       [{::stc/opts {:max-size 1000}}]
-                    :kaocha/cli-options {:stc-max-size 5}}))))))
+    (is (= {:kaocha/tests       [(assoc suite ::stc/opts {:num-tests 5})]
+            ::stc/opts          {:num-tests 5}
+            :kaocha/cli-options {:stc-num-tests 5}}
+           (run-plugin-hook :kaocha.hooks/config
+                            {:kaocha/cli-options {:stc-num-tests 5}})))
+    (is (= {:kaocha/tests       [(assoc suite ::stc/opts {:max-size 5})]
+            ::stc/opts          {:max-size 5}
+            :kaocha/cli-options {:stc-max-size 5}}
+           (run-plugin-hook :kaocha.hooks/config
+                            {:kaocha/cli-options {:stc-max-size 5}}))))
+
+  (testing "with existing test suites"
+    (is (= {:kaocha/tests        [{:kaocha.testable/type :kaocha.type/spec.test.check
+                                   :kaocha.testable/id   :my-special-fdefs
+                                   ::stc/instrument?     true
+                                   ::stc/check-asserts?  false
+                                   ::stc/opts            {:num-tests 5
+                                                          :max-size  5}}
+                                  {:kaocha.testable/type :kaocha.type/spec.test.check
+                                   :kaocha.testable/id   :my-ok-fdefs
+                                   ::stc/instrument?     true
+                                   ::stc/check-asserts?  true
+                                   ::stc/opts            {:num-tests 5
+                                                          :max-size  5}}
+                                  {:kaocha.testable/id :unit}]
+            ::stc/instrument?    true
+            ::stc/check-asserts? true
+            ::stc/opts           {:num-tests 5
+                                  :max-size  5}
+            :kaocha/cli-options  {:stc-instrumentation true
+                                  :stc-num-tests       5}}
+      (run-plugin-hook
+       :kaocha.hooks/config
+       {:kaocha/tests        [{:kaocha.testable/type :kaocha.type/spec.test.check
+                               :kaocha.testable/id   :my-special-fdefs
+                               ::stc/check-asserts?  false
+                               ::stc/instrument?     true
+                               ::stc/opts            {:num-tests 1000}}
+                              {:kaocha.testable/type :kaocha.type/spec.test.check
+                               :kaocha.testable/id   :my-ok-fdefs}
+                              {:kaocha.testable/id :unit}]
+        ::stc/check-asserts? true
+        ::stc/opts           {:num-tests 10
+                              :max-size  5}
+        :kaocha/cli-options  {:stc-instrumentation true
+                              :stc-num-tests       5}})))))
