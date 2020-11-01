@@ -5,6 +5,7 @@
             [kaocha.core-ext :refer :all]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
+            [kaocha.specs]
             [kaocha.test-suite :as test-suite]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
@@ -50,6 +51,8 @@
 (s/def :kaocha.spec.test.check/syms
   (s/or :given-symbols (s/coll-of symbol?)
         :catch-all #{:all-fdefs :other-fdefs}))
+
+(s/def :kaocha.spec.test.check/ns-patterns :kaocha/ns-patterns)
 
 (s/def :kaocha.spec.test.check/check
   (s/keys :opt [:kaocha.spec.test.check/syms

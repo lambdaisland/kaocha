@@ -102,7 +102,8 @@
                                    ::stc/check-asserts?  true
                                    ::stc/opts            {:num-tests 5
                                                           :max-size  5}}
-                                  {:kaocha.testable/id :unit}]
+                                  {:kaocha.testable/id   :unit
+                                   :kaocha.testable/type :kaocha.type/clojure.test}]
             ::stc/instrument?    true
             ::stc/check-asserts? true
             ::stc/opts           {:num-tests 5
@@ -118,7 +119,8 @@
                                ::stc/opts            {:num-tests 1000}}
                               {:kaocha.testable/type :kaocha.type/spec.test.check
                                :kaocha.testable/id   :my-ok-fdefs}
-                              {:kaocha.testable/id :unit}]
+                              {:kaocha.testable/id   :unit
+                               :kaocha.testable/type :kaocha.type/clojure.test}]
         ::stc/check-asserts? true
         ::stc/opts           {:num-tests 10
                               :max-size  5}

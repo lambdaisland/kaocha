@@ -1,27 +1,40 @@
 (ns kaocha.specs
   (:require [clojure.spec.alpha :as s]
             [clojure.test :as t]
-            [expound.alpha :as expound]))
+            [expound.alpha :as expound])
+  (:import (java.io FileNotFoundException)))
 
 (try
   (require 'clojure.test.check.generators)
-  (catch java.io.FileNotFoundException _))
-
-(def global-opts [:kaocha/reporter
-                  :kaocha/color?
-                  :kaocha/fail-fast?
-                  :kaocha/watch?
-                  :kaocha/plugins])
+  (catch FileNotFoundException _))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global
 
+(s/def :kaocha/color? boolean?)
+
+(s/def :kaocha/fail-fast? boolean?)
+
+(s/def :kaocha/watch? boolean?)
+
 (s/def :kaocha/plugins (s/coll-of keyword?))
+
+(s/def :kaocha/reporter (s/or :fn      (s/fspec :args (s/cat :m map?))
+                              :symbol  symbol?
+                              :symbols (s/coll-of symbol? :kind vector?)))
+
+(s/def :kaocha/global-opts
+  (s/keys :opt [:kaocha/reporter
+                :kaocha/color?
+                :kaocha/fail-fast?
+                :kaocha/watch?
+                :kaocha/plugins]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; config
 
-(s/def :kaocha/config (s/keys :req ~(conj global-opts :kaocha/tests)))
+(s/def :kaocha/config (s/merge :kaocha/global-opts
+                               (s/keys :opt [:kaocha/tests])))
 
 (s/def :kaocha/tests (s/coll-of :kaocha/testable))
 
@@ -29,6 +42,14 @@
                                       :kaocha.testable/id]
                                 :opt [:kaocha.testable/meta
                                       :kaocha.testable/wrap]))
+
+(s/def :kaocha/source-paths (s/coll-of string?))
+
+(s/def :kaocha/test-paths (s/coll-of string?))
+
+(s/def :kaocha/ns-patterns (s/coll-of string?))
+
+(s/def :kaocha.filter/skip-meta (s/coll-of keyword?))
 
 (s/def :kaocha.testable/meta (s/nilable map?))
 
@@ -47,7 +68,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan
 
-(s/def :kaocha/test-plan (s/keys :req ~(conj global-opts :kaocha.test-plan/tests)))
+(s/def :kaocha/test-plan
+  (s/merge :kaocha/global-opts
+           (s/keys :opt [:kaocha.test-plan/tests])))
 
 (s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
 
@@ -63,7 +86,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
 
-(s/def :kaocha/result (s/keys :req ~(conj global-opts :kaocha.result/tests)))
+(s/def :kaocha/result
+  (s/merge :kaocha/global-opts
+           (s/keys :opt [:kaocha.result/tests])))
 
 (s/def :kaocha.result/tests (s/coll-of :kaocha.result/testable))
 
@@ -95,18 +120,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; clojure.spec.test
 
+(try
+  (require 'clojure.spec.test.alpha)
+  (alias 'stc 'clojure.spec.test.check)
+  (catch FileNotFoundException _))
+
 (when (find-ns 'clojure.spec.test.check)
-  (s/def :clojure.spec.test.check/instrument? (s/nilable boolean?))
-  (s/def :clojure.spec.test.check/check-asserts? (s/nilable boolean?))
+  (s/def ::stc/instrument? (s/nilable boolean?))
+  (s/def ::stc/check-asserts? (s/nilable boolean?))
 
   ;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
   ;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
   ;; using flat maps with namespaced keys. :clojure.spec.test.check/opts is a sub-map with
   ;; un-namespaced keys, and that's now propagating out into this library.
-  (s/def :clojure.spec.test.check/num-tests (s/nilable nat-int?))
-  (s/def :clojure.spec.test.check/max-size (s/nilable nat-int?))
-  (s/def :clojure.spec.test.check/opts (s/nilable (s/keys :opt-un [:clojure.spec.test.check/num-tests
-                                                                   :clojure.spec.test.check/max-size]))))
+  (s/def ::stc/num-tests (s/nilable nat-int?))
+  (s/def ::stc/max-size (s/nilable nat-int?))
+  (s/def ::stc/opts (s/nilable (s/keys :opt-un [::stc/num-tests
+                                                ::stc/max-size]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers

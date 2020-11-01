@@ -15,6 +15,7 @@
 - `kaocha.plugin.alpha.spec-test-check` now respects a priority of supplied
   configuration. CLI options always take precedence, followed by options
   specified in individual test suites, followed by global options.
+- Improved spec definitions and generative fdef coverage
 
 # 1.0.700 (2020-09-18 / 552b977)
 

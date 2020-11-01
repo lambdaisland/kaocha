@@ -1,6 +1,7 @@
 #kaocha/v1
 {:plugins [:kaocha.plugin.alpha/info
            :kaocha.plugin.alpha/spec-test-check
+           :kaocha.plugin/orchestra
            :profiling
            :print-invocations
            :hooks
@@ -21,5 +22,13 @@
 
  :clojure.spec.test.check/instrument? true
  :clojure.spec.test.check/check-asserts? true
+ :clojure.spec.test.check/opts
+ #profile {;; Halving the default opts to prevent CircleCI from killing the test
+           ;; process for lack of output.
+           :ci {:num-tests 500 :max-size 100}
+           ;; Reducing num-tests by two orders of magnitude in local
+           ;; development greatly speeds up iteration time at the expense of
+           ;; possible false negatives.
+           :default {:num-tests 10}}
 
  :reporter kaocha.report/documentation}
