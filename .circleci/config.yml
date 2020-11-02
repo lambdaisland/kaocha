@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  kaocha: lambdaisland/kaocha@dev:first
-  clojure: lambdaisland/clojure@dev:first
+  kaocha: lambdaisland/kaocha@0.0.1
+  clojure: lambdaisland/clojure@0.0.1
 
 jobs:
   test:
