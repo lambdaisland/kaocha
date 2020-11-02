@@ -4,6 +4,7 @@
             [kaocha.plugin :refer [defplugin]]
             [kaocha.specs]
             [kaocha.type.spec.test.check]
+            [orchestra.core :refer [defn-spec]]
             [meta-merge.core :refer [meta-merge]]))
 
 ;; This namespace does not actually exist, but is created by
@@ -13,8 +14,15 @@
 (s/def ::config-path
   (s/coll-of keyword? :min-count 1))
 
+(def ^:private config-paths
+  [[::stc/instrument?]
+   [::stc/check-asserts?]
+   [::stc/opts :num-tests]
+   [::stc/opts :max-size]])
+
 (s/def ::config-mapping
-  (s/map-of ::config-path ::config-path))
+  (s/map-of ::config-path ::config-path
+            :count        (count config-paths)))
 
 (s/def ::stc-config
   (s/keys :opt [::stc/instrument?
@@ -34,12 +42,8 @@
 (s/def ::tests
   (s/coll-of ::test))
 
-(s/fdef is-stc?
-  :args (s/cat :test ::test)
-  :ret  boolean?)
-
-(defn ^:private is-stc?
-  [test]
+(defn-spec ^:private is-stc? boolean?
+  [test ::test]
   (= (:kaocha.testable/type test) :kaocha.type/spec.test.check))
 
 (def ^:private default-stc-suite
@@ -49,12 +53,6 @@
    :kaocha/source-paths         ["src"]
    :kaocha.spec.test.check/syms :all-fdefs})
 
-(def ^:private config-paths
-  [[::stc/instrument?]
-   [::stc/check-asserts?]
-   [::stc/opts :num-tests]
-   [::stc/opts :max-size]])
-
 (def ^:private cli-config-paths
   (mapv (partial vector :kaocha/cli-options)
         [:stc-instrumentation
@@ -62,16 +60,11 @@
          :stc-num-tests
          :stc-max-size]))
 
-(s/fdef make-config-mapping
-  :args (s/cat :instrument?-path    ::config-path
-               :check-asserts?-path ::config-path
-               :opts-num-tests-path ::config-path
-               :opts-max-size-path  ::config-path)
-  :ret  (s/map-of ::config-path ::config-path
-                  :count (count config-paths)))
-
-(defn ^:private make-config-mapping
-  [instrument?-path check-asserts?-path opts-num-tests-path opts-max-size-path]
+(defn-spec ^:private make-config-mapping ::config-mapping
+  [instrument?-path    ::config-path
+   check-asserts?-path ::config-path
+   opts-num-tests-path ::config-path
+   opts-max-size-path  ::config-path]
   (let [paths [instrument?-path
                check-asserts?-path
                opts-num-tests-path
@@ -82,26 +75,18 @@
   {::cli    (apply make-config-mapping cli-config-paths)
    ::global (apply make-config-mapping config-paths)})
 
-(s/fdef override-test-stc-config
-  :args (s/cat :tests       (s/nilable ::tests)
-               :stc-configs ::stc-configs)
-  :ret  ::tests)
-
-(defn ^:private override-test-stc-config
-  [tests stc-configs]
+(defn-spec ^:private override-test-stc-config ::tests
+  [tests       (s/nilable ::tests)
+   stc-configs ::stc-configs]
   (map (fn [test]
          (if (is-stc? test)
            (meta-merge (::global stc-configs) test (::cli stc-configs))
            test))
        tests))
 
-(s/fdef extract-stc-config
-  :args (s/cat :config         :kaocha/config
-               :config-mapping ::config-mapping)
-  :ret  :kaocha/config)
-
-(defn ^:private extract-stc-config
-  [config config-mapping]
+(defn-spec ^:private extract-stc-config :kaocha/config
+  [config         :kaocha/config
+   config-mapping ::config-mapping]
   (reduce-kv (fn [acc source-path dest-path]
                (if-some [setting (get-in config source-path)]
                  (assoc-in acc dest-path setting)
@@ -109,34 +94,22 @@
              {}
              config-mapping))
 
-(s/fdef extract-stc-configs
-  :args (s/cat :config :kaocha/config)
-  :ret  ::stc-configs)
-
-(defn ^:private extract-stc-configs
-  [config]
+(defn-spec ^:private extract-stc-configs ::stc-configs
+  [config :kaocha/config]
   (reduce-kv (fn [acc key config-mapping]
                (assoc acc key (extract-stc-config config config-mapping)))
              {}
              config-mappings))
 
-(s/fdef override-stc-config
-  :args (s/cat :config :kaocha/config)
-  :ret  :kaocha/config)
-
-(defn ^:private override-stc-config
-  [config]
+(defn-spec ^:private override-stc-config :kaocha/config
+  [config :kaocha/config]
   (let [stc-configs (extract-stc-configs config)]
     (-> config
         (meta-merge (::cli stc-configs))
         (update :kaocha/tests override-test-stc-config stc-configs))))
 
-(s/fdef ensure-stc-suite
-  :args (s/cat :tests (s/nilable ::tests))
-  :ret  ::tests)
-
-(defn ^:private ensure-stc-suite
-  [tests]
+(defn-spec ^:private ensure-stc-suite ::tests
+  [tests (s/nilable ::tests)]
   (if (some is-stc? tests)
     tests
     (conj tests default-stc-suite)))
@@ -145,28 +118,17 @@
   (comp (filter is-stc?)
         (map :kaocha.testable/id)))
 
-(s/fdef stc-suite-ids
-  :args (s/cat :config :kaocha/config)
-  :ret  (s/coll-of keyword? :kind set?))
-
-(defn ^:private stc-suite-ids
-  [config]
+(defn-spec ^:private stc-suite-ids (s/coll-of keyword?)
+  [config :kaocha/config]
   (into #{} extract-stc-suite-ids-xform (:kaocha/tests config)))
 
-(s/fdef stc-suites-not-selected?
-  :args (s/cat :config :kaocha/config))
-
-(defn ^:private stc-suites-not-selected?
-  [{:kaocha/keys [cli-args] :as config}]
+(defn-spec ^:private stc-suites-not-selected? any?
+  [{:kaocha/keys [cli-args] :as config} :kaocha/config]
   (and (seq cli-args)
        (not-any? (stc-suite-ids config) cli-args)))
 
-(s/fdef config-hook
-  :args (s/cat :config :kaocha/config)
-  :ret  :kaocha/config)
-
-(defn ^:private config-hook
-  [config]
+(defn-spec ^:private config-hook :kaocha/config
+  [config :kaocha/config]
   (let [config-with-suite (update config :kaocha/tests ensure-stc-suite)]
     (if (stc-suites-not-selected? config-with-suite)
       config
