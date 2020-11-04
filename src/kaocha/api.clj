@@ -57,7 +57,9 @@
    (let [fail-fast? (:kaocha/fail-fast? config)
          reporter   (:kaocha/reporter config)
          reporter   (-> reporter
-                        (cond-> (not (vector? reporter)) vector)
+                        (cond->
+                            (not (sequential? reporter)) vector
+                            (seq? reporter) vec)
                         (conj 'kaocha.report/report-counters
                               'kaocha.history/track
                               'kaocha.report/dispatch-extra-keys)

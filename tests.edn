@@ -23,9 +23,9 @@
  :clojure.spec.test.check/instrument? true
  :clojure.spec.test.check/check-asserts? true
  :clojure.spec.test.check/opts
- #profile {;; Halving the default opts to prevent CircleCI from killing the test
+ #profile {;; Quartering the default opts to prevent CircleCI from killing the test
            ;; process for lack of output.
-           :ci {:num-tests 500 :max-size 100}
+           :ci {:num-tests 250 :max-size 50}
            ;; Reducing num-tests by two orders of magnitude in local
            ;; development greatly speeds up iteration time at the expense of
            ;; possible false negatives.

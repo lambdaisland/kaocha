@@ -1,5 +1,6 @@
 (ns kaocha.result
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]
+            [orchestra.core :refer [defn-spec]]))
 
 (defn diff-test-result
   "Subtract two clojure.test style summary maps."
@@ -9,20 +10,16 @@
    ::fail    (apply - (map :fail [after before]))
    ::pending (apply - (map :pending [after before]))})
 
-(defn sum
+(s/def ::result-map (s/keys :req [::count ::pass ::error ::fail ::pending]))
+
+(defn-spec sum ::result-map
   "Sum up kaocha result maps."
-  [& rs]
+  [& rs (s/cat :args (s/* ::result-map))]
   {::count   (apply + (map #(::count % 0) rs))
    ::pass    (apply + (map #(::pass % 0) rs))
    ::error   (apply + (map #(::error % 0) rs))
    ::fail    (apply + (map #(::fail % 0) rs))
    ::pending (apply + (map #(::pending % 0) rs))})
-
-(s/def ::result-map (s/keys :req [::count ::pass ::error ::fail ::pending]))
-
-(s/fdef sum
-  :args (s/cat :args (s/* ::result-map))
-  :ret ::result-map)
 
 (declare testable-totals)
 

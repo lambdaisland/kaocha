@@ -4,17 +4,23 @@
             [kaocha.output :as output]
             [kaocha.report :as report]
             [slingshot.slingshot :refer [throw+]]
+            [orchestra.core :refer [defn-spec]]
             [meta-merge.core :refer [meta-merge]]))
 
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
-(defn- rename-key [m old-key new-key]
+(defn-spec ^:private rename-key map?
+  [m       map?
+   old-key keyword?
+   new-key qualified-keyword?]
   (if (contains? m old-key)
     (assoc (dissoc m old-key) new-key (get m old-key))
     m))
 
-(defn replace-by-default [config k]
+(defn-spec replace-by-default map?
+  [config map?
+   k      keyword?]
   (if-let [v (get config k)]
     (if (#{:prepend :append} (meta v))
       config
@@ -29,7 +35,8 @@
                      (replace-by-default :kaocha/source-paths)
                      (replace-by-default :kaocha/ns-patterns))))
 
-(defn normalize-test-suite [m]
+(defn-spec normalize-test-suite :kaocha/testable
+  [m :kaocha.raw/testable]
   (let [m (-> m
               (rename-key :type :kaocha.testable/type)
               (rename-key :id :kaocha.testable/id)
@@ -55,7 +62,8 @@
             (throw (ex-info "Plugin name must be a keyword" {:plugins plugins}))))
         plugins))
 
-(defn normalize [config]
+(defn-spec normalize :kaocha/config
+  [config :kaocha.raw/config]
   (let [default-config (default-config)
         {:keys [tests
                 plugins

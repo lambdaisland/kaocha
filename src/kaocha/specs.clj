@@ -1,6 +1,5 @@
 (ns kaocha.specs
   (:require [clojure.spec.alpha :as s]
-            [clojure.test :as t]
             [expound.alpha :as expound])
   (:import (java.io FileNotFoundException)))
 
@@ -19,9 +18,15 @@
 
 (s/def :kaocha/plugins (s/coll-of keyword?))
 
-(s/def :kaocha/reporter (s/or :fn      (s/fspec :args (s/cat :m map?))
-                              :symbol  symbol?
-                              :symbols (s/coll-of symbol? :kind vector?)))
+(s/def :kaocha.reporter/fn (s/fspec :args (s/cat :m map?)))
+
+(s/def :kaocha.reporter/symbol qualified-symbol?)
+
+(s/def :kaocha/reporter
+  (s/or :fn      :kaocha.reporter/fn
+        :fns     (s/coll-of :kaocha.reporter/fn)
+        :symbol  :kaocha.reporter/symbol
+        :symbols (s/coll-of :kaocha.reporter/symbol)))
 
 (s/def :kaocha/global-opts
   (s/keys :opt [:kaocha/reporter
@@ -33,29 +38,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; config
 
-(s/def :kaocha/config (s/merge :kaocha/global-opts
-                               (s/keys :opt [:kaocha/tests])))
 
-(s/def :kaocha/tests (s/coll-of :kaocha/testable))
-
-(s/def :kaocha/testable (s/keys :req [:kaocha.testable/type
-                                      :kaocha.testable/id]
-                                :opt [:kaocha.testable/meta
-                                      :kaocha.testable/wrap]))
-
-(s/def :kaocha/source-paths (s/coll-of string?))
-
-(s/def :kaocha/test-paths (s/coll-of string?))
-
-(s/def :kaocha/ns-patterns (s/coll-of string?))
-
-(s/def :kaocha.filter/skip-meta (s/coll-of keyword?))
+(s/def :kaocha/bindings (s/map-of qualified-symbol? (s/coll-of keyword?)))
 
 (s/def :kaocha.testable/meta (s/nilable map?))
 
 (s/def :kaocha.testable/type qualified-keyword?)
 
 (s/def :kaocha.testable/id keyword?)
+
+(s/def :kaocha/test-paths (s/coll-of string?))
+
+(s/def :kaocha/source-paths (s/coll-of string?))
+
+(s/def :kaocha/ns-patterns (s/coll-of string?))
+
+(s/def :kaocha.filter/skip (s/coll-of symbol?))
+
+(s/def :kaocha.filter/focus (s/coll-of symbol?))
+
+(s/def :kaocha.filter/skip-meta (s/coll-of keyword?))
+
+(s/def :kaocha.filter/focus-meta (s/coll-of keyword?))
 
 ;; Short description as used by the documentation reporter. No newlines.
 (s/def :kaocha.testable/desc string?)
@@ -64,6 +68,79 @@
   (s/with-gen
     (s/coll-of fn? :into [])
     #(s/gen #{[]})))
+
+
+(s/def :kaocha.plugin.randomize/randomize? any?)
+
+(s/def :kaocha.plugin.capture-output/capture-output? any?)
+
+(s/def :kaocha/tests (s/coll-of :kaocha/testable))
+
+(s/def :kaocha/testable
+  (s/keys :opt [:kaocha.testable/type
+                :kaocha.testable/id
+                :kaocha.testable/meta
+                :kaocha.testable/wrap
+                :kaocha/test-paths
+                :kaocha/source-paths
+                :kaocha/ns-patterns
+                :kaocha.filter/skip
+                :kaocha.filter/focus
+                :kaocha.filter/skip-meta
+                :kaocha.filter/focus-meta
+                :kaocha.testable/desc]))
+
+(s/def :kaocha/config
+  (s/merge :kaocha/global-opts
+           (s/keys :opt [:kaocha/tests
+                         :kaocha.plugin.randomize/randomize?
+                         :kaocha.plugin.capture-output/capture-output?])))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; raw config
+
+(s/def :kaocha.raw/testable
+  (s/merge :kaocha/testable
+           (s/keys :opt    [:kaocha.testable/type
+                            :kaocha.testable/id
+                            :kaocha/test-paths
+                            :kaocha/source-paths
+                            :kaocha/ns-patterns
+                            :kaocha.filter/skip
+                            :kaocha.filter/focus
+                            :kaocha.filter/skip-meta
+                            :kaocha.filter/focus-meta]
+                   :opt-un [:kaocha.testable/type
+                            :kaocha.testable/id
+                            :kaocha/test-paths
+                            :kaocha/source-paths
+                            :kaocha/ns-patterns
+                            :kaocha.filter/skip
+                            :kaocha.filter/focus
+                            :kaocha.filter/skip-meta
+                            :kaocha.filter/focus-meta])))
+
+(s/def :kaocha.raw/tests
+  (s/coll-of :kaocha.raw/testable))
+
+(s/def :kaocha.raw/config
+  (s/merge :kaocha/config
+           (s/keys :opt    [:kaocha/tests
+                            :kaocha/reporter
+                            :kaocha/bindings
+                            :kaocha/color?
+                            :kaocha/fail-fast?
+                            :kaocha.plugin.randomize/randomize?
+                            :kaocha.plugin.capture-output/capture-output?
+                            :kaocha.testable/desc]
+                   :opt-un [:kaocha/tests
+                            :kaocha/reporter
+                            :kaocha/bindings
+                            :kaocha/color?
+                            :kaocha/fail-fast?
+                            :kaocha.plugin.randomize/randomize?
+                            :kaocha.plugin.capture-output/capture-output?
+                            :kaocha.testable/desc])))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan
@@ -74,14 +151,15 @@
 
 (s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
 
-(s/def :kaocha.test-plan/testable (s/merge :kaocha/testable
-                                           (s/keys :req []
-                                                   :opt [:kaocha.testable/desc
-                                                         :kaocha.test-plan/tests
-                                                         :kaacha.test-plan/load-error])))
+(s/def :kaocha.test-plan/testable
+  (s/merge :kaocha/testable
+           (s/keys :req []
+                   :opt [:kaocha.test-plan/tests
+                         :kaocha.test-plan/load-error])))
 
-(s/def :kaacha.test-plan/load-error (s/with-gen #(instance? Throwable %)
-                                      #(s/gen #{(ex-info {:oops "not good"} "load error")})))
+(s/def :kaocha.test-plan/load-error
+  (s/with-gen #(instance? Throwable %)
+    #(s/gen #{(ex-info {:oops "not good"} "load error")})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
