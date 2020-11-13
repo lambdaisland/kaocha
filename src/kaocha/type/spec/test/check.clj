@@ -5,6 +5,7 @@
             [kaocha.core-ext :refer :all]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
+            [kaocha.specs]
             [kaocha.test-suite :as test-suite]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
@@ -31,7 +32,7 @@
     (condp = syms
       :all-fdefs   (all-fdef-tests check)
       :other-fdefs nil ;; TODO: this requires orchestration from the plugin
-      :else        (type.fdef/load-testables syms))))
+      :else        (type.fdef/load-testables check syms))))
 
 (defn checks [{checks :kaocha.spec.test.check/checks :as testable}]
   (let [checks (or checks [{}])]
@@ -50,6 +51,8 @@
 (s/def :kaocha.spec.test.check/syms
   (s/or :given-symbols (s/coll-of symbol?)
         :catch-all #{:all-fdefs :other-fdefs}))
+
+(s/def :kaocha.spec.test.check/ns-patterns :kaocha/ns-patterns)
 
 (s/def :kaocha.spec.test.check/check
   (s/keys :opt [:kaocha.spec.test.check/syms

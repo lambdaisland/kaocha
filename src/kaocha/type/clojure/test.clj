@@ -7,6 +7,7 @@
             [kaocha.classpath :as classpath]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
+            [kaocha.specs]
             [kaocha.test-suite :as test-suite]
             [clojure.java.io :as io]
             [clojure.test :as t]))
@@ -22,10 +23,6 @@
 (s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
                                                :kaocha/test-paths
                                                :kaocha/ns-patterns]))
-
-(s/def :kaocha/source-paths (s/coll-of string?))
-(s/def :kaocha/test-paths (s/coll-of string?))
-(s/def :kaocha/ns-patterns (s/coll-of string?))
 
 (hierarchy/derive! :kaocha.type/clojure.test :kaocha.testable.type/suite)
 (hierarchy/derive! :kaocha.type/ns :kaocha.testable.type/group)

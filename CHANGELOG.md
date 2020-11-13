@@ -4,7 +4,18 @@
 
 ## Fixed
 
+- `kaocha.type.spec.test.check` now correctly builds fdef testables with
+  configuration options from their enclosing test suites.
+- `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
+  upon all of the configured STC suites rather than the static
+  `:generative-fdef-checks` selector.
+
 ## Changed
+
+- `kaocha.plugin.alpha.spec-test-check` now respects a priority of supplied
+  configuration. CLI options always take precedence, followed by options
+  specified in individual test suites, followed by global options.
+- Improved spec definitions and generative fdef coverage
 
 # 1.0.700 (2020-09-18 / 552b977)
 

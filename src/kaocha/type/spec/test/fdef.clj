@@ -6,7 +6,6 @@
             [expound.alpha :as expound]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.report :as report]
-            [kaocha.result :as result]
             [kaocha.testable :as testable]
             [kaocha.type :as type]
             [orchestra.spec.test :as orchestra]))
@@ -15,19 +14,23 @@
 ;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
-(defn load-testable [sym]
+(defn load-testable [stc-config sym]
   (let [var (resolve sym)]
-    {:kaocha.testable/type :kaocha.type/spec.test.fdef
-     :kaocha.testable/id   (keyword sym)
-     :kaocha.testable/meta (meta var)
-     :kaocha.testable/desc (str sym)
-     :kaocha.spec.fdef/sym sym
-     :kaocha.spec.fdef/var var}))
+    (merge {:kaocha.testable/type :kaocha.type/spec.test.fdef
+            :kaocha.testable/id   (keyword sym)
+            :kaocha.testable/meta (meta var)
+            :kaocha.testable/desc (str sym)
+            :kaocha.spec.fdef/sym sym
+            :kaocha.spec.fdef/var var}
+           stc-config)))
 
-(defn load-testables [syms]
-  (->> syms
-       (sort-by name)
-       (map load-testable)))
+(defn load-testables [testable syms]
+  (let [stc-config (select-keys testable [::stc/instrument?
+                                          ::stc/check-asserts?
+                                          ::stc/opts])]
+    (->> syms
+         (sort-by name)
+         (map (partial load-testable stc-config)))))
 
 (defn report-success [check-results]
   (test/do-report
@@ -48,14 +51,14 @@
                     (::stest/val failure))}))))
 
 (defmethod testable/-run :kaocha.type/spec.test.fdef
-  [{the-var :kaocha.spec.fdef/var
-    sym     :kaocha.spec.fdef/sym
-    wrap    :kaocha.testable/wrap
-    :as     testable}
-   {instrument?    ::stc/instrument?
+  [{the-var        :kaocha.spec.fdef/var
+    sym            :kaocha.spec.fdef/sym
+    wrap           :kaocha.testable/wrap
+    instrument?    ::stc/instrument?
     check-asserts? ::stc/check-asserts?
     opts           ::stc/opts
-    :as            test-plan}]
+    :as            testable}
+   _test-plan]
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
     (when check-asserts? (s/check-asserts true))
