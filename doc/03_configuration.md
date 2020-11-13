@@ -34,7 +34,14 @@ Here's an example test configuration with a single test suite:
 
 Writing a full test configuration by hand is tedious, which is why in
 `tests.edn` you can use the `#kaocha/v1 {}` tagged reader literal. It allows using
-plain instead of namespaced keywords, and provides many default values. If you
+plain instead of namespaced keywords, and provides many default values, including:
+- source files are in the `src/` folder,
+- test files are in the `test/` folder,
+- all test namespaces _names_ end with `-test`
+(e.g. `my-project.core-test`).
+Also, the default test suite id is `:unit` (just `unit` on the command line).
+
+If you
 have a single test suite with `clojure.test` style tests in the `test`
 directory, then you can start out with a `tests.edn` with nothing but
 
@@ -44,6 +51,11 @@ directory, then you can start out with a `tests.edn` with nothing but
 
 Try it out! Use `bin/kaocha --print-config` to see the resulting test
 configuration.
+
+If your tests don't seem to run (outcome is `0 tests, 0 assertions, 0
+failures`), you may need to configure one or more [test
+suites](https://cljdoc.org/d/lambdaisland/kaocha/1.0.700/doc/3-configuration#test-suites) with the correct paths.
+
 
 In general using `#kaocha/v1 {}` is highly recommended, however if you need fine
 grained control you can write the output of `--print-config` to `tests.edn` and

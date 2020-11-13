@@ -179,9 +179,9 @@ chmod +x bin/kaocha
 
 By default, Kaocha assumes that:
 - source files are in the `src/` folder,
-- tests files are in the `test/` folder,
+- test files are in the `test/` folder,
 - all test namespaces _names_ end with `-test`
-(eg. `my-project.core-test`).
+(e.g. `my-project.core-test`).
 Also, the default test suite id is `:unit` (just `unit` on the command line).
 
 If your tests don't seem to run (outcome is `0 tests, 0 assertions, 0 failures`)
