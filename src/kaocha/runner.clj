@@ -154,7 +154,11 @@
                                                               (config/load-config (if profile
                                                                                     {:profile profile}
                                                                                     {})))
-          _check (specs/assert-spec :kaocha/config config)
+          _check                                          (try 
+                                                            (specs/assert-spec :kaocha/config config)
+                                                            (catch AssertionError e 
+                                                              (println (.toString e))
+                                                              (throw+ {:kaocha/early-exit 0})))
           plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
