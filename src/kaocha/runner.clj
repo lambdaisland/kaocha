@@ -154,6 +154,7 @@
                                                               (config/load-config (if profile
                                                                                     {:profile profile}
                                                                                     {})))
+          _check (specs/assert-spec :kaocha/config config)
           plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
