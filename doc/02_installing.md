@@ -73,14 +73,13 @@ bin/kaocha --version
 
 ### Leiningen
 
-Add a `:kaocha` profile, where the Kaocha dependency is included, then add an
-alias that activates the profile, and invokes `lein run -m kaocha.runner`.
+Add Kaocha to your `:dev` profile, then add an alias that invokes `lein run -m kaocha.runner`:
 
 ``` clojure
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.700"]]}}
-  :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
+  :profiles {:dev {:dependencies [,,, [lambdaisland/kaocha "1.0.700"]]}}
+  :aliases {"kaocha" ["run" "-m" "kaocha.runner"]})
 ```
 
 Now you can invoke Kaocha as such:
@@ -98,6 +97,25 @@ projects. The rest of the documentation assumes you can invoke Kaocha with
 
 lein kaocha "$@"
 ```
+
+
+#### Alternative method: separate `:kaocha` profile
+
+If you want to use Kaocha only in certain circumstances, say when
+[profiling tests](08_plugins.md#profiling), you may not want to add it to your :dev profile.
+
+Instead, add a `:kaocha` profile with the Kaocha dependency, then add an
+alias that activates the profile and invokes `lein run -m kaocha.runner`:
+
+``` clojure
+(defproject my-proj "0.1.0"
+  :dependencies [,,,]
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.700"]]}}
+  :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
+```
+
+Invoking Kaocha and creating `bin/kaocha` will work the same way. However,
+Kaocha will not be available in your REPL by default.
 
 ### Boot
 
