@@ -98,11 +98,12 @@ projects. The rest of the documentation assumes you can invoke Kaocha with
 lein kaocha "$@"
 ```
 
+For more information on `:dev`, see the [Leiningen docs](https://cljdoc.org/d/leiningen/leiningen/2.9.3/doc/profiles#default-profiles).
 
 #### Alternative method: separate `:kaocha` profile
 
 If you want to use Kaocha only in certain circumstances, say when
-[profiling tests](08_plugins.md#profiling), you may not want to add it to your :dev profile.
+[profiling tests](08_plugins.md#profiling), you may not want to add it to your `:dev` profile.
 
 Instead, add a `:kaocha` profile with the Kaocha dependency, then add an
 alias that activates the profile and invokes `lein run -m kaocha.runner`:
