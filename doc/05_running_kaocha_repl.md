@@ -28,21 +28,21 @@ containing two tests.
 You could run the whole suite
 
 ``` clojure
-(use 'kaocha.repl)
+(require '[kaocha.repl :as k])
 
-(run :unit)
+(k/run :unit)
 ```
 
 The namespace
 
 ``` clojure
-(run 'kaocha.random-test)
+(k/run 'kaocha.random-test)
 ```
 
 Or specific test vars
 
 ``` clojure
-(run 'kaocha.random-test/rand-ints-test 'kaocha.random-test/randomize-test)
+(k/run 'kaocha.random-test/rand-ints-test 'kaocha.random-test/randomize-test)
 ```
 
 These are equivalent to using `--focus` on the command line. `run` also
@@ -50,22 +50,22 @@ understand namespace and var objects.
 
 
 ``` clojure
-(run *ns*)
-(run #'rand-ints-test)
+(k/run *ns*)
+(k/run #'rand-ints-test)
 ```
 
-`(run)` without any arguments is equivalent to `(run *ns*)`. If you really want to run all test suites without discrimination, use [run-all](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/api/kaocha.repl#run-all).
+`(k/run)` without any arguments is equivalent to `(k/run *ns*)`. If you really want to run all test suites without discrimination, use [k/run-all](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/api/kaocha.repl#run-all).
 
 
 ## Passing configuration
 
-If the last argument to `(run)` is a map, then it is considered extra
+If the last argument to `(k/run)` is a map, then it is considered extra
 configuration which is applied on top of what is read from `tests.edn`. The
 special key `:config-file` is available to change the location from which
 `tests.edn` is read.
 
 ``` clojure
-(run {:config-file "/tmp/my_tests.edn"})
+(k/run {:config-file "/tmp/my_tests.edn"})
 ```
 
 Other keys in the map need to be either fully qualified keywords as used in
