@@ -14,6 +14,9 @@
 
 ## Changed
 
+- Breaking! Test configuration (`tests.edn`) is now validated with spec, meaning
+  existing configs may fail. In most cases you should be able to update your
+  config so it is valid, but please do report any issues.
 - `kaocha.plugin.alpha.spec-test-check` now respects a priority of supplied
   configuration. CLI options always take precedence, followed by options
   specified in individual test suites, followed by global options.
