@@ -9,6 +9,8 @@
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
   upon all of the configured STC suites rather than the static
   `:generative-fdef-checks` selector.
+- Fix an issue where clojure.test.check would be required for Kaocha to work,
+  rather than being an optional dependency
 
 ## Changed
 
