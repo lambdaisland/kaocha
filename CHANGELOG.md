@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.726 (2020-11-24 / faa6ef6)
 
 ## Added
 
