@@ -1,14 +1,10 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fixed an issue with the optional `clojure.test.check` dependency (follow-up)
 
 # 1.0.726 (2020-11-24 / faa6ef6)
-
-## Added
 
 ## Fixed
 
@@ -17,7 +13,7 @@
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
   upon all of the configured STC suites rather than the static
   `:generative-fdef-checks` selector.
-- Fix an issue where clojure.test.check would be required for Kaocha to work,
+- Fix an issue where `clojure.test.check` would be required for Kaocha to work,
   rather than being an optional dependency
 
 ## Changed
