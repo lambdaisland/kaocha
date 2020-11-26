@@ -6,11 +6,13 @@
 
 (defn s-gen [_])
 (defn s-with-gen [spec _] spec)
+(defn s-fspec [_ __] any?)
 
 (try
   (require 'clojure.test.check.generators)
   (def s-gen @(resolve 'clojure.spec.alpha/gen))
   (def s-with-gen @(resolve 'clojure.spec.alpha/with-gen))
+  (defmacro s-fspec [& args] `(s/fspec ~@args))
   (catch FileNotFoundException _))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -24,7 +26,7 @@
 
 (s/def :kaocha/plugins (s/coll-of keyword?))
 
-(s/def :kaocha/reporter (s/or :fn      (s/fspec :args (s/cat :m map?))
+(s/def :kaocha/reporter (s/or :fn      (s-fspec :args (s/cat :m map?))
                               :symbol  symbol?
                               :symbols (s/coll-of symbol? :kind vector?)))
 
