@@ -12,7 +12,7 @@
   (require 'clojure.test.check.generators)
   (def s-gen @(resolve 'clojure.spec.alpha/gen))
   (def s-with-gen @(resolve 'clojure.spec.alpha/with-gen))
-  (def s-fspec @(resolve 'clojure.spec.alpha/fspec))
+  (defmacro s-fspec [& args] `(s/fspec ~@args))
   (catch FileNotFoundException _))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
