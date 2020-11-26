@@ -2,6 +2,7 @@
 {:plugins [:kaocha.plugin.alpha/info
            :kaocha.plugin.alpha/spec-test-check
            :kaocha.plugin/orchestra
+           :kaocha.plugin/retry
            :profiling
            :print-invocations
            :hooks
