@@ -85,9 +85,9 @@
                                            (s/keys :req []
                                                    :opt [:kaocha.testable/desc
                                                          :kaocha.test-plan/tests
-                                                         :kaacha.test-plan/load-error])))
+                                                         :kaocha.test-plan/load-error])))
 
-(s/def :kaacha.test-plan/load-error (s-with-gen
+(s/def :kaocha.test-plan/load-error (s-with-gen
                                      #(instance? Throwable %)
                                      #(s-gen #{(ex-info {:oops "not good"} "load error")})))
 
