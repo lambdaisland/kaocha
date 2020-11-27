@@ -1,14 +1,14 @@
 (ns kaocha.runner
   "Main entry point for command line use."
   (:gen-class)
-  (:require [clojure.java.io :as io]
+  (:require [kaocha.api :as api]
+            [clojure.java.io :as io]
             [clojure.pprint :as pprint]
             [clojure.set :as set]
             [clojure.spec.alpha :as spec]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
             [expound.alpha :as expound]
-            [kaocha.api :as api]
             [kaocha.config :as config]
             [kaocha.jit :refer [jit]]
             [kaocha.output :as output]

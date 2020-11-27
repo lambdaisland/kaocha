@@ -1,7 +1,13 @@
 (ns kaocha.core-ext
   "Core language extensions"
   (:refer-clojure :exclude [symbol])
-  (:import [java.util.regex Pattern]))
+  (:import [java.util.regex Pattern])
+  (:require  [kaocha.output :as output]
+            [slingshot.slingshot :refer [try+ throw+]]))
+
+(when-not (and (>= (:major *clojure-version*) 1) (>= (:minor *clojure-version*) 9))
+                       (output/error "Kaocha requires Clojure 1.9 or later.")
+                       (throw+ {:kaocha/early-exit 251}))
 
 (defn regex? [x]
   (instance? Pattern x))
