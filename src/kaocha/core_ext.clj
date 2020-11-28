@@ -5,6 +5,7 @@
   (:require  [kaocha.output :as output]
             [slingshot.slingshot :refer [try+ throw+]]))
 
+;This ends up being the best place to put the version check to avoid duplication.
 (when-not (and (>= (:major *clojure-version*) 1) (>= (:minor *clojure-version*) 9))
                        (output/error "Kaocha requires Clojure 1.9 or later.")
                        (throw+ {:kaocha/early-exit 251}))
