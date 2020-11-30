@@ -1,7 +1,7 @@
 (ns kaocha.runner
   "Main entry point for command line use."
   (:gen-class)
-  (:require [kaocha.api :as api]
+  (:require [kaocha.api :as api]; DO NOT MOVE. This needs to be first for the sake of the version check.
             [clojure.java.io :as io]
             [clojure.pprint :as pprint]
             [clojure.set :as set]
