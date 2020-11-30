@@ -102,6 +102,14 @@
 
   (config [config]
     (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha/cli-options config)]
+      (when (and (or (seq focus)
+                     (seq focus-meta)
+                     (seq skip)
+                     (seq skip-meta))
+                 (> (count (:kaocha/tests config)) 1))
+        (println "Multiple test id available and --focus/--focus-meta/--skip/--skip-meta specified")
+        (System/exit 1))
+
       (cond-> config
         (seq skip)       (assoc :kaocha.filter/skip skip)
         (seq focus)      (assoc :kaocha.filter/focus focus)
