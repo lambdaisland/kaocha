@@ -1,3 +1,4 @@
+(require 'kaocha.version_check)
 (ns kaocha.api
   "Programmable test runner interface."
   (:require [clojure.test :as t]
