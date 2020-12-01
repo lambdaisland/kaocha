@@ -4,14 +4,31 @@
 
 ## Fixed
 
+## Changed
+
+# 1.0.732 (2020-11-26 / b418350)
+
+## Fixed
+
+- Fixed an issue with the optional `clojure.test.check` dependency (follow-up)
+
+# 1.0.726 (2020-11-24 / faa6ef6)
+
+## Fixed
+
 - `kaocha.type.spec.test.check` now correctly builds fdef testables with
   configuration options from their enclosing test suites.
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
   upon all of the configured STC suites rather than the static
   `:generative-fdef-checks` selector.
+- Fix an issue where `clojure.test.check` would be required for Kaocha to work,
+  rather than being an optional dependency
 
 ## Changed
 
+- Breaking! Test configuration (`tests.edn`) is now validated with spec, meaning
+  existing configs may fail. In most cases you should be able to update your
+  config so it is valid, but please do report any issues.
 - `kaocha.plugin.alpha.spec-test-check` now respects a priority of supplied
   configuration. CLI options always take precedence, followed by options
   specified in individual test suites, followed by global options.

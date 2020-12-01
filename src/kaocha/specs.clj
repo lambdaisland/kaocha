@@ -159,7 +159,7 @@
 
 (s/def :kaocha.test-plan/load-error
   (s/with-gen #(instance? Throwable %)
-    #(s/gen #{(ex-info {:oops "not good"} "load error")})))
+    #(s/gen #{(ex-info "load error" {:oops "not good"})})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
