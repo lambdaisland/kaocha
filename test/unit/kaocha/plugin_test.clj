@@ -9,7 +9,7 @@
   (is (thrown-with-msg? ExceptionInfo
                         #"Couldn't load plugin :kaocha.missing.plugin/gone"
                         (plugin/load-all [:kaocha.missing.plugin/gone])))
-  (is (= {:err "ERROR: Couldn't load plugin :kaocha.missing.plugin/gone\n" :out "" :result nil}
+  (is (= {:err "ERROR: Couldn't load plugin :kaocha.missing.plugin/gone. Failed to load namespaces kaocha.missing.plugin.gone and kaocha.missing.plugin.\n" :out "" :result nil}
          (binding [output/*colored-output* false]
            (util/with-out-err
              (try

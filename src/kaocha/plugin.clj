@@ -57,7 +57,8 @@
       (not plugin-result) (output/error-and-throw 
                             {:kaocha/early-exit 254} nil
                             (format "Couldn't load plugin %s. Failed to load namespace %s." 
-                                    plugin-name (first failed-ns))))))
+                                    plugin-name (first failed-ns))))
+   plugin-result))
 
 (defn normalize-name [plugin-name]
   (if (and (simple-keyword? plugin-name)
