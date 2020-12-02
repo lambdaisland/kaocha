@@ -4,6 +4,9 @@
 
 ## Fixed
 
+- Fixed an issue with the definition of spec `:kaocha.test-plan/load-error` that
+    caused a ClassCastException whenever a generator was created for it.
+
 ## Changed
 
 # 1.0.732 (2020-11-26 / b418350)
