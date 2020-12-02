@@ -1,4 +1,4 @@
-(require 'kaocha.version_check)
+(require 'kaocha.version-check)
 (ns ^{:author "Arne Brasseur"
       :doc "REPL interface to Kaocha
 

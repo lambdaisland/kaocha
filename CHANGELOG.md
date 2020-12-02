@@ -4,6 +4,9 @@
 
 ## Fixed
 
+- Clearly alert the user that Cloure 1.9 isn't supported, rather than
+    failing on whatever 1.9 functionality happens to be invoked first.
+
 ## Changed
 
 # 1.0.732 (2020-11-26 / b418350)
