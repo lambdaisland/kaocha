@@ -51,7 +51,9 @@
       (merge-config (first (:kaocha/tests (default-config))) $)
       (merge {:kaocha.testable/desc (str (name (:kaocha.testable/id $))
                                          " (" (name (:kaocha.testable/type $)) ")")}
-             $))))
+             $)
+      (update $ :kaocha.filter/focus (partial map keyword))
+      (update $ :kaocha.filter/skip (partial map keyword)))))
 
 (defn normalize-plugin-names [plugins]
   (mapv (fn [p]
