@@ -4,6 +4,9 @@
 
 ## Fixed
 
+- Errors when loading plugins are more specific, specifying which namespaces, if
+    any, failed to load.
+
 ## Changed
 
 # 1.0.732 (2020-11-26 / b418350)
