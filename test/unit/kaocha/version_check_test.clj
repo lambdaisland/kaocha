@@ -4,7 +4,6 @@
             [kaocha.test-helper]
             [kaocha.version-check :as v]))
 
-
 (deftest earlier-version-throws
   (is (thrown-ex-data? "Kaocha requires Clojure 1.9 or later." 
                        {:kaocha/early-exit 251} (binding [*clojure-version* {:major 1 :minor 8}]
