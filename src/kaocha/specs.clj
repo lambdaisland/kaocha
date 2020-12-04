@@ -39,7 +39,7 @@
 ;; config
 
 
-(s/def :kaocha/bindings (s/map-of qualified-symbol? (s/coll-of keyword?)))
+(s/def :kaocha/bindings (s/map-of qualified-symbol? any?))
 
 (s/def :kaocha.testable/meta (s/nilable map?))
 
