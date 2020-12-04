@@ -6,21 +6,25 @@
 
 (defmulti track :type :hierarchy #'hierarchy/hierarchy)
 
-(defmethod track :default [m] (swap! *history* conj m))
+(defmethod track :default [m]
+  (when *history* (swap! *history* conj m)))
 
 (defmethod track :kaocha/fail-type [m]
-  (swap! *history* conj (assoc m
-                               :testing-contexts t/*testing-contexts*
-                               :testing-vars t/*testing-vars*)) )
+  (when *history*
+    (swap! *history* conj (assoc m
+                                 :testing-contexts t/*testing-contexts*
+                                 :testing-vars t/*testing-vars*))) )
 
 (defmethod track :error [m]
-  (swap! *history* conj (assoc m
-                               :testing-contexts t/*testing-contexts*
-                               :testing-vars t/*testing-vars*)))
+  (when *history*
+    (swap! *history* conj (assoc m
+                                 :testing-contexts t/*testing-contexts*
+                                 :testing-vars t/*testing-vars*))))
 
 (defn clojure-test-summary
   ([]
-   (clojure-test-summary @*history*))
+   (when *history*
+     (clojure-test-summary @*history*)))
   ([history]
    (reduce
     (fn [m {type :type :as event}]
