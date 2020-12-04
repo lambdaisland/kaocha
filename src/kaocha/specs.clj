@@ -53,9 +53,9 @@
 
 (s/def :kaocha/ns-patterns (s/coll-of string?))
 
-(s/def :kaocha.filter/skip (s/coll-of symbol?))
+(s/def :kaocha.filter/skip (s/coll-of keyword?))
 
-(s/def :kaocha.filter/focus (s/coll-of symbol?))
+(s/def :kaocha.filter/focus (s/coll-of keyword?))
 
 (s/def :kaocha.filter/skip-meta (s/coll-of keyword?))
 
