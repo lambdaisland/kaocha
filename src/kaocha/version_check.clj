@@ -1,8 +1,8 @@
 (ns kaocha.version-check
-  (:require  [kaocha.output :as output]
+  (:require [kaocha.output :as output]
             [slingshot.slingshot :refer [throw+]]))
 
-(defn check-version-minimum 
+(defn check-version-minimum
   "Checks that Clojure has at least a minimum version"
   [major minor]
   (when-not (or (and (= (:major *clojure-version*) major) (>= (:minor *clojure-version*) minor))

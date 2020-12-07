@@ -3,7 +3,6 @@
   (:refer-clojure :exclude [symbol])
   (:import [java.util.regex Pattern]))
 
-
 (defn regex? [x]
   (instance? Pattern x))
 

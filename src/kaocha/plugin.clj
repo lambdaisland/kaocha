@@ -1,4 +1,3 @@
-
 (require 'kaocha.version-check)
 (ns kaocha.plugin
   (:require [kaocha.output :as output]
