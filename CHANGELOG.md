@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- Clearly alert the user that Cloure 1.9 isn't supported, rather than
+    failing on whatever 1.9 functionality happens to be invoked first.
 - Fixed an issue with the definition of spec `:kaocha.test-plan/load-error` that
     caused a ClassCastException whenever a generator was created for it.
 
