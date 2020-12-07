@@ -6,7 +6,7 @@
   (:import (clojure.lang ExceptionInfo)))
 
 (deftest missing-plugin-test
-  (let [expected-message "Couldn't load plugin :kaocha.missing.plugin/gone. Failed to load namespaces kaocha.missing.plugin.gone and kaocha.missing.plugin."]
+  (let [expected-message "Couldn't load plugin :kaocha.missing.plugin/gone. Failed to load namespaces kaocha.missing.plugin.gone and kaocha.missing.plugin. This could be caused by a misspelling or a missing dependency."]
   (is (thrown-with-msg? ExceptionInfo
                         (re-pattern expected-message)
                         (plugin/load-all [:kaocha.missing.plugin/gone])))
@@ -19,7 +19,7 @@
                  nil))))))))
 
 (deftest missing-unnamespaced-plugin-test
-  (let [expected-message "Couldn't load plugin :kaocha.plugin/gone. Failed to load namespace kaocha.plugin.gone."]
+  (let [expected-message "Couldn't load plugin :kaocha.plugin/gone. Failed to load namespace kaocha.plugin.gone. This could be caused by a misspelling or a missing dependency."]
     (is (thrown-with-msg? ExceptionInfo
                           (re-pattern expected-message)
                         (plugin/load-all [:gone])))
@@ -33,7 +33,7 @@
 
 
 (deftest missing-plugin-valid-ns-test
-  (let [expected-message "Couldn't load plugin :kaocha/plugin, but loaded kaocha.plugin."]
+  (let [expected-message "Couldn't load plugin :kaocha/plugin. The plugin was not defined after loading namespace kaocha.plugin. Is the file missing a defplugin?"]
     (is (thrown-with-msg? ExceptionInfo
                           (re-pattern expected-message)
                           (plugin/load-all [:kaocha/plugin])))
