@@ -20,12 +20,13 @@
   [(try-require n) n])
 
 (defn try-load-third-party-lib [plugin-name]
-  (let [full-name (symbol (str (namespace plugin-name) "." (name plugin-name)))]
-    (if (qualified-keyword? plugin-name)
-      (if-let [full-result (try-require full-name)]
-        [[full-result full-name]]
-        [[false full-name] (try-require-info (symbol (namespace plugin-name))) ])
-      [(try-require-info (symbol (name plugin-name)))])))
+  (if (qualified-keyword? plugin-name)
+    (let [full-name (symbol (str (namespace plugin-name) "." (name plugin-name)))
+          [full-name-succeeded _ :as full-name-result] (try-require-info full-name)]
+      (if full-name-succeeded
+        [full-name-result]
+        [full-name-result (try-require-info (symbol (namespace plugin-name)))]))
+    [(try-require-info (symbol (name plugin-name)))]))
 
 (defmulti -register "Add your plugin to the stack"
   (fn [name plugins] name))
