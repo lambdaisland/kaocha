@@ -7,29 +7,29 @@
 
 (deftest missing-plugin-test
   (let [expected-message "Couldn't load plugin :kaocha.missing.plugin/gone. Failed to load namespaces kaocha.missing.plugin.gone and kaocha.missing.plugin. This could be caused by a misspelling or a missing dependency."]
-  (is (thrown-with-msg? ExceptionInfo
-                        (re-pattern expected-message)
-                        (plugin/load-all [:kaocha.missing.plugin/gone])))
-  (is (= {:err  (str "ERROR: " expected-message "\n") :out "" :result nil}
-         (binding [output/*colored-output* false]
-           (util/with-out-err
-             (try
-               (plugin/load-all [:kaocha.missing.plugin/gone])
-               (catch ExceptionInfo e
-                 nil))))))))
+    (is (thrown-with-msg? ExceptionInfo
+                          (re-pattern expected-message)
+                          (plugin/load-all [:kaocha.missing.plugin/gone])))
+    (is (= {:err  (str "ERROR: " expected-message "\n") :out "" :result nil}
+           (binding [output/*colored-output* false]
+             (util/with-out-err
+               (try
+                 (plugin/load-all [:kaocha.missing.plugin/gone])
+                 (catch ExceptionInfo e
+                   nil))))))))
 
 (deftest missing-unnamespaced-plugin-test
   (let [expected-message "Couldn't load plugin :kaocha.plugin/gone. Failed to load namespace kaocha.plugin.gone. This could be caused by a misspelling or a missing dependency."]
     (is (thrown-with-msg? ExceptionInfo
                           (re-pattern expected-message)
-                        (plugin/load-all [:gone])))
-  (is (= {:err (str "ERROR: " expected-message "\n") :out "" :result nil}
-         (binding [output/*colored-output* false]
-           (util/with-out-err
-             (try
-               (plugin/load-all [:gone])
-               (catch ExceptionInfo e
-                 nil))))))))
+                          (plugin/load-all [:gone])))
+    (is (= {:err (str "ERROR: " expected-message "\n") :out "" :result nil}
+           (binding [output/*colored-output* false]
+             (util/with-out-err
+               (try
+                 (plugin/load-all [:gone])
+                 (catch ExceptionInfo e
+                   nil))))))))
 
 
 (deftest missing-plugin-valid-ns-test
