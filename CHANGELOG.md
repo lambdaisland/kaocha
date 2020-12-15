@@ -8,6 +8,8 @@
     failing on whatever 1.9 functionality happens to be invoked first.
 - Fixed an issue with the definition of spec `:kaocha.test-plan/load-error` that
     caused a ClassCastException whenever a generator was created for it.
+- Errors when loading plugins are more specific, specifying which namespaces, if
+    any, failed to load.
 
 ## Changed
 
