@@ -236,7 +236,7 @@ bin/kaocha --test-help
 
 ## Requirements
 
-Kaocha requirements Clojure 1.9 or later.
+Kaocha requires Clojure 1.9 or later.
 
 <!-- contributing -->
 ## Contributing
