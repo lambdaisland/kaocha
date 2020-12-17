@@ -8,6 +8,9 @@
     failing on whatever 1.9 functionality happens to be invoked first.
 - Fixed an issue with the definition of spec `:kaocha.test-plan/load-error` that
     caused a ClassCastException whenever a generator was created for it.
+- Warn when running Kaocha without a configuration file. This is fine for
+    experimenting, but for long-term use, we recommend creating a configuration
+    file to avoid changes in behavior between releases.
 
 ## Changed
 
