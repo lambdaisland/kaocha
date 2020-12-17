@@ -39,5 +39,5 @@ workflows:
       - test:
           matrix:
             parameters:
-              os: [clojure/openjdk15, clojure/openjdk11, clojure/openjdk8]
+              os: [clojure/openjdk15-buster, clojure/openjdk11, clojure/openjdk8]
               clojure_version: ["1.9.0", "1.10.1"]
