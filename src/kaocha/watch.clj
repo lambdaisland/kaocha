@@ -82,10 +82,9 @@
   for a description of the patterns, these are similar but not the same as
   typical shell glob patterns."
   [path patterns]
-  (prn path)
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
-    (doto (some #(.matches % path) patterns) (prn path ))))
+    (some #(.matches % path) patterns)))
 
 
 (defn convert 
@@ -115,8 +114,8 @@
       ;Otherwise, it should have the same behavior
       :else cleaned)))
 
-#_(defn merge-ignore-files []
-  (mapcat (fn [filename])
+(defn merge-ignore-files []
+  (mapcat #(str/split-lines (slurp %))
           [".gitignore" ".ignore"]))
 
 (defn get-ignore-file
@@ -168,7 +167,6 @@
                       (into (::ignore config)
                           (get-ignore-file))
                       (::ignore config))]
-        ; (prn ignore)
         (cond
           error
           (do
