@@ -89,43 +89,39 @@
 
 (defn convert 
   "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
-  [pattern]
-  (let [cleaned  (-> pattern
-                   ;If a Git pattern has a trailing space, it should be stripped
-                   ;(unless escaped)
-                   ;TODO if it's escaped, but there's multiple trailing spaces, are all of them escaped? Or just the first one?
-                   ;Also, does it mean spaces? or whitespace?
+  [pattern] 
+  (let [cleaned  (-> pattern 
+                   ;If a Git pattern has a trailing space, it should be stripped (unless escaped)
                    ;Example: 'src/test ' => 'src/test'
-                   (str/replace #"([^\\])\s+$" "$1")
+                   (str/replace #"([^\\]) +$" "$1")
 
                    ;If a Git pattern contains braces, those should be treated literally
                    ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
                    ; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
                    (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
-    (cond 
-      ;If it starts with a single *, it should have **
-      ;Example: *.html => **.html
-      (re-find #"^\*[^*]" cleaned) (str \* cleaned)
+        (cond 
+                    ;If it starts with a single *, it should have **
+                    ;Example: *.html => **.html
+                    (re-find #"^\*[^*]" cleaned) (str \* cleaned)
 
-      ;If a Git pattern ends with a slash, that represents everything underneath
-      ;Example: src/ => src/**
-      (re-find #"/$" cleaned) (str cleaned "**")
+                    ;If a Git pattern ends with a slash, that represents everything underneath
+                    ;Example: src/ => src/**
+                    (re-find #"/$" cleaned) (str cleaned "**")
 
-      ;Otherwise, it should have the same behavior
-      :else cleaned)))
+                    ;Otherwise, it should have the same behavior
+                    :else cleaned)))
 
-(defn merge-ignore-files []
-  (mapcat #(str/split-lines (slurp %))
-          [".gitignore" ".ignore"]))
 
-(defn get-ignore-file
-  "Gets .gitignore file patterns."
-  []
-  (->> (slurp ".gitignore")
+(defn parse-file [file]
+  (->> (slurp file)
        (str/split-lines)
        ;filter out comments, which need to be ignored, and negated patterns, which need to be handled separately:
        (filter #(not (re-find #"^[!#]" %))) 
-       (map convert)))
+       (map #(convert %))))
+
+
+(defn merge-ignore-files []
+  (mapcat #(when (.exists (io/file %)) (parse-file %)) [".gitignore" ".ignore" (str (System/getProperty "user.home") "/.config/git/ignore")]))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
@@ -165,7 +161,7 @@
             error   (::error result)
             ignore  (if  (::use-ignore-file config)
                       (into (::ignore config)
-                          (get-ignore-file))
+                          (merge-ignore-files))
                       (::ignore config))]
         (cond
           error

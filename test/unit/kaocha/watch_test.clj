@@ -54,6 +54,7 @@
 
 (deftest convert-test
   (is (= "src/**" (w/convert "src/")))
+  (is (= "src/**" (w/convert "src/ ")))
   (is (= "**.html" (w/convert "*.html")))
   (is (= "src/\\{ill-advised-filename\\}.clj" (w/convert "src/{ill-advised-filename}.clj")))
   (is (= "README.md" (w/convert "README.md")))
@@ -61,13 +62,17 @@
 
 
 (deftest glob-converted-unchanged-test
-  "Validate that compatible patterns still match/fail to match after conversion."
+  ; Validate that compatible patterns still match/fail to match after conversion.
   (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*")]))
   (is (not (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxy*")]))))
 
 (deftest glob-converted-test
-  "Validate that incompatible patterns are converted match after conversion."
-  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx* ")]))
+  ; Validate that incompatible patterns are converted and match after conversion. 
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx* ")])) 
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*  ")]))
+  (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\ ")]))
+  (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\  ")]))
+  (is (w/glob? (.toPath (io/file "xxxx.clj  ")) [(w/convert "xxx*\\ \\ ")]))
   (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "src/")]))
   (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "*.class")]))
   (is (not (w/glob? (.toPath (io/file "src/ill-advised-filename.clj")) [(w/convert "src/{ill-advised-filename}.clj")]))))
