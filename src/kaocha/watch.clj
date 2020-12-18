@@ -84,7 +84,50 @@
   [path patterns]
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
-    (some #(.matches % path) patterns)))
+    (doto (some #(.matches % path) patterns) (prn path ))))
+
+
+(defn convert 
+  "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
+  [pattern]
+
+  ;Git ignores unescaped trailing spaces:
+  ;TODO if it's escaped, but there's multiple trailing spaces, are all of them escaped? Or just the first one?
+  ;Also, does it mean spaces? or whitespace?
+  (let [trimmed  (str/replace pattern #"([^\\])\s+$" "$1") ]
+    (cond 
+      ;TODO handle anchored paths 
+      ;(re-find #"/" pattern) pattern
+
+      ;If it starts with a single *, it should have **
+      ;Example: *.html => **.html
+      (re-find #"^\*[^*]" trimmed) 
+      (str \* trimmed)
+
+      ;If a Git pattern ends with a slash, that represents everything underneath
+      ;Example: src/ => src/**
+      (re-find #"/$" trimmed) (str trimmed "**")
+
+      ;If a Git pattern contains braces, those should be treated literally
+      ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
+      ;TODO this is not mutually exclusive with the other cases:
+      (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
+
+      ;Otherwise, it should have the same behavior
+      :else trimmed)))
+
+#_(defn merge-ignore-files []
+  (mapcat (fn [filename])
+          [".gitignore" ".ignore"]))
+
+(defn get-ignore-file
+  "Gets .gitignore file patterns."
+  []
+  (->> (slurp ".gitignore")
+       (str/split-lines)
+       ;filter out comments, which need to be ignored, and negated patterns, which need to be handled separately:
+       (filter #(not (re-find #"^[!#]" %))) 
+       (map convert)))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
@@ -122,8 +165,11 @@
       (let [result  (try-run config focus tracker)
             tracker (::tracker result)
             error   (::error result)
-            ignore  (::ignore config)]
-
+            ignore  (if  (::use-ignore-file config)
+                      (into (::ignore config)
+                          (get-ignore-file))
+                      (::ignore config))]
+        ; (prn ignore)
         (cond
           error
           (do

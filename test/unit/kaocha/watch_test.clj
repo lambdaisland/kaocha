@@ -52,6 +52,13 @@
   (is (w/glob? (.toPath (io/file "xxxx.clj")) ["xxx*"]))
   (is (not (w/glob? (.toPath (io/file "xxxx.clj")) ["xxy*"]))))
 
+(deftest convert-test
+  (is (= "src/**" (w/convert "src/")))
+  (is (= "**.html" (w/convert "*.html")))
+  (is (= "src/\\{ill-advised-filename\\}.clj" (w/convert "src/{ill-advised-filename}.clj")))
+  (is (= "README.md" (w/convert "README.md")))
+  (is (= "README.md" (w/convert "README.md "))))
+
 (deftest reload-config-test
   (is (match?
        {:kaocha/tests [{:kaocha.testable/id :foo}]}
