@@ -82,6 +82,7 @@
   for a description of the patterns, these are similar but not the same as
   typical shell glob patterns."
   [path patterns]
+  (prn path)
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
     (doto (some #(.matches % path) patterns) (prn path ))))
@@ -90,31 +91,29 @@
 (defn convert 
   "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
   [pattern]
+  (let [cleaned  (-> pattern
+                   ;If a Git pattern has a trailing space, it should be stripped
+                   ;(unless escaped)
+                   ;TODO if it's escaped, but there's multiple trailing spaces, are all of them escaped? Or just the first one?
+                   ;Also, does it mean spaces? or whitespace?
+                   ;Example: 'src/test ' => 'src/test'
+                   (str/replace #"([^\\])\s+$" "$1")
 
-  ;Git ignores unescaped trailing spaces:
-  ;TODO if it's escaped, but there's multiple trailing spaces, are all of them escaped? Or just the first one?
-  ;Also, does it mean spaces? or whitespace?
-  (let [trimmed  (str/replace pattern #"([^\\])\s+$" "$1") ]
+                   ;If a Git pattern contains braces, those should be treated literally
+                   ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
+                   ; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
+                   (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
     (cond 
-      ;TODO handle anchored paths 
-      ;(re-find #"/" pattern) pattern
-
       ;If it starts with a single *, it should have **
       ;Example: *.html => **.html
-      (re-find #"^\*[^*]" trimmed) 
-      (str \* trimmed)
+      (re-find #"^\*[^*]" cleaned) (str \* cleaned)
 
       ;If a Git pattern ends with a slash, that represents everything underneath
       ;Example: src/ => src/**
-      (re-find #"/$" trimmed) (str trimmed "**")
-
-      ;If a Git pattern contains braces, those should be treated literally
-      ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
-      ;TODO this is not mutually exclusive with the other cases:
-      (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
+      (re-find #"/$" cleaned) (str cleaned "**")
 
       ;Otherwise, it should have the same behavior
-      :else trimmed)))
+      :else cleaned)))
 
 #_(defn merge-ignore-files []
   (mapcat (fn [filename])
