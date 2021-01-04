@@ -17,7 +17,8 @@
             [kaocha.result :as result]
             [kaocha.specs :as specs]
             [orchestra.spec.test :as orchestra]
-            [slingshot.slingshot :refer [try+ throw+]]))
+            [slingshot.slingshot :refer [try+ throw+]])
+  (:import [java.io File]))
 
 (orchestra/instrument
  (filter #(or (str/starts-with? (str %) "kaocha.")
@@ -155,12 +156,17 @@
                                                               (config/load-config (if profile
                                                                                     {:profile profile}
                                                                                     {})))
-          _check                                          (try 
-                                                            (specs/assert-spec :kaocha/config config)
-                                                            (catch AssertionError e 
-                                                              (output/error "Invalid configuration file:\n" 
-                                                                            (.getMessage e))
-                                                              (throw+ {:kaocha/early-exit 252})))
+          _check_config_file                              (when (not (. (File. (or config-file "tests.edn")) exists)) 
+                                                            (output/warn (format (str "Did not load a configuration file and using the defaults.\n" 
+                                                                                      "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
+                                                                                      "To create a configuration file using the current defaults, create a file named tests.edn that contains '%s {}'.")
+                                                                                 config/current-reader)))
+          _check                                         (try 
+                                                           (specs/assert-spec :kaocha/config config)
+                                                           (catch AssertionError e 
+                                                             (output/error "Invalid configuration file:\n" 
+                                                                           (.getMessage e))
+                                                             (throw+ {:kaocha/early-exit 252}))) 
           plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 

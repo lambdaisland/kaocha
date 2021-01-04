@@ -6,6 +6,9 @@
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]]))
 
+;the reader literal for the current default:
+(def current-reader 'kaocha/v1)
+
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
@@ -80,7 +83,7 @@
       :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [_opts _tag value]
-  (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")
+  (output/warn (format "The #kaocha reader literal is deprecated, please change it to %s." current-reader))
   (-> (default-config)
       (merge-config (normalize value))))
 

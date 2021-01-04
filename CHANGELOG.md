@@ -10,6 +10,9 @@
     caused a ClassCastException whenever a generator was created for it.
 - Errors when loading plugins are more specific, specifying which namespaces, if
     any, failed to load.
+- Warn when running Kaocha without a configuration file. This is fine for
+    experimenting, but for long-term use, we recommend creating a configuration
+    file to avoid changes in behavior between releases.
 
 ## Changed
 
