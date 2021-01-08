@@ -2,6 +2,9 @@
 
 ## Added
 
+- Kaocha watch can now add ignores from `.gitignore` and `.ignore`. To enable
+    this feature, set `:kaocha.watch/use-ignore-files` to true in your deps.edn.
+
 ## Fixed
 
 - Clearly alert the user that Cloure 1.9 isn't supported, rather than
