@@ -69,6 +69,9 @@ there's a lot you can do without having to restart Kaocha.
 - set a fixed seed (when debugging ordering issue)
 - switch to a different reporter
 
+You can tell Kaocha to ignore changes to files matching patterns in `.gitignore`
+files by setting `:kaocha.watch/use-ignore-files` to `true` in your deps.edn.
+
 ## Configuring the watcher
 
 Kaocha uses [Hawk](https://github.com/wkf/hawk) to watch the filesystem for
