@@ -120,8 +120,11 @@
        (map #(convert %))))
 
 
-(defn merge-ignore-files []
-  (mapcat #(when (.exists (io/file %)) (parse-file %)) [".gitignore" ".ignore" (str (System/getProperty "user.home") "/.config/git/ignore")]))
+(defn merge-ignore-files [dir]
+  (let [absolute-files [(str (System/getProperty "user.home") "/.config/git/ignore")]
+        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))
+        all-files (into absolute-files relative-files)]
+  (doto (mapcat #(when (.exists (io/file %)) (parse-file %)) all-files ) (println ))))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
@@ -161,7 +164,7 @@
             error   (::error result)
             ignore  (if  (::use-ignore-file config)
                       (into (::ignore config)
-                          (merge-ignore-files))
+                          (merge-ignore-files "."))
                       (::ignore config))]
         (cond
           error

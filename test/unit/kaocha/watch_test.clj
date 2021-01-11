@@ -3,6 +3,7 @@
             [kaocha.watch :as w]
             [kaocha.test-util :as util]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
+            [clojure.java.shell :as shell]
             [lambdaisland.tools.namespace.track :as ctn-track]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
             [kaocha.integration-helpers :as integration]
@@ -137,6 +138,20 @@
     (w/qput q :finish)
 
     (is (= "[]\n0 tests, 0 assertions, 0 failures.\n\n" @out-str))))
+
+
+(deftest ignore-files-merged
+  (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
+    (integration/spit-file  m (str test-dir "/.gitignore") "one" )
+    (integration/spit-file  m (str test-dir "/.ignore") "two" )
+    (is (=  ["one" "two"]  (w/merge-ignore-files (str test-dir))))))
+
+(deftest child-files-merged
+  (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
+    (integration/spit-file  m (str test-dir "/.gitignore") "one" )
+    (integration/spit-dir m (str test-dir "/src/") )
+    (integration/spit-file  m (str test-dir "/src/.gitignore") "two" )
+    (is (=  ["one" "two"]  (w/merge-ignore-files (str test-dir))))))
 
 (deftest watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file
