@@ -144,14 +144,14 @@
   (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
     (integration/spit-file  m (str test-dir "/.gitignore") "one" )
     (integration/spit-file  m (str test-dir "/.ignore") "two" )
-    (is (=  ["one" "two"]  (w/merge-ignore-files (str test-dir))))))
+    (is (=  #{"one" "two"}  (set (w/merge-ignore-files (str test-dir)))))))
 
 (deftest child-files-merged
   (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
     (integration/spit-file  m (str test-dir "/.gitignore") "one" )
     (integration/spit-dir m (str test-dir "/src/") )
     (integration/spit-file  m (str test-dir "/src/.gitignore") "two" )
-    (is (=  ["one" "two"]  (w/merge-ignore-files (str test-dir))))))
+    (is (=  #{"one" "two"}   (set (w/merge-ignore-files (str test-dir)))))))
 
 (deftest watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file
