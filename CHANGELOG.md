@@ -3,7 +3,7 @@
 ## Added
 
 - Kaocha watch can now add ignores from `.gitignore` and `.ignore`. To enable
-    this feature, set `:kaocha.watch/use-ignore-files` to true in your deps.edn.
+    this feature, set `:kaocha.watch/use-ignore-file` to true in your deps.edn.
 
 ## Fixed
 

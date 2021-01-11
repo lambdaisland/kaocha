@@ -70,7 +70,7 @@ there's a lot you can do without having to restart Kaocha.
 - switch to a different reporter
 
 You can tell Kaocha to ignore changes to files matching patterns in `.gitignore`
-files by setting `:kaocha.watch/use-ignore-files` to `true` in your deps.edn.
+or `.ignore` files by setting `:kaocha.watch/use-ignore-file` to `true` in your deps.edn.
 
 ## Configuring the watcher
 
