@@ -4,6 +4,7 @@
             [clojure.set :as set]
             [clojure.string :as str]
             [clojure.test :as t]
+            [clojure.spec.alpha :as s]
             [hawk.core :as hawk]
             [kaocha.api :as api]
             [kaocha.config :as config]
@@ -21,6 +22,7 @@
             [lambdaisland.tools.namespace.track :as ctn-track]
             [clojure.stacktrace :as st])
   (:import [java.nio.file FileSystems]
+           [java.io File]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
 (defn make-queue []
@@ -111,6 +113,8 @@
                     ;Otherwise, it should have the same behavior
                     :else cleaned)))
 
+(s/fdef convert :args (s/cat :pattern string?) :ret string?)
+
 
 (defn parse-file [file]
   (->> (slurp file)
@@ -119,12 +123,21 @@
        (filter #(not (re-find #"^[!#]" %))) 
        (map #(convert %))))
 
+(s/fdef parse-file :args (s/cat :file (s/or :file-object (partial instance? File) :string string?))  
+        :ret (s/coll-of string?) )
 
 (defn merge-ignore-files [dir]
   (let [absolute-files [(str (System/getProperty "user.home") "/.config/git/ignore")]
         relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))
         all-files (into absolute-files relative-files)]
-  (doto (mapcat #(when (.exists (io/file %)) (parse-file %)) all-files ) (println ))))
+    (mapcat #(when (.exists (io/file %)) (parse-file %)) all-files )))
+
+
+(s/fdef merge-ignore-files  
+        :args (s/cat :dir string?)
+        :ret (s/coll-of string?) )
+
+
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
