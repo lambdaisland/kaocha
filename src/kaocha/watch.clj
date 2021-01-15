@@ -22,7 +22,6 @@
             [lambdaisland.tools.namespace.track :as ctn-track]
             [clojure.stacktrace :as st])
   (:import [java.nio.file FileSystems]
-           [java.io File]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
 (defn make-queue []
@@ -116,7 +115,9 @@
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
 
 
-(defn parse-file [file]
+(defn parse-ignore-file 
+  "Parses an individual ignore file."
+  [file]
   (->> (slurp file)
        (str/split-lines)
        ;filter out comments, which need to be ignored, and negated patterns, which need to be handled separately:
@@ -124,11 +125,18 @@
        (map #(convert %))))
 
 
-(defn merge-ignore-files [dir]
+(defn find-ignore-files 
+  "Finds ignore files in the local directory and the system."
+  [dir]
   (let [absolute-files [(str (System/getProperty "user.home") "/.config/git/ignore")]
-        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))
-        all-files (into absolute-files relative-files)]
-    (mapcat #(when (.exists (io/file %)) (parse-file %)) all-files )))
+        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))]
+    (into absolute-files relative-files))) 
+
+(defn merge-ignore-files 
+  "Combines and parses ignore files."
+  [dir]
+  (let [all-files  (find-ignore-files dir)]
+    (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files )))
 
 
 (s/fdef merge-ignore-files  
