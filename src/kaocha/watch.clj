@@ -128,7 +128,7 @@
 (defn find-ignore-files 
   "Finds ignore files in the local directory and the system."
   [dir]
-  (let [absolute-files [(str (System/getProperty "user.home") "/.config/git/ignore")]
+  (let [absolute-files [(io/file (str (System/getProperty "user.home") "/.config/git/ignore"))]
         relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))]
     (into absolute-files relative-files))) 
 
@@ -259,7 +259,10 @@ errors as test errors."
 
 (defn run* [config finish? q]
   (let [hawk-opts (::hawk-opts config {})
-        watch-paths (watch-paths config)
+        watch-paths (if (:kaocha.watch/use-ignore-file config) 
+                     (set/union (watch-paths config)
+                                (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
+                     (watch-paths config)) 
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload
