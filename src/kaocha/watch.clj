@@ -123,8 +123,6 @@
        (filter #(not (re-find #"^[!#]" %))) 
        (map #(convert %))))
 
-(s/fdef parse-file :args (s/cat :file (s/or :file-object (partial instance? File) :string string?))  
-        :ret (s/coll-of string?) )
 
 (defn merge-ignore-files [dir]
   (let [absolute-files [(str (System/getProperty "user.home") "/.config/git/ignore")]
