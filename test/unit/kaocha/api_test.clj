@@ -1,7 +1,8 @@
 (ns kaocha.api-test
   (:require [clojure.test :refer :all]
             [kaocha.api :refer :all]
-            [kaocha.test-util :refer [with-out-err]]))
+            [kaocha.test-util :refer [with-out-err]]
+            [slingshot.slingshot :refer [try+]]))
 
 (deftest run-test
   (testing "allows API usage"
@@ -31,3 +32,11 @@
                   :kaocha.result/error  0
                   :kaocha.result/fail   0}]}]}]}
            (:result (with-out-err (run config))))))))
+
+(deftest no-tests
+  (testing "no tests are found!")
+  (is (= :caught (try
+                  (try+
+                    (run {})
+                    (catch :kaocha/early-exit e
+                      :caught))))))

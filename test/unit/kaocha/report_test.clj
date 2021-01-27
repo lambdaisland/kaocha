@@ -327,8 +327,8 @@
 (comment
   (do
     (require 'kaocha.repl)
-    (kaocha.repl/run)
+    (kaocha.repl/run)))
 
-    )
 
-  )
+
+
