@@ -35,8 +35,7 @@
 
 (deftest no-tests
   (testing "no tests are found!")
-  (is (= :caught (try
-                  (try+
-                    (run {})
-                    (catch :kaocha/early-exit e
-                      :caught))))))
+  (is (= :caught (try+
+                  (run {})
+                  (catch :kaocha/early-exit e
+                    :caught)))))

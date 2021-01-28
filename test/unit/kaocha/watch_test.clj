@@ -89,34 +89,6 @@
                      prefix)
         @out-str)))
 
-(deftest watch-test-do-not-trigger-on-dir-changes
-  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
-        config (-> (config/load-config config-file)
-                   (assoc-in [:kaocha/cli-options :config-file] (str config-file))
-                   (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
-                   (assoc-in [:kaocha/tests 0 :kaocha/test-paths] [(str test-dir)]))
-        finish? (atom false)
-        q       (w/make-queue)
-        out-val (promise)]
-    (integration/spit-file m "tests.edn" (prn-str config))
-    (integration/spit-dir m "test/somedir")
-
-    (future (deliver out-val (t/with-test-out
-                               (util/with-test-ctx
-                                 (try
-                                  (try+
-                                    (w/run* config finish? q)
-                                    (catch :kaocha/early-exit e
-                                      :caught)))))))
-
-    (Thread/sleep 100)
-    (w/qput q (clojure.java.io/file (.resolve (:dir m) "test/somedir")))
-    (Thread/sleep 100)
-    (reset! finish? true)
-    (w/qput q :finish)
-
-    (is (= {:report [], :result nil} @out-val))))
-
 (deftest watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file
   ; is checked via ./bin/kaocha with --watch mode
