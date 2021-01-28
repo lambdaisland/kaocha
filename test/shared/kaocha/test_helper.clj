@@ -14,7 +14,7 @@
 
 (extend-protocol mc.core/Matcher
   clojure.lang.Var
-  (-match [this actual]
+  (match [this actual]
     (if (= this actual)
       {::mc.result/type :match
        ::mc.result/value actual
@@ -23,8 +23,7 @@
        ::mc.result/value (if (and (keyword? actual) (= ::mc.core/missing actual))
                            (mc.model/->Missing this)
                            (mc.model/->Mismatch this actual))
-       ::mc.result/weight 1}))
-  (-matcher-for [this] this))
+       ::mc.result/weight 1})))
 
 ;; TODO move to kaocha.assertions
 
