@@ -96,6 +96,13 @@
                    ;Example: 'src/test ' => 'src/test'
                    (str/replace #"([^\\]) +$" "$1")
 
+                   ;If a Git ppattern contains a double star between path
+                   ;separators, that means zero or more intervening directories.
+                   ;(Java treats this as at least one directory because the path
+                   ;separators are interpreted literally.)
+                   ;Exmple: 'src/**/test'  => 'src**test'
+                   (str/replace #"/[*][*]/" "**")
+
                    ;If a Git pattern contains braces, those should be treated literally
                    ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
                    ; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
