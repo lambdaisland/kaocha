@@ -9,6 +9,7 @@
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
   upon all of the configured STC suites rather than the static
   `:generative-fdef-checks` selector.
+- Provide a warning when no tests are found.
 
 ## Changed
 
