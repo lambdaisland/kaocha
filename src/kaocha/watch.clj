@@ -96,12 +96,22 @@
                    ;Example: 'src/test ' => 'src/test'
                    (str/replace #"([^\\]) +$" "$1")
 
-                   ;If a Git ppattern contains a double star between path
+                   ;If a Git paattern contains a double star bordering no path
+                   ;separators, it basically functions as a single star, AFAICT:
+                   ;Per the man page: "Other consecutive asterisks are
+                   ;considered regular asterisks and will match according to the
+                   ;previous rules." ("other consecutive asterisks" = not
+                   ;preceded, followed, or surounded by separators)
+                   ;
+                   (str/replace #"[^/][*][*][^/]" "*")
+
+                   ;If a Git pattern contains a double star between path
                    ;separators, that means zero or more intervening directories.
                    ;(Java treats this as at least one directory because the path
                    ;separators are interpreted literally.)
                    ;Exmple: 'src/**/test'  => 'src**test'
                    (str/replace #"/[*][*]/" "**")
+
 
                    ;If a Git pattern contains braces, those should be treated literally
                    ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj

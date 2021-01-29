@@ -85,6 +85,8 @@
   (is (w/glob? (.toPath (io/file "src/test.tmp")) [(w/convert "src/**/test.tmp")]))
   (is (w/glob? (.toPath (io/file "src/test2.tmp")) [(w/convert "src/**/*.tmp")]))
 
+  (is (not (w/glob? (.toPath (io/file "src/clj/test.tmp")) [(w/convert "src**test.tmp")])))
+  (is (not (w/glob? (.toPath (io/file "src/test.tmp")) [(w/convert "src**test.tmp")])))
   (is (not (w/glob? (.toPath (io/file "src/ill-advised-filename.clj")) [(w/convert "src/{ill-advised-filename}.clj")]))))
 
 (deftest reload-config-test
