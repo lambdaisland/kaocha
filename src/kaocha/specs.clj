@@ -4,8 +4,15 @@
             [expound.alpha :as expound])
   (:import (java.io FileNotFoundException)))
 
+(defn s-gen [_])
+(defn s-with-gen [spec _] spec)
+(defn s-fspec [_ __] any?)
+
 (try
   (require 'clojure.test.check.generators)
+  (def s-gen @(resolve 'clojure.spec.alpha/gen))
+  (def s-with-gen @(resolve 'clojure.spec.alpha/with-gen))
+  (defmacro s-fspec [& args] `(s/fspec ~@args))
   (catch FileNotFoundException _))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -19,7 +26,7 @@
 
 (s/def :kaocha/plugins (s/coll-of keyword?))
 
-(s/def :kaocha/reporter (s/or :fn      (s/fspec :args (s/cat :m map?))
+(s/def :kaocha/reporter (s/or :fn      (s-fspec :args (s/cat :m map?))
                               :symbol  symbol?
                               :symbols (s/coll-of symbol? :kind vector?)))
 
@@ -61,9 +68,9 @@
 (s/def :kaocha.testable/desc string?)
 
 (s/def :kaocha.testable/wrap
-  (s/with-gen
-    (s/coll-of fn? :into [])
-    #(s/gen #{[]})))
+  (s-with-gen
+   (s/coll-of fn? :into [])
+   #(s-gen #{[]})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan
@@ -78,10 +85,11 @@
                                            (s/keys :req []
                                                    :opt [:kaocha.testable/desc
                                                          :kaocha.test-plan/tests
-                                                         :kaacha.test-plan/load-error])))
+                                                         :kaocha.test-plan/load-error])))
 
-(s/def :kaacha.test-plan/load-error (s/with-gen #(instance? Throwable %)
-                                      #(s/gen #{(ex-info {:oops "not good"} "load error")})))
+(s/def :kaocha.test-plan/load-error (s-with-gen
+                                     #(instance? Throwable %)
+                                     #(s-gen #{(ex-info "load error" {:oops "not good"})})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
@@ -102,9 +110,10 @@
                                                       :kaocha.result/err
                                                       :kaocha.result/time])))
 
-(s/def ::small-int (s/with-gen nat-int?
-                     (constantly (or (some-> (resolve `clojure.test.check.generators/small-integer) deref)
-                                     (s/gen nat-int?)))))
+(s/def ::small-int (s-with-gen
+                    nat-int?
+                    (constantly (or (some-> (resolve `clojure.test.check.generators/small-integer) deref)
+                                    (s-gen nat-int?)))))
 
 (s/def :kaocha.result/count ::small-int)
 (s/def :kaocha.result/pass ::small-int)

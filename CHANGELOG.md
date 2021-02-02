@@ -4,15 +4,42 @@
 
 ## Fixed
 
+- Clearly alert the user that Clojure versions before 1.9 aren't supported, rather than
+    failing on whatever 1.9 functionality happens to be invoked first.
+- Fixed an issue with the definition of spec `:kaocha.test-plan/load-error` that
+    caused a ClassCastException whenever a generator was created for it.
+- Errors when loading plugins are more specific, specifying which namespaces, if
+    any, failed to load.
+- Warn when running Kaocha without a configuration file. This is fine for
+    experimenting, but for long-term use, we recommend creating a configuration
+    file to avoid changes in behavior between releases.
+- Provide a warning when no tests are found.
+
+## Changed
+
+# 1.0.732 (2020-11-26 / b418350)
+
+## Fixed
+
+- Fixed an issue with the optional `clojure.test.check` dependency (follow-up)
+
+# 1.0.726 (2020-11-24 / faa6ef6)
+
+## Fixed
+
 - `kaocha.type.spec.test.check` now correctly builds fdef testables with
   configuration options from their enclosing test suites.
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
   upon all of the configured STC suites rather than the static
   `:generative-fdef-checks` selector.
-- Provide a warning when no tests are found.
+- Fix an issue where `clojure.test.check` would be required for Kaocha to work,
+  rather than being an optional dependency
 
 ## Changed
 
+- Breaking! Test configuration (`tests.edn`) is now validated with spec, meaning
+  existing configs may fail. In most cases you should be able to update your
+  config so it is valid, but please do report any issues.
 - `kaocha.plugin.alpha.spec-test-check` now respects a priority of supplied
   configuration. CLI options always take precedence, followed by options
   specified in individual test suites, followed by global options.
