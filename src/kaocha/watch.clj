@@ -92,41 +92,41 @@
   "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
   [pattern] 
   (let [cleaned  (-> pattern 
-                   ;If a Git pattern has a trailing space, it should be stripped (unless escaped)
-                   ;Example: 'src/test ' => 'src/test'
+                   ;;If a Git pattern has a trailing space, it should be stripped (unless escaped)
+                   ;;Example: 'src/test ' => 'src/test'
                    (str/replace #"([^\\]) +$" "$1")
 
-                   ;If a Git paattern contains a double star bordering no path
-                   ;separators, it basically functions as a single star, AFAICT:
-                   ;Per the man page: "Other consecutive asterisks are
-                   ;considered regular asterisks and will match according to the
-                   ;previous rules." ("other consecutive asterisks" = not
-                   ;preceded, followed, or surounded by separators)
-                   ;
+                   ;;If a Git pattern contains a double star bordering no path
+                   ;;separators, it basically functions as a single star, AFAICT:
+                   ;;Per the man page: "Other consecutive asterisks are
+                   ;;considered regular asterisks and will match according to the
+                   ;;previous rules." ("other consecutive asterisks" = not
+                   ;;preceded, followed, or surounded by separators)
+                   ;;
                    (str/replace #"[^/][*][*][^/]" "*")
 
-                   ;If a Git pattern contains a double star between path
-                   ;separators, that means zero or more intervening directories.
-                   ;(Java treats this as at least one directory because the path
-                   ;separators are interpreted literally.)
-                   ;Exmple: 'src/**/test'  => 'src**test'
+                   ;;If a Git pattern contains a double star between path
+                   ;;separators, that means zero or more intervening directories.
+                   ;;(Java treats this as at least one directory because the path
+                   ;;separators are interpreted literally.)
+                   ;;Exmple: 'src/**/test'  => 'src**test'
                    (str/replace #"/[*][*]/" "**")
 
 
-                   ;If a Git pattern contains braces, those should be treated literally
-                   ;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
-                   ; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
+                   ;;If a Git pattern contains braces, those should be treated literally
+                   ;;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
+                   ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
                    (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
         (cond 
-                    ;If it starts with a single *, it should have **
-                    ;Example: *.html => **.html
+                    ;;If it starts with a single *, it should have **
+                    ;;Example: *.html => **.html
                     (re-find #"^\*[^*]" cleaned) (str \* cleaned)
 
-                    ;If a Git pattern ends with a slash, that represents everything underneath
-                    ;Example: src/ => src/**
+                    ;;If a Git pattern ends with a slash, that represents everything underneath
+                    ;;Example: src/ => src/**
                     (re-find #"/$" cleaned) (str cleaned "**")
 
-                    ;Otherwise, it should have the same behavior
+                    ;;Otherwise, it should have the same behavior
                     :else cleaned)))
 
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
