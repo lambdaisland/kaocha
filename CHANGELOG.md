@@ -13,6 +13,7 @@
 - Warn when running Kaocha without a configuration file. This is fine for
     experimenting, but for long-term use, we recommend creating a configuration
     file to avoid changes in behavior between releases.
+- Provide a warning when no tests are found.
 
 ## Changed
 

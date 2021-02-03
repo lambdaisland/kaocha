@@ -9,7 +9,8 @@
             [clojure.java.io :as io]
             [kaocha.config :as config]
             [clojure.test :as t]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [slingshot.slingshot :refer [try+]])
   (:import [java.io File]))
 
 (deftest make-queue-test
@@ -87,31 +88,6 @@
                      "foo"
                      prefix)
         @out-str)))
-
-(deftest watch-test-do-not-trigger-on-dir-changes
-  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
-        config (-> (config/load-config config-file)
-                   (assoc-in [:kaocha/cli-options :config-file] (str config-file))
-                   (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
-                   (assoc-in [:kaocha/tests 0 :kaocha/test-paths] [(str test-dir)]))
-        finish? (atom false)
-        q       (w/make-queue)
-        out-str (promise)]
-    (integration/spit-file m "tests.edn" (prn-str config))
-    (integration/spit-dir m "test/somedir")
-
-    (future (deliver out-str (util/with-test-out-str
-                               (t/with-test-out
-                                 (util/with-test-ctx
-                                   (w/run* config finish? q))))))
-
-    (Thread/sleep 100)
-    (w/qput q (clojure.java.io/file (.resolve (:dir m) "test/somedir")))
-    (Thread/sleep 100)
-    (reset! finish? true)
-    (w/qput q :finish)
-
-    (is (= "[]\n0 tests, 0 assertions, 0 failures.\n\n" @out-str))))
 
 (deftest watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file
