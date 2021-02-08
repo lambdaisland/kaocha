@@ -10,8 +10,8 @@
             [kaocha.config :as config]
             [kaocha.core-ext :refer :all]
             [kaocha.output :as output]
-            [kaocha.plugin :as plugin]
             [kaocha.plugin :refer [defplugin]]
+            [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
@@ -117,17 +117,17 @@
                    ;;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
                    ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
                    (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
-        (cond 
-                    ;;If it starts with a single *, it should have **
-                    ;;Example: *.html => **.html
-                    (re-find #"^\*[^*]" cleaned) (str \* cleaned)
+    (cond->> cleaned
+      ;;If it starts with a single *, it should have **
+      ;;Example: *.html => **.html
+      (re-find #"^\*[^*]" cleaned) (format "*%s")
 
-                    ;;If a Git pattern ends with a slash, that represents everything underneath
-                    ;;Example: src/ => src/**
-                    (re-find #"/$" cleaned) (str cleaned "**")
+      ;;If a Git pattern ends with a slash, that represents everything underneath
+      ;;Example: src/ => src/**
+      (re-find #"/$" cleaned) (format "%s**")
 
-                    ;;Otherwise, it should have the same behavior
-                    :else cleaned)))
+      ;;Otherwise, it should have the same behavior
+      )))
 
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
 
