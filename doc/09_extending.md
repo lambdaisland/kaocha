@@ -556,7 +556,7 @@ default output at several levels:
     uses.
 
 Here's a typical failing message and the method responsible for each part:
-![](./extensions.png)
+![Screen shot of failing results. The entire bottom third, which includes a description of a failure, the expected and actual, and the counts of the total number of tests, the number of assertions, and the failures  is outlined in blue and labeled 'result'. The specifics about the first failing test, including the expected and actual is also outlined in blue and labeed 'fail-summary'. Finally, the expected and actual values are outlined in blue and labeled 'print-expr'.](./extensions.png)
 
 We'll start with `result`. The main summary is implemented by the `result`
 method for `:summary`:
