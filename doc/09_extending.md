@@ -491,7 +491,7 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
 ```
 
 The `result` reporter is a special one included in all default reporters that
-takes care of the final results. 
+takes care of the final results.
 
 Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
 
@@ -546,30 +546,49 @@ For a full example have a look at Kaocha's built-in [matcher combinator support]
 #### Overriding the default `result` output ####
 
 
-You can customize the default output at several levels:
+if you want results to be reported differently, you can also customize the
+default output at several levels:
 * Replace `result` with your own for full control over the final results.
-* If you just want to customize the output of failures, override `fail-summary`.
+* you just want to customize the output of failures, override `fail-summary`,
+    which `result` uses.
 * If you want to just customize the part of the failure message that shows both
-    the expected and actual, override `print-expr`
+    the expected and actual, override `print-expr`, which `fail-summary` in turn
+    uses.
 
+Here's a typical failing message and the method responsible for each part:
 ![](./extensions.png)
 
 We'll start with `result`. The main summary is implemented by the `result`
 method for `:summary`:
 
 ```clojure
-(defmethodd result :summary [m] 
- ;Code here
+(defmethod result :summary [m]
+   (println ...)
  )
 ```
 
-Similarly, `fail-summary`:
+Create a similar method in your project and then combine it with the
+desired default reporter in your `tests.edn`:
+
+```edn
+
+ :kaocha/reporter                    [kaocha.report/dots* my.app.kaocha/result]
+
+```
+
+Note that you don't want to use `kaocha.report/dots` reporter here, as that will
+use the default `fail-summary` and you'll end up with both your summary and the
+default one.
+
+
+If you like the general output of `result` but just want the failures to look
+differenty, you can merely override `fail-summary` with your own implementation:
 
 ```clojure
 (defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
+  (println ...)
 )
 ```
-
 
 Finally, you can also override the default `print-expression` if all you want
 is to override the part of `fail-summary` that prints the expected and actual
