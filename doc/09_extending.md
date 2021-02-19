@@ -552,7 +552,7 @@ You can customize the default output at several levels:
 * If you want to just customize the part of the failure message that shows both
     the expected and actual, override `print-expr`
 
-![][./extensions.png]
+![](./extensions.png)
 
 We'll start with `result`. The main summary is implemented by the `result`
 method for `:summary`:
