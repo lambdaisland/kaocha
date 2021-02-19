@@ -379,7 +379,7 @@ Use `kaocha.hierarchy/derive!` to mark your test types as suite/group/leaf.
 ```
 
 When implementing `-load` your job is to transform a configuration testable into
-a test-plan testable, so you should should `dissoc :kaocha/tests` and `assoc
+a test-plan testable, so you should `dissoc :kaocha/tests` and `assoc
 :kaocha.test-plan/tests`.
 
 `-load` is responsible for adding the test directories to the classpath (if this
@@ -441,7 +441,7 @@ This is an example of event types, and the keywords they derive from.
 :foo-test/end-suite     :kaocha/end-suite
 ```
 
-Some notable parent types to inherit from
+Some notable parent types to inherit from:
 
 - `:kaocha/known-key` all events we emit should eventually inherit from
   known-key. Any event we receive that is not a known-key will be propagated to
@@ -492,6 +492,8 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
 
 Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
 
+#### Handling custom assertions ####
+
 A common use case for extending or replacing reporters is to support custom assertion functions which emit their own `:type` of `clojure.test` events.
 
 ``` clojure
@@ -513,9 +515,13 @@ If your event would cause a test to fail, then also mark it as a `:kaocha/fail-t
 (kaocha.hierarchy/derive! ::my-assertion :kaocha/fail-type)
 ```
 
-This way Kaocha's built-in reporters will know that this event indicates a failure, and correctly report it in the test results. It will also cause a default failure message to be rendered based on the `:message`, `:expected`, and `:actual` keys.
+This way Kaocha's built-in reporters will know that this event indicates a
+failure, and correctly report it in the test results. It will also cause a
+default failure message to be rendered based on the `:message`, `:expected`, and
+`:actual` keys.
 
-If you want to provide custom output then add an implementation of the `kaocha.report/fail-summary` multimethod.
+If you want to provide custom output then add an implementation of the
+`kaocha.report/fail-summary` multimethod.
 
 ``` clojure
 (defmulti kaocha.report/fail-summary ::my-assertion [m]
@@ -530,3 +536,5 @@ Built in reporters include
 - `kaocha.report/dots`
 - `kaocha.report/documentation`
 - `kaocha.report.progress/report`
+
+
