@@ -490,7 +490,18 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
   [dots* result])
 ```
 
+The `result` reporter is a special one included in all default reporters that
+takes care of the final results. 
+
 Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
+
+
+Built in reporters include
+
+- `kaocha.report/dots`
+- `kaocha.report/documentation`
+- `kaocha.report.progress/report`
+
 
 #### Handling custom assertions ####
 
@@ -531,10 +542,46 @@ If you want to provide custom output then add an implementation of the
 
 For a full example have a look at Kaocha's built-in [matcher combinator support](https://github.com/lambdaisland/kaocha/blob/ca2d71dbb1e259041fb5314a286d22416ce77555/src/kaocha/matcher_combinators.clj).
 
-Built in reporters include
 
-- `kaocha.report/dots`
-- `kaocha.report/documentation`
-- `kaocha.report.progress/report`
+#### Overriding the default `result` output ####
+
+
+You can customize the default output at several levels:
+* Replace `result` with your own for full control over the final results.
+* If you just want to customize the output of failures, override `fail-summary`.
+* If you want to just customize the part of the failure message that shows both
+    the expected and actual, override `print-expr`
+
+![][./extensions.png]
+
+We'll start with `result`. The main summary is implemented by the `result`
+method for `:summary`:
+
+```clojure
+(defmethodd result :summary [m] 
+ ;Code here
+ )
+```
+
+Similarly, `fail-summary`:
+
+```clojure
+(defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
+)
+```
+
+
+Finally, you can also override the default `print-expression` if all you want
+is to override the part of `fail-summary` that prints the expected and actual
+expressions.
+
+For example, this alternate implementation shows the expected and actual input
+without using `deepdiff`:
+
+``` clojure
+(defmethod kaocha.report/print-expr '= [m]
+  (println "expected:" (pr-str (:expected m)))
+  (println "  actual:" (pr-str (:actual m))))
+```
 
 
