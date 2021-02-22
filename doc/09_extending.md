@@ -71,7 +71,7 @@ info, including nested test-plan testables.
                                                                                ,,,}]}]}]}
 ```
 
-Running these tests is again type specific, each type has an implementation of
+Running these tests is again type specific: Each type has an implementation of
 `kaocha.testable/-run`, which recursively calls `kaocha.testable/run-tests`,
 which collects the results into the test result data structure.
 
@@ -207,7 +207,7 @@ The [hooks chapter](10_hooks.md) has more information about most of these hooks.
 
 ### Tips for developing plugins
 
-Start with the boilerplate, i.e. a namespace + empty defplugin declaration.
+Start with the boilerplate, i.e., a namespace and empty defplugin declaration:
 
 ``` clojure
 (ns my.kaocha.plugin
@@ -259,7 +259,7 @@ when developing from the REPL as well.
 (my.kaocha.plugin/plugin-config-hook (kaocha.repl/config))
 ;; => ???
 ```
-You may wonder why all this boilerplate, e.g. why does the `-register` method
+You may wonder why all this boilerplate, e.g., why does the `-register` method
 have to call `conj`, on the plugin chain, instead of just returning the map with
 hooks? The reason is this allows for plugins to do more complex things, like
 injecting multiple plugins at once, adding a plugin before or after an other
@@ -270,7 +270,7 @@ Generally your hooks will fall into two categories, either you're just using a
 hook to cause some side effect at a certain point in the execution, or you're
 manipulating Kaocha's data structures to change its behavior.
 
-Kaocha is very data driven, so the idea is that e.g. by changing the config or
+Kaocha is very data driven, so the idea is that e.g., by changing the config or
 test-plan you can change its behavior. For instance you can implement special
 test filtering with a `pre-test` hook that does `(assoc testable
 :kaocha.testable/skip true)` when a certain condition is met. Here you'll have
@@ -278,7 +278,7 @@ to poke around the source a bit, look for the place where you would normally
 hack in your change, and then hope that there's a hook there and affordances to
 cause the right behavior.
 
-Final a general tip/best practice: if your plugin is in any way configurable,
+Finally, a general tip/best practice: if your plugin is in any way configurable,
 then it should use the `cli-options` and `config` hooks, in such a way that
 options specified on the CLI override those set in the config. The `cli-options`
 hooks defines your command line flags, then in the `config` hooks you can
@@ -318,7 +318,7 @@ register a Clojure spec with the same name as the suite type.
 Finally a test suite implements two multimethods, one that handles Kaocha's load
 stage, and one that handles the run stage.
 
-Here's a skeleton example of a test suite.
+Here's a skeleton example of a test suite:
 
 ``` clojure
 (ns kaocha.type.clojure.test
@@ -417,12 +417,12 @@ Before invoking the actual test logic, check for `:kaocha.testable/load-error`,
 and if it's there then signal a test error and finish. You can do this with the
 `kaocha.testable/handle-load-error` helper.
 
-During the recursive invocations of `-run` `clojure.test` style events are
+During the recursive invocations of `-run` `clojure.test`-style events are
 emitted by calling `clojure.test/do-report`. Rather than reusing pre-existing
 generic event types you should come up with event types that are specific to
 your test type, then use `kaocha.hierarchy/derive!` to attach semantics to them.
 
-This is an example of event types, and the keywords they derive from.
+This is an example of event types, and the keywords they derive from:
 
 ``` clojure
 :foo-test/begin-suite   :kaocha/begin-suite
@@ -496,16 +496,16 @@ takes care of the final results.
 Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
 
 
-Built in reporters include
+Built-in reporters include:
 
-- `kaocha.report/dots`
-- `kaocha.report/documentation`
-- `kaocha.report.progress/report`
+- `kaocha.report/dots` prints progress as a sequence of dots and letters.
+- `kaocha.report/documentation` prints an overview of all tests bein run using indentation.
+- `kaocha.report.progress/report` shows a progress bar.
 
 
 #### Handling custom assertions ####
 
-A common use case for extending or replacing reporters is to support custom assertion functions which emit their own `:type` of `clojure.test` events.
+A common use case for extending or replacing reporters is to support custom assertion functions that emit their own `:type` of `clojure.test` events.
 
 ``` clojure
 (clojure.test/do-report {:type ::my-assertion, :message ..., :expected ..., :actual ...})
@@ -540,7 +540,7 @@ If you want to provide custom output then add an implementation of the
   )
 ```
 
-For a full example have a look at Kaocha's built-in [matcher combinator support](https://github.com/lambdaisland/kaocha/blob/ca2d71dbb1e259041fb5314a286d22416ce77555/src/kaocha/matcher_combinators.clj).
+For a full example, have a look at Kaocha's built-in [matcher combinator support](https://github.com/lambdaisland/kaocha/blob/ca2d71dbb1e259041fb5314a286d22416ce77555/src/kaocha/matcher_combinators.clj).
 
 
 #### Overriding the default `result` output ####
