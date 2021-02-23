@@ -16,7 +16,7 @@
   (let [cmd (if 
               (re-find #"Windows" (System/getProperty "os.name"))
               "where.exe" "which" )]
-    (= 0 (:exit (sh "which" program)))))
+    (= 0 (:exit (sh cmd program)))))
 
 (defn detect-command []
   (cond
