@@ -13,7 +13,10 @@
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
 
 (defn exists? [program]
-  (= 0 (:exit (sh "which" program))))
+  (let [cmd (if 
+              (re-find #"Windows" (System/getProperty "os.name"))
+              "where.exe" "which" )]
+    (= 0 (:exit (sh "which" program)))))
 
 (defn detect-command []
   (cond
