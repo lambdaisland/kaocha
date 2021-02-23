@@ -71,7 +71,7 @@ info, including nested test-plan testables.
                                                                                ,,,}]}]}]}
 ```
 
-Running these tests is again type specific, each type has an implementation of
+Running these tests is again type specific: Each type has an implementation of
 `kaocha.testable/-run`, which recursively calls `kaocha.testable/run-tests`,
 which collects the results into the test result data structure.
 
@@ -207,7 +207,7 @@ The [hooks chapter](10_hooks.md) has more information about most of these hooks.
 
 ### Tips for developing plugins
 
-Start with the boilerplate, i.e. a namespace + empty defplugin declaration.
+Start with the boilerplate, i.e., a namespace and empty defplugin declaration:
 
 ``` clojure
 (ns my.kaocha.plugin
@@ -259,7 +259,7 @@ when developing from the REPL as well.
 (my.kaocha.plugin/plugin-config-hook (kaocha.repl/config))
 ;; => ???
 ```
-You may wonder why all this boilerplate, e.g. why does the `-register` method
+You may wonder why all this boilerplate, e.g., why does the `-register` method
 have to call `conj`, on the plugin chain, instead of just returning the map with
 hooks? The reason is this allows for plugins to do more complex things, like
 injecting multiple plugins at once, adding a plugin before or after an other
@@ -270,7 +270,7 @@ Generally your hooks will fall into two categories, either you're just using a
 hook to cause some side effect at a certain point in the execution, or you're
 manipulating Kaocha's data structures to change its behavior.
 
-Kaocha is very data driven, so the idea is that e.g. by changing the config or
+Kaocha is very data driven, so the idea is that e.g., by changing the config or
 test-plan you can change its behavior. For instance you can implement special
 test filtering with a `pre-test` hook that does `(assoc testable
 :kaocha.testable/skip true)` when a certain condition is met. Here you'll have
@@ -278,7 +278,7 @@ to poke around the source a bit, look for the place where you would normally
 hack in your change, and then hope that there's a hook there and affordances to
 cause the right behavior.
 
-Final a general tip/best practice: if your plugin is in any way configurable,
+Finally, a general tip/best practice: if your plugin is in any way configurable,
 then it should use the `cli-options` and `config` hooks, in such a way that
 options specified on the CLI override those set in the config. The `cli-options`
 hooks defines your command line flags, then in the `config` hooks you can
@@ -318,7 +318,7 @@ register a Clojure spec with the same name as the suite type.
 Finally a test suite implements two multimethods, one that handles Kaocha's load
 stage, and one that handles the run stage.
 
-Here's a skeleton example of a test suite.
+Here's a skeleton example of a test suite:
 
 ``` clojure
 (ns kaocha.type.clojure.test
@@ -379,7 +379,7 @@ Use `kaocha.hierarchy/derive!` to mark your test types as suite/group/leaf.
 ```
 
 When implementing `-load` your job is to transform a configuration testable into
-a test-plan testable, so you should should `dissoc :kaocha/tests` and `assoc
+a test-plan testable, so you should `dissoc :kaocha/tests` and `assoc
 :kaocha.test-plan/tests`.
 
 `-load` is responsible for adding the test directories to the classpath (if this
@@ -417,12 +417,12 @@ Before invoking the actual test logic, check for `:kaocha.testable/load-error`,
 and if it's there then signal a test error and finish. You can do this with the
 `kaocha.testable/handle-load-error` helper.
 
-During the recursive invocations of `-run` `clojure.test` style events are
+During the recursive invocations of `-run` `clojure.test`-style events are
 emitted by calling `clojure.test/do-report`. Rather than reusing pre-existing
 generic event types you should come up with event types that are specific to
 your test type, then use `kaocha.hierarchy/derive!` to attach semantics to them.
 
-This is an example of event types, and the keywords they derive from.
+This is an example of event types, and the keywords they derive from:
 
 ``` clojure
 :foo-test/begin-suite   :kaocha/begin-suite
@@ -441,7 +441,7 @@ This is an example of event types, and the keywords they derive from.
 :foo-test/end-suite     :kaocha/end-suite
 ```
 
-Some notable parent types to inherit from
+Some notable parent types to inherit from:
 
 - `:kaocha/known-key` all events we emit should eventually inherit from
   known-key. Any event we receive that is not a known-key will be propagated to
@@ -490,9 +490,22 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
   [dots* result])
 ```
 
+The `result` reporter is a special one included in all default reporters that
+takes care of the final results.
+
 Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
 
-A common use case for extending or replacing reporters is to support custom assertion functions which emit their own `:type` of `clojure.test` events.
+
+Built-in reporters include:
+
+- `kaocha.report/dots` prints progress as a sequence of dots and letters.
+- `kaocha.report/documentation` prints an overview of all tests bein run using indentation.
+- `kaocha.report.progress/report` shows a progress bar.
+
+
+#### Handling custom assertions ####
+
+A common use case for extending or replacing reporters is to support custom assertion functions that emit their own `:type` of `clojure.test` events.
 
 ``` clojure
 (clojure.test/do-report {:type ::my-assertion, :message ..., :expected ..., :actual ...})
@@ -513,9 +526,13 @@ If your event would cause a test to fail, then also mark it as a `:kaocha/fail-t
 (kaocha.hierarchy/derive! ::my-assertion :kaocha/fail-type)
 ```
 
-This way Kaocha's built-in reporters will know that this event indicates a failure, and correctly report it in the test results. It will also cause a default failure message to be rendered based on the `:message`, `:expected`, and `:actual` keys.
+This way Kaocha's built-in reporters will know that this event indicates a
+failure, and correctly report it in the test results. It will also cause a
+default failure message to be rendered based on the `:message`, `:expected`, and
+`:actual` keys.
 
-If you want to provide custom output then add an implementation of the `kaocha.report/fail-summary` multimethod.
+If you want to provide custom output then add an implementation of the
+`kaocha.report/fail-summary` multimethod.
 
 ``` clojure
 (defmulti kaocha.report/fail-summary ::my-assertion [m]
@@ -523,10 +540,67 @@ If you want to provide custom output then add an implementation of the `kaocha.r
   )
 ```
 
-For a full example have a look at Kaocha's built-in [matcher combinator support](https://github.com/lambdaisland/kaocha/blob/ca2d71dbb1e259041fb5314a286d22416ce77555/src/kaocha/matcher_combinators.clj).
+For a full example, have a look at Kaocha's built-in [matcher combinator support](https://github.com/lambdaisland/kaocha/blob/ca2d71dbb1e259041fb5314a286d22416ce77555/src/kaocha/matcher_combinators.clj).
 
-Built in reporters include
 
-- `kaocha.report/dots`
-- `kaocha.report/documentation`
-- `kaocha.report.progress/report`
+#### Overriding the default `result` output ####
+
+
+if you want results to be reported differently, you can also customize the
+default output at several levels:
+* Replace `result` with your own for full control over the final results.
+* you just want to customize the output of failures, override `fail-summary`,
+    which `result` uses.
+* If you want to just customize the part of the failure message that shows both
+    the expected and actual, override `print-expr`, which `fail-summary` in turn
+    uses.
+
+Here's a typical failing message and the method responsible for each part:
+![Screen shot of failing results. The entire bottom third, which includes a description of a failure, the expected and actual, and the counts of the total number of tests, the number of assertions, and the failures  is outlined in blue and labeled 'result'. The specifics about the first failing test, including the expected and actual is also outlined in blue and labeed 'fail-summary'. Finally, the expected and actual values are outlined in blue and labeled 'print-expr'.](./extensions.png)
+
+We'll start with `result`. The main summary is implemented by the `result`
+method for `:summary`:
+
+```clojure
+(defmethod result :summary [m]
+   (println ...)
+ )
+```
+
+Create a similar method in your project and then combine it with the
+desired default reporter in your `tests.edn`:
+
+```edn
+
+ :kaocha/reporter                    [kaocha.report/dots* my.app.kaocha/result]
+
+```
+
+Note that you don't want to use `kaocha.report/dots` reporter here, as that will
+use the default `fail-summary` and you'll end up with both your summary and the
+default one.
+
+
+If you like the general output of `result` but just want the failures to look
+differenty, you can merely override `fail-summary` with your own implementation:
+
+```clojure
+(defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
+  (println ...)
+)
+```
+
+Finally, you can also override the default `print-expression` if all you want
+is to override the part of `fail-summary` that prints the expected and actual
+expressions.
+
+For example, this alternate implementation shows the expected and actual input
+without using `deepdiff`:
+
+``` clojure
+(defmethod kaocha.report/print-expr '= [m]
+  (println "expected:" (pr-str (:expected m)))
+  (println "  actual:" (pr-str (:actual m))))
+```
+
+
