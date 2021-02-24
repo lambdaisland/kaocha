@@ -6,8 +6,10 @@
             [kaocha.result :as result]
             [kaocha.shellwords :refer [shellwords]]
             [clojure.string :as str]
-            [clojure.java.io :as io])
-  (:import [java.nio.file Files]))
+            [clojure.java.io :as io]
+            [slingshot.slingshot :refer [throw+]])
+  (:import [java.nio.file Files]
+           [java.io IOException] ))
 
 ;; special thanks for terminal-notify stuff to
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
@@ -16,7 +18,10 @@
   (let [cmd (if 
               (re-find #"Windows" (System/getProperty "os.name"))
               "where.exe" "which" )]
-    (= 0 (:exit (sh cmd program)))))
+    (try 
+      (= 0 (:exit (sh cmd program)))
+      (catch IOException e  ;in the unlikely event where.exe or which isn't available
+        (throw+ {:kaocha/early-exit 0} e)))))
 
 (defn detect-command []
   (cond
