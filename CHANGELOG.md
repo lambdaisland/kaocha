@@ -27,6 +27,8 @@
 
 ## Fixed
 
+- `If the value of a configuration key is not a collection or symbol,
+  a more helpful error message is output. Fixes #124`
 - `kaocha.type.spec.test.check` now correctly builds fdef testables with
   configuration options from their enclosing test suites.
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based
