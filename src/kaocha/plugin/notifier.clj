@@ -2,6 +2,7 @@
   {:authors ["Ryan McCuaig (@rgm)"
              "Arne Brasseur (@plexus)"]}
   (:require [clojure.java.shell :refer [sh]]
+            [kaocha.output :as output]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.result :as result]
             [kaocha.shellwords :refer [shellwords]]
@@ -21,7 +22,7 @@
     (try 
       (= 0 (:exit (sh cmd program)))
       (catch IOException e  ;in the unlikely event where.exe or which isn't available
-        (throw+ {:kaocha/early-exit 0} e)))))
+        (output/warn (format "Unable to determine whether '%s' exists." program)) ))))
 
 (defn detect-command []
   (cond
