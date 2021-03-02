@@ -6,7 +6,7 @@ For information on *writing* plugins, see the section on [extending Kaocha](09_e
 
 ## Profiling
 
-The profiling plugin will output a list of the slowest tests for each test type at the end of the test run.
+The profiling plugin outputs a list of the slowest tests for each test type at the end of the test run.
 
 ### Enabling
 
@@ -140,7 +140,7 @@ some keys so the output isn't too noisy. By defaults only prints
 `:kaocha.testable/id` and `:kaocha.testable/type`, or for `pre-report` it prints
 `:type`, `:file`, `:line`.
 
-To customize which keys to print, use Kaocha's "bindings" functionality, in `tests.edn`.
+To customize which keys to print, use Kaocha's "bindings" functionality, in `tests.edn`:
 
 ``` clojure
 :kaocha/bindings {kaocha.plugin.debug/*keys* [,,,]}

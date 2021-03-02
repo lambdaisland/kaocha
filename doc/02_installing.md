@@ -25,11 +25,11 @@ In `deps.edn`, create a `test` "alias" (profile) that loads the `lambdaisland/ka
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.732"}}}}}
 ```
 
-Other dependencies that are only used for tests like test framework or assertion
-libraries can also go here.
+Other dependencies that are only used for tests, like test framework or assertion
+libraries, can also go here.
 
 Next create a `bin/kaocha` wrapper script. Having it in this location is
-strongly recommended, as its where developers coming from other projects will
+strongly recommended, as it's where developers coming from other projects will
 expect to find it.
 
 In it invoke `clojure` with the `:test` alias and the `kaocha.runner` main
@@ -42,7 +42,7 @@ namespace. This is what `bin/kaocha` by default looks like. Make sure to add
 clojure -A:test -m kaocha.runner "$@"
 ```
 
-Make sure the script is executable
+Make sure the script is executable:
 
 ``` shell
 chmod +x bin/kaocha
