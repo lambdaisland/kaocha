@@ -22,13 +22,13 @@ focused, while making it easy to experiment with new features.
 To use Kaocha you create a `tests.edn` at the root of your project, and run
 tests from the command line or from the REPL.
 
-Features include
+Features include:
 
 - Filtering tests based on test names or metadata
 - Watch mode: watch the file system for changes and re-run tests
 - Pretty, pluggable reporting
 - Randomize test order
-- Detect when interrupted with ctrl-C and print report
+- Detect when interrupted with Ctrl-C and print report
 - Fail fast mode: stop at first failure and print report
 - Profiling (show slowest tests)
 - Dynamic classpath handling
