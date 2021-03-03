@@ -13,6 +13,7 @@
 - Warn when running Kaocha without a configuration file. This is fine for
     experimenting, but for long-term use, we recommend creating a configuration
     file to avoid changes in behavior between releases.
+- Provide a warning when no tests are found.
 - Fix exception when running Kaocha on Windows with the built-in notification
     plugin enabled.
 
@@ -28,6 +29,8 @@
 
 ## Fixed
 
+- `If the value of a configuration key is not a collection or symbol,
+  a more helpful error message is output. Fixes #124`
 - `kaocha.type.spec.test.check` now correctly builds fdef testables with
   configuration options from their enclosing test suites.
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based

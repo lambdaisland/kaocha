@@ -4,7 +4,7 @@ For REPL use there's the
 [kaocha.repl](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/api/kaocha.repl)
 namespace. Its main entry point is the
 [run](https://cljdoc.xyz/d/lambdaisland/kaocha/CURRENT/api/kaocha.repl#run)
-function. Calling it is similar to starting Kaocha from the CLI, it will load
+function. Calling it is similar to starting Kaocha from the CLI: It will load
 `tests.edn`, merge in any extra options and flags, and then load and run your
 test suites.
 
@@ -25,7 +25,7 @@ containing two tests.
 
 ```
 
-You could run the whole suite
+You could run the whole suite...
 
 ``` clojure
 (require '[kaocha.repl :as k])
@@ -33,13 +33,13 @@ You could run the whole suite
 (k/run :unit)
 ```
 
-The namespace
+...the namespace...
 
 ``` clojure
 (k/run 'kaocha.random-test)
 ```
 
-Or specific test vars
+...or specific test vars:
 
 ``` clojure
 (k/run 'kaocha.random-test/rand-ints-test 'kaocha.random-test/randomize-test)
@@ -60,7 +60,7 @@ understand namespace and var objects.
 ## Passing configuration
 
 If the last argument to `(k/run)` is a map, then it is considered extra
-configuration which is applied on top of what is read from `tests.edn`. The
+configuration and is applied on top of what is read from `tests.edn`. The
 special key `:config-file` is available to change the location from which
 `tests.edn` is read.
 
@@ -94,7 +94,7 @@ To enable live reloading of tests in your REPL session, you can call
 `(kaocha.watch/run (kaocha.repl/config))`. This will use all your standard 
 config options, including watching the tests.edn file.
 
-## Config and Test plan
+## Accessing configuration and test plans
 
 The `(kaocha.repl/config)` and `(kaocha.repl/test-plan)` functions are very
 useful when diagnosing issues, and can be helpful when developing plugins or

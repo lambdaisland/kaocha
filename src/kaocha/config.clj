@@ -21,7 +21,12 @@
   (if-let [v (get config k)]
     (if (#{:prepend :append} (meta v))
       config
-      (update config k vary-meta assoc :replace true))
+      (if (or (coll? v)
+              (symbol? v))
+        (update config k vary-meta assoc :replace true)
+        (do
+         (output/error "Test suite configuration value with key " k " should be a collection or symbol, but got '" v "' of type " (type v))
+         (throw+ {:kaocha/early-exit 252}))))
     config))
 
 (defn merge-config [c1 c2]

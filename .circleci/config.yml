@@ -27,7 +27,7 @@ jobs:
                 args: "integration --reporter documentation --plugin cloverage --codecov"
                 clojure_version: << parameters.clojure_version >>
             - kaocha/execute:
-                args: "generative-fdef-checks --reporter documentation"
+                args: "generative-fdef-checks --reporter documentation --stc-num-tests 50"
                 clojure_version: << parameters.clojure_version >>
       - kaocha/upload_codecov:
           flags: integration

@@ -2,7 +2,7 @@
 
 Kaocha aims to be flexible and adaptable, so that you are able to do things with
 it that the authors did not anticipate. We achieve this goal by being
-data-driven, and by providing hooks. Data-driven means that Kaocha's behavior is
+data-driven and by providing hooks. Data-driven means that Kaocha's behavior is
 determined by plain data structures. By manipulating these data structures you
 can change how Kaocha behaves.
 
@@ -29,7 +29,7 @@ important background since to use hooks well you need to have some understanding
 of how Kaocha's process works. It's a good idea to read through at least the
 "Concepts" section, and perhaps refer to it later on.
 
-**Note that hooks/plugins are not the only way to extend Kaocha. If you want to
+**Note that hooks and plugins are not the only way to extend Kaocha. If you want to
 customize how Kaocha reports test run events on the command line then the
 recommended way to do this is through a custom reporter.**
 
@@ -149,7 +149,7 @@ true.
 
 ## Suite level hooks
 
-Generally hooks are always declared at the top level of your test configuration
+Generally hooks are declared at the top level of your test configuration
 (`tests.edn`), but the testable-level hooks can also be declared on a test
 suite. These are `pre-load-test`, `post-load-test`, `pre-test`, `post-test`.
 When declared like this they will be called before/after that specific suite
@@ -168,7 +168,7 @@ compilation and JavaScript runtime.
 ### wrap-run
 
 Most of Kaocha's hooks have `pre-` and `post-` variants, but we don't have
-"around" hooks. This can be annoying e.g. when setting up dynamic bindings on a
+"around" hooks. This can be annoying, e.g., when setting up dynamic bindings on a
 per-test level, in this case you can use `wrap-run` to "wrap" Kaocha's run
 function.
 
@@ -186,7 +186,7 @@ In particular this wraps `kaocha.testable/-run`, so it receives a two argument f
 
 ### Pre-report
 
-Kaocha reporters are based on Clojure.test reporters, they are functions that
+Kaocha reporters are based on Clojure.test reporters. They are functions that
 receive "events" (map with a `:type` key), and based on those they print out
 information to the terminal.
 
@@ -199,7 +199,7 @@ order from `(= actual expected)` to `(= expected actual)`.
 
 ### Post-summary
 
-This is the final hooks that gets called, it runs after the finally summary has
+This is the final hook that gets called, it runs after the finally summary has
 been printed (after the `:summary` event has fired).
 
 ```

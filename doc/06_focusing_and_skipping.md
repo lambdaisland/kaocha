@@ -3,7 +3,7 @@
 Often you will want to *skip* certain tests, so they don't get run, or you want
 to *focus* on specific tests, so only those get run.
 
-For example:
+For example, you can:
 
 - Skip tests that aren't finished yet
 - Skip tests marked as slow
@@ -66,7 +66,7 @@ bin/kaocha --focus com.my.project-test/foo-test
 
 ### On metadata
 
-Suppose you have test that are checked into source code, but that still need
+Suppose you have tests that are checked into version control, but that still need
 work. You can mark these with a metadata tag:
 
 ``` clojure
@@ -88,19 +88,19 @@ And then run via the command:
 bin/kaocha --focus :unit
 ```
 
-This also works for metadata placed on the test's namespace, or any other
-metadata that a given test type implementation exposes. For example
+This also works for metadata placed in the test's namespace, or any other
+metadata that a given test type implementation exposes. For example,
 kaocha-cucumber converts scenario tags into metadata.
 
 ### Focusing on metadata: special case
 
 `--focus-meta` will only work if at least one test has this metadata tag. If not
 a single test matches then this metadata is ignored. Assuming no other filters
-are in effect this will result in running all tests.
+are in effect, this will result in running all tests.
 
 This way you can configure a certain key in `tests.edn` that you can use when
 you want to zone in on a specific test. Add the metadata to the test and only
-this test runs, remove it and the whole suite runs.
+this test runs, remove it and the whole suite runs:
 
 ``` clojure
 #kaocha/v1
