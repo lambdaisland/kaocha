@@ -11,6 +11,8 @@ jobs:
         type: executor
       clojure_version:
         type: string
+      num_tests:
+        type: integer
     executor: << parameters.os >>
     steps:
       - checkout
