@@ -2,18 +2,27 @@
   {:authors ["Ryan McCuaig (@rgm)"
              "Arne Brasseur (@plexus)"]}
   (:require [clojure.java.shell :refer [sh]]
+            [kaocha.output :as output]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.result :as result]
             [kaocha.shellwords :refer [shellwords]]
             [clojure.string :as str]
-            [clojure.java.io :as io])
-  (:import [java.nio.file Files]))
+            [clojure.java.io :as io]
+            [slingshot.slingshot :refer [throw+]])
+  (:import [java.nio.file Files]
+           [java.io IOException] ))
 
 ;; special thanks for terminal-notify stuff to
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
 
 (defn exists? [program]
-  (= 0 (:exit (sh "which" program))))
+  (let [cmd (if 
+              (re-find #"Windows" (System/getProperty "os.name"))
+              "where.exe" "which" )]
+    (try 
+      (= 0 (:exit (sh cmd program)))
+      (catch IOException e  ;in the unlikely event where.exe or which isn't available
+        (output/warn (format "Unable to determine whether '%s' exists." program)) ))))
 
 (defn detect-command []
   (cond
