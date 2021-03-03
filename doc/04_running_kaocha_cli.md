@@ -68,7 +68,7 @@ helps to track down unintended dependencies between tests.
 
 The random seed will be printed at the start of the test run. On the same code
 base with the same seed you will always get the same test order. This way you
-can e.g. reproduce a test run that failed on a build server.
+can, e.g., reproduce a test run that failed on a build server.
 
 ``` shell
 bin/kaocha --seed 10761431
@@ -96,7 +96,7 @@ available, it is not usable under Clojure CLI, instead it will print the help
 information for Clojure itself.
 
 Conceptually Kaocha goes through three steps: load configuration, load tests,
-run tests. The result of each step is a data structure. You can view these
+and run tests. The result of each step is a data structure. You can view these
 structures (EDN) with `--print-config`, `--print-test-plan`, and
 `--print-result`.
 
