@@ -17,8 +17,7 @@
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
 
 (defn exists? [program]
-  (let [cmd (if 
-              (re-find #"Windows" (System/getProperty "os.name"))
+  (let [cmd (if (re-find #"Windows" (System/getProperty "os.name"))
               "where.exe" "which" )]
     (try 
       (= 0 (:exit (sh cmd program)))
@@ -78,19 +77,16 @@
 
 (defn send-tray-notification 
   "Use Java's built-in functionality to display a notification.
-  
+
   Not preferred over shelling out because the built-in notification sometimes
   looks out of place, and isn't consistently available on Linux."
   [result]
   (try 
     (let [icon (tray-icon "kaocha/clojure_logo.png")
-        urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
-  (.displayMessage icon (title result) (message result) urgency))
+          urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
+      (.displayMessage icon (title result) (message result) urgency))
     (catch java.awt.HeadlessException e
-      (output/info (str "Notification not shown because system is headless. AWT error: " e))
-            
-            )
-    ))
+      (output/warn (str "Notification not shown because system is headless. AWT error: " e)) )))
 
 
 (defn expand-command
@@ -120,6 +116,7 @@
     (apply sh (expand-command command {:message message
                                        :title title
                                        :icon icon
+
                                        :urgency urgency
                                        :count count
                                        :pass pass
