@@ -82,9 +82,15 @@
   Not preferred over shelling out because the built-in notification sometimes
   looks out of place, and isn't consistently available on Linux."
   [result]
-  (let [icon (tray-icon "kaocha/clojure_logo.png")
+  (try 
+    (let [icon (tray-icon "kaocha/clojure_logo.png")
         urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
-  (.displayMessage icon (title result) (message result) urgency)))
+  (.displayMessage icon (title result) (message result) urgency))
+    (catch java.awt.HeadlessException e
+      (output/info (str "Notification not shown because system is headless. AWT error: " e))
+            
+            )
+    ))
 
 
 (defn expand-command
