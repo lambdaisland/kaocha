@@ -155,11 +155,13 @@ duplicated between `tests.edn` and your project configuration (`deps.edn`,
 However, often people will have these paths in their `deps.edn` anyway (e.g. in
 a `:test` or `:dev` profile), so they are accessible for interactive evaluation
 (REPL, in-buffer eval). In some cases you also do not *want* Kaocha to add
-these, because the way we make sure we have a dynamic classloader so we can add
-entries at runtime can confuse third party tools.
+these, because it can confuse third-party tools. This is because Kaocha needs a
+`DynamicClassLoader` to be able to add classpath entries at runtime. If the
+current classloader is not a `DynamicClassLoader` then we set one up ourselves,
+but there have been cases where this caused issues with other tools.
 
 In these cases you can add `:kaocha.testable/skip-add-classpath? false` to the
-test suite definition, to disable this behavior.
+test suite definition to disable this behavior.
 
 ### :kaocha.type/clojure.test
 
