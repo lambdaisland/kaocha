@@ -10,7 +10,8 @@
             [clojure.java.io :as io]
             [kaocha.config :as config]
             [clojure.test :as t]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [slingshot.slingshot :refer [try+]])
   (:import [java.io File]))
 
 (deftest make-queue-test

@@ -17,22 +17,54 @@
     (catch java.io.FileNotFoundException e
       false)))
 
+(defn- try-require-info [n]
+  [(try-require n) n])
+
 (defn try-load-third-party-lib [plugin-name]
   (if (qualified-keyword? plugin-name)
-    (when-not (try-require (symbol (str (namespace plugin-name) "." (name plugin-name))))
-      (try-require (symbol (namespace plugin-name))))
-    (try-require (symbol (name plugin-name)))))
+    (let [full-name (symbol (str (namespace plugin-name) "." (name plugin-name)))
+          [full-name-succeeded _ :as full-name-result] (try-require-info full-name)]
+      (if full-name-succeeded
+        [full-name-result]
+        [full-name-result (try-require-info (symbol (namespace plugin-name)))]))
+    [(try-require-info (symbol (name plugin-name)))]))
 
 (defmulti -register "Add your plugin to the stack"
   (fn [name plugins] name))
 
 (defmethod -register :default [name plugins]
-  (output/error "Couldn't load plugin " name)
-  (throw+ {:kaocha/early-exit 254} nil (str "Couldn't load plugin " name)))
+  (throw+ {:kaocha.plugin/not-loaded name} nil (str "Couldn't load plugin " name)))
 
 (defn register [plugin-name plugin-stack]
-  (try-load-third-party-lib plugin-name)
-  (-register plugin-name plugin-stack))
+  (let [ns-result (try-load-third-party-lib plugin-name)
+        successful-ns (map second (filter first ns-result))
+        failed-ns (map second (filter (complement first) ns-result))
+        plugin-result (try+ (-register plugin-name plugin-stack)
+                            (catch [:kaocha.plugin/not-loaded plugin-name] _ false)) ]
+    (cond
+      ;; Namespaces succeeded, but plugin itself failed.
+      (and (not plugin-result)
+           (every? true? (map first ns-result)))
+      (output/error-and-throw {:kaocha/early-exit 254} nil
+                              (format "Couldn't load plugin %s. The plugin was not defined after loading namespace %s. Is the file missing a defplugin?"
+                                      plugin-name (first successful-ns)))
+
+      ;; Multiple namespaces failed to load.
+      (and (not plugin-result)
+           (> (count failed-ns) 1))
+      (output/error-and-throw
+       {:kaocha/early-exit 254} nil
+       (format "Couldn't load plugin %s. Failed to load namespaces %s. This could be caused by a misspelling or a missing dependency."
+               plugin-name (apply str ( interpose " and " failed-ns))))
+
+      ;; A single namespace failed to load.
+      ;; This is a separate case mostly so we can get the error message's grammar right.
+      (not plugin-result)
+      (output/error-and-throw
+       {:kaocha/early-exit 254} nil
+       (format "Couldn't load plugin %s. Failed to load namespace %s. This could be caused by a misspelling or a missing dependency."
+               plugin-name (first failed-ns))))
+    plugin-result))
 
 (defn normalize-name [plugin-name]
   (if (and (simple-keyword? plugin-name)

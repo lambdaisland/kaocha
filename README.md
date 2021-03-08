@@ -197,7 +197,7 @@ tests found in `src/` and `/test`, in any namespace).
 #kaocha/v1
 {:tests [{:id          :unit
           :test-paths  ["test" "src"]
-          :ns-patterns [".*"]}]}
+          :ns-patterns [".*"]}]
           ;; :reporter kaocha.report.progress/report
           ;; :plugins [:kaocha.plugin/profiling :kaocha.plugin/notifier]
  }
@@ -236,7 +236,7 @@ bin/kaocha --test-help
 
 ## Requirements
 
-Kaocha requirements Clojure 1.9 or later.
+Kaocha requires Clojure 1.9 or later.
 
 <!-- contributing -->
 ## Contributing

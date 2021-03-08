@@ -145,6 +145,24 @@ This is what the `:unit` suite looks like after expansion:
 
 If you don't define any test suites then Kaocha assumes a single `:unit` test suite.
 
+#### Disabling Automatic Classpath Handling
+
+Kaocha will add any entries in `:kaocha/test-paths` to the classpath, if they
+aren't on there already. This is done so this information doesn't need to be
+duplicated between `tests.edn` and your project configuration (`deps.edn`,
+`project.clj`, etc).
+
+However, often people will have these paths in their `deps.edn` anyway (e.g. in
+a `:test` or `:dev` profile), so they are accessible for interactive evaluation
+(REPL, in-buffer eval). In some cases you also do not *want* Kaocha to add
+these, because it can confuse third-party tools. This is because Kaocha needs a
+`DynamicClassLoader` to be able to add classpath entries at runtime. If the
+current classloader is not a `DynamicClassLoader` then we set one up ourselves,
+but there have been cases where this caused issues with other tools.
+
+In these cases you can add `:kaocha.testable/skip-add-classpath? false` to the
+test suite definition to disable this behavior.
+
 ### :kaocha.type/clojure.test
 
 The main test suite type implemented at the moment is one for `clojure.test`,

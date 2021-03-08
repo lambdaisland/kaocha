@@ -1,6 +1,7 @@
 (ns kaocha.config-test
   (:require [clojure.test :refer :all]
-            [kaocha.config :as c]))
+            [kaocha.config :as c]
+            [slingshot.slingshot :refer [try+]]))
 
 (def rename-key @#'c/rename-key)
 
@@ -48,6 +49,14 @@
     (is (= {:kaocha/reporter ['yyy]}
            (c/merge-config {:kaocha/reporter '[xxx]}
                            {:kaocha/reporter '[yyy]})))))
+
+(deftest merge-ns-patterns-issue-124-test
+  (testing "https://github.com/lambdaisland/kaocha/issues/124"
+    (is (= #:kaocha{:early-exit 252}
+           (try+
+            (c/merge-config {:kaocha/ns-patterns "test"} {:kaocha/ns-patterns "test"})
+            (catch :kaocha/early-exit e
+              e))))))
 
 (deftest normalize-test-suite-test
   (testing "namespaces keywords"

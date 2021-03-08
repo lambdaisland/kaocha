@@ -2,18 +2,28 @@
   {:authors ["Ryan McCuaig (@rgm)"
              "Arne Brasseur (@plexus)"]}
   (:require [clojure.java.shell :refer [sh]]
+            [kaocha.output :as output]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.result :as result]
             [kaocha.shellwords :refer [shellwords]]
             [clojure.string :as str]
-            [clojure.java.io :as io])
-  (:import [java.nio.file Files]))
+            [clojure.java.io :as io]
+            [slingshot.slingshot :refer [throw+]])
+  (:import [java.nio.file Files]
+           [java.io IOException] 
+           [java.awt SystemTray TrayIcon  TrayIcon$MessageType Toolkit])) 
 
 ;; special thanks for terminal-notify stuff to
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
 
 (defn exists? [program]
-  (= 0 (:exit (sh "which" program))))
+  (let [cmd (if (re-find #"Windows" (System/getProperty "os.name"))
+              "where.exe" "which" )]
+    (try 
+      (= 0 (:exit (sh cmd program)))
+      (catch IOException e  ;in the unlikely event where.exe or which isn't available
+        (output/warn (format "Unable to determine whether '%s' exists. Notifications may not work." program)) ))))
+
 
 (defn detect-command []
   (cond
@@ -53,6 +63,32 @@
            (io/copy (io/make-input-stream resource {}) file)
            (str file)))))))
 
+
+(def tray-icon
+  "Creates a system tray icon."
+  (memoize
+    (fn [icon-path]
+      (let [tray-icon (-> (Toolkit/getDefaultToolkit) 
+                          (.getImage icon-path)
+                          (TrayIcon. "Kaocha Notification"))]
+        (doto (SystemTray/getSystemTray)
+          (.add tray-icon))
+        tray-icon))))
+
+(defn send-tray-notification 
+  "Use Java's built-in functionality to display a notification.
+
+  Not preferred over shelling out because the built-in notification sometimes
+  looks out of place, and isn't consistently available on Linux."
+  [result]
+  (try 
+    (let [icon (tray-icon "kaocha/clojure_logo.png")
+          urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
+      (.displayMessage icon (title result) (message result) urgency))
+    (catch java.awt.HeadlessException e
+      (output/warn (str "Notification not shown because system is headless. AWT error: " e)) )))
+
+
 (defn expand-command
   "Takes a command string including replacement patterns, and a map of
   replacements, and returns a vector of command + arguments.
@@ -80,6 +116,7 @@
     (apply sh (expand-command command {:message message
                                        :title title
                                        :icon icon
+
                                        :urgency urgency
                                        :count count
                                        :pass pass
@@ -110,5 +147,6 @@
 
   (post-run [result]
     (if-let [command (and (::notifications? result) (::command result))]
-      (run-command command result))
+      (run-command command result)
+      (send-tray-notification result))
     result))

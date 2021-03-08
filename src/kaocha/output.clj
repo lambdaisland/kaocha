@@ -1,5 +1,6 @@
 (ns kaocha.output
-  (:require [kaocha.jit :refer [jit]]))
+  (:require [kaocha.jit :refer [jit]]
+            [slingshot.slingshot :refer [throw+]]))
 
 (def ^:dynamic *colored-output* true)
 
@@ -30,6 +31,10 @@
 (defn error [& args]
   (binding [*out* *err*]
     (println (apply str (colored :red "ERROR: ") args))))
+
+(defn error-and-throw [object cause? & args]
+  (apply error args)
+  (throw+ object cause? (apply str args)))
 
 (defn printer [& [opts]]
   ((jit lambdaisland.deep-diff/printer) (merge {:print-color *colored-output*} opts)))

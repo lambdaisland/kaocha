@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   kaocha: lambdaisland/kaocha@0.0.1
-  clojure: lambdaisland/clojure@0.0.1
+  clojure: lambdaisland/clojure@0.0.2
 
 jobs:
   test:
@@ -27,7 +27,7 @@ jobs:
                 args: "integration --reporter documentation --plugin cloverage --codecov"
                 clojure_version: << parameters.clojure_version >>
             - kaocha/execute:
-                args: "generative-fdef-checks --reporter documentation"
+                args: "generative-fdef-checks --reporter documentation --stc-num-tests 50"
                 clojure_version: << parameters.clojure_version >>
       - kaocha/upload_codecov:
           flags: integration
@@ -39,5 +39,5 @@ workflows:
       - test:
           matrix:
             parameters:
-              os: [clojure/openjdk11, clojure/openjdk8]
+              os: [clojure/openjdk15, clojure/openjdk11, clojure/openjdk8]
               clojure_version: ["1.9.0", "1.10.1"]

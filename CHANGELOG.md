@@ -7,10 +7,18 @@
 
 ## Fixed
 
-- Clearly alert the user that Cloure 1.9 isn't supported, rather than
+- Clearly alert the user that Clojure versions before 1.9 aren't supported, rather than
     failing on whatever 1.9 functionality happens to be invoked first.
 - Fixed an issue with the definition of spec `:kaocha.test-plan/load-error` that
     caused a ClassCastException whenever a generator was created for it.
+- Errors when loading plugins are more specific, specifying which namespaces, if
+    any, failed to load.
+- Warn when running Kaocha without a configuration file. This is fine for
+    experimenting, but for long-term use, we recommend creating a configuration
+    file to avoid changes in behavior between releases.
+- Provide a warning when no tests are found.
+- Fix exception when running Kaocha on Windows with the built-in notification
+    plugin enabled.
 
 ## Changed
 
@@ -24,6 +32,8 @@
 
 ## Fixed
 
+- `If the value of a configuration key is not a collection or symbol,
+  a more helpful error message is output. Fixes #124`
 - `kaocha.type.spec.test.check` now correctly builds fdef testables with
   configuration options from their enclosing test suites.
 - `kaocha.plugin.alpha.spec-test-check` now honors command line arguments based

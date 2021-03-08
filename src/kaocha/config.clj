@@ -6,6 +6,9 @@
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]]))
 
+;the reader literal for the current default:
+(def current-reader 'kaocha/v1)
+
 (defn default-config []
   (aero/read-config (io/resource "kaocha/default_config.edn")))
 
@@ -18,7 +21,12 @@
   (if-let [v (get config k)]
     (if (#{:prepend :append} (meta v))
       config
-      (update config k vary-meta assoc :replace true))
+      (if (or (coll? v)
+              (symbol? v))
+        (update config k vary-meta assoc :replace true)
+        (do
+         (output/error "Test suite configuration value with key " k " should be a collection or symbol, but got '" v "' of type " (type v))
+         (throw+ {:kaocha/early-exit 252}))))
     config))
 
 (defn merge-config [c1 c2]
@@ -80,7 +88,7 @@
       :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [_opts _tag value]
-  (output/warn "The #kaocha reader literal is deprecated, please change it to #kaocha/v1.")
+  (output/warn (format "The #kaocha reader literal is deprecated, please change it to %s." current-reader))
   (-> (default-config)
       (merge-config (normalize value))))
 
