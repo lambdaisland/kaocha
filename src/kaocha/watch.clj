@@ -4,13 +4,14 @@
             [clojure.set :as set]
             [clojure.string :as str]
             [clojure.test :as t]
+            [clojure.spec.alpha :as s]
             [hawk.core :as hawk]
             [kaocha.api :as api]
             [kaocha.config :as config]
             [kaocha.core-ext :refer :all]
             [kaocha.output :as output]
-            [kaocha.plugin :as plugin]
             [kaocha.plugin :refer [defplugin]]
+            [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
@@ -86,6 +87,81 @@
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
     (some #(.matches % path) patterns)))
 
+
+(defn convert 
+  "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
+  [pattern] 
+  (let [cleaned  (-> pattern 
+                   ;;If a Git pattern has a trailing space, it should be stripped (unless escaped)
+                   ;;Example: 'src/test ' => 'src/test'
+                   (str/replace #"([^\\]) +$" "$1")
+
+                   ;;If a Git pattern contains a double star bordering no path
+                   ;;separators, it basically functions as a single star, AFAICT:
+                   ;;Per the man page: "Other consecutive asterisks are
+                   ;;considered regular asterisks and will match according to the
+                   ;;previous rules." ("other consecutive asterisks" = not
+                   ;;preceded, followed, or surounded by separators)
+                   ;;
+                   (str/replace #"[^/][*][*][^/]" "*")
+
+                   ;;If a Git pattern contains a double star between path
+                   ;;separators, that means zero or more intervening directories.
+                   ;;(Java treats this as at least one directory because the path
+                   ;;separators are interpreted literally.)
+                   ;;Exmple: 'src/**/test'  => 'src**test'
+                   (str/replace #"/[*][*]/" "**")
+
+
+                   ;;If a Git pattern contains braces, those should be treated literally
+                   ;;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
+                   ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
+                   (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
+    (cond->> cleaned
+      ;;If it starts with a single *, it should have **
+      ;;Example: *.html => **.html
+      (re-find #"^\*[^*]" cleaned) (format "*%s")
+
+      ;;If a Git pattern ends with a slash, that represents everything underneath
+      ;;Example: src/ => src/**
+      (re-find #"/$" cleaned) (format "%s**")
+
+      ;;Otherwise, it should have the same behavior
+      )))
+
+(s/fdef convert :args (s/cat :pattern string?) :ret string?)
+
+
+(defn parse-ignore-file 
+  "Parses an individual ignore file."
+  [file]
+  (->> (slurp file)
+       (str/split-lines)
+       ;filter out comments, which need to be ignored, and negated patterns, which need to be handled separately:
+       (filter #(not (re-find #"^[!#]" %))) 
+       (map #(convert %))))
+
+
+(defn find-ignore-files 
+  "Finds ignore files in the local directory and the system."
+  [dir]
+  (let [absolute-files [(io/file (str (System/getProperty "user.home") "/.config/git/ignore"))]
+        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))]
+    (into absolute-files relative-files))) 
+
+(defn merge-ignore-files 
+  "Combines and parses ignore files."
+  [dir]
+  (let [all-files  (find-ignore-files dir)]
+    (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files )))
+
+
+(s/fdef merge-ignore-files  
+        :args (s/cat :dir string?)
+        :ret (s/coll-of string?) )
+
+
+
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
     (cond
@@ -122,8 +198,10 @@
       (let [result  (try-run config focus tracker)
             tracker (::tracker result)
             error   (::error result)
-            ignore  (::ignore config)]
-
+            ignore  (if  (::use-ignore-file config)
+                      (into (::ignore config)
+                          (merge-ignore-files "."))
+                      (::ignore config))]
         (cond
           error
           (do
@@ -198,7 +276,10 @@ errors as test errors."
 
 (defn run* [config finish? q]
   (let [hawk-opts (::hawk-opts config {})
-        watch-paths (watch-paths config)
+        watch-paths (if (:kaocha.watch/use-ignore-file config) 
+                     (set/union (watch-paths config)
+                                (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
+                     (watch-paths config)) 
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload

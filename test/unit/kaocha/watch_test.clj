@@ -3,6 +3,7 @@
             [kaocha.watch :as w]
             [kaocha.test-util :as util]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
+            [clojure.java.shell :as shell]
             [lambdaisland.tools.namespace.track :as ctn-track]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
             [kaocha.integration-helpers :as integration]
@@ -53,6 +54,44 @@
   (is (w/glob? (.toPath (io/file "xxxx.clj")) ["xxx*"]))
   (is (not (w/glob? (.toPath (io/file "xxxx.clj")) ["xxy*"]))))
 
+(deftest convert-test
+  (is (= "src/**" (w/convert "src/")))
+  (is (= "src/**" (w/convert "src/ ")))
+  (is (= "**.html" (w/convert "*.html")))
+  (is (= "src/\\{ill-advised-filename\\}.clj" (w/convert "src/{ill-advised-filename}.clj")))
+  (is (= "README.md" (w/convert "README.md")))
+  (is (= "README.md" (w/convert "README.md "))))
+
+
+(deftest glob-converted-unchanged-test
+  ; Validate that compatible patterns still match/fail to match after conversion.
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*")]))
+  (is (w/glob? (.toPath (io/file "x.class")) [(w/convert "[a-z].class")]))
+  (is (not (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxy*")])))
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "**xxx.clj")]))
+  (is (w/glob? (.toPath (io/file "test/xxxx.clj")) [(w/convert "**xxx.clj")]))
+  (is (w/glob? (.toPath (io/file "test/xxxx.clj")) [(w/convert "***xxx.clj")]))
+  )
+
+(deftest glob-converted-test
+  ; Validate that incompatible patterns are converted and match after conversion. 
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx* ")])) 
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*  ")]))
+  (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\ ")]))
+  (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\  ")]))
+  (is (w/glob? (.toPath (io/file "xxxx.clj  ")) [(w/convert "xxx*\\ \\ ")]))
+  (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "src/")]))
+  (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "*.class")]))
+  (is (w/glob? (.toPath (io/file "src/clj/test.tmp")) [(w/convert "src/**/test.tmp")]))
+  (is (w/glob? (.toPath (io/file "src/test.tmp")) [(w/convert "src/**/test.tmp")]))
+  (is (w/glob? (.toPath (io/file "src/test/xxx.clj")) [(w/convert "*rc/test/")]))
+  (is (w/glob? (.toPath (io/file "src/xxx.clj")) [(w/convert "*rc/")]))
+  (is (w/glob? (.toPath (io/file "src/test2.tmp")) [(w/convert "src/**/*.tmp")]))
+
+  (is (not (w/glob? (.toPath (io/file "src/clj/test.tmp")) [(w/convert "src**test.tmp")])))
+  (is (not (w/glob? (.toPath (io/file "src/test.tmp")) [(w/convert "src**test.tmp")])))
+  (is (not (w/glob? (.toPath (io/file "src/ill-advised-filename.clj")) [(w/convert "src/{ill-advised-filename}.clj")]))))
+
 (deftest reload-config-test
   (is (match?
        {:kaocha/tests [{:kaocha.testable/id :foo}]}
@@ -88,6 +127,19 @@
                      "foo"
                      prefix)
         @out-str)))
+
+(deftest ignore-files-merged
+  (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
+    (integration/spit-file  m (str test-dir "/.gitignore") "one" )
+    (integration/spit-file  m (str test-dir "/.ignore") "two" )
+    (is (=  #{"one" "two"}  (set (w/merge-ignore-files (str test-dir)))))))
+
+(deftest child-files-merged
+  (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
+    (integration/spit-file  m (str test-dir "/.gitignore") "one" )
+    (integration/spit-dir m (str test-dir "/src/") )
+    (integration/spit-file  m (str test-dir "/src/.gitignore") "two" )
+    (is (=  #{"one" "two"}   (set (w/merge-ignore-files (str test-dir)))))))
 
 (deftest watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file

@@ -69,6 +69,15 @@ there's a lot you can do without having to restart Kaocha.
 - set a fixed seed (when debugging ordering issue)
 - switch to a different reporter
 
+You can tell Kaocha to ignore changes to files matching patterns in `.gitignore`
+or `.ignore` files by setting `:kaocha.watch/use-ignore-file` to `true` in your deps.edn.
+
+Currently these features of `.gitignore` are not supported:
+- Negating patterns. Git allows you to specify patterns for files that should *not* be
+    ignored.
+- Directory-only patterns. PatternMatcher doesn't distinguish between files and
+    directories in paths.
+
 ## Configuring the watcher
 
 Kaocha uses [Hawk](https://github.com/wkf/hawk) to watch the filesystem for
