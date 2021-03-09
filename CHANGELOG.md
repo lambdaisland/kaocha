@@ -12,6 +12,8 @@
 
 - Kaocha watch can now add ignores from `.gitignore` and `.ignore`. To enable
     this feature, set `:kaocha.watch/use-ignore-file` to true in your deps.edn.
+- Kaocha now falls back to the notifications provided by Java's AWT when it can't
+    find `notify-send` or `terminal-notifier`.
 
 ## Fixed
 
