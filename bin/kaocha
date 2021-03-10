@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-clojure -A:dev:test -m kaocha.runner "$@"
+clojure -J-Dline.separator=$'\n' -A:dev:test -m kaocha.runner "$@"
