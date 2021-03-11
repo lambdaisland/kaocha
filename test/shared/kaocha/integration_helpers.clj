@@ -1,6 +1,7 @@
 (ns kaocha.integration-helpers
   (:require [clojure.java.io :as io]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [kaocha.platform :as platform])
   (:import java.io.File
            [java.nio.file Files OpenOption Path Paths]
            [java.nio.file.attribute FileAttribute PosixFilePermissions]))
@@ -95,7 +96,13 @@
                         :always
                         (conj "\"$@\""))))
       (write-deps-edn deps-edn)
-      (Files/setPosixFilePermissions runner (PosixFilePermissions/fromString "rwxr--r--"));
+      (if (platform/on-posix?)
+        (Files/setPosixFilePermissions runner (PosixFilePermissions/fromString "rwxr--r--"));
+        (doto (io/file runner)
+          (.setReadable true true) ; make it readable for everyone
+          (.setWritable true false) ; make it writeable only for the owner
+          (.setExecutable true false)) ; make it executable only for the owner
+        )
       (assoc m
              :dir dir
              :test-dir test-dir
