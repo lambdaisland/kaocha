@@ -3,7 +3,6 @@
             [kaocha.plugin.notifier :as n]
             [clojure.string :as str]
             [kaocha.platform :as platform]
-
             [clojure.java.io :as io]))
 
 (deftest exists?-test
@@ -108,7 +107,6 @@
     (n/notifier-post-run-hook {::n/notifications? true
                                ::n/command (str cmd f1)})
     (is (.isFile (io/file f1)))
-
 
     (n/notifier-post-run-hook {::n/notifications? false
                                ::n/command (str cmd f2)})

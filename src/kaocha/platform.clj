@@ -8,8 +8,6 @@
 
 
 (defn on-posix?
-  "Return whether we're running on a Posix system.
-   "
+  "Return whether we're running on a Posix system."
   []
-  (re-find #"(?ix)(MacOS|Linux)" (System/getProperty "os.name"))
-  )
+  (re-find #"(?ix)(MacOS|Linux)" (System/getProperty "os.name")))
