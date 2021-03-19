@@ -25,7 +25,7 @@
  :clojure.spec.test.check/opts
  #profile {;; Halving the default opts to prevent CircleCI from killing the test
            ;; process for lack of output.
-           :ci {:num-tests 500 :max-size 100}
+           :ci {:num-tests 50 :max-size 100}
            ;; Reducing num-tests by two orders of magnitude in local
            ;; development greatly speeds up iteration time at the expense of
            ;; possible false negatives.
