@@ -101,9 +101,10 @@
                 (when-not (some #(or (hierarchy/leaf? %)
                                      (::testable/load-error %))
                                 (testable/test-seq test-plan))
+                   
                   (output/warn (str "No tests were found, make sure :test-paths and "
                                     ":ns-patterns are configured correctly in tests.edn."))
-                  (throw+ {:kaocha/early-exit 0}))
+                  (throw+ {:kaocha/early-exit 0 }))
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 
