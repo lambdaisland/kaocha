@@ -2,10 +2,12 @@
   (:require [clojure.test :refer :all]
             [kaocha.plugin.notifier :as n]
             [clojure.string :as str]
+            [kaocha.platform :as platform]
             [clojure.java.io :as io]))
 
 (deftest exists?-test
-  (is (n/exists? "cat"))
+  (let [cmd-to-check (if (platform/on-windows?) "cmd.exe" "ls")]
+    (is (n/exists? cmd-to-check)))
   (is (not (n/exists? "nonsense123"))))
 
 (deftest detect-command-test
@@ -96,15 +98,16 @@
               (n/notifier-config-hook {:kaocha/cli-options {:notifications false}}))))
 
 (deftest notifier-post-run-hook-test
-  (let [gen-file-name #(str "/tmp/" (gensym (str (namespace `_) "-" (rand-int 10000))))
+  (let [gen-file-name #(str (System/getProperty "java.io.tmpdir") (System/getProperty "file.separator") 
+                            (gensym (str (namespace `_) "-" (rand-int 10000))))
         f1 (gen-file-name)
-        f2 (gen-file-name)]
+        f2 (gen-file-name)
+        cmd (if (platform/on-windows?) "cmd.exe echo $null >> " "touch ")]
 
     (n/notifier-post-run-hook {::n/notifications? true
-                               ::n/command (str "touch " f1)})
+                               ::n/command (str cmd f1)})
     (is (.isFile (io/file f1)))
 
-
     (n/notifier-post-run-hook {::n/notifications? false
-                               ::n/command (str "touch " f2)})
+                               ::n/command (str cmd f2)})
     (is (not (.isFile (io/file f2))))))

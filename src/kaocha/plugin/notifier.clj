@@ -5,6 +5,7 @@
             [kaocha.output :as output]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.result :as result]
+            [kaocha.platform :as platform]
             [kaocha.shellwords :refer [shellwords]]
             [clojure.string :as str]
             [clojure.java.io :as io]
@@ -17,7 +18,7 @@
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
 
 (defn exists? [program]
-  (let [cmd (if (re-find #"Windows" (System/getProperty "os.name"))
+  (let [cmd (if (platform/on-windows?)
               "where.exe" "which" )]
     (try 
       (= 0 (:exit (sh cmd program)))
