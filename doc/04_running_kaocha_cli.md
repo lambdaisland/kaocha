@@ -88,6 +88,13 @@ test result summary. This is generally what you want, since this way tests that
 pass don't generate distracting noise. If you do want all the output as it
 occurs, use `--no-capture-output`.
 
+Kaocha uses `deep-diff2` when tests fail to distinguish the difference between
+the actual and expected values. If you don't like the format, or if it provides
+unhelpful output in a particular scenario, you can turn it off using the
+`--diff-style :none` option.
+
+![Terminal screenshot showing an expected value of "{:expected-key 1}" and an actual value. ":unexpected-key 1" is in green because it is an extra key not expected and "expected-key 1" is in red because it was expected but not present.][./deep-diff.png]
+
 ## Debug information
 
 `--version` prints version information, whereas `--test-help` will print the

@@ -603,4 +603,7 @@ without using `deepdiff`:
   (println "  actual:" (pr-str (:actual m))))
 ```
 
+(If all you want is to disable, you can use the `--diff-style :none` option or
+add `:diff-style` configuration option.)
+
 
