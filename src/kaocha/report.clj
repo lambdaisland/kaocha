@@ -255,7 +255,9 @@
           (into [:nest]
                 (interpose :break)
                 (for [actual actuals]
-                  (output/format-doc ((jit lambdaisland.deep-diff/diff) expected actual)
+                  (output/format-doc (if (= :none (:diff-style kaocha.testable/*config*))
+                                       actual
+                                       ((jit lambdaisland.deep-diff/diff) expected actual))
                                      printer)))]))
       (output/print-doc
        [:span

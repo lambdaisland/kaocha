@@ -115,12 +115,14 @@
 
 (defn apply-cli-opts [config options]
   (cond-> config
-    (some? (:fail-fast options)) (assoc :kaocha/fail-fast? true)
-    (:reporter options)          (assoc :kaocha/reporter (:reporter options))
-    (:watch options)             (assoc :kaocha/watch? (:watch options))
-    (some? (:color options))     (assoc :kaocha/color? (:color options))
-    (:plugin options)            (update :kaocha/plugins #(distinct (concat % (:plugin options))))
-    true                         (assoc :kaocha/cli-options options)))
+    (some? (:fail-fast options))  (assoc :kaocha/fail-fast? true)
+    (:reporter options)           (assoc :kaocha/reporter (:reporter options))
+    (:watch options)              (assoc :kaocha/watch? (:watch options))
+    (some? (:color options))      (assoc :kaocha/color? (:color options))
+    ;; (some? (:diff-style options)) (assoc :kaocha/diff-style (:diff-style options))
+    (some? (:diff-style options)) (assoc :diff-style (:diff-style options))
+    (:plugin options)             (update :kaocha/plugins #(distinct (concat % (:plugin options))))
+    true                          (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
   (if (seq args)
