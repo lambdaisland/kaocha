@@ -7,13 +7,13 @@
   lambdaisland/tools.namespace {:mvn/version "0.0-237"}
   lambdaisland/deep-diff       {:mvn/version "0.0-47"}
   org.tcrawley/dynapath        {:mvn/version "1.1.0"}
-  slingshot                    {:mvn/version "0.12.2"}
-  hawk                         {:mvn/version "0.2.11"}
-  expound                      {:mvn/version "0.8.5"}
-  orchestra                    {:mvn/version "2020.07.12-1"}
-  aero                         {:mvn/version "1.1.6"}
-  progrock                     {:mvn/version "0.1.2"}
-  meta-merge                   {:mvn/version "1.0.0"}}
+  slingshot/slingshot          {:mvn/version "0.12.2"}
+  hawk/hawk                    {:mvn/version "0.2.11"}
+  expound/expound              {:mvn/version "0.8.5"}
+  orchestra/orchestra          {:mvn/version "2020.07.12-1"}
+  aero/aero                    {:mvn/version "1.1.6"}
+  progrock/progrock            {:mvn/version "0.1.2"}
+  meta-merge/meta-merge        {:mvn/version "1.0.0"}}
 
  :aliases
  {:test
