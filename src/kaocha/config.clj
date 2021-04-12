@@ -119,7 +119,6 @@
     (:reporter options)           (assoc :kaocha/reporter (:reporter options))
     (:watch options)              (assoc :kaocha/watch? (:watch options))
     (some? (:color options))      (assoc :kaocha/color? (:color options))
-    ;; (some? (:diff-style options)) (assoc :kaocha/diff-style (:diff-style options))
     (some? (:diff-style options)) (assoc :diff-style (:diff-style options))
     (:plugin options)             (update :kaocha/plugins #(distinct (concat % (:plugin options))))
     true                          (assoc :kaocha/cli-options options)))

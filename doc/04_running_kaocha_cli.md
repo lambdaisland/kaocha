@@ -93,7 +93,7 @@ the actual and expected values. If you don't like the format, or if it provides
 unhelpful output in a particular scenario, you can turn it off using the
 `--diff-style :none` option.
 
-![Terminal screenshot showing an expected value of "{:expected-key 1}" and an actual value. ":unexpected-key 1" is in green because it is an extra key not expected and "expected-key 1" is in red because it was expected but not present.][./deep-diff.png]
+![Terminal screenshot showing an expected value of "{:expected-key 1}" and an actual value. ":unexpected-key 1" is in green because it is an extra key not expected and "expected-key 1" is in red because it was expected but not present.](./deep-diff.png)
 
 ## Debug information
 
