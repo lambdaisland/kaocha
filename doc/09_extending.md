@@ -595,7 +595,7 @@ is to override the part of `fail-summary` that prints the expected and actual
 expressions.
 
 For example, this alternate implementation shows the expected and actual input
-without using `deepdiff`:
+without using `deep-diff`:
 
 ``` clojure
 (defmethod kaocha.report/print-expr '= [m]
@@ -603,7 +603,7 @@ without using `deepdiff`:
   (println "  actual:" (pr-str (:actual m))))
 ```
 
-(If all you want is to disable, you can use the `--diff-style :none` option or
-add `:diff-style` configuration option.)
+(If all you want is to disable `deep-diff`, you can use the `--diff-style :none` option or
+add `:diff-style :none` to your `tests.edn` file.)
 
 
