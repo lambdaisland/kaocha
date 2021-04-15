@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   kaocha: lambdaisland/kaocha@0.0.1
-  clojure: lambdaisland/clojure@0.0.2
+  clojure: lambdaisland/clojure@dev:0.0.5-rc2
 
 jobs:
   test:
