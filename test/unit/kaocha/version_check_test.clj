@@ -12,10 +12,8 @@
 
 (deftest current-version-does-not-throw
   (is (nil? (binding [*clojure-version* {:major 1 :minor 9}]
-        (v/check-version-minimum 1 9)))))
-
+              (v/check-version-minimum 1 9)))))
 
 (deftest version-2-does-not-throw
   (is (nil? (binding [*clojure-version* {:major 2 :minor 0}]
-        (v/check-version-minimum 1 9)))))
-
+              (v/check-version-minimum 1 9)))))
