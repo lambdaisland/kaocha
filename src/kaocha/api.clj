@@ -98,7 +98,9 @@
           (with-bindings (config/binding-map config)
             (let [config (resolve-reporter config)]
               (let [test-plan (test-plan config)]
-                (when-not (some hierarchy/leaf? (testable/test-seq test-plan))
+                (when-not (some #(or (hierarchy/leaf? %)
+                                     (::testable/load-error %))
+                                (testable/test-seq test-plan))
                   (output/warn (str "No tests were found, make sure :test-paths and "
                                     ":ns-patterns are configured correctly in tests.edn."))
                   (throw+ {:kaocha/early-exit 0}))
