@@ -70,6 +70,7 @@
                 reporter
                 color?
                 fail-fast?
+                diff-style
                 randomize?
                 capture-output?
                 watch?
@@ -82,6 +83,7 @@
       bindings                (assoc :kaocha/bindings bindings)
       (some? color?)          (assoc :kaocha/color? color?)
       (some? fail-fast?)      (assoc :kaocha/fail-fast? fail-fast?)
+      (some? diff-style)      (assoc :kaocha/diff-style diff-style)
       (some? watch?)          (assoc :kaocha/watch? watch?)
       (some? randomize?)      (assoc :kaocha.plugin.randomize/randomize? randomize?)
       (some? capture-output?) (assoc :kaocha.plugin.capture-output/capture-output? capture-output?)
@@ -115,12 +117,13 @@
 
 (defn apply-cli-opts [config options]
   (cond-> config
-    (some? (:fail-fast options)) (assoc :kaocha/fail-fast? true)
-    (:reporter options)          (assoc :kaocha/reporter (:reporter options))
-    (:watch options)             (assoc :kaocha/watch? (:watch options))
-    (some? (:color options))     (assoc :kaocha/color? (:color options))
-    (:plugin options)            (update :kaocha/plugins #(distinct (concat % (:plugin options))))
-    true                         (assoc :kaocha/cli-options options)))
+    (some? (:fail-fast options))  (assoc :kaocha/fail-fast? true)
+    (:reporter options)           (assoc :kaocha/reporter (:reporter options))
+    (:watch options)              (assoc :kaocha/watch? (:watch options))
+    (some? (:color options))      (assoc :kaocha/color? (:color options))
+    (some? (:diff-style options)) (assoc :kaocha/diff-style (:diff-style options))
+    (:plugin options)             (update :kaocha/plugins #(distinct (concat % (:plugin options))))
+    true                          (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
   (if (seq args)
