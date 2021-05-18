@@ -3,6 +3,7 @@
 ## Added
 
 ## Fixed
+- Fix at least some cases of syntax errors being suppressed by the "no tests found" message 
 
 ## Changed
 
