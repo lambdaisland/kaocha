@@ -1,9 +1,10 @@
 # Unreleased
 
 ## Added
+- Formatting of failed test results using deep-diff can be disabled with `--diff-style :none` on the command line or `:diff-style :none` in `tests.edn`.
 
 ## Fixed
-- Fix at least some cases of syntax errors being suppressed by the "no tests found" message 
+- Fix at least some cases of syntax errors being suppressed by the "no tests found" message.
 
 ## Changed
 
