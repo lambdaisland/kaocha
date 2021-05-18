@@ -15,5 +15,5 @@ Feature: Syntax errors are preserved
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (sample_test.clj:0:0).
+    Exception: clojure.lang.Compiler$CompilerException
     """
