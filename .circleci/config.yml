@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   kaocha: lambdaisland/kaocha@0.0.1
   clojure: lambdaisland/clojure@0.0.4
+  win: circleci/windows@2.2.0
 
 jobs:
   test:
@@ -29,6 +30,16 @@ jobs:
       - kaocha/upload_codecov:
           flags: integration
           file: target/coverage/integration*/codecov.json
+  windows-test:
+    executor:
+      name: win/default
+    steps:
+      - run:
+          command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
+          shell: powershell.exe
+      - run:
+          command: Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://download.clojure.org/install/win-install-1.10.3.839.ps1')
+          shell: powershell.exe
 
 workflows:
   kaocha_test:
