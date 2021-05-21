@@ -15,13 +15,14 @@
 ;; TODO: run the cucumber to markdown code from here
 
 (lioss/main
- {:license        :epl
-  :inception-year 2018
-  :description    "Full featured next generation test runner for Clojure."
+ {:license          :epl
+  :inception-year   2018
+  :description      "Full featured next generation test runner for Clojure."
   :pre-release-hook update-docs
-  :commands ["update-docs"
-             {:description "Update the ToC and version strings in md files"
-              :command update-docs}]})
+  :group-id         "lambdaisland"
+  :commands         ["update-docs"
+                     {:description "Update the ToC and version strings in md files"
+                      :command     update-docs}]})
 
 
 ;; Local Variables:
