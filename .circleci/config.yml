@@ -34,6 +34,7 @@ jobs:
     executor:
       name: win/default
     steps:
+      - checkout
       - run:
           command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
           shell: powershell.exe
