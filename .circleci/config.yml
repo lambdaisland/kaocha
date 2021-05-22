@@ -40,6 +40,9 @@ jobs:
       - run:
           command: Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://download.clojure.org/install/win-install-1.10.3.839.ps1')
           shell: powershell.exe
+      - run:
+          command: clojure -h
+          shell: powershell.exe
 
 workflows:
   kaocha_test:
