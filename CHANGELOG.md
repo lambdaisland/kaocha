@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.861 (2021-05-21 / dbfd6e8)
 
 ## Added
 - Formatting of failed test results using deep-diff can be disabled with `--diff-style :none` on the command line or `:diff-style :none` in `tests.edn`.
