@@ -43,6 +43,9 @@ jobs:
       - run:
           command: clojure -h
           shell: powershell.exe
+      - run:
+          command: clojure -J-Dline.separator=$'\n' -A:dev:test -m kaocha.runner
+          shell: powershell.exe
 
 workflows:
   kaocha_test:
