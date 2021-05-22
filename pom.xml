@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.0.829</version>
+  <version>1.0.861</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -22,13 +22,18 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>9151b2d34ec2c4a97d886408deb7d70c65978201</tag>
+    <tag>6b9f64007e2008559863c7673adc5a002f41da25</tag>
   </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
       <version>1.10.1</version>
+    </dependency>
+    <dependency>
+      <groupId>expound</groupId>
+      <artifactId>expound</artifactId>
+      <version>0.8.5</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -46,19 +51,14 @@
       <version>0.0-47</version>
     </dependency>
     <dependency>
-      <groupId>aero</groupId>
-      <artifactId>aero</artifactId>
-      <version>1.1.6</version>
-    </dependency>
-    <dependency>
-      <groupId>orchestra</groupId>
-      <artifactId>orchestra</artifactId>
-      <version>2020.07.12-1</version>
-    </dependency>
-    <dependency>
       <groupId>slingshot</groupId>
       <artifactId>slingshot</artifactId>
       <version>0.12.2</version>
+    </dependency>
+    <dependency>
+      <groupId>aero</groupId>
+      <artifactId>aero</artifactId>
+      <version>1.1.6</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
@@ -66,19 +66,14 @@
       <version>0.0-237</version>
     </dependency>
     <dependency>
-      <groupId>meta-merge</groupId>
-      <artifactId>meta-merge</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>hawk</groupId>
-      <artifactId>hawk</artifactId>
-      <version>0.2.11</version>
-    </dependency>
-    <dependency>
       <groupId>progrock</groupId>
       <artifactId>progrock</artifactId>
       <version>0.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>orchestra</groupId>
+      <artifactId>orchestra</artifactId>
+      <version>2020.07.12-1</version>
     </dependency>
     <dependency>
       <groupId>org.tcrawley</groupId>
@@ -86,9 +81,14 @@
       <version>1.1.0</version>
     </dependency>
     <dependency>
-      <groupId>expound</groupId>
-      <artifactId>expound</artifactId>
-      <version>0.8.5</version>
+      <groupId>hawk</groupId>
+      <artifactId>hawk</artifactId>
+      <version>0.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>meta-merge</groupId>
+      <artifactId>meta-merge</artifactId>
+      <version>1.0.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -114,7 +114,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>9151b2d34ec2c4a97d886408deb7d70c65978201</git-revision>
+              <git-revision>6b9f64007e2008559863c7673adc5a002f41da25</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
