@@ -42,10 +42,12 @@ jobs:
           command: Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://download.clojure.org/install/win-install-1.10.3.839.ps1')
           shell: powershell.exe
       - run:
-          command: clojure -e "(println (System/getProperty `"java.runtime.name`") (System/getProperty `"java.runtime.version`") `"\nClojure`" (clojure-version))"
+          command: clojure -e "(println (System/getProperty \`"java.runtime.name\`") (System/getProperty \`"java.runtime.version\`") \`"`nClojure\`" (clojure-version))"
           shell: powershell.exe
       - run:
-          command: Set-Variable -Name "ErrorActionPreference" -Value "Stop"; clojure "-J-Dline.separator=`n" -A:dev:test -m kaocha.runner  2>&1
+          command: |
+            $erroractionpreference = "Stop"
+            clojure "-J-Dline.separator=`n" -A:dev:test -m kaocha.runner  2>&1
           shell: powershell.exe
 
 workflows:
