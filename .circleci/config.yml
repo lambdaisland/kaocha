@@ -47,7 +47,7 @@ jobs:
       - run:
           command: |
             $ErrorActionPreference = "Stop"
-            clojure "-J-Dline.separator=`n" -A:dev:test -m kaocha.runner  2>&1
+            clojure "-J-Dline.separator=`n" -A:dev:test -m kaocha.runner unit  2>&1
             exit $lastexitcode
           shell: powershell.exe
 
