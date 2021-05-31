@@ -102,7 +102,7 @@
                             (gensym (str (namespace `_) "-" (rand-int 10000))))
         f1 (gen-file-name)
         f2 (gen-file-name)
-        cmd (if (platform/on-windows?) "cmd.exe echo $null >> " "touch ")]
+        cmd (if (platform/on-windows?) "echo.exe $null >> " "touch ")]
 
     (n/notifier-post-run-hook {::n/notifications? true
                                ::n/command (str cmd f1)})
