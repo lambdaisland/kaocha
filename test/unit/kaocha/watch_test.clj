@@ -1,6 +1,7 @@
 (ns kaocha.watch-test
   (:require [clojure.test :refer :all]
             [kaocha.watch :as w]
+            [kaocha.platform :as platform]
             [kaocha.test-util :as util]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
             [clojure.java.shell :as shell]
@@ -77,9 +78,12 @@
   ; Validate that incompatible patterns are converted and match after conversion. 
   (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx* ")])) 
   (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*  ")]))
-  (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\ ")]))
-  (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\  ")]))
-  (is (w/glob? (.toPath (io/file "xxxx.clj  ")) [(w/convert "xxx*\\ \\ ")]))
+  (when-not (platform/on-windows?) 
+    (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\ ")])))
+  (when-not (platform/on-windows?) 
+   (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\  ")])))
+  (when-not (platform/on-windows?) 
+   (is (w/glob? (.toPath (io/file "xxxx.clj  ")) [(w/convert "xxx*\\ \\ ")])))
   (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "src/")]))
   (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "*.class")]))
   (is (w/glob? (.toPath (io/file "src/clj/test.tmp")) [(w/convert "src/**/test.tmp")]))
