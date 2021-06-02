@@ -102,12 +102,12 @@
                             (gensym (str (namespace `_) "-" (rand-int 10000))))
         f1 (gen-file-name)
         f2 (gen-file-name)
-        cmd (if (platform/on-windows?) "echo.exe $null >> " "touch ")]
+        cmd (if (platform/on-windows?) "powershell 'echo.exe $null >> %s'" "touch %s")]
 
     (n/notifier-post-run-hook {::n/notifications? true
-                               ::n/command (str cmd f1)})
+                               ::n/command (format cmd f1)})
     (is (.isFile (io/file f1)))
 
     (n/notifier-post-run-hook {::n/notifications? false
-                               ::n/command (str cmd f2)})
+                               ::n/command (format cmd f2)})
     (is (not (.isFile (io/file f2))))))
