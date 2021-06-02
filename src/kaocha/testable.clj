@@ -10,7 +10,10 @@
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.specs :refer [assert-spec]]
-            [kaocha.util :as util]))
+            [kaocha.util :as util]
+            [kaocha.hierarchy :as hierarchy])
+  (:import [clojure.lang Compiler$CompilerException]
+           [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -211,11 +214,33 @@
         (run % test-plan)
         (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
+(defn f [acc value]
+                     (if (instance? BlockingQueue value)
+                       (.drainTo value acc)
+                       (.put acc value))
+                     acc)
+
+(defn f [acc value] (doto acc (.put value)))
+
+(def q (ArrayBlockingQueue. 1024))
+(def r (ArrayBlockingQueue. 1024))
+
+(.put r 5)
+
+
+(reduce f [q 1 2 r])
+
 (defn run-testables
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-  (let [load-error? (some ::load-error testables)]
-    (loop [result []
+  (let [load-error? (some ::load-error testables)
+        ;; results (watch/make-queue)
+        put-return (fn [acc value]
+                     (if (instance? BlockingQueue value)
+                       (.drainTo value acc)
+                       (.put acc value))
+                     acc)]
+    (loop [result  (ArrayBlockingQueue. 1024)
            [test & testables] testables]
       (if test
         (let [test (cond-> test
@@ -223,8 +248,8 @@
                      (assoc ::skip true))
               r (run-testable test test-plan)]
           (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-            (reduce into result [[r] testables])
-            (recur (conj result r) testables)))
+            (reduce put-return result [[r] testables])
+            (recur (doto result (.put r)) testables)))
         result))))
 
 (defn test-seq [testable]
