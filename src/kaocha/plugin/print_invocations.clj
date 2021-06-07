@@ -20,8 +20,17 @@
                      (str/join
                       " "
                       (mapcat (fn [[k v]]
-                                (if (vector? v)
+                                (cond
+                                  (vector? v)
                                   (mapcat (fn [v] [(str "--" (name k)) v]) v)
+                                  
+                                  (true? v)
+                                  [(str "--" (name k))]
+                                  
+                                  (false? v)
+                                  [(str "--no-" (name k))]
+                                  
+                                  :else
                                   [(str "--" (name k))  v]))
                               (cond-> (dissoc (:kaocha/cli-options results) :focus)
                                 (= "tests.edn" (:config-file (:kaocha/cli-options results)))
