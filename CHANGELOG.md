@@ -3,6 +3,7 @@
 ## Added
 
 ## Fixed
+- Fix printing of boolean options in the print-invocations plugin
 
 ## Changed
 
