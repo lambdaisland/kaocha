@@ -18,7 +18,7 @@
   ;; It's not guaranteed the the fixture-fn returns the result of calling the
   ;; tests function, so we need to put it in a box for reference.
   (let [result (atom (:kaocha.test-plan/tests testable))]
-    (fixture-fn #(swap! result testable/run-testables test-plan))
+    (fixture-fn #(swap! result testable/run-testables-parallel test-plan))
     @result))
 
 (defmethod testable/-load :kaocha.type/ns [testable]
