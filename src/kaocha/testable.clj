@@ -232,14 +232,8 @@
 (defn run-testables
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-  (let [load-error? (some ::load-error testables)
-        ;; results (watch/make-queue)
-        put-return (fn [acc value] 
-                     (if (instance? BlockingQueue value)
-                       (.drainTo value acc)
-                       (.put acc value))
-                     acc)]
-    (loop [result  (ArrayBlockingQueue. 1024)
+  (let [load-error? (some ::load-error testables)]
+    (loop [result  []
            [test & testables] testables]
       (if test
         (let [test (cond-> test
@@ -247,9 +241,38 @@
                      (assoc ::skip true))
               r (run-testable test test-plan)]
           (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-            (reduce put-return result [[r] testables])
-            (recur (doto result (.put r)) testables)))
+            (reduce into result [[r] testables])
+            (recur (conj result r) testables)))
         result))))
+
+
+(defn run-testables-parallel
+  "Run a collection of testables, returning a result collection."
+  [testables test-plan]
+(let [load-error? (some ::load-error testables)
+        ;; results (watch/make-queue)
+        put-return (fn [acc value] 
+                     (if (instance? BlockingQueue value)
+                       (.drainTo value acc)
+                       (.put acc value))
+                     acc)
+        futures (map #(future (run-testable % test-plan)) testables)]
+  (println "Running in parallel!")
+    (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
+           [test & testables] testables]
+      (if test
+        (let [test (cond-> test
+                     (and load-error? (not (::load-error test)))
+                     (assoc ::skip true))
+              r (run-testable test test-plan)]
+          (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
+            ;(reduce put-return result [[r] testables])
+            (reduce into result [[r] testables])
+            ;(recur (doto result (.put r)) testables)
+            (recur (conj result r) testables)))
+        result)))
+    (map deref futures)
+    ))
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
