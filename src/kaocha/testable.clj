@@ -1,16 +1,17 @@
 (ns kaocha.testable
   (:refer-clojure :exclude [load])
-  (:require [clojure.spec.alpha :as s]
-            [kaocha.specs :refer [assert-spec]]
-            [kaocha.history :as history]
-            [kaocha.result :as result]
-            [kaocha.plugin :as plugin]
+  (:require [clojure.java.io :as io]
             [clojure.pprint :as pprint]
-            [clojure.java.io :as io]
-            [kaocha.output :as output]
-            [kaocha.classpath :as classpath]
+            [clojure.spec.alpha :as s]
             [clojure.test :as t]
-            [kaocha.hierarchy :as hierarchy])
+            [kaocha.classpath :as classpath]
+            [kaocha.hierarchy :as hierarchy]
+            [kaocha.history :as history]
+            [kaocha.output :as output]
+            [kaocha.plugin :as plugin]
+            [kaocha.result :as result]
+            [kaocha.specs :refer [assert-spec]]
+            [kaocha.util :as util])
   (:import [clojure.lang Compiler$CompilerException]))
 
 (def ^:dynamic *fail-fast?*
