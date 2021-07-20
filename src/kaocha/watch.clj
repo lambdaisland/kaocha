@@ -2,25 +2,27 @@
   (:refer-clojure :exclude [symbol])
   (:require [clojure.java.io :as io]
             [clojure.set :as set]
+            [clojure.spec.alpha :as s]
+            [clojure.stacktrace :as st]
             [clojure.string :as str]
             [clojure.test :as t]
-            [clojure.spec.alpha :as s]
             [hawk.core :as hawk]
             [kaocha.api :as api]
             [kaocha.config :as config]
             [kaocha.core-ext :refer :all]
+            [kaocha.load :as load]
             [kaocha.output :as output]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
+            [kaocha.util :as util]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
             [lambdaisland.tools.namespace.file :as ctn-file]
             [lambdaisland.tools.namespace.parse :as ctn-parse]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
-            [lambdaisland.tools.namespace.track :as ctn-track]
-            [clojure.stacktrace :as st])
+            [lambdaisland.tools.namespace.track :as ctn-track])
   (:import [java.nio.file FileSystems]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
@@ -87,80 +89,74 @@
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
     (some #(.matches % path) patterns)))
 
-
-(defn convert 
+(defn convert
   "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
-  [pattern] 
-  (let [cleaned  (-> pattern 
-                   ;;If a Git pattern has a trailing space, it should be stripped (unless escaped)
-                   ;;Example: 'src/test ' => 'src/test'
-                   (str/replace #"([^\\]) +$" "$1")
+  [pattern]
+  (let [cleaned  (-> pattern
+                     ;; If a Git pattern has a trailing space, it should be stripped (unless escaped)
+                     ;; Example: 'src/test ' => 'src/test'
+                     (str/replace #"([^\\]) +$" "$1")
 
-                   ;;If a Git pattern contains a double star bordering no path
-                   ;;separators, it basically functions as a single star, AFAICT:
-                   ;;Per the man page: "Other consecutive asterisks are
-                   ;;considered regular asterisks and will match according to the
-                   ;;previous rules." ("other consecutive asterisks" = not
-                   ;;preceded, followed, or surounded by separators)
-                   ;;
-                   (str/replace #"[^/][*][*][^/]" "*")
+                     ;; If a Git pattern contains a double star bordering no path
+                     ;; separators, it basically functions as a single star, AFAICT:
+                     ;; Per the man page: "Other consecutive asterisks are
+                     ;; considered regular asterisks and will match according to the
+                     ;; previous rules." ("other consecutive asterisks" = not
+                     ;; preceded, followed, or surounded by separators)
+                     ;;
+                     (str/replace #"[^/][*][*][^/]" "*")
 
-                   ;;If a Git pattern contains a double star between path
-                   ;;separators, that means zero or more intervening directories.
-                   ;;(Java treats this as at least one directory because the path
-                   ;;separators are interpreted literally.)
-                   ;;Exmple: 'src/**/test'  => 'src**test'
-                   (str/replace #"/[*][*]/" "**")
+                     ;; If a Git pattern contains a double star between path
+                     ;; separators, that means zero or more intervening directories.
+                     ;;(Java treats this as at least one directory because the path
+                     ;; separators are interpreted literally.)
+                     ;; Exmple: 'src/**/test'  => 'src**test'
+                     (str/replace #"/[*][*]/" "**")
 
 
-                   ;;If a Git pattern contains braces, those should be treated literally
-                   ;;Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
-                   ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  ) 
-                   (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
+                     ;; If a Git pattern contains braces, those should be treated literally
+                     ;; Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
+                     ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  )
+                     (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
     (cond->> cleaned
-      ;;If it starts with a single *, it should have **
-      ;;Example: *.html => **.html
+      ;; If it starts with a single *, it should have **
+      ;; Example: *.html => **.html
       (re-find #"^\*[^*]" cleaned) (format "*%s")
 
-      ;;If a Git pattern ends with a slash, that represents everything underneath
-      ;;Example: src/ => src/**
+      ;; If a Git pattern ends with a slash, that represents everything underneath
+      ;; Example: src/ => src/**
       (re-find #"/$" cleaned) (format "%s**")
 
-      ;;Otherwise, it should have the same behavior
+      ;; Otherwise, it should have the same behavior
       )))
 
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
 
-
-(defn parse-ignore-file 
+(defn parse-ignore-file
   "Parses an individual ignore file."
   [file]
   (->> (slurp file)
        (str/split-lines)
-       ;filter out comments, which need to be ignored, and negated patterns, which need to be handled separately:
-       (filter #(not (re-find #"^[!#]" %))) 
+       ;; filter out comments, which need to be ignored, and negated patterns, which need to be handled separately:
+       (filter #(not (re-find #"^[!#]" %)))
        (map #(convert %))))
 
-
-(defn find-ignore-files 
+(defn find-ignore-files
   "Finds ignore files in the local directory and the system."
   [dir]
   (let [absolute-files [(io/file (str (System/getProperty "user.home") "/.config/git/ignore"))]
         relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))]
-    (into absolute-files relative-files))) 
+    (into absolute-files relative-files)))
 
-(defn merge-ignore-files 
+(defn merge-ignore-files
   "Combines and parses ignore files."
   [dir]
   (let [all-files  (find-ignore-files dir)]
     (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files )))
 
-
-(s/fdef merge-ignore-files  
-        :args (s/cat :dir string?)
-        :ret (s/coll-of string?) )
-
-
+(s/fdef merge-ignore-files
+  :args (s/cat :dir string?)
+  :ret (s/coll-of string?))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
@@ -180,11 +176,10 @@
 (defn reload-config [config plugin-chain]
   (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
     (let [{:kaocha/keys [cli-options cli-args]} config
-
-          config       (-> config-file
-                           (config/load-config)
-                           (config/apply-cli-opts cli-options)
-                           (config/apply-cli-args cli-args))
+          config (-> config-file
+                     (config/load-config)
+                     (config/apply-cli-opts cli-options)
+                     (config/apply-cli-args cli-args))
           plugin-chain (plugin/load-all (concat (:kaocha/plugins config) (:plugin cli-options)))]
       [config plugin-chain])
     [config plugin-chain]))
@@ -197,13 +192,13 @@
     (when-not @finish?
       (let [result  (try-run config focus tracker)
             tracker (::tracker result)
-            error   (::error result)
-            ignore  (if  (::use-ignore-file config)
+            error?  (::error? result)
+            ignore  (if (::use-ignore-file config)
                       (into (::ignore config)
-                          (merge-ignore-files "."))
+                            (merge-ignore-files "."))
                       (::ignore config))]
         (cond
-          error
+          error?
           (do
             (println "[watch] Error reloading, all tests skipped.")
             (let [[tracker _] (wait-and-rescan! q tracker watch-paths ignore)
@@ -239,24 +234,24 @@ errors as test errors."
           error-ns   (::ctn-reload/error-ns tracker)
           load-error (::ctn-file/load-error tracker)]
       (if (and error error-ns)
-        (-> config
-            (assoc ::error error ::error-ns error-ns)
-            (update :kaocha/tests
-                    (partial map (fn [t] (assoc t :kaocha.testable/skip true)))))
-        config)))
-
-  (pre-test [test test-plan]
-    (if-let [error (::error test-plan)]
-      (do
-        (t/do-report {:type :error
-                      :kaocha/testable {:kaocha.testable/id :kaocha/watch}
-                      :message (str "Failed reloading ns: " (::error-ns test-plan))
-                      :actual error})
-        (assoc test
-               :kaocha.result/count 1
-               :kaocha.result/error 1
-               ::testable/skip-remaining? true))
-      test)))
+        (let [[file line] (util/compiler-exception-file-and-line error)]
+          (-> config
+              (assoc ::error? true)
+              (update :kaocha/tests
+                      (fn [suites]
+                        ;; We don't really know which suite the load error
+                        ;; belongs to, it could well be in a file shared by all
+                        ;; suites, so we arbitrarily put the load error on the
+                        ;; first and skip the rest, so that it gets reported
+                        ;; properly.
+                        (into [(assoc (first suites)
+                                      ::testable/load-error error
+                                      ::testable/load-error-file (or file (util/ns-file error-ns))
+                                      ::testable/load-error-line line
+                                      ::testable/load-error-message (str "Failed reloading " error-ns ":"))]
+                              (map #(assoc % ::testable/skip true))
+                              (rest suites))))))
+        config))))
 
 (defn watch-paths [config]
   (into #{}
@@ -276,10 +271,10 @@ errors as test errors."
 
 (defn run* [config finish? q]
   (let [hawk-opts (::hawk-opts config {})
-        watch-paths (if (:kaocha.watch/use-ignore-file config) 
+        watch-paths (if (:kaocha.watch/use-ignore-file config)
                      (set/union (watch-paths config)
                                 (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
-                     (watch-paths config)) 
+                     (watch-paths config))
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload

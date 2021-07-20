@@ -44,7 +44,7 @@
     (when (::profiling? result)
       (let [tests     (->> result
                            testable/test-seq
-                           (remove :kaocha.test-plan/load-error)
+                           (remove ::testable/load-error)
                            (remove ::testable/skip))
             types     (group-by :kaocha.testable/type tests)
             total-dur (::duration result)

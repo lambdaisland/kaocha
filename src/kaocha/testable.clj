@@ -150,7 +150,7 @@
       (let [r (if (or (::skip test) (::load-error test))
                 test
                 (load test))]
-        (if (and *fail-fast?* (:kaocha.test-plan/load-error r))
+        (if (and *fail-fast?* (::load-error r))
           (reduce into [[r] result testables]) ;; move failing test to the front
           (recur (conj result r) testables)))
       result)))
@@ -160,23 +160,21 @@
     (cond
       (::load-error test)
       (let [error (::load-error test)
+            [file line] (util/compiler-exception-file-and-line error)
+            file (::load-error-file test file)
+            line (::load-error-line test line)
             m (if-let [message (::load-error-message test)]
                 {:type :error
                  :message message
+                 :actual error
                  :kaocha/testable test}
                 {:type :error
-                 :actual (::load-error test)
+                 :message "Failed loading tests:"
+                 :actual error
                  :kaocha/testable test})
             m (cond-> m
-                (::load-error-file test)
-                (assoc :file (::load-error-file test))
-
-                (::load-error-line test)
-                (assoc :line (::load-error-line test))
-
-                (instance? Compiler$CompilerException error)
-                (assoc :file (.-source ^Compiler$CompilerException error)
-                       :line (.-line ^Compiler$CompilerException error)))]
+                file (assoc :file file)
+                line (assoc :line line))]
         (t/do-report (assoc m :type :kaocha/begin-suite))
         (binding [*fail-fast?* false]
           (t/do-report m))
@@ -237,15 +235,3 @@
     ;; the outer map. When running on an actual testable, do include it.
     (:kaocha.testable/id testable)
     (cons testable)))
-
-(defn load-error? [testable]
-  (boolean (:kaocha.test-plan/load-error testable)))
-
-(defn handle-load-error [testable]
-  (when-let [load-error (:kaocha.test-plan/load-error testable)]
-    (t/do-report {:type                    :error
-                  :message                 "Failed to load namespace."
-                  :expected                nil
-                  :actual                  load-error
-                  :kaocha.result/exception load-error})
-    (assoc testable :kaocha.result/error 1)))
