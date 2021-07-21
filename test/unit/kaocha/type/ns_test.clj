@@ -77,7 +77,7 @@
                                  :kaocha.testable/id      :unit
                                  :kaocha/ns-patterns      ["-test$"]
                                  :kaocha/source-paths     ["src"]
-                                 :kaocha/test-paths       ["fixtures/d-tests"]
+                                 :kaocha/test-paths       ["fixtures/f-tests"]
                                  :kaocha.filter/skip-meta [:kaocha/skip]})
 
         #_(testable/load {:kaocha.testable/type :kaocha.type/ns
@@ -101,4 +101,10 @@
                                          :kaocha.result/fail    0}]}
                 (:result
                  (with-test-ctx {:fail-fast? true}
+                   (testable/run testable testable)))))
+    (is (not (nil? (:result
+                 (binding [testable/*config* (assoc testable/*config* :parallel true)]
+                   (with-test-ctx {:fail-fast? true
+                                 :parallel true }
                    (testable/run testable testable)))))))
+    ))
