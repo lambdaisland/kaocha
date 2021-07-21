@@ -2,6 +2,16 @@
   (:require [clojure.test :as t]
             [kaocha.testable :as testable]))
 
+(defn deref-recur [testables]
+  (cond (future? testables) (deref testables)
+        (vector? testables) (doall (mapv deref-recur testables))
+        (seq? testables) (deref-recur (into [] (doall testables)))
+        (contains? testables :kaocha.test-plan/tests)
+        (update testables :kaocha.test-plan/tests deref-recur)
+        (contains? testables :kaocha.result/tests)
+        (update testables :kaocha.result/tests deref-recur)
+        :else testables))
+
 (defn run [testable test-plan]
   (t/do-report {:type :begin-test-suite})
   (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan) 
