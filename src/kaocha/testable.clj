@@ -232,6 +232,10 @@
 (defn run-testables
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
+  (print "run-testables got a collection of size" (count testables)
+         " the first of which is "
+         (:kaocha.testable/type (first testables))
+         )
   (let [load-error? (some ::load-error testables)]
     (loop [result  []
            [test & testables] testables]
@@ -249,15 +253,16 @@
 (defn run-testables-parallel
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
+
+  (print "run-testables-parallel got a collection of size" (count testables))
 (let [load-error? (some ::load-error testables)
         ;; results (watch/make-queue)
-        put-return (fn [acc value] 
-                     (if (instance? BlockingQueue value)
-                       (.drainTo value acc)
-                       (.put acc value))
-                     acc)
-        futures (map #(future (run-testable % test-plan)) testables)]
-  (println "Running in parallel!")
+        ;; put-return (fn [acc value] 
+        ;;              (if (instance? BlockingQueue value)
+        ;;                (.drainTo value acc)
+        ;;                (.put acc value))
+        ;;              acc)
+        futures (doall (map #(future (do (println "Firing off future!" (Thread/currentThread)) (binding [*config* (dissoc *config* :parallel)] (run-testable % test-plan)))) testables))]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
            [test & testables] testables]
       (if test
@@ -271,8 +276,7 @@
             ;(recur (doto result (.put r)) testables)
             (recur (conj result r) testables)))
         result)))
-    (map deref futures)
-    ))
+   futures))
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
