@@ -44,3 +44,10 @@
                  (plugin/load-all [:kaocha/plugin])
                  (catch ExceptionInfo e
                    nil))))))))
+
+(deftest normalize-name-test
+  (are [input expected] (= expected (plugin/normalize-name input))
+    :abc               :kaocha.plugin/abc
+    :kaocha.plugin/abc :kaocha.plugin/abc
+    :custom-ns/abc     :custom-ns/abc
+    :custom.ns.abc     :custom.ns.abc))

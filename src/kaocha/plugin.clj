@@ -68,7 +68,7 @@
 
 (defn normalize-name [plugin-name]
   (if (and (simple-keyword? plugin-name)
-           (not (str/includes? "." (name plugin-name))))
+           (not (str/includes? (name plugin-name) ".")))
     ;; Namespaces without a period are not valid, we treat these as
     ;; kaocha.plugin/*
     (keyword "kaocha.plugin" (name plugin-name))
