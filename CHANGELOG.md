@@ -4,6 +4,7 @@
 
 ## Fixed
 - Fix printing of boolean options in the print-invocations plugin
+- Fix plugin name normalization
 
 ## Changed
 
