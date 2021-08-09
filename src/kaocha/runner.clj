@@ -1,4 +1,4 @@
-(require 'kaocha.version-check)
+(clojure.core/require 'kaocha.version-check)
 (ns kaocha.runner
   "Main entry point for command line use."
   (:gen-class)

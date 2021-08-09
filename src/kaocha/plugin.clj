@@ -1,4 +1,4 @@
-(require 'kaocha.version-check)
+(clojure.core/require 'kaocha.version-check)
 (ns kaocha.plugin
   (:require [kaocha.output :as output]
             [clojure.string :as str]
