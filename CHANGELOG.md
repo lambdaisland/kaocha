@@ -3,6 +3,7 @@
 ## Added
 
 ## Fixed
+- Fix `could not resolve symbol require` error that occured sporadically when requiring certain kaocha namespaces.
 - Fix printing of boolean options in the print-invocations plugin
 
 ## Changed
