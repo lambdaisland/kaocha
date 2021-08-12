@@ -2,6 +2,8 @@
 
 Full featured next generation test runner for Clojure.
 
+[Jump to Quickstart](#quickstart)
+
 ## Projects
 
 <!-- projects -->
@@ -24,27 +26,6 @@ Full featured next generation test runner for Clojure.
 
 See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cnen/entry/89b3f694bb3a4fd49e3241c6bd1cb79f) for an audio sample.
 
-<!-- opencollective -->
-
-&nbsp;
-
-<img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
-
-&nbsp;
-
-## Support Lambda Island Open Source
-
-kaocha is part of a growing collection of quality Clojure libraries and
-tools released on the Lambda Island label. If you are using this project
-commercially then you are expected to pay it forward by
-[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
-so that we may continue to enjoy a thriving Clojure ecosystem.
-
-&nbsp;
-
-&nbsp;
-
-<!-- /opencollective -->
 
 ## Need help?
 
@@ -237,6 +218,28 @@ bin/kaocha --test-help
 ## Requirements
 
 Kaocha requires Clojure 1.9 or later.
+
+<!-- opencollective -->
+
+&nbsp;
+
+<img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
+
+&nbsp;
+
+## Support Lambda Island Open Source
+
+kaocha is part of a growing collection of quality Clojure libraries and
+tools released on the Lambda Island label. If you are using this project
+commercially then you are expected to pay it forward by
+[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
+so that we may continue to enjoy a thriving Clojure ecosystem.
+
+&nbsp;
+
+&nbsp;
+
+<!-- /opencollective -->
 
 <!-- contributing -->
 ## Contributing
