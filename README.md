@@ -2,7 +2,7 @@
 
 Full featured next generation test runner for Clojure.
 
-[Jump to Quickstart](#quickstart)
+[Jump to Quick start.](#quick-start)
 
 ## Projects
 
