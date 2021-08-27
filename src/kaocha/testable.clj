@@ -47,6 +47,13 @@
       (try-require (symbol (namespace type))))
     (try-require (symbol (name type)))))
 
+
+(defn- try-assert-spec [type testable n]
+  (let [ result (try (assert-spec type testable) (catch Exception _e false))]
+    (if (or result (<= n 1)) result
+    (try-assert-spec type testable (dec n))) ;otherwise, retry
+    ))
+
 (defn- load-type+validate
   "Try to load a testable type, and validate it both to be a valid generic testable, and a valid instance given the type.
 
@@ -60,11 +67,9 @@
   (let [type (::type testable)]
     (try-load-third-party-lib type)
     (try 
-      (assert-spec type testable)
+      (try-assert-spec type testable 3)
       (catch Exception e
-        (prn e)
-        )
-      )))
+        (output/warn  (format "Could not load %s. This is a known bug in parallelization.\n%s" type e))))))
 
 (defmulti -load
   "Given a testable, load the specified tests, producing a test-plan."
@@ -130,10 +135,8 @@
   Also performs validation, and lazy loading of the testable type's
   implementation."
   [testable test-plan]
-  ;; (println (class testable))
+  (load-type+validate testable)
   (binding [*current-testable* testable]
-    ;; (println (:kaocha.testable/id *current-testable*))
-    (load-type+validate testable)
     (let [run (plugin/run-hook :kaocha.hooks/wrap-run -run test-plan)
           result (run testable test-plan)]
       (if-let [history history/*history*]
@@ -220,6 +223,13 @@
         (run % test-plan)
         (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
+
+(defn try-run-testable [test test-plan n]
+  (let [ result (try (run-testable test test-plan) (catch Exception _e false))]
+    (if (or result (> n 1)) result ;success or last try, return
+    (try-run-testable test test-plan (dec n))) ;otherwise retry
+    ))
+
 (defn f [acc value] 
                      (if (instance? BlockingQueue value)
                        (.drainTo value acc)
@@ -274,7 +284,7 @@
                                (println (:parallel *config*) \space (.getName (Thread/currentThread)))
                                (future 
                                  ;(do #_(println "Firing off future!" (Thread/currentThread)) )
-                           (binding [*config* (dissoc *config* :parallel)] (run-testable % test-plan))))
+                           (binding [*config* (dissoc *config* :parallel)] (try-run-testable % test-plan 3))))
                             testables))]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
            [test & testables] testables]
