@@ -68,9 +68,7 @@
                  (with-test-ctx {:fail-fast? true}
                    (testable/run testable testable)))))))
 
-(require '[kaocha.config :as config])
-
-(deftest run-test-parallel ;both tests currently test the parallel version but later...
+(deftest run-test-parallel 
   (classpath/add-classpath "fixtures/f-tests")
 
   (let [testable (testable/load {:kaocha.testable/type    :kaocha.type/clojure.test

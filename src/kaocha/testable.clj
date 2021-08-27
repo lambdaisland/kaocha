@@ -58,7 +58,12 @@
   (assert-spec :kaocha/testable testable)
   (let [type (::type testable)]
     (try-load-third-party-lib type)
-    (assert-spec type testable)))
+    (try 
+      (assert-spec type testable)
+      (catch Exception e
+        (prn e)
+        )
+      )))
 
 (defmulti -load
   "Given a testable, load the specified tests, producing a test-plan."
@@ -126,8 +131,10 @@
   Also performs validation, and lazy loading of the testable type's
   implementation."
   [testable test-plan]
-  (load-type+validate testable)
+  ;; (println (class testable))
   (binding [*current-testable* testable]
+    ;; (println (:kaocha.testable/id *current-testable*))
+    (load-type+validate testable)
     (let [run (plugin/run-hook :kaocha.hooks/wrap-run -run test-plan)
           result (run testable test-plan)]
       (if-let [history history/*history*]
@@ -233,7 +240,8 @@
 (defn run-testables
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-  (print "run-testables got a collection of size" (count testables)
+  (doall testables)
+  #_(print "run-testables got a collection of size" (count testables)
          " the first of which is "
          (:kaocha.testable/type (first testables))
          )
@@ -254,8 +262,8 @@
 (defn run-testables-parallel
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-
-  (print "run-testables-parallel got a collection of size" (count testables))
+  (doall testables)
+  ;; (print "run-testables-parallel got a collection of size" (count testables))
 (let [load-error? (some ::load-error testables)
         ;; results (watch/make-queue)
         ;; put-return (fn [acc value]
@@ -263,7 +271,12 @@
         ;;                (.drainTo value acc)
         ;;                (.put acc value))
         ;;              acc)
-        futures (doall (map #(future (do (println "Firing off future!" (Thread/currentThread)) (binding [*config* (dissoc *config* :parallel)] (run-testable % test-plan)))) testables))]
+        futures (doall (map #(do 
+                               (println (:parallel *config*) \space (.getName (Thread/currentThread)))
+                               (future 
+                                 ;(do #_(println "Firing off future!" (Thread/currentThread)) )
+                           (binding [*config* (dissoc *config* :parallel)] (run-testable % test-plan))))
+                            testables))]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
            [test & testables] testables]
       (if test
