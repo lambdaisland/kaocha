@@ -29,13 +29,17 @@
   and `:line`."
   nil)
 
+
+(def REQUIRE_LOCK (Object.))
+
 (defn add-desc [testable description]
   (assoc testable ::desc
          (str (name (::id testable)) " (" description ")")))
 
 (defn- try-require [n]
   (try
-    (require n)
+    (locking REQUIRE_LOCK
+      (require n))
     true
     (catch java.io.FileNotFoundException e
       false)))
@@ -47,10 +51,10 @@
     (try-require (symbol (name type)))))
 
 
-(defn- try-assert-spec [type testable n]
+(defn- retry-assert-spec [type testable n]
   (let [ result (try (assert-spec type testable) (catch Exception _e false))]
     (if (or result (<= n 1)) result
-    (try-assert-spec type testable (dec n))) ;otherwise, retry
+    (retry-assert-spec type testable (dec n))) ;otherwise, retry
     ))
 
 (defn- load-type+validate
@@ -66,7 +70,7 @@
   (let [type (::type testable)]
     (try-load-third-party-lib type)
     (try
-      (try-assert-spec type testable 3)
+      (assert-spec type testable)
       (catch Exception e
         (output/warn  (format "Could not load %s. This is a known bug in parallelization.\n%s" type e))))))
 
@@ -284,7 +288,7 @@
                                (println (:parallel *config*) \space (.getName (Thread/currentThread)))
                                (future
                                  ;(do #_(println "Firing off future!" (Thread/currentThread)) )
-                           (binding [*config* (dissoc *config* :parallel)] (try-run-testable % test-plan 3))))
+                           (binding [*config* (dissoc *config* :parallel)] (run-testable % test-plan))))
                             testables))]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
            [test & testables] testables]
