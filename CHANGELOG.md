@@ -5,6 +5,7 @@
 ## Fixed
 
 - Fix load-error handling in `kaocha.watch`
+- Fix `could not resolve symbol require` error that occured sporadically when requiring certain kaocha namespaces.
 - Fix printing of boolean options in the print-invocations plugin
 - Fix Java reflection warning in the Notifier plugin
 

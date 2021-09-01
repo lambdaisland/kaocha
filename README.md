@@ -2,6 +2,8 @@
 
 Full featured next generation test runner for Clojure.
 
+Jump to [Quick start](#quick-start) | [Docs](#docs)
+
 ## Projects
 
 <!-- projects -->
@@ -24,27 +26,6 @@ Full featured next generation test runner for Clojure.
 
 See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cnen/entry/89b3f694bb3a4fd49e3241c6bd1cb79f) for an audio sample.
 
-<!-- opencollective -->
-
-&nbsp;
-
-<img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
-
-&nbsp;
-
-## Support Lambda Island Open Source
-
-kaocha is part of a growing collection of quality Clojure libraries and
-tools released on the Lambda Island label. If you are using this project
-commercially then you are expected to pay it forward by
-[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
-so that we may continue to enjoy a thriving Clojure ecosystem.
-
-&nbsp;
-
-&nbsp;
-
-<!-- /opencollective -->
 
 ## Need help?
 
@@ -238,6 +219,28 @@ bin/kaocha --test-help
 
 Kaocha requires Clojure 1.9 or later.
 
+<!-- opencollective -->
+
+&nbsp;
+
+<img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
+
+&nbsp;
+
+## Support Lambda Island Open Source
+
+kaocha is part of a growing collection of quality Clojure libraries and
+tools released on the Lambda Island label. If you are using this project
+commercially then you are expected to pay it forward by
+[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
+so that we may continue to enjoy a thriving Clojure ecosystem.
+
+&nbsp;
+
+&nbsp;
+
+<!-- /opencollective -->
+
 <!-- contributing -->
 ## Contributing
 
@@ -273,7 +276,7 @@ changes are justified.
 <!-- license -->
 ## License
 
-Copyright &copy; 2018-2020 Arne Brasseur and contributors
+Copyright &copy; 2018-2021 Arne Brasseur and contributors
 
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
 <!-- /license -->
