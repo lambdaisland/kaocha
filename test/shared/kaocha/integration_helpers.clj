@@ -67,7 +67,8 @@
       (with-print-namespace-maps false
         (clojure.pprint/pprint {:deps {'lambdaisland/kaocha           {:local/root (project-dir-path)}
                                        'lambdaisland/kaocha-cloverage {:mvn/version "RELEASE"}
-                                       'org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}}})))))
+                                       'org.clojure/test.check        {:mvn/version "0.10.0-alpha3"}
+                                       'orchestra/orchestra           {:mvn/version "2020.07.12-1"}}})))))
 
 (defn test-dir-setup [m]
   (if (:dir m)

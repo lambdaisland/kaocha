@@ -2,28 +2,22 @@
 (ns kaocha.runner
   "Main entry point for command line use."
   (:gen-class)
-  (:require [kaocha.api :as api]
-            [clojure.java.io :as io]
+  (:require [clojure.java.io :as io]
             [clojure.pprint :as pprint]
             [clojure.set :as set]
             [clojure.spec.alpha :as spec]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
             [expound.alpha :as expound]
+            [kaocha.api :as api]
             [kaocha.config :as config]
             [kaocha.jit :refer [jit]]
             [kaocha.output :as output]
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.specs :as specs]
-            [orchestra.spec.test :as orchestra]
-            [slingshot.slingshot :refer [try+ throw+]])
-  (:import [java.io File]))
-
-(orchestra/instrument
- (filter #(or (str/starts-with? (str %) "kaocha.")
-              (str/starts-with? (str %) "lambdaisland."))
-         (map ns-name (all-ns))))
+            [slingshot.slingshot :refer [throw+ try+]])
+  (:import java.io.File))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))
@@ -159,17 +153,17 @@
                                                               (config/load-config (if profile
                                                                                     {:profile profile}
                                                                                     {})))
-          _check_config_file                              (when (not (. (File. (or config-file "tests.edn")) exists)) 
-                                                            (output/warn (format (str "Did not load a configuration file and using the defaults.\n" 
+          _check_config_file                              (when (not (. (File. (or config-file "tests.edn")) exists))
+                                                            (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
                                                                                       "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
                                                                                       "To create a configuration file using the current defaults, create a file named tests.edn that contains '#%s {}'.")
                                                                                  config/current-reader)))
-          _check                                         (try 
+          _check                                         (try
                                                            (specs/assert-spec :kaocha/config config)
-                                                           (catch AssertionError e 
-                                                             (output/error "Invalid configuration file:\n" 
+                                                           (catch AssertionError e
+                                                             (output/error "Invalid configuration file:\n"
                                                                            (.getMessage e))
-                                                             (throw+ {:kaocha/early-exit 252}))) 
+                                                             (throw+ {:kaocha/early-exit 252})))
           plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 

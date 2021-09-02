@@ -3,17 +3,27 @@
 ## Added
 
 ## Fixed
+
+- Fix load-error handling in `kaocha.watch`
 - Fix `could not resolve symbol require` error that occured sporadically when requiring certain kaocha namespaces.
 - Fix printing of boolean options in the print-invocations plugin
+- Fix Java reflection warning in the Notifier plugin
 
 ## Changed
+
+- [BREAKING] Remove the Orchestra dependency, and no longer auto-instrument.
+  You'll have to list Orchestra in your own `deps.edn`/`project.clj` if you want
+  to use the Orchestra plugin.
+- Version bumps of Clojure, tools.cli, spec.alpha, expound
 
 # 1.0.861 (2021-05-21 / dbfd6e8)
 
 ## Added
+
 - Formatting of failed test results using deep-diff can be disabled with `--diff-style :none` on the command line or `:diff-style :none` in `tests.edn`.
 
 ## Fixed
+
 - Fix at least some cases of syntax errors being suppressed by the "no tests found" message.
 
 ## Changed

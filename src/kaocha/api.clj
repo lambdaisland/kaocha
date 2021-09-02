@@ -9,6 +9,7 @@
             [kaocha.plugin :as plugin]
             [kaocha.report :as report]
             [kaocha.result :as result]
+            [kaocha.util :as util]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
             [slingshot.slingshot :refer [try+ throw+]]))
@@ -72,10 +73,10 @@
                                           (if (:kaocha/fail-fast (ex-data e))
                                             (throw e)
                                             (do
-                                              (output/error "Error in reporter: " (ex-data e) " when processing " (:type m))
+                                              (output/error "Error in reporter: " (ex-data e) " when processing " (pr-str (util/minimal-test-event m)))
                                               (stacktrace/print-cause-trace e))))
                                         (catch Throwable t
-                                          (output/error "Error in reporter: " (.getClass t) " when processing " (:type m))
+                                          (output/error "Error in reporter: " (.getClass t) " when processing " (pr-str (util/minimal-test-event m)))
                                           (stacktrace/print-cause-trace t))))))
 
    (catch :kaocha/reporter-not-found {:kaocha/keys [reporter-not-found]}
@@ -101,7 +102,7 @@
                 (when-not (some #(or (hierarchy/leaf? %)
                                      (::testable/load-error %))
                                 (testable/test-seq test-plan))
-                   
+
                   (output/warn (str "No tests were found, make sure :test-paths and "
                                     ":ns-patterns are configured correctly in tests.edn."))
                   (throw+ {:kaocha/early-exit 0 }))

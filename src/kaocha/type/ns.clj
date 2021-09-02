@@ -55,18 +55,14 @@
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
     (type/with-report-counters
       (do-report {:type :begin-test-ns})
-      (if-let [testable (testable/handle-load-error testable)]
-        (do
-          (do-report {:type :end-test-ns})
-          testable)
-        (let [ns-meta         (:kaocha.testable/meta testable)
-              once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
-              tests           (run-tests testable test-plan once-fixture-fn)
-              result          (assoc (dissoc testable :kaocha.test-plan/tests)
-                                :kaocha.result/tests
-                                tests)]
-          (do-report {:type :end-test-ns})
-          result)))))
+      (let [ns-meta         (:kaocha.testable/meta testable)
+            once-fixture-fn (t/join-fixtures (::t/once-fixtures ns-meta))
+            tests           (run-tests testable test-plan once-fixture-fn)
+            result          (assoc (dissoc testable :kaocha.test-plan/tests)
+                                   :kaocha.result/tests
+                                   tests)]
+        (do-report {:type :end-test-ns})
+        result))))
 
 (s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
                                      :kaocha.testable/id

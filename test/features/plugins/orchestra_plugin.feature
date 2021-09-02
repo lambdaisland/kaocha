@@ -50,6 +50,8 @@ Feature: Orchestra (spec instrumentation)
 
     -- Spec failed --------------------
 
+    Return value
+
       "x"
 
     should satisfy

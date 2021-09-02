@@ -1,34 +1,21 @@
 #kaocha/v1
 {:plugins [:kaocha.plugin.alpha/info
-           :kaocha.plugin.alpha/spec-test-check
-           :kaocha.plugin/orchestra
            :profiling
            :print-invocations
            :hooks
            :notifier]
 
- :tests   [{:id         :unit
-            :test-paths ["test/shared"
-                         "test/unit"]}
-           {:id                  :integration
-            :type                :kaocha.type/cucumber
-            :test-paths          ["test/shared"
-                                  "test/features"]
-            :cucumber/glue-paths ["test/step_definitions"]}]
+ :tests [{:id         :unit
+          :test-paths ["test/shared"
+                       "test/unit"]}
+         {:id                  :integration
+          :type                :kaocha.type/cucumber
+          :test-paths          ["test/shared"
+                                "test/features"]
+          :cucumber/glue-paths ["test/step_definitions"]}]
 
  :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
 
  :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []}
-
- :clojure.spec.test.check/instrument? true
- :clojure.spec.test.check/check-asserts? true
- :clojure.spec.test.check/opts
- #profile {;; Halving the default opts to prevent CircleCI from killing the test
-           ;; process for lack of output.
-           :ci {:num-tests 50 :max-size 100}
-           ;; Reducing num-tests by two orders of magnitude in local
-           ;; development greatly speeds up iteration time at the expense of
-           ;; possible false negatives.
-           :default {:num-tests 10}}
 
  :reporter kaocha.report/documentation}
