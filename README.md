@@ -114,6 +114,37 @@ echo 'clojure -A:test -m kaocha.runner "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
 
+#### tools-deps :exec-fn alternative
+
+If you prefer to use the :exec-fn / -X approach, you can setup kaocha this way:
+
+```clojure
+;; deps.edn
+{:deps { ,,, }
+ :aliases 
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec
+         :exec-args {}}}}
+```
+
+The `exec-args` map can contain any long-form CLI args as keyword keys.
+Use `true` as the value for args that don't take one, or `false` to get the
+`--no-whatever` equivalent.
+
+For example, this CLI invocation:
+`bin/kaocha --config-file my-tests.edn --diff-style :deep --fail-fast --no-color`
+
+...would look like this as an `exec-args` map:
+
+``` clojure
+{:config-file "my-tests.edn"
+ :diff-style  :deep
+ :fail-fast   true
+ :color       false}
+```
+
+And then kaocha can be invoked this way: `clojure -X:test`
+
 ### Leiningen
 
 Add a profile and alias
