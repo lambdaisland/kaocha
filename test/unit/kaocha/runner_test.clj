@@ -21,19 +21,3 @@
       (is (= -1 result))
       (is (re-find #"Unknown option: \"--foo\"\n" out))
       (is (re-find #"USAGE:" out)))))
-
-(deftest exec-args->cli-args-test
-  (testing "converts exec-args map to CLI args vector w/ values after arg-names"
-    (let [cli-args (runner/exec-args->cli-args {:config-file "tests.edn"
-                                                :fail-fast   true
-                                                :color       false
-                                                :diff-style  :deep})]
-      (are [arg-name arg-val]
-        (let [arg-index (.indexOf cli-args arg-name)]
-          (and (<= 0 arg-index)
-               (or (= ::no-val arg-val)
-                   (= (inc arg-index) (.indexOf cli-args arg-val)))))
-        "--config-file" "tests.edn"
-        "--fail-fast"   ::no-val
-        "--no-color"    ::no-val
-        "--diff-style"  ":deep"))))

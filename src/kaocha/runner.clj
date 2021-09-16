@@ -187,27 +187,3 @@
    (System/exit (apply -main* args))
    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
      (System/exit exit-code))))
-
-(defn- map-key->arg [k & [prefix]]
-  (->> k name (str "--" (when prefix (str prefix "-")))))
-
-(defn exec-args->cli-args
-  [args]
-  (->> args
-       (reduce-kv (fn [o k v]
-                    (let [[arg val] (cond
-                                      (false? v) [(map-key->arg k "no") nil]
-                                      (true? v) [(map-key->arg k) nil]
-                                      :else [(map-key->arg k) (str v)])]
-                      (conj o arg val)))
-                  [])
-       (remove nil?)))
-
-(defn exec
-  "Entrypoint for Clojure CLI's -X feature; converts the arg map into a
-  clojure.tools.cli args list. Assumes the arg map in deps.edn is composed of
-  long-form args as keyword keys. For args with no values (e.g. --fail-fast),
-  use the value true. If you set these to false, they will be transformed into
-  --no-whatever args."
-  [args]
-  (apply -main (exec-args->cli-args args)))
