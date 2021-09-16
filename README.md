@@ -102,6 +102,26 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}}}}
+```
+
+Add a binstub called `bin/kaocha`
+
+```
+mkdir -p bin
+echo '#!/usr/bin/env sh' > bin/kaocha
+echo 'clojure -A:test -m kaocha.runner "$@"' >> bin/kaocha
+chmod +x bin/kaocha
+```
+
+#### tools-deps :exec-fn alternative
+
+If you prefer to use the :exec-fn / -X approach, you can setup kaocha this way:
+
+```clojure
+;; deps.edn
+{:deps { ,,, }
+ :aliases 
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
          :exec-fn kaocha.runner/exec
          :exec-args {}}}}
@@ -123,14 +143,7 @@ For example, this CLI invocation:
  :color       false}
 ```
 
-Add a binstub called `bin/kaocha`
-
-```
-mkdir -p bin
-echo '#!/usr/bin/env sh' > bin/kaocha
-echo 'clojure -X:test "$@"' >> bin/kaocha
-chmod +x bin/kaocha
-```
+And then kaocha can be invoked this way: `clojure -X:test`
 
 ### Leiningen
 
