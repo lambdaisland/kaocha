@@ -60,6 +60,23 @@
    [nil "--help"                "Display this help message."]
    ["-H" "--test-help"          "Display this help message."]])
 
+
+(defn exec-fn
+  "Entry point for use with deps.tools' -X feature."
+  [m]
+  (try+
+   (let [config (-> (config/load-config)
+                    (config/merge-config (config/normalize m)))]
+     (plugin/with-plugins (plugin/load-all (:kaocha/plugins config))
+       (let [config (plugin/run-hook :kaocha.hooks/config config)]
+         (plugin/run-hook :kaocha.hooks/main config)
+         (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
+               totals (result/totals (:kaocha.result/tests result))
+               exit-code (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)]
+           (System/exit exit-code)))))
+   (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
+     (System/exit exit-code))))
+
 (defn load-props [file-name]
   (with-open [^java.io.Reader reader (io/reader file-name)]
     (let [props (java.util.Properties.)]
