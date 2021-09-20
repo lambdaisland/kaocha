@@ -1,3 +1,11 @@
+# Unreleased
+
+## Added
+
+## Fixed
+
+- Fix only considering public vars when building up the test plan
+
 # 1.0.887 (2021-09-01 / 38470aa)
 
 ## Added

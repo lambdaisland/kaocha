@@ -30,7 +30,7 @@
         ns-meta         (meta ns-obj)
         each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]
     (->> ns-obj
-         ns-publics
+         ns-interns
          (filter (comp :test meta val))
          (sort-by key)
          (map (fn [[sym var]]
