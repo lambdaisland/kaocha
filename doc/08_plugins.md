@@ -16,8 +16,7 @@ bin/kaocha --plugin kaocha.plugin/profiling
 
 or
 
-``` clojure
-#kaocha/v1
+``` clojure #kaocha/v1
 {:plugins [:kaocha.plugin/profiling]}
 ```
 
@@ -62,6 +61,29 @@ Shown with their default values:
 #kaocha/v1
 {:kaocha.plugin.profiling/count 3
  :kaocha.plugin.profiling/profiling? true}
+```
+
+## Memory Profiling
+
+The memory profiling plugin works like the profiling plugin, but for memory usage.
+
+The nature of JVM garbage collectors makes measuring memory usage difficult.
+Collection can happen at any time, including in the middle of a test. That means
+if a test that created a lot of garbage, those objects may be freed in a
+subsequent test. Additionally, heap measurements are not precise.
+
+If you want to just measure allocations, you can enable the Epsilon garbage
+collector, which is a stub garbage collector that doesn't actually look for
+garbage or free any memory. While this gives you a relatively accurate sense of
+how much was allocated, raw allocations may not be as important as the rate at
+which garbage is being generated and whether the garbage collector can keep up.
+
+
+### Enabling 
+
+
+``` clojure #kaocha/v1
+{:plugins [:kaocha.plugin/profiling]}
 ```
 
 ## Print invocations
