@@ -82,7 +82,7 @@ options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
 {:deps { ,,, }
  :aliases 
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
-         :exec-fn kaocha.runner/exec
+         :exec-fn kaocha.runner/exec-fn
          :exec-args {}}}}
 ```
 
@@ -103,7 +103,7 @@ of tests skipped. You could save that configuration with an additional alias:
 {:deps { ,,, }
  :aliases 
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
-         :exec-fn kaocha.runner/exec
+         :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
  :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
          :exec-fn kaocha.runner/exec
