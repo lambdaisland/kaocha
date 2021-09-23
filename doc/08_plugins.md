@@ -83,7 +83,7 @@ which garbage is being generated and whether the garbage collector can keep up.
 
 
 ``` clojure #kaocha/v1
-{:plugins [:kaocha.plugin/profiling]}
+{:plugins [:kaocha.plugin/gc-profiling]}
 ```
 
 ## Print invocations
