@@ -71,6 +71,50 @@ Now you can invoke Kaocha as such:
 bin/kaocha --version
 ```
 
+#### Alternative method: :exec-fn
+
+We also support using the Clojure CLI `:exec-fn`/`-X`. However, we recommend the
+binstub approach above because it allows you to use traditional long and short
+options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
+
+```clojure
+;; deps.edn
+{:deps { ,,, }
+ :aliases 
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec-fn
+         :exec-args {}}}}
+```
+
+And then Kaocha can be invoked this way: `clojure -X:test`
+
+Generally speaking, we recommend using `tests.edn` for all of your configuration
+rather than putting it in `exec-args` unless there's an alternative combination
+of options you frequently run.
+
+In that case, you can put configuration options `:exec-args` as though it were
+`tests.edn`. Let's say you frequently use watch with `:fail-fast` and a subset
+of tests skipped. You could save that configuration with an additional alias:
+`clojure -X:watch-test` like so:
+
+
+```clojure
+;; deps.edn
+{:deps { ,,, }
+ :aliases 
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec-fn
+         :exec-args {}}
+ :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec
+         :exec-args {:watch? true
+	 :skip-meta :slow
+	 :fail-fast? true }}}}
+```
+
+If you wanted to turn off `fail-fast` temporarily, you could run `clojure
+-X:watch-test :fail-fast? false`.
+
 ### Leiningen
 
 Add Kaocha to your `:dev` profile, then add an alias that invokes `lein run -m kaocha.runner`:
