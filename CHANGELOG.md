@@ -2,6 +2,8 @@
 
 ## Added
 
+- Added support for code using `:as-alias`
+
 ## Fixed
 
 - Fix only considering public vars when building up the test plan
