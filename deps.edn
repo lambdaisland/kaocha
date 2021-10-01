@@ -4,12 +4,12 @@
  {org.clojure/clojure          {:mvn/version "1.10.3"}
   org.clojure/spec.alpha       {:mvn/version "0.2.194"}
   org.clojure/tools.cli        {:mvn/version "1.0.206"}
-  lambdaisland/tools.namespace {:mvn/version "0.0-237"}
+  lambdaisland/tools.namespace {:mvn/version "0.1.247"}
   lambdaisland/deep-diff       {:mvn/version "0.0-47"}
   org.tcrawley/dynapath        {:mvn/version "1.1.0"}
   slingshot/slingshot          {:mvn/version "0.12.2"}
   hawk/hawk                    {:mvn/version "0.2.11"}
-  expound/expound              {:mvn/version "0.8.9"}
+  expound/expound              {:mvn/version "0.8.10"}
   aero/aero                    {:mvn/version "1.1.6"}
   progrock/progrock            {:mvn/version "0.1.2"}
   meta-merge/meta-merge        {:mvn/version "1.0.0"}}
@@ -20,9 +20,9 @@
    :extra-deps  {org.clojure/test.check        {:mvn/version "1.1.0"}
                  lambdaisland/kaocha-cucumber  {:mvn/version "0.0-53" :exclusions [lambdaisland/kaocha]}
                  lambdaisland/kaocha-cloverage {:mvn/version "1.0.75" :exclusions [lambdaisland/kaocha]}
-                 nubank/matcher-combinators    {:mvn/version "1.5.2"}
+                 nubank/matcher-combinators    {:mvn/version "3.3.1"}
                  akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}
-                 orchestra/orchestra           {:mvn/version "2020.07.12-1"}}}
+                 orchestra/orchestra           {:mvn/version "2021.01.01-1"}}}
 
   :dev
   {:extra-paths ["dev"]
