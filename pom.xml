@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.0.861</version>
+  <version>1.0.902</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -22,28 +22,28 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>6b9f64007e2008559863c7673adc5a002f41da25</tag>
+    <tag>2453049dfbd226bea3126054ccdbded74db76a03</tag>
   </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.10.3</version>
     </dependency>
     <dependency>
       <groupId>expound</groupId>
       <artifactId>expound</artifactId>
-      <version>0.8.5</version>
+      <version>0.8.10</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>spec.alpha</artifactId>
-      <version>0.2.187</version>
+      <version>0.2.194</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
-      <version>1.0.194</version>
+      <version>1.0.206</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
@@ -63,17 +63,12 @@
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>tools.namespace</artifactId>
-      <version>0.0-237</version>
+      <version>0.1.247</version>
     </dependency>
     <dependency>
       <groupId>progrock</groupId>
       <artifactId>progrock</artifactId>
       <version>0.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>orchestra</groupId>
-      <artifactId>orchestra</artifactId>
-      <version>2020.07.12-1</version>
     </dependency>
     <dependency>
       <groupId>org.tcrawley</groupId>
@@ -114,7 +109,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>6b9f64007e2008559863c7673adc5a002f41da25</git-revision>
+              <git-revision>2453049dfbd226bea3126054ccdbded74db76a03</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
