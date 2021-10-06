@@ -1,7 +1,8 @@
 (ns kaocha.plugin.gc-profiling
   (:require 
     [kaocha.testable :as testable]
-            [kaocha.plugin :as plugin :refer [defplugin]]))
+    [kaocha.hierarchy :as hierarchy]
+    [kaocha.plugin :as plugin :refer [defplugin]]))
 
 
 (def force-collection? false)
@@ -46,28 +47,40 @@
 
   (cli-options [opts]
                (conj opts
-                     [nil "--[no]memory-profiling" "Show the approximate memory used by each test."]) )
+                     [nil "--[no-]memory-profiling" "Show the approximate memory used by each test."]) )
 
   (config [{:kaocha/keys [cli-options] :as config}]
           (assoc config
-                 ::gc-profiling? (:gc-profiling cli-options (::gc-profiling? config false))
-                 
-                 ))
+                 ::memory-profiling? (:memory-profiling cli-options (::memory-profiling? config true))
+                 ::show-individual-tests (:show-individual-tests-memory cli-options 
+                                                                        (::show-individual-tests config true)) ))
 
   (post-summary [result]
-        (when (::gc-profilling? result)
-          (let [tests     (->> result
+        (when (::memory-profiling? result)
+          (let [indentation-amount 2
+                indentation-str (apply str (take 2 (repeat \space)))
+                tests     (->> result
                                testable/test-seq
                                (remove ::testable/load-error)
-                               (remove ::testable/skip))
+                               (remove ::testable/skip)
+                               (map #(update % :kaocha.testable/id name)))
+                longest  (->> tests
+                              (map :kaocha.testable/id) 
+                              (map count)
+                              (reduce (fn [a b] (Math/max a b)))
+                              (+ 2)) ;Leave space for identation
+                _ (println "LONGEST: " longest)
                 types     (group-by :kaocha.testable/type tests) ]
 
-            (doseq [t tests]
-              (println (format "%-90s   %10s (%s)"
-                               (:kaocha.testable/id t)
-                               (convert-bytes (::delta t 0))
-                               (:file (:kaocha.testable/meta t)))))
-            result)))
+            (when (::show-individual-tests result)
+              (doseq [t tests
+                      :let [leaf? (hierarchy/leaf? t)
+                            padding (if leaf? (- longest indentation-amount) longest)] ]
+                (println (format (str (when leaf? indentation-str) "%-" padding "s   %10s (%s)")
+                                 (:kaocha.testable/id t)
+                                 (convert-bytes (::delta t 0))
+                                 (:file (:kaocha.testable/meta t))))))))
+        result)
 
   ;; (post-summary [result]
   ;;   (when (::profiling? result)
