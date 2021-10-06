@@ -86,7 +86,13 @@ which garbage is being generated and whether the garbage collector can keep up.
 {:plugins [:kaocha.plugin/gc-profiling]}
 ```
 
-## Print invocations
+### Plugin-specific command line flags   ###
+
+```
+      --[no]memory-profiling             Show the approximate memory used by each test.
+```
+
+## Print invocations 
 
 At the end of the test run, print command invocations that can be copy-pasted to re-run only specific failed tests.
 

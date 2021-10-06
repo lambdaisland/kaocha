@@ -28,8 +28,7 @@
 
 (defn stop [{::keys [start] :as testable}]
   (let [end (get-memory)  ]
-    (assoc testable ::end (get-memory) ::delta (- end start))
-    ))
+    (assoc testable ::end (get-memory) ::delta (- end start))))
 
 
 (defplugin kaocha.plugin/gc-profiling
@@ -45,18 +44,30 @@
   (post-test [testable _]
     (stop testable))
 
-  (post-summary [result]
-        (let [tests     (->> result
-                             testable/test-seq
-                             (remove ::testable/load-error)
-                             (remove ::testable/skip))
-              types     (group-by :kaocha.testable/type tests) ]
+  (cli-options [opts]
+               (conj opts
+                     [nil "--[no]memory-profiling" "Show the approximate memory used by each test."]) )
 
-          (doseq [t tests]
-            (println (format "%-90s   %10s (%s)"
-                             (:kaocha.testable/id t)
-                             (convert-bytes (::delta t 0))
-                             (:file (:kaocha.testable/meta t)))))))
+  (config [{:kaocha/keys [cli-options] :as config}]
+          (assoc config
+                 ::gc-profiling? (:gc-profiling cli-options (::gc-profiling? config false))
+                 
+                 ))
+
+  (post-summary [result]
+        (when (::gc-profilling? result)
+          (let [tests     (->> result
+                               testable/test-seq
+                               (remove ::testable/load-error)
+                               (remove ::testable/skip))
+                types     (group-by :kaocha.testable/type tests) ]
+
+            (doseq [t tests]
+              (println (format "%-90s   %10s (%s)"
+                               (:kaocha.testable/id t)
+                               (convert-bytes (::delta t 0))
+                               (:file (:kaocha.testable/meta t)))))
+            result)))
 
   ;; (post-summary [result]
   ;;   (when (::profiling? result)
