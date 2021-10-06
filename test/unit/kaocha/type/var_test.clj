@@ -1,6 +1,6 @@
 (ns kaocha.type.var-test
   (:refer-clojure :exclude [symbol])
-  (:require [clojure.test :as t :refer :all]
+  (:require [clojure.test :as t :refer [testing is deftest]]
             [kaocha.test-factories :as f]
             [kaocha.testable :as testable]
             [kaocha.report :as report]
