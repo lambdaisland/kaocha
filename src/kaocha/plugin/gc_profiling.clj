@@ -17,7 +17,7 @@
 
 
 (defn get-memory []
-  (when force-collection?
+  (when force-collection? ;try to force a collection
     (System/gc)
     (System/runFinalization))
 
@@ -79,7 +79,25 @@
                 (println (format (str (when leaf? indentation-str) "%-" padding "s   %10s (%s)")
                                  (:kaocha.testable/id t)
                                  (convert-bytes (::delta t 0))
-                                 (:file (:kaocha.testable/meta t))))))))
+                                 (:file (:kaocha.testable/meta t))))))
+            (doseq [[type tests] types
+                    :when type
+                    :let [largest (take 5 (reverse (sort-by ::delta tests)))
+                          large-test-total (apply + (keep ::delta largest))]]
+              (println (format "Top 5 %s for memory usage. (Used %s, %.1f%% of total)"
+                               type
+                               (convert-bytes large-test-total)
+                               (float (* (/ large-test-total (::delta result)) 100))))
+              (doseq [{:keys [::delta :kaocha.testable/id] :as test} largest
+                      :let [n (count (remove ::testable/skip (:kaocha.result/tests test)))]]
+                (cond 
+                  (> n 0) (let [avg (int (/ delta  n))]
+                            (println (format "%s%s    \n%s\033[1m%s\033[0m average (%s / %d tests)" indentation-str 
+                                             id (str indentation-str indentation-str)
+                                             (convert-bytes avg) (convert-bytes delta) n)))
+                  :else  (println (format "%s%s    \n%s\033[1m%s\033[0m " indentation-str 
+                                          id (str indentation-str indentation-str)
+                                          (convert-bytes delta))))))))
         result)
 
   ;; (post-summary [result]
