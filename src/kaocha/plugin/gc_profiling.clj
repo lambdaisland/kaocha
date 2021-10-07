@@ -13,7 +13,7 @@
       (> abs-bytes 1e9) (format "%.2fGB" (/ bytes 1e9))
       (> abs-bytes 1e6) (format "%.2fMB" (/ bytes 1e6))
       (> abs-bytes 1e3) (format "%.2fKB" (/ bytes 1e3))
-      :else (str bytes))))
+      :else (str bytes "B"))))
 
 
 (defn get-memory []
