@@ -43,7 +43,7 @@
   (plugin/with-plugins plugin-chain
     (is 
       (match? {:kaocha.plugin.gc-profiling/memory-profiling? true
-                :kaocha.plugin.gc-profiling/show-individual-tests true}
+                :kaocha.plugin.gc-profiling/show-individual-tests false}
                 (plugin/run-hook :kaocha.hooks/config {})))
     (is
 

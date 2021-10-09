@@ -47,13 +47,14 @@
 
   (cli-options [opts]
                (conj opts
-                     [nil "--[no-]memory-profiling" "Show the approximate memory used by each test."]) )
+                     [nil "--[no-]memory-profiling" "Show the approximate memory used by each test."]
+                     [nil "--[no-]show-individual-tests-memory" "Show the details of individual tests."]))
 
   (config [{:kaocha/keys [cli-options] :as config}]
           (assoc config
                  ::memory-profiling? (:memory-profiling cli-options (::memory-profiling? config true))
                  ::show-individual-tests (:show-individual-tests-memory cli-options 
-                                                                        (::show-individual-tests config true)) ))
+                                                                        (::show-individual-tests config false)) ))
 
   (post-summary [result]
         (when (::memory-profiling? result)
@@ -69,7 +70,6 @@
                               (map count)
                               (reduce (fn [a b] (Math/max a b)))
                               (+ 2)) ;Leave space for identation
-                _ (println "LONGEST: " longest)
                 types     (group-by :kaocha.testable/type tests) ]
 
             (when (::show-individual-tests result)
