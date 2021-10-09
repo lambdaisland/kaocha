@@ -1,5 +1,6 @@
 (ns kaocha.plugin.gc-profiling-test
   (:require [clojure.test :refer [deftest is testing]]
+            [clojure.set]
             [kaocha.test-helper :refer :all]
             [kaocha.testable :as testable]
             [kaocha.plugin :as plugin]
@@ -45,6 +46,11 @@
       (match? {:kaocha.plugin.gc-profiling/memory-profiling? true
                 :kaocha.plugin.gc-profiling/show-individual-tests false}
                 (plugin/run-hook :kaocha.hooks/config {})))
+    (let [result ( plugin/run-hook :kaocha.hooks/cli-options [])]
+      (is
+        (clojure.set/subset? #{"--[no-]memory-profiling"
+                                "--[no-]show-individual-tests-memory"} 
+                             (set (map second result))))) 
     (is
 
       (let [test-plan (testable/load test-suite)
