@@ -66,18 +66,19 @@ Shown with their default values:
 ## Memory Profiling
 
 The memory profiling plugin works like the profiling plugin, but for memory usage.
+It works by measuring the amount of memory in use before and after each test.
 
-The nature of JVM garbage collectors makes measuring memory usage difficult.
+JVM garbage collectors makes measuring memory usage difficult.
 Collection can happen at any time, including in the middle of a test. That means
-if a test that created a lot of garbage, those objects may be freed in a
-subsequent test. Additionally, heap measurements are not precise.
+if a test that created a lot of garbage, those objects may al be freed in a
+subsequent test. In that case, the memory usage will sharply decline during the
+later test, which can easily swamp. Additionally, heap measurements are not precise.
 
 If you want to just measure allocations, you can enable the Epsilon garbage
 collector, which is a stub garbage collector that doesn't actually look for
-garbage or free any memory. While this gives you a relatively accurate sense of
+garbage or free any memory. While this gives you a reasonably accurate sense of
 how much was allocated, raw allocations may not be as important as the rate at
 which garbage is being generated and whether the garbage collector can keep up.
-
 
 ### Enabling 
 
