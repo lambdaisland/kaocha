@@ -16,8 +16,7 @@ bin/kaocha --plugin kaocha.plugin/profiling
 
 or
 
-``` clojure
-#kaocha/v1
+``` clojure #kaocha/v1
 {:plugins [:kaocha.plugin/profiling]}
 ```
 
@@ -64,7 +63,43 @@ Shown with their default values:
  :kaocha.plugin.profiling/profiling? true}
 ```
 
-## Print invocations
+## GC Profiling
+
+The gc profiling plugin works like the profiling plugin, but for memory usage.
+It works by measuring the amount of memory in use before and after each test.
+
+
+JVM garbage collectors makes measuring memory usage difficult.  Collection can
+happen at any time, including in the middle of a test. That means if a test that
+created a lot of garbage, those objects may al be freed in a subsequent test. In
+that case, the memory usage will sharply decline during the later test, which
+can easily swamp results. In some cases, a garbage collection will free more
+memory than was allocated during a test, and the result will be negative.
+Additionally, heap measurements are not precise.
+
+If you want to just measure allocations, you can enable the Epsilon garbage
+collector, which is a stub garbage collector that doesn't actually look for
+garbage or free any memory. While this gives you a reasonably accurate sense of
+how much was allocated, raw allocations may not be as important as the rate at
+which garbage is being generated and whether the garbage collector can keep up.
+
+Be
+
+### Enabling 
+
+
+``` clojure #kaocha/v1
+{:plugins [:kaocha.plugin/gc-profiling]}
+```
+
+### Plugin-specific command line flags   ###
+
+```
+      --[no-]gc-profiling             Show the approximate memory used by each test.
+      --[no-]gc-profiling-individual      Show the details of individual tests."
+```
+
+## Print invocations 
 
 At the end of the test run, print command invocations that can be copy-pasted to re-run only specific failed tests.
 

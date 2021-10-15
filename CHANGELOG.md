@@ -13,6 +13,8 @@
 
 - Added support for code using `:as-alias`
 
+- New `gc-profiling` plugin for measuring tests' memory usage.
+
 ## Fixed
 
 - Fix only considering public vars when building up the test plan
