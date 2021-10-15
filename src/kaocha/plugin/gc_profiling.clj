@@ -101,5 +101,5 @@
                                           id (str indentation-str indentation-str)
                                           (convert-bytes delta))))))
             (when negative-allocations?
-              (println (output/colored :yellow "\nWARNING:") "Some results are negative. This happens when more memory is freed than was allocated during a test."))))
+              (println (output/colored :yellow "\nWARNING:") "Some results are negative. This happens when more memory is freed than was allocated during a test. Try rerunning the test suite."))))
         result))
