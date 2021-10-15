@@ -41,6 +41,7 @@
         failed-ns (map second (filter (complement first) ns-result))
         plugin-result (try+ (-register plugin-name plugin-stack)
                             (catch [:kaocha.plugin/not-loaded plugin-name] _ false)) ]
+    (println (name plugin-name))
     (cond
       ;; Namespaces succeeded, but plugin itself failed.
       (and (not plugin-result)
@@ -53,17 +54,21 @@
       (and (not plugin-result)
            (> (count failed-ns) 1))
       (output/error-and-throw
-       {:kaocha/early-exit 254} nil
-       (format "Couldn't load plugin %s. Failed to load namespaces %s. This could be caused by a misspelling or a missing dependency."
-               plugin-name (apply str ( interpose " and " failed-ns))))
+        {:kaocha/early-exit 254} nil
+        (format (str "Couldn't load plugin %s. Failed to load namespaces %s. This could be caused by a misspelling or a missing dependency."
+                     (when  (not (str/includes? "." (name plugin-name)))
+                       (str (output/colored :yellow "\nWARNING: ")  "Plugin " plugin-name " previously would have been normalized to " (keyword "kaocha.plugin" (name plugin-name)) " but no longer is. In the unlikely event you relied on this behavior, it may have caused this error to fail to load.")))
+                plugin-name (apply str ( interpose " and " failed-ns))))
 
       ;; A single namespace failed to load.
       ;; This is a separate case mostly so we can get the error message's grammar right.
       (not plugin-result)
       (output/error-and-throw
-       {:kaocha/early-exit 254} nil
-       (format "Couldn't load plugin %s. Failed to load namespace %s. This could be caused by a misspelling or a missing dependency."
-               plugin-name (first failed-ns))))
+        {:kaocha/early-exit 254} nil
+        (format (str "Couldn't load plugin %s. Failed to load namespace %s. This could be caused by a misspelling or a missing dependency."
+                     (when  (not (str/includes? "." (name plugin-name)))
+                       (str (output/colored :yellow "\nWARNING: ")  "Plugin " plugin-name " previously would have been normalized to " (keyword "kaocha.plugin" (name plugin-name)) " but no longer is. In the unlikely event you relied on this behavior, it may have caused this error to fail to load.")))
+                plugin-name (first failed-ns))))
     plugin-result))
 
 (defn normalize-name [plugin-name]
