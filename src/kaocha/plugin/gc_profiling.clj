@@ -1,5 +1,6 @@
 (ns kaocha.plugin.gc-profiling
   (:require 
+    [kaocha.output :as output]
     [kaocha.testable :as testable]
     [kaocha.hierarchy :as hierarchy]
     [kaocha.plugin :as plugin :refer [defplugin]]))
@@ -70,7 +71,8 @@
                               (map count)
                               (reduce (fn [a b] (Math/max a b)))
                               (+ 2)) ;Leave space for identation
-                types     (group-by :kaocha.testable/type tests) ]
+                types     (group-by :kaocha.testable/type tests)
+               negative-allocations? (some neg? (map ::delta (testable/test-seq result)))]
 
             (when (::gc-profiling-individual result)
               (doseq [t tests
@@ -84,7 +86,7 @@
                     :when type
                     :let [largest (take 5 (reverse (sort-by ::delta tests)))
                           large-test-total (apply + (keep ::delta largest))]]
-              (println (format "Top 5 %s for memory usage. (Used %s, %.1f%% of total)"
+              (println (format "\nTop 5 %s for memory usage. (Used %s, %.1f%% of total)"
                                type
                                (convert-bytes large-test-total)
                                (float (* (/ large-test-total (::delta result)) 100))))
@@ -97,5 +99,7 @@
                                              (convert-bytes avg) (convert-bytes delta) n)))
                   :else  (println (format "%s%s    \n%s\033[1m%s\033[0m " indentation-str 
                                           id (str indentation-str indentation-str)
-                                          (convert-bytes delta))))))))
+                                          (convert-bytes delta))))))
+            (when negative-allocations?
+              (println (output/colored :yellow "\nWARNING:") "Some results are negative. This happens when more memory is freed than was allocated during a test."))))
         result))
