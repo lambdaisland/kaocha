@@ -1,6 +1,6 @@
 (ns kaocha.type.clojure.test-test
   (:refer-clojure :exclude [symbol])
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [is deftest]]
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
             [kaocha.test-util :refer [with-test-ctx]]))

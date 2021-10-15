@@ -2,6 +2,8 @@
 
 Full featured next generation test runner for Clojure.
 
+Jump to [Quick start](#quick-start) | [Docs](#docs)
+
 ## Projects
 
 <!-- projects -->
@@ -24,27 +26,6 @@ Full featured next generation test runner for Clojure.
 
 See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cnen/entry/89b3f694bb3a4fd49e3241c6bd1cb79f) for an audio sample.
 
-<!-- opencollective -->
-
-&nbsp;
-
-<img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
-
-&nbsp;
-
-## Support Lambda Island Open Source
-
-kaocha is part of a growing collection of quality Clojure libraries and
-tools released on the Lambda Island label. If you are using this project
-commercially then you are expected to pay it forward by
-[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
-so that we may continue to enjoy a thriving Clojure ecosystem.
-
-&nbsp;
-
-&nbsp;
-
-<!-- /opencollective -->
 
 ## Need help?
 
@@ -121,7 +102,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.861"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.902"}}}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -141,7 +122,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.861"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.902"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
@@ -174,6 +155,51 @@ echo '#!/usr/bin/env sh' > bin/kaocha
 echo 'boot kaocha "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
+
+#### Clojure CLI (tools.deps) :exec-fn alternative
+
+We also support using the Clojure CLI `:exec-fn`/`-X`. However, we recommend the
+binstub approach above because it allows you to use traditional long and short
+options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
+
+```clojure
+;; deps.edn
+{:deps { ,,, }
+ :aliases 
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec
+         :exec-args {}}}}
+```
+
+And then Kaocha can be invoked this way: `clojure -X:test`
+
+Generally speaking, we recommend using `tests.edn` for all of your configuration
+rather than putting it in `exec-args` unless there's an alternative combination
+of options you frequently run.
+
+In that case, you can put configuration options `:exec-args` as though it were
+`tests.edn`. Let's say you frequently use watch with `:fail-fast` and a subset
+of tests skipped. You could save that configuration with an additional alias:
+`clojure -X:watch-test` like so:
+
+
+```clojure
+;; deps.edn
+{:deps { ,,, }
+ :aliases 
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec
+         :exec-args {}}
+ :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.887"}}
+         :exec-fn kaocha.runner/exec
+         :exec-args {:watch? true
+	 :skip-meta :slow
+	 :fail-fast? true }}}}
+```
+
+If you wanted to turn off `fail-fast` temporarily, you could run `clojure
+-X:watch-test :fail-fast? false`
+
 
 ### All tools
 
@@ -238,6 +264,28 @@ bin/kaocha --test-help
 
 Kaocha requires Clojure 1.9 or later.
 
+<!-- opencollective -->
+
+&nbsp;
+
+<img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
+
+&nbsp;
+
+## Support Lambda Island Open Source
+
+kaocha is part of a growing collection of quality Clojure libraries and
+tools released on the Lambda Island label. If you are using this project
+commercially then you are expected to pay it forward by
+[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
+so that we may continue to enjoy a thriving Clojure ecosystem.
+
+&nbsp;
+
+&nbsp;
+
+<!-- /opencollective -->
+
 <!-- contributing -->
 ## Contributing
 
@@ -273,7 +321,7 @@ changes are justified.
 <!-- license -->
 ## License
 
-Copyright &copy; 2018-2020 Arne Brasseur and contributors
+Copyright &copy; 2018-2021 Arne Brasseur and contributors
 
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
 <!-- /license -->

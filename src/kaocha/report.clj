@@ -89,18 +89,19 @@
   (kaocha.hierarchy/derive! :mismatch :kaocha/fail-type)
   ```"
   (:refer-clojure :exclude [symbol])
-  (:require [kaocha.core-ext :refer :all]
+  (:require [clojure.string :as str]
+            [clojure.test :as t]
+            [kaocha.core-ext :refer :all]
+            [kaocha.hierarchy :as hierarchy]
+            [kaocha.history :as history]
+            [kaocha.jit :refer [jit]]
             [kaocha.output :as output]
             [kaocha.plugin.capture-output :as capture]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
-            [clojure.test :as t]
-            [slingshot.slingshot :refer [throw+]]
-            [clojure.string :as str]
-            [kaocha.history :as history]
             [kaocha.testable :as testable]
-            [kaocha.hierarchy :as hierarchy]
-            [kaocha.jit :refer [jit]]))
+            [kaocha.util :as util]
+            [slingshot.slingshot :refer [throw+]]))
 
 (defonce clojure-test-report t/report)
 
@@ -414,19 +415,7 @@
 
 (defn debug [m]
   (t/with-test-out
-    (prn (cond-> (select-keys m [:type
-                                 :file
-                                 :line
-                                 :var
-                                 :ns
-                                 :expected
-                                 :actual
-                                 :message
-                                 :kaocha/testable
-                                 :debug
-                                 ::printed-expression])
-           (:kaocha/testable m)
-           (update :kaocha/testable select-keys [:kaocha.testable/id :kaocha.testable/type])))))
+    (prn (util/minimal-test-event m))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

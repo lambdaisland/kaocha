@@ -44,16 +44,12 @@
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
     (type/with-report-counters
       (do-report {:type :kaocha.stc/begin-ns})
-      (if-let [testable (testable/handle-load-error testable)]
-        (do
-          (do-report {:type :kaocha.stc/end-ns})
-          testable)
-        (let [tests  (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
-              result (-> testable
-                         (dissoc :kaocha.test-plan/tests)
-                         (assoc :kaocha.result/tests tests))]
-          (do-report {:type :kaocha.stc/end-ns})
-          result)))))
+      (let [tests  (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
+            result (-> testable
+                       (dissoc :kaocha.test-plan/tests)
+                       (assoc :kaocha.result/tests tests))]
+        (do-report {:type :kaocha.stc/end-ns})
+        result))))
 
 (s/def :kaocha.type/spec.test.ns (s/keys :req [:kaocha.testable/type
                                                :kaocha.testable/id

@@ -10,7 +10,7 @@
             [orchestra.spec.test :as orchestra])
   (:import [clojure.lang ExceptionInfo]))
 
-(orchestra/instrument)
+(require 'matcher-combinators.clj-test)
 
 (extend-protocol mc.core/Matcher
   clojure.lang.Var

@@ -1,5 +1,5 @@
 (ns kaocha.api-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [testing is deftest]]
             [kaocha.api :refer :all]
             [kaocha.test-util :refer [with-out-err]]
             [slingshot.slingshot :refer [try+]]))
