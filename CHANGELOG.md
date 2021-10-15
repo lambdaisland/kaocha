@@ -5,6 +5,9 @@
 
 ## Fixed
 
+- Breaking! Unqualified plugin names containing dots are no longer
+    normalized to contain the `kaocha.plugin`-namespace in front.
+
 ## Changed
 
 # 1.0.902 (2021-10-01 / 3100c8b)
