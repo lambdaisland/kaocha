@@ -41,7 +41,6 @@
         failed-ns (map second (filter (complement first) ns-result))
         plugin-result (try+ (-register plugin-name plugin-stack)
                             (catch [:kaocha.plugin/not-loaded plugin-name] _ false)) ]
-    (println (name plugin-name))
     (cond
       ;; Namespaces succeeded, but plugin itself failed.
       (and (not plugin-result)
@@ -56,7 +55,9 @@
       (output/error-and-throw
         {:kaocha/early-exit 254} nil
         (format (str "Couldn't load plugin %s. Failed to load namespaces %s. This could be caused by a misspelling or a missing dependency."
-                     (when  (not (str/includes? "." (name plugin-name)))
+                     (when  (and 
+                              (str/includes? (name plugin-name) "." )
+                              (not (str/includes? "." (name plugin-name))))
                        (str (output/colored :yellow "\nWARNING: ")  "Plugin " plugin-name " previously would have been normalized to " (keyword "kaocha.plugin" (name plugin-name)) " but no longer is. In the unlikely event you relied on this behavior, it may have caused this error to fail to load.")))
                 plugin-name (apply str ( interpose " and " failed-ns))))
 
@@ -66,7 +67,9 @@
       (output/error-and-throw
         {:kaocha/early-exit 254} nil
         (format (str "Couldn't load plugin %s. Failed to load namespace %s. This could be caused by a misspelling or a missing dependency."
-                     (when  (not (str/includes? "." (name plugin-name)))
+                     (when  (and
+                             (str/includes? (name plugin-name) "." )
+                              (not (str/includes? "." (name plugin-name))))
                        (str (output/colored :yellow "\nWARNING: ")  "Plugin " plugin-name " previously would have been normalized to " (keyword "kaocha.plugin" (name plugin-name)) " but no longer is. In the unlikely event you relied on this behavior, it may have caused this error to fail to load.")))
                 plugin-name (first failed-ns))))
     plugin-result))
