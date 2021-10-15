@@ -63,10 +63,11 @@ Shown with their default values:
  :kaocha.plugin.profiling/profiling? true}
 ```
 
-## Memory Profiling
+## GC Profiling
 
-The memory profiling plugin works like the profiling plugin, but for memory usage.
+The gc profiling plugin works like the profiling plugin, but for memory usage.
 It works by measuring the amount of memory in use before and after each test.
+
 
 JVM garbage collectors makes measuring memory usage difficult.
 Collection can happen at any time, including in the middle of a test. That means
@@ -90,7 +91,8 @@ which garbage is being generated and whether the garbage collector can keep up.
 ### Plugin-specific command line flags   ###
 
 ```
-      --[no]memory-profiling             Show the approximate memory used by each test.
+      --[no-]gc-profiling             Show the approximate memory used by each test.
+      --[no-]gc-profiling-individual      Show the details of individual tests."
 ```
 
 ## Print invocations 

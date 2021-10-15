@@ -47,17 +47,17 @@
 
   (cli-options [opts]
                (conj opts
-                     [nil "--[no-]memory-profiling" "Show the approximate memory used by each test."]
-                     [nil "--[no-]show-individual-tests-memory" "Show the details of individual tests."]))
+                     [nil "--[no-]gc-profiling" "Show the approximate memory used by each test."]
+                     [nil "--[no-]gc-profiling-individual" "Show the details of individual tests."]))
 
   (config [{:kaocha/keys [cli-options] :as config}]
           (assoc config
-                 ::memory-profiling? (:memory-profiling cli-options (::memory-profiling? config true))
-                 ::show-individual-tests (:show-individual-tests-memory cli-options 
-                                                                        (::show-individual-tests config false)) ))
+                 ::gc-profiling? (:gc-profiling cli-options (::gc-profiling? config true))
+                 ::gc-profiling-individual (:show-individual-tests-memory cli-options 
+                                                                          (::gc-profiling-individual config false))))
 
   (post-summary [result]
-        (when (::memory-profiling? result)
+        (when (::gc-profiling? result)
           (let [indentation-amount 2
                 indentation-str (apply str (take 2 (repeat \space)))
                 tests     (->> result
@@ -72,7 +72,7 @@
                               (+ 2)) ;Leave space for identation
                 types     (group-by :kaocha.testable/type tests) ]
 
-            (when (::show-individual-tests result)
+            (when (::gc-profiling-individual result)
               (doseq [t tests
                       :let [leaf? (hierarchy/leaf? t)
                             padding (if leaf? (- longest indentation-amount) longest)] ]
