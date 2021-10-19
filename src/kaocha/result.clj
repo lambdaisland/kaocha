@@ -34,6 +34,7 @@
 (defn ^:no-gen testable-totals
   "Return a map of summed up results for a testable, including descendants."
   [testable]
+  ;; (prn "TESTABLE: " testable)
   (if-let [testables (::tests testable)]
     (merge testable (totals testables))
     (merge (sum) testable)))

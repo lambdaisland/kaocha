@@ -58,6 +58,16 @@
     (retry-assert-spec type testable (dec n))) ;otherwise, retry
     ))
 
+(defn deref-recur [testables]
+  (cond (future? testables) (deref testables)
+        (vector? testables) (doall (mapv deref-recur testables))
+        (seq? testables) (deref-recur (into [] (doall testables)))
+        (contains? testables :kaocha.test-plan/tests)
+        (update testables :kaocha.test-plan/tests deref-recur)
+        (contains? testables :kaocha.result/tests)
+        (update testables :kaocha.result/tests deref-recur)
+        :else testables))
+
 (defn- load-type+validate
   "Try to load a testable type, and validate it both to be a valid generic testable, and a valid instance given the type.
 
@@ -179,6 +189,7 @@
             [file line] (util/compiler-exception-file-and-line error)
             file (::load-error-file test file)
             line (::load-error-line test line)
+            thread (.getName (Thread/currentThread))
             m (if-let [message (::load-error-message test)]
                 {:type :error
                  :message message
@@ -190,7 +201,8 @@
                  :kaocha/testable test})
             m (cond-> m
                 file (assoc :file file)
-                line (assoc :line line))]
+                line (assoc :line line)
+                thread (assoc :thread thread))]
         (t/do-report (assoc m :type :kaocha/begin-suite))
         (binding [*fail-fast?* false]
           (t/do-report m))
@@ -250,7 +262,7 @@
 
 (reduce f [q 1 2 r])
 
-(defn run-testables
+(defn run-testables-serial
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
   (doall testables)
@@ -284,11 +296,17 @@
         ;;                (.drainTo value acc)
         ;;                (.put acc value))
         ;;              acc)
+        ;; _ (println "nested tests?" (:parallel-test-level *config* false))
+        type(:kaocha.testable/type test-plan) 
+        _ (println type)
         futures (doall (map #(do 
-                               (println (:parallel *config*) \space (.getName (Thread/currentThread)))
                                (future 
-                                 ;(do #_(println "Firing off future!" (Thread/currentThread)) )
-                           (binding [*config* (dissoc *config* :parallel)] (run-testable % test-plan))))
+                                 (binding [;*config* (if (:parallel-test-level *config* false) 
+                                           ;           (dissoc *config* :parallel) *config* )
+                                           
+                                           *config*  (update *config* :levels (fn [x] (if (nil? x) 1 (inc x)))) ] 
+                                   (prn (:levels *config* 0))
+                                   (run-testable % test-plan))))
                             testables))]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
            [test & testables] testables]
@@ -303,7 +321,15 @@
             ;(recur (doto result (.put r)) testables)
             (recur (conj result r) testables)))
         result)))
-   futures))
+   (deref-recur futures)))
+
+
+(defn run-testables 
+  [testables test-plan]
+  (if (:parallel *config*)
+    (doall (run-testables-parallel testables test-plan))
+    (run-testables-serial testables test-plan)))
+
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
