@@ -290,14 +290,14 @@
   (doall testables)
   (let [load-error? (some ::load-error testables)
         types (set (:parallel-children-exclude *config*))
-        futures (doall (map #(do
-                               (future
-                                 (binding [*config*
-                                           (cond-> *config*
-                                             (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
-                                             true (update :levels (fn [x] (if (nil? x) 1 (inc x))))) ]
-                                   (run-testable % test-plan))))
-                            testables))]
+        futures (map #(do
+                        (future
+                          (binding [*config*
+                                    (cond-> *config*
+                                      (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
+                                      true (update :levels (fn [x] (if (nil? x) 1 (inc x))))) ]
+                            (run-testable % test-plan))))
+                     testables)]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
                     [test & testables] testables]
                (if test
