@@ -18,14 +18,8 @@
   ;; tests function, so we need to put it in a box for reference.
   ;; (println (keys test-plan))
   ;; (println (:kaocha.testable/meta test-plan))
-  (let [result (atom (:kaocha.test-plan/tests testable))
-        run-testables-fn (if (:parallel testable/*config*)
-                           testable/run-testables-parallel
-                           testable/run-testables)
-        #_testable/run-testables
-        
-        ]
-    (fixture-fn #(swap! result run-testables-fn test-plan))
+  (let [result (atom (:kaocha.test-plan/tests testable))]
+    (fixture-fn #(swap! result testable/run-testables test-plan))
     @result))
 
 (defmethod testable/-load :kaocha.type/ns [testable]
