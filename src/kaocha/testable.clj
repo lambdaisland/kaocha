@@ -288,40 +288,30 @@
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
   (doall testables)
-  ;; (print "run-testables-parallel got a collection of size" (count testables))
-(let [load-error? (some ::load-error testables)
-        ;; results (watch/make-queue)
-        ;; put-return (fn [acc value] 
-        ;;              (if (instance? BlockingQueue value)
-        ;;                (.drainTo value acc)
-        ;;                (.put acc value))
-        ;;              acc)
-        ;; _ (println "nested tests?" (:parallel-test-level *config* false))
-        type(:kaocha.testable/type test-plan) 
-        _ (println type)
+  (let [load-error? (some ::load-error testables)
+        types (set (:parallel-children-exclude *config*))
         futures (doall (map #(do 
                                (future 
-                                 (binding [;*config* (if (:parallel-test-level *config* false) 
-                                           ;           (dissoc *config* :parallel) *config* )
-                                           
-                                           *config*  (update *config* :levels (fn [x] (if (nil? x) 1 (inc x)))) ] 
-                                   (prn (:levels *config* 0))
+                                 (binding [*config*  
+                                           (cond-> *config* 
+                                             (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
+                                             true (update :levels (fn [x] (if (nil? x) 1 (inc x))))) ] 
                                    (run-testable % test-plan))))
                             testables))]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
-           [test & testables] testables]
-      (if test
-        (let [test (cond-> test
-                     (and load-error? (not (::load-error test)))
-                     (assoc ::skip true))
-              r (run-testable test test-plan)]
-          (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-            ;(reduce put-return result [[r] testables])
-            (reduce into result [[r] testables])
-            ;(recur (doto result (.put r)) testables)
-            (recur (conj result r) testables)))
-        result)))
-   (deref-recur futures)))
+                    [test & testables] testables]
+               (if test
+                 (let [test (cond-> test
+                              (and load-error? (not (::load-error test)))
+                              (assoc ::skip true))
+                       r (run-testable test test-plan)]
+                   (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
+                     ;(reduce put-return result [[r] testables])
+                     (reduce into result [[r] testables])
+                     ;(recur (doto result (.put r)) testables)
+                     (recur (conj result r) testables)))
+                 result)))
+    (deref-recur futures)))
 
 
 (defn run-testables 
