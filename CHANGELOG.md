@@ -2,13 +2,12 @@
 
 ## Added
 - `kaocha.runner/exec` for use with Clojure CLI's -X feature
+- Added `gc-profiling` plugin for measuring the memory usage of tests.
 
 ## Fixed
 
 - Breaking! Unqualified plugin names containing dots are no longer
     normalized to contain the `kaocha.plugin`-namespace in front.
-
-## Changed
 
 # 1.0.902 (2021-10-01 / 3100c8b)
 
