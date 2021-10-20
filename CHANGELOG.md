@@ -1,4 +1,4 @@
-# Unreleased
+# 1.0.937 (2021-10-20 / 8ccaba7)
 
 ## Added
 - `kaocha.runner/exec` for use with Clojure CLI's -X feature
