@@ -85,7 +85,7 @@
             (doseq [[type tests] types
                     :when type
                     :let [largest (take 5 (reverse (sort-by ::delta tests)))
-                          large-test-total (apply + (keep ::delta largest))]]
+                          large-test-total (apply + (keep ::delta largest))]] ;no need to remove nil? here: keep takes care of that
               (println (format "\nTop 5 %s for memory usage. (Used %s, %.1f%% of total)"
                                type
                                (convert-bytes large-test-total)
