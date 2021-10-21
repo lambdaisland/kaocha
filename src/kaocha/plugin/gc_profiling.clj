@@ -72,7 +72,7 @@
                               (reduce (fn [a b] (Math/max a b)))
                               (+ 2)) ;Leave space for identation
                 types     (group-by :kaocha.testable/type tests)
-               negative-allocations? (some neg? (map ::delta (testable/test-seq result)))]
+               negative-allocations? (some neg? (remove nil? (map ::delta (testable/test-seq result))))]
 
             (when (::gc-profiling-individual result)
               (doseq [t tests
@@ -85,11 +85,11 @@
             (doseq [[type tests] types
                     :when type
                     :let [largest (take 5 (reverse (sort-by ::delta tests)))
-                          large-test-total (apply + (keep ::delta largest))]]
+                          large-test-total (apply + (keep ::delta largest))]] ;no need to remove nil? here: keep takes care of that
               (println (format "\nTop 5 %s for memory usage. (Used %s, %.1f%% of total)"
                                type
                                (convert-bytes large-test-total)
-                               (float (* (/ large-test-total (::delta result)) 100))))
+                               (float (* (/ large-test-total (float (::delta result 1))) 100))))
               (doseq [{:keys [::delta :kaocha.testable/id] :as test} largest
                       :let [n (count (remove ::testable/skip (:kaocha.result/tests test)))]]
                 (cond 
