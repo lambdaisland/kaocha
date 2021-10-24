@@ -1,4 +1,4 @@
-# Unreleased
+# 1.60.945 (2021-10-24 / 7ed5dd8)
 
 ## Fixed
 
