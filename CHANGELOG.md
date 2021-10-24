@@ -1,34 +1,34 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Apply `:kaocha/bindings` higher in the stack, so they are visible to `main`
+  and `post-summary` plugin hooks
+- Fix an issue when the history track reporter gets invoked outside of the scope
+  where the history tracking atom is bound
 
 # 1.0.937 (2021-10-20 / 8ccaba7)
 
 ## Added
+
 - `kaocha.runner/exec` for use with Clojure CLI's -X feature
 - Added `gc-profiling` plugin for measuring the memory usage of tests.
 
 ## Fixed
 
 - Breaking! Unqualified plugin names containing dots are no longer
-    normalized to contain the `kaocha.plugin`-namespace in front.
+  normalized to contain the `kaocha.plugin`-namespace in front.
 
 # 1.0.902 (2021-10-01 / 3100c8b)
 
 ## Added
 
 - Added support for code using `:as-alias`
-
 - New `gc-profiling` plugin for measuring tests' memory usage.
 
 ## Fixed
 
 - Fix only considering public vars when building up the test plan
-=======
 
 # 1.0.887 (2021-09-01 / 38470aa)
 
