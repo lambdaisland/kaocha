@@ -1,10 +1,7 @@
 # Unreleased
 
-## Added
-
 ## Fixed
-
-## Changed
+- Fixed issue in `gc-profiling` that caused itermittent NullPointerException
 
 # 1.0.937 (2021-10-20 / 8ccaba7)
 
