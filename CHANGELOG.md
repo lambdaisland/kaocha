@@ -14,6 +14,7 @@
   and `post-summary` plugin hooks
 - Fix an issue when the history track reporter gets invoked outside of the scope
   where the history tracking atom is bound
+- Fixed issue in `gc-profiling` that caused itermittent `NullPointerException`s
 
 # 1.0.937 (2021-10-20 / 8ccaba7)
 
@@ -32,7 +33,6 @@
 ## Added
 
 - Added support for code using `:as-alias`
-- New `gc-profiling` plugin for measuring tests' memory usage.
 
 ## Fixed
 
