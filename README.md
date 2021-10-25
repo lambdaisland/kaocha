@@ -102,7 +102,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.937"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.945"}}}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -122,7 +122,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.0.937"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.60.945"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
@@ -166,7 +166,7 @@ options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.937"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.945"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}}}
 ```
@@ -187,10 +187,10 @@ of tests skipped. You could save that configuration with an additional alias:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.937"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.945"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
- :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.0.937"}}
+ :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.945"}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {:watch? true
 	 :skip-meta :slow
