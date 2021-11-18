@@ -60,6 +60,6 @@ workflows:
               os: [clojure/openjdk16, clojure/openjdk15, clojure/openjdk11, clojure/openjdk8]
               clojure_version: ["1.9.0", "1.10.1"]
 
-      - windows-test
+      # - windows-test
 
 
