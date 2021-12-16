@@ -1,4 +1,4 @@
-#!bin/bb
+#!/usr/bin/env bb
 
 (ns proj (:require [lioss.main :as lioss]
                    [lioss.subshell :as subshell]
