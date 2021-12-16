@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.60.945</version>
+  <version>1.60.972</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -12,6 +12,9 @@
     <name>Lambda Island</name>
     <url>https://lambdaisland.com</url>
   </organization>
+  <properties>
+    <project class="build sourceEncoding">UTF-8</project>
+  </properties>
   <licenses>
     <license>
       <name>Eclipse Public License 1.0</name>
@@ -22,7 +25,7 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>2915acb7618173e193b6c94e59ddee459abb10dd</tag>
+    <tag>23d7bf426c8bc2027d0da2fc2a5420f5c6474740</tag>
   </scm>
   <dependencies>
     <dependency>
@@ -101,6 +104,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -109,7 +116,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>2915acb7618173e193b6c94e59ddee459abb10dd</git-revision>
+              <git-revision>23d7bf426c8bc2027d0da2fc2a5420f5c6474740</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
