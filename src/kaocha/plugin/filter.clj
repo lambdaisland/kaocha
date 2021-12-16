@@ -65,7 +65,10 @@
     (cond
       (or (seq focus) (seq focus-meta))
       (cond
-        ;; - postiive
+        (::testable/load-error testable)
+        testable
+
+        ;; - positive
         ;;   - foo ^:a
         ;;   - bar ^:b
         ;; --focus positive --focus-meta a
