@@ -1,10 +1,9 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fixed an issue where the combination of a load error and using `--focus` would
+  result in "no tests found", shadowing the actual error
 
 # 1.60.945 (2021-10-24 / 7ed5dd8)
 
