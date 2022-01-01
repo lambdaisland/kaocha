@@ -2,9 +2,7 @@
 
 ## Added
 
-## Fixed
-
-## Changed
+- Add support for `:watch?` when using `exec-fn`
 
 # 1.60.972 (2021-12-16 / af118c8)
 
