@@ -194,13 +194,17 @@
   (try+
    (let [config (-> (config/load-config)
                     (config/merge-config (config/normalize m)))]
-     (plugin/with-plugins (plugin/load-all (:kaocha/plugins config))
-       (let [config (plugin/run-hook :kaocha.hooks/config config)]
-         (with-bindings (config/binding-map config)
-           (plugin/run-hook :kaocha.hooks/main config)
-           (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
-                 totals (result/totals (:kaocha.result/tests result))
-                 exit-code (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)]
-             (System/exit exit-code))))))
+     (if (:kaocha/watch? config)
+       (let [[exit-code finish!] ((jit kaocha.watch/run) config)]
+         (System/exit @exit-code))
+
+       (plugin/with-plugins (plugin/load-all (:kaocha/plugins config))
+         (let [config (plugin/run-hook :kaocha.hooks/config config)]
+           (with-bindings (config/binding-map config)
+             (plugin/run-hook :kaocha.hooks/main config)
+             (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
+                   totals (result/totals (:kaocha.result/tests result))
+                   exit-code (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)]
+               (System/exit exit-code)))))))
    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
      (System/exit exit-code))))
