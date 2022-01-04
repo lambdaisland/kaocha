@@ -106,7 +106,7 @@ of tests skipped. You could save that configuration with an additional alias:
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
  :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.60.977"}}
-         :exec-fn kaocha.runner/exec
+         :exec-fn kaocha.runner/exec-fn
          :exec-args {:watch? true
 	 :skip-meta :slow
 	 :fail-fast? true }}}}
