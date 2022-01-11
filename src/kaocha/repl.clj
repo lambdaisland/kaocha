@@ -58,12 +58,14 @@ out what's going on. The [[config]] and [[test-plan]] functions provide this
 kind of debugging information.
 
 These will particularly come in handy when developing plugins."}
-    kaocha.repl
+ kaocha.repl
   (:require [kaocha.config :as config]
             [kaocha.plugin :as plugin]
             [kaocha.api :as api]
             [kaocha.result :as result]
-            [clojure.java.io :as io]))
+            [kaocha.output :as output]
+            [clojure.java.io :as io]
+            [slingshot.slingshot :refer [throw+ try+]]))
 
 (defn config
   "Load the Kaocha configuration
@@ -151,11 +153,17 @@ These will particularly come in handy when developing plugins."}
                                [{} args])
          config (-> (config config-opts)
                     (update :kaocha.filter/focus into (map testable-id) tests))]
-     (->> config
-          api/run
-          (plugin/run-hook :kaocha.hooks/post-summary)
-          :kaocha.result/tests
-          result/totals))))
+     (try+
+      (->> config
+           api/run
+           (plugin/run-hook :kaocha.hooks/post-summary)
+           :kaocha.result/tests
+           result/totals)
+      (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
+        (if (not= exit-code 0)
+          (output/error "Test run exited with code " exit-code)
+          (output/warn "Test run exited with code " exit-code))
+        exit-code)))))
 
 (defn run-all
   "Do a full Kaocha test run
@@ -165,4 +173,10 @@ These will particularly come in handy when developing plugins."}
   ([]
    (run-all {}))
   ([extra-opts]
-   (result/totals (:kaocha.result/tests (api/run (config extra-opts))))))
+   (try+
+    (result/totals (:kaocha.result/tests (api/run (config extra-opts))))
+    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
+      (if (not= exit-code 0)
+        (output/error "Test run exited with code " exit-code)
+        (output/warn "Test run exited with code " exit-code))
+      exit-code))))
