@@ -15,7 +15,7 @@
   (testing "a passing test var"
     (kaocha.classpath/add-classpath "fixtures/a-tests")
     (require 'foo.bar-test)
-    (let [{:keys [result report]}
+    (let [{:keys [:result :report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run {:kaocha.testable/type :kaocha.type/var
                            :kaocha.testable/id   :foo.bar-test/a-test
@@ -43,7 +43,7 @@
                   report))))
 
   (testing "a failing test var"
-    (let [{:keys [result report]}
+    (let [{:keys [:result :report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run
               (f/var-testable {:kaocha.var/test (fn [] (is false))})
@@ -61,7 +61,7 @@
                   report))))
 
   (testing "an erroring test var"
-    (let [{:keys [result report]}
+    (let [{:keys [:result :report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run
               (f/var-testable {:kaocha.var/test (fn [] (throw (ex-info "ERROR!" {})))})
@@ -85,7 +85,7 @@
                   report))))
 
   (testing "multiple assertions"
-    (let [{:keys [result report]}
+    (let [{:keys [:result :report]}
           (with-test-ctx {:fail-fast? false}
             (testable/run
               (f/var-testable {:kaocha.var/test (fn []
@@ -113,7 +113,7 @@
                   report))))
 
   (testing "early exit"
-    (let [{:keys [result report]}
+    (let [{:keys [:result :report]}
           (with-test-ctx {:fail-fast? true}
             (testable/run
               (f/var-testable {:kaocha.var/test (fn []
@@ -140,7 +140,7 @@
                   report)))
 
     (testing "early exit - exception"
-      (let [{:keys [result report]}
+      (let [{:keys [:result :report]}
             (with-test-ctx {:fail-fast? true}
               (testable/run
                 (f/var-testable {:kaocha.var/test (fn []

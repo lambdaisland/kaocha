@@ -18,7 +18,7 @@
     (orchestra/unstrument)
     result)
 
-  (pre-report [{:keys [type actual] :as event}]
+  (pre-report [{:keys [:type :actual] :as event}]
     ;; Render the explain-out string and add it to the clojure.test :error
     ;; event's message, since orchestra no longer adds the explain-str to the
     ;; exception.

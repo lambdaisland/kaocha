@@ -585,7 +585,7 @@ If you like the general output of `result` but just want the failures to look
 differenty, you can merely override `fail-summary` with your own implementation:
 
 ```clojure
-(defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
+(defmethod fail-summary :kaocha/fail-type [{:keys [:testing-contexts :testing-vars] :as m}]
   (println ...)
 )
 ```

@@ -19,7 +19,7 @@
 (def last-cpcache-dir (atom nil))
 
 (When "I run `(.*)`" [m args]
-  (let [{:keys [config-file dir] :as m} (test-dir-setup m)]
+  (let [{:keys [:config-file :dir] :as m} (test-dir-setup m)]
 
     (when-let [cache @last-cpcache-dir]
       (let [target (join dir ".cpcache")]
@@ -40,11 +40,11 @@
           (reset! last-cpcache-dir cpcache)))
       (merge m result))))
 
-(Then "the exit-code is non-zero" [{:keys [exit] :as m}]
+(Then "the exit-code is non-zero" [{:keys [:exit] :as m}]
   (is (not= "0" exit))
   m)
 
-(Then "the exit-code should be {int}" [{:keys [exit] :as m} code]
+(Then "the exit-code should be {int}" [{:keys [:exit] :as m} code]
   (is (= code (Integer. exit)))
   m)
 

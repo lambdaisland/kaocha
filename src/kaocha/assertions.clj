@@ -32,7 +32,7 @@
                (fn [s]
                  (output/colored :red-bg s))))
 
-(defmethod report/print-expr 'substring? [{:keys [expected] :as m}]
+(defmethod report/print-expr 'substring? [{:keys [:expected] :as m}]
   (let [[_ s1 s2] expected
         long-sub (longest-substring s1 s2)
         remainder (subs s1 (count long-sub))

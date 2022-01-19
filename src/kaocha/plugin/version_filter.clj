@@ -43,10 +43,10 @@
     true))
 
 (defn skip? [testable]
-  (let [{:keys [min-clojure-version
-                max-clojure-version
-                min-java-version
-                max-java-version]}
+  (let [{:keys [:min-clojure-version
+                :max-clojure-version
+                :min-java-version
+                :max-java-version]}
         (::testable/meta testable)]
     (not
      (and

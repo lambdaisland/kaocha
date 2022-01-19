@@ -52,7 +52,7 @@
      :old-system-out  old-out
      :old-system-err  old-err}))
 
-(defn restore-capture [{:keys [old-system-out old-system-err]}]
+(defn restore-capture [{:keys [:old-system-out :old-system-err]}]
   (System/setOut old-system-out)
   (System/setErr old-system-err))
 

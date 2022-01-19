@@ -8,13 +8,13 @@
 
 (def bar (atom nil))
 
-(defn color [{:keys [failed? pending?]}]
+(defn color [{:keys [:failed? :pending?]}]
   (cond
     failed?  :red
     pending? :yellow
     :else    :green))
 
-(defn format-bar [{:keys [label label-width] :as bar}]
+(defn format-bar [{:keys [:label :label-width] :as bar}]
   (str (format (str "%" label-width "s") label)
        ":   :percent% ["
        (output/colored (color bar) ":bar")

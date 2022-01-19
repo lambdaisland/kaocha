@@ -52,7 +52,7 @@
 
 (defn filter-testable [testable opts]
   (let [{:as opts
-         :keys [skip focus skip-meta focus-meta]} (merge-filters opts (filters testable))
+         :keys [:skip :focus :skip-meta :focus-meta]} (merge-filters opts (filters testable))
         recurse   (fn recurse
                     ([]
                      (recurse opts))
@@ -118,7 +118,7 @@
              :assoc-fn accumulate])))
 
   (config [config]
-    (let [{:keys [skip focus skip-meta focus-meta]} (:kaocha/cli-options config)]
+    (let [{:keys [:skip :focus :skip-meta :focus-meta]} (:kaocha/cli-options config)]
       (cond-> config
         (seq skip)       (assoc :kaocha.filter/skip skip)
         (seq focus)      (assoc :kaocha.filter/focus focus)

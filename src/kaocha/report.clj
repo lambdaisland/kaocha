@@ -192,7 +192,7 @@
   "Returns a string representation of the current test. Renders names
   in :testing-vars as a list, then the source file and line of current
   assertion."
-  [{:keys [file line testing-vars kaocha/testable] :as m}]
+  [{:keys [:file :line :testing-vars :kaocha/testable] :as m}]
   (let [file' (or file (some-> testable ::testable/meta :file))
         line' (or line (some-> testable ::testable/meta :line))]
     (str
@@ -278,7 +278,7 @@
 
 (defmethod fail-summary :default [_])
 
-(defmethod fail-summary :kaocha/fail-type [{:keys [testing-contexts testing-vars] :as m}]
+(defmethod fail-summary :kaocha/fail-type [{:keys [:testing-contexts :testing-vars] :as m}]
   (println (str "\n" (output/colored :red "FAIL") " in") (testing-vars-str m))
   (when (seq testing-contexts)
     (println (str/join " " (reverse testing-contexts))))
@@ -289,7 +289,7 @@
     (print-expr m))
   (print-output m))
 
-(defmethod fail-summary :error [{:keys [testing-contexts testing-vars] :as m}]
+(defmethod fail-summary :error [{:keys [:testing-contexts :testing-vars] :as m}]
   (println (str "\n" (output/colored :red "ERROR") " in") (testing-vars-str m))
   (when (seq testing-contexts)
     (println (str/join " " (reverse testing-contexts))))
@@ -308,7 +308,7 @@
   (let [history @history/*history*]
     (t/with-test-out
       (let [failures (filter hierarchy/fail-type? history)]
-        (doseq [{:keys [testing-contexts testing-vars] :as m} failures]
+        (doseq [{:keys [:testing-contexts :testing-vars] :as m} failures]
           (binding [t/*testing-contexts* testing-contexts
                     t/*testing-vars* testing-vars]
             (fail-summary m))))
@@ -316,7 +316,7 @@
       (doseq [deferred (filter hierarchy/deferred? history)]
         (clojure-test-report deferred))
 
-      (let [{:keys [test pass fail error pending] :or {pass 0 fail 0 error 0 pending 0}} m
+      (let [{:keys [:test :pass :fail :error :pending] :or {pass 0 fail 0 error 0 pending 0}} m
             failed? (pos-int? (+ fail error))
             pending? (pos-int? pending)]
         (println (output/colored (if failed? :red (if pending? :yellow :green))
@@ -430,7 +430,7 @@
 
 (defn tap
   "Reporter for the TAP protocol (Test Anything Protocol)."
-  [{:keys [type] :as m}]
+  [{:keys [:type] :as m}]
   (let [pass (jit clojure.test.tap/print-tap-pass)
         fail (jit clojure.test.tap/print-tap-fail)
         error (jit clojure.test.tap/print-tap-error)

@@ -226,7 +226,7 @@
 Behind the scenes we add this plugin to the start of the plugin chain. It takes
 care of reloading namespaces inside a Kaocha run, so we can report any load
 errors as test errors."
-  (pre-load [{::keys [tracker focus] :as config}]
+  (pre-load [{::keys [:tracker :focus] :as config}]
     (print-scheduled-operations! tracker focus)
     (let [tracker    (track-reload! tracker)
           config     (assoc config ::tracker tracker)

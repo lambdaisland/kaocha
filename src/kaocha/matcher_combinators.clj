@@ -41,7 +41,7 @@
 
 (run! #(apply printer/register-print-handler! %) print-handlers)
 
-(defn fail-summary [{:keys [testing-contexts testing-vars] :as m}]
+(defn fail-summary [{:keys [:testing-contexts :testing-vars] :as m}]
   (let [printer (ddiff/printer {:print-color output/*colored-output*})]
     (println (str "\n" (output/colored :red "FAIL") " in") (clojure.test/testing-vars-str m))
     (when (seq t/*testing-contexts*)

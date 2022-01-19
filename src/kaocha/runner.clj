@@ -70,7 +70,7 @@
   (let [resource (io/resource "META-INF/maven/lambdaisland/kaocha/pom.properties")]
     (str "lambdaisland/kaocha " (pr-str (some-> resource load-props :version)))))
 
-(defn run [{:keys [config errors options suites summary]}]
+(defn run [{:keys [:config :errors :options :suites :summary]}]
   ;; TODO: we're calling the config hook here in multiple places, and it's also
   ;; being called in `kaocha.api`. Given that we already need the fully expanded
   ;; config here (since now we're potentially adding suites in the config hook),
@@ -147,7 +147,7 @@
     (throw+ {:kaocha/early-exit 253}))
 
   (binding [spec/*explain-out* expound/printer]
-    (let [{{:keys [config-file plugin profile]} :options} (cli/parse-opts args cli-options)
+    (let [{{:keys [:config-file :plugin :profile]} :options} (cli/parse-opts args cli-options)
           config                                          (-> config-file
                                                               (or "tests.edn")
                                                               (config/load-config (if profile
@@ -167,7 +167,7 @@
           plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
-          {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
+          {:keys [:errors :options :arguments summary]} (cli/parse-opts args cli-options)
           config                                     (-> config
                                                          (config/apply-cli-opts options)
                                                          (config/apply-cli-args (map parse-kw arguments)))

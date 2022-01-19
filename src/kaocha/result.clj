@@ -46,12 +46,12 @@
 (defn failed?
   "Did this testable, or one of its children, fail or error?"
   [testable]
-  (let [{::keys [error fail]} (testable-totals testable)]
+  (let [{::keys [:error :fail]} (testable-totals testable)]
     (or (> error 0) (> fail 0))))
 
 (defn failed-one?
   "Did this testable fail or error, does not recurse."
-  [{::keys [error fail] :or {error 0 fail 0}}]
+  [{::keys [:error :fail] :or {error 0 fail 0}}]
   (or (> error 0) (> fail 0)))
 
 (defn totals->clojure-test-summary

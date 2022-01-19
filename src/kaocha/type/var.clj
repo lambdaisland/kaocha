@@ -10,7 +10,7 @@
             [clojure.string :as str])
   (:import [clojure.lang Var]))
 
-(defmethod report/fail-summary ::zero-assertions [{:keys [testing-contexts testing-vars] :as m}]
+(defmethod report/fail-summary ::zero-assertions [{:keys [:testing-contexts :testing-vars] :as m}]
   (println "\nFAIL in" (report/testing-vars-str m))
   (when (seq testing-contexts)
     (println (str/join " " testing-contexts)))

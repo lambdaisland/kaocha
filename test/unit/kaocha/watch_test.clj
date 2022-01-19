@@ -104,7 +104,7 @@
          (first (w/reload-config {:kaocha/cli-options {:config-file (str tmp-file)}} []))))))
 
 (deftest watch-test
-  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
+  (let [{:keys [:config-file :test-dir] :as m} (integration/test-dir-setup {})
         config (-> (config/load-config config-file)
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
                    (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
@@ -133,13 +133,13 @@
         @out-str)))
 
 (deftest ignore-files-merged
-  (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
+  (let [{:keys [:_config-file :test-dir] :as m} (integration/test-dir-setup {})]
     (integration/spit-file  m (str test-dir "/.gitignore") "one" )
     (integration/spit-file  m (str test-dir "/.ignore") "two" )
     (is (=  #{"one" "two"}  (set (w/merge-ignore-files (str test-dir)))))))
 
 (deftest child-files-merged
-  (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
+  (let [{:keys [:_config-file :test-dir] :as m} (integration/test-dir-setup {})]
     (integration/spit-file  m (str test-dir "/.gitignore") "one" )
     (integration/spit-dir m (str test-dir "/src/") )
     (integration/spit-file  m (str test-dir "/src/.gitignore") "two" )
@@ -150,7 +150,7 @@
   ; is checked via ./bin/kaocha with --watch mode
   (is (do (set! *warn-on-reflection* false)
           true))
-  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
+  (let [{:keys [:config-file :test-dir] :as m} (integration/test-dir-setup {})
         config (-> (config/load-config config-file)
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
                    (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])

@@ -28,7 +28,7 @@
 (defn start [testable]
   (assoc testable ::start (get-memory)))
 
-(defn stop [{::keys [start] :as testable}]
+(defn stop [{::keys [:start] :as testable}]
   (let [end (get-memory)  ]
     (assoc testable ::end (get-memory) ::delta (- end start))))
 
