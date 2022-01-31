@@ -295,7 +295,7 @@ errors as test errors."
                                 :lambdaisland.tools.namespace.track/load))]
 
     (when (or (= watcher-type :hawk) (::hawk-opts config))
-      (output/warn "Hawk watcher is deprecated in favour of beholder. Kaocha will soon get rid of hawk completely."))
+      (output/warn "Hawk watcher is deprecated in favour of Beholder. Kaocha will soon get rid of Hawk completely."))
 
     (watch! {:type watcher-type
              :q q
