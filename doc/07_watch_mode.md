@@ -86,7 +86,7 @@ your operating system. Beholder works with OSX and M1 mac machines as well.
 
 Previously Kaocha used another watcher, [Hawk](https://github.com/wkf/hawk), which
 has been deprecated in favour of Beholder. If you still want to use it for some
-reason then use the `:kaocha.watch/type :hawk` configuration to switch to hawk.
+reason, then use the `:kaocha.watch/type :hawk` configuration to switch to Hawk.
 Please note that Hawk will be removed completely in a future release.
 
 Use the `:kaocha.watch/hawk-opts` configuration key to pass options to Hawk.
