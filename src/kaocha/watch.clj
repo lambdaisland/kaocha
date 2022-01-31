@@ -280,7 +280,7 @@ errors as test errors."
          (map str watch-paths)))
 
 (defn run* [config finish? q]
-  (let [watcher-type (::type config :hawk)
+  (let [watcher-type (::type config :beholder)
         watcher-opts (condp = watcher-type
                        :hawk (::hawk-opts config {})
                        :beholder (::beholder-opts config {})
@@ -293,6 +293,9 @@ errors as test errors."
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload
                                 :lambdaisland.tools.namespace.track/load))]
+
+    (when (or (= watcher-type :hawk) (::hawk-opts config))
+      (output/warn "Hawk watcher is deprecated in favour of beholder. Kaocha will soon get rid of hawk completely."))
 
     (watch! {:type watcher-type
              :q q
