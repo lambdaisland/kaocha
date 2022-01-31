@@ -80,17 +80,15 @@ Currently these features of `.gitignore` are not supported:
 
 ## Configuring the watcher
 
-Kaocha uses [Hawk](https://github.com/wkf/hawk) to watch the filesystem for
-changes. By default Hawk will pick a mechanism suitable for your operating
-system, but if that doesn't cut it for some reason you can switch to using
-polling instead.
+Kaocha uses [Beholder](https://github.com/nextjournal/beholder) to watch the
+filesystem for changes. By default Beholder will pick a mechanism suitable for
+your operating system. Beholder works with OSX and M1 mac machines as well.
+
+Previously Kaocha used another watcher [Hawk](https://github.com/wkf/hawk) which
+has been deprecated in favour of Beholder. If you still want to use it for some
+reason then use the `:kaocha.watch/type :hawk` configuration to switch to hawk.
+Please note that Hawk will be removed completely in a future release.
 
 Use the `:kaocha.watch/hawk-opts` configuration key to pass options to Hawk.
 Currently it understands `:watcher` (`:java`, `:barbary`, `:polling`) and
 `:sensitivity` (`:high`, `:medium`, `:low`, only applies to `:polling`).
-
-```
-#kaocha/v1
-{:kaocha.watch/hawk-opts {:watcher :polling
-                          :sensitivity :medium}}
-```

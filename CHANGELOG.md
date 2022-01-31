@@ -2,9 +2,16 @@
 
 ## Added
 
+- Added configuration `:kaocha.watch/type` which takes either `:beholder` or
+  `:hawk` as values. Defaulting to `:beholder` as the new fs watcher.
+
 ## Fixed
 
 ## Changed
+
+- Changed default watcher to [Beholder](https://github.com/nextjournal/beholder)
+  which supports OSX/m1 machines natively. Hawk is now deprecated and will be
+  removed in a future release.
 
 # 1.60.977 (2022-01-01 / 4a6ed21)
 
