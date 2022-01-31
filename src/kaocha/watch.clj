@@ -283,7 +283,7 @@ errors as test errors."
   (let [watcher-type (::type config :beholder)
         watcher-opts (condp = watcher-type
                        :hawk (::hawk-opts config {})
-                       :beholder (::beholder-opts config {})
+                       :beholder {} ;; beholder does not take opts
                        {})
         watch-paths (if (:kaocha.watch/use-ignore-file config)
                       (set/union (watch-paths config)
