@@ -272,7 +272,7 @@ errors as test errors."
                             (when (= (:kind event) :modify)
                               (qput q (:file event))))}]))
 
-(defmethod watch! :beholder [{:keys [q watch-paths opts]}]
+(defmethod watch! :beholder [{:keys [q watch-paths]}]
   (apply beholder/watch
          (fn [{:keys [type path]}]
            (when (= type :modify)
