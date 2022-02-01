@@ -4,6 +4,7 @@
 
 - Added configuration `:kaocha.watch/type` which takes either `:beholder` or
   `:hawk` as values. Defaulting to `:beholder` as the new fs watcher.
+- Add `--no-fail-fast` CLI option
 
 ## Fixed
 
