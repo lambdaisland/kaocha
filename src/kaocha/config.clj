@@ -117,7 +117,7 @@
 
 (defn apply-cli-opts [config options]
   (cond-> config
-    (some? (:fail-fast options))  (assoc :kaocha/fail-fast? true)
+    (some? (:fail-fast options))  (assoc :kaocha/fail-fast? (:fail-fast options))
     (:reporter options)           (assoc :kaocha/reporter (:reporter options))
     (:watch options)              (assoc :kaocha/watch? (:watch options))
     (some? (:color options))      (assoc :kaocha/color? (:color options))
