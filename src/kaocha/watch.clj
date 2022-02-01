@@ -22,7 +22,8 @@
             [lambdaisland.tools.namespace.file :as ctn-file]
             [lambdaisland.tools.namespace.parse :as ctn-parse]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
-            [lambdaisland.tools.namespace.track :as ctn-track])
+            [lambdaisland.tools.namespace.track :as ctn-track]
+            [nextjournal.beholder :as beholder])
   (:import [java.nio.file FileSystems]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
@@ -262,28 +263,50 @@ errors as test errors."
               (map io/file))
         (:kaocha/tests config)))
 
-(defn watch! [q watch-paths hawk-opts]
-  (hawk/watch! hawk-opts
+(defmulti watch! :type)
+
+(defmethod watch! :hawk [{:keys [q watch-paths opts]}]
+  (hawk/watch! opts
                [{:paths   watch-paths
                  :handler (fn [ctx event]
                             (when (= (:kind event) :modify)
                               (qput q (:file event))))}]))
 
+(defmethod watch! :beholder [{:keys [q watch-paths]}]
+  (apply beholder/watch
+         (fn [{:keys [type path]}]
+           (when (= type :modify)
+             (qput q path)))
+         (map str watch-paths)))
+
 (defn run* [config finish? q]
-  (let [hawk-opts (::hawk-opts config {})
+  (let [watcher-type (::type config :beholder)
+        watcher-opts (condp = watcher-type
+                       :hawk (::hawk-opts config {})
+                       :beholder {} ;; beholder does not take opts
+                       {})
         watch-paths (if (:kaocha.watch/use-ignore-file config)
-                     (set/union (watch-paths config)
-                                (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
-                     (watch-paths config))
+                      (set/union (watch-paths config)
+                                 (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
+                      (watch-paths config))
         tracker     (-> (ctn-track/tracker)
                         (ctn-dir/scan-dirs watch-paths)
                         (dissoc :lambdaisland.tools.namespace.track/unload
                                 :lambdaisland.tools.namespace.track/load))]
 
-    (watch! q watch-paths hawk-opts)
+    (when (or (= watcher-type :hawk) (::hawk-opts config))
+      (output/warn "Hawk watcher is deprecated in favour of beholder. Kaocha will soon get rid of hawk completely."))
+
+    (watch! {:type watcher-type
+             :q q
+             :watch-paths watch-paths
+             :opts watcher-opts})
     (when-let [config-file (get-in config [:kaocha/cli-options :config-file])]
       (when (.exists (io/file config-file))
-        (watch! q #{config-file} hawk-opts)))
+        (watch! {:type watcher-type
+                 :q q
+                 :watch-paths #{config-file}
+                 :opts watcher-opts})))
 
     (future
       (let [stdin (io/reader System/in)]
