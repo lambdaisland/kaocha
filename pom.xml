@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.60.977</version>
+  <version>1.62.993</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -25,7 +25,7 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>391790b715181a20108e8bbc29008bb92c0c2335</tag>
+    <tag>2ae9d30b92181e7bfeb9600fef5255c4e74de560</tag>
   </scm>
   <dependencies>
     <dependency>
@@ -57,6 +57,11 @@
       <groupId>slingshot</groupId>
       <artifactId>slingshot</artifactId>
       <version>0.12.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nextjournal</groupId>
+      <artifactId>beholder</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>aero</groupId>
@@ -116,7 +121,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>391790b715181a20108e8bbc29008bb92c0c2335</git-revision>
+              <git-revision>2ae9d30b92181e7bfeb9600fef5255c4e74de560</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
