@@ -1,4 +1,14 @@
 (ns kaocha.plugin.notifier
+  "Plugin that shows the test result (fail/pass) and test counts in a
+  desktop (system tray) notification.
+
+  Will try multiple approaches to find a system-appropriate way to show a
+  desktop notifaction.
+
+  - notify-send
+  - terminal-notifier
+  - java.awt.SystemTray
+  "
   {:authors ["Ryan McCuaig (@rgm)"
              "Arne Brasseur (@plexus)"]}
   (:require [clojure.java.shell :refer [sh]]
@@ -86,7 +96,9 @@
           urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
       (.displayMessage icon (title result) (message result) urgency))
     (catch java.awt.HeadlessException e
-      (output/warn (str "Notification not shown because system is headless. AWT error: " e)) )))
+      (output/warn (str "Notification not shown because system is headless. AWT error: " e)) )
+    (catch java.lang.UnsupportedOperationException e
+      (output/warn (str "Notification not shown because system does not support it. " e)))))
 
 (defn expand-command
   "Takes a command string including replacement patterns, and a map of
