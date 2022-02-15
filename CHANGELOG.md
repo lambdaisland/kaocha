@@ -1,5 +1,9 @@
 # Unreleased
 
+## Changed
+
+- Version bumps of spec, expound, test.check
+
 ## Fixed
 
 - Catch an exception in the notifier plugin which can occur in headless (CI)
