@@ -122,7 +122,7 @@ on certain conditions. Here's an example hook that skips all tests that have
 (defn my-pre-test-hook [testable test-plan]
   (if (and (hierarchy/leaf? testable)
            (System/getenv "CI")
-           (.contains (str (:kaocha.testable/id testabe)) "foo"))
+           (.contains (str (:kaocha.testable/id testable)) "foo"))
     (assoc testable :kaocha.testable/skip true)
     testable))
 ```
