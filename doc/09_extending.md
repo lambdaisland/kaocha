@@ -18,7 +18,7 @@ A Kaocha test run consists of three part
 - Run
 
 In the configure step the configuration file is loaded, normalized, and any
-command line options merged in. Plugins are loaded at this staged, and given a
+command line options merged in. Plugins are loaded at this stage, and given a
 chance to update the configuration. The result is a Kaocha configuration (spec:
 `:kaocha/config`)
 
