@@ -111,7 +111,7 @@ You should use the helpers in the `kaocha.hierarchy` namespace to determine if a
 testable is a suite (top-level), group (intermediate grouping), or leaf (an
 individual test with assertions).
 
-For example, a common use case of pre-test hooks is to skip certian tests based
+For example, a common use case of pre-test hooks is to skip certain tests based
 on certain conditions. Here's an example hook that skips all tests that have
 "foo" in their name, when running on CI.
 
