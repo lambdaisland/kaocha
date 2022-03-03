@@ -22,7 +22,8 @@
   :group-id         "lambdaisland"
   :commands         ["update-docs"
                      {:description "Update the ToC and version strings in md files"
-                      :command     update-docs}]})
+                      :command     update-docs}]
+  :aliases-as-optional-deps [:test]})
 
 
 ;; Local Variables:
