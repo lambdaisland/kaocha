@@ -29,7 +29,6 @@
   and `:line`."
   nil)
 
-
 (def REQUIRE_LOCK (Object.))
 
 (defn add-desc [testable description]
@@ -50,12 +49,11 @@
       (try-require (symbol (namespace type))))
     (try-require (symbol (name type)))))
 
-
 (defn- retry-assert-spec [type testable n]
-  (let [ result (try (assert-spec type testable) (catch Exception _e false))]
+  (let [result (try (assert-spec type testable) (catch Exception _e false))]
     (if (or result (<= n 1)) result
-    (retry-assert-spec type testable (dec n))) ;otherwise, retry
-    ))
+        (retry-assert-spec type testable (dec n))) ;otherwise, retry
+))
 
 (defn deref-recur [testables]
   (cond (future? testables) (deref testables)
@@ -125,8 +123,8 @@
         (assoc testable ::load-error t)
         (throw t)))))
 
-(spec/fdef load
-  :args (spec/cat :testable :kaocha/testable)
+(s/fdef load
+  :args (s/cat :testable :kaocha/testable)
   :ret :kaocha.test-plan/testable)
 
 (defmulti -run
@@ -241,16 +239,16 @@
         (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
 (defn try-run-testable [test test-plan n]
-  (let [ result (try (run-testable test test-plan) (catch Exception _e false))]
+  (let [result (try (run-testable test test-plan) (catch Exception _e false))]
     (if (or result (> n 1)) result ;success or last try, return
-    (try-run-testable test test-plan (dec n))) ;otherwise retry
-    ))
+        (try-run-testable test test-plan (dec n))) ;otherwise retry
+))
 
 (defn f [acc value]
-                     (if (instance? BlockingQueue value)
-                       (.drainTo value acc)
-                       (.put acc value))
-                     acc)
+  (if (instance? BlockingQueue value)
+    (.drainTo value acc)
+    (.put acc value))
+  acc)
 
 (defn f [acc value] (doto acc (.put value)))
 
@@ -259,7 +257,6 @@
 
 (.put r 5)
 
-
 (reduce f [q 1 2 r])
 
 (defn run-testables-serial
@@ -267,9 +264,8 @@
   [testables test-plan]
   (doall testables)
   #_(print "run-testables got a collection of size" (count testables)
-         " the first of which is "
-         (:kaocha.testable/type (first testables))
-         )
+           " the first of which is "
+           (:kaocha.testable/type (first testables)))
   (let [load-error? (some ::load-error testables)]
     (loop [result  []
            [test & testables] testables]
@@ -283,7 +279,6 @@
             (recur (conj result r) testables)))
         result))))
 
-
 (defn run-testables-parallel
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
@@ -295,7 +290,7 @@
                           (binding [*config*
                                     (cond-> *config*
                                       (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
-                                      true (update :levels (fn [x] (if (nil? x) 1 (inc x))))) ]
+                                      true (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
                             (run-testable % test-plan))))
                      testables)]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
@@ -313,13 +308,11 @@
                  result)))
     (deref-recur futures)))
 
-
 (defn run-testables
   [testables test-plan]
   (if (:parallel *config*)
     (doall (run-testables-parallel testables test-plan))
     (run-testables-serial testables test-plan)))
-
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)

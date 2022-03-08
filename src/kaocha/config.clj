@@ -31,7 +31,7 @@
         (update config k vary-meta assoc :replace true)
         (do
           (output/error "Test suite configuration value with key " k " should be a collection or symbol, but got '" v "' of type " (type v))
-          (throw+ {:kaocha/early-exit 250}))))
+          (throw+ {:kaocha/early-exit 252}))))
     config))
 
 (defn merge-config
@@ -204,6 +204,7 @@
     (some? (:color options))      (assoc :kaocha/color? (:color options))
     (some? (:diff-style options)) (assoc :kaocha/diff-style (:diff-style options))
     (:plugin options)             (update :kaocha/plugins #(distinct (concat % (:plugin options))))
+    (some? (:parallel options))   (assoc :parallel (:parallel options))
     true                          (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
@@ -227,7 +228,7 @@
       cli-opts (apply-cli-opts cli-opts)
       cli-args (apply-cli-args cli-args)))
 
-(defn find-config-and-warn 
+(defn find-config-and-warn
   [config-file]
   (let [final-config-file (or config-file "tests.edn")]
     (when (not (.exists (io/file (or config-file "tests.edn"))))

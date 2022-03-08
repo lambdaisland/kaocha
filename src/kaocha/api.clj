@@ -124,10 +124,10 @@
                   (throw+ {:kaocha/early-exit 0}))
 
                 (when (:parallel config)
-                  (output/warn (str "Parallelization enabled. This is a beta "
-                                    "feature. If you encounter errors, try "
+                  (output/warn (str "Parallelization enabled. This feature is in "
+                                    "beta If you encounter errors, try "
                                     "running with the feature disabled and "
-                                    "consider filing a PR.")))
+                                    "consider filing an issue.")))
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 

@@ -8,6 +8,7 @@
             [clojure.spec.alpha :as spec]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
+            [clojure.pprint :as pp]
             [expound.alpha :as expound]
             [kaocha.api :as api]
             [kaocha.config :as config]
@@ -33,6 +34,7 @@
    [nil  "--[no-]fail-fast"     "Stop testing after the first failure."]
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
+   [nil  "--[no-]parallel"           "Run tests in parallel. Warning: This feature is beta."]
    [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
     :parse-fn (fn [s]
                 (let [sym (symbol s)]
@@ -41,8 +43,7 @@
                     (symbol "kaocha.report" s))))
     :assoc-fn accumulate]
    [nil "--diff-style STYLE"    "The style of diff to print on failing tests, either :none or :deep"
-    :parse-fn parse-kw
-    ]
+    :parse-fn parse-kw]
    [nil "--plugin KEYWORD"      "Load the given plugin."
     :parse-fn (fn [s]
                 (let [kw (parse-kw s)]
