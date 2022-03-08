@@ -123,6 +123,11 @@
                                       " To investigate, check the :test-paths and :ns-patterns keys in tests.edn.")))
                   (throw+ {:kaocha/early-exit 0}))
 
+                (when (:parallel config)
+                  (output/warn (str "Parallelization enabled. This is a beta "
+                                    "feature. If you encounter errors, try "
+                                    "running with the feature disabled and "
+                                    "consider filing a PR.")))
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 
