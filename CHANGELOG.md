@@ -2,6 +2,8 @@
 
 ## Added
 
+- Allow :kaocha.plugin.randomize/randomize? to be set at any test level.
+
 ## Fixed
 
 ## Changed
