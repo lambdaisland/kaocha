@@ -140,9 +140,11 @@
               :kaocha/tests
               (fn [suites]
                 (mapv (fn [suite]
-                        (if (or (matches? suite skip skip-meta)
-                                (and (seq focus-suites)
-                                     (not (contains? focus-suites (:kaocha.testable/id suite)))))
+                        (if (and
+                             (not (:kaocha.testable/skip suite)) ; short circuit if this has been set elsewhere, saves a few cycles
+                             (or (matches? suite skip skip-meta)
+                                 (and (seq focus-suites)
+                                      (not (contains? focus-suites (:kaocha.testable/id suite))))))
                           (assoc suite :kaocha.testable/skip true)
                           suite))
                       suites)))))
@@ -153,10 +155,17 @@
         (output/warn ":focus " focus " did not match any tests."))
       (let [test-plan (update test-plan :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)
             filter-suite (fn [suite]
-                           (let [suite (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)]
-                             (-> suite
-                                 (filter-testable {})
-                                 (dissoc :kaocha.filter/focus :kaocha.filter/focus-meta)
-                                 (filter-testable (filters test-plan)))))]
+                           ;; Suites may already be marked as skipped in
+                           ;; kaocha.config when procssing CLI arguments, in
+                           ;; that case don't do any further processing, e.g. we
+                           ;; don't want to emit warnings about missing metadata
+                           ;; keys.
+                           (if (:kaocha.testable/skip suite)
+                             suite
+                             (let [suite (update suite :kaocha.filter/focus-meta remove-missing-metadata-keys test-plan)]
+                               (-> suite
+                                   (filter-testable {})
+                                   (dissoc :kaocha.filter/focus :kaocha.filter/focus-meta)
+                                   (filter-testable (filters test-plan))))))]
         (-> test-plan
             (update :kaocha.test-plan/tests (partial map filter-suite)))))))
