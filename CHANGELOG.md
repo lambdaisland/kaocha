@@ -1,10 +1,10 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Ignore test suites that are already excluded through CLI arguments when
+  running the filter plugin. This gets rid of false warnings regarding missing
+  metadata
 
 # 1.63.998 (2022-02-15 / ae54f2b)
 
