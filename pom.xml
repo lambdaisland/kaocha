@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.63.998</version>
+  <version>1.64.1010</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -25,7 +25,7 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>7228fe6a8713338a2e7be6c27ba8619b59c8f061</tag>
+    <tag>201583625332f6f44ef86893d6d2cf71cb18e8a9</tag>
   </scm>
   <dependencies>
     <dependency>
@@ -93,6 +93,42 @@
       <artifactId>meta-merge</artifactId>
       <version>1.0.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>test.check</artifactId>
+      <version>1.1.1</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>lambdaisland</groupId>
+      <artifactId>kaocha-cucumber</artifactId>
+      <version>0.0-53</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>lambdaisland</groupId>
+      <artifactId>kaocha-cloverage</artifactId>
+      <version>1.0.75</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>nubank</groupId>
+      <artifactId>matcher-combinators</artifactId>
+      <version>1.5.2</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>akvo</groupId>
+      <artifactId>fs</artifactId>
+      <version>20180904-152732.6dad3934</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>orchestra</groupId>
+      <artifactId>orchestra</artifactId>
+      <version>2021.01.01-1</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -121,7 +157,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>7228fe6a8713338a2e7be6c27ba8619b59c8f061</git-revision>
+              <git-revision>201583625332f6f44ef86893d6d2cf71cb18e8a9</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
