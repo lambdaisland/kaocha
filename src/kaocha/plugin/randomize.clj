@@ -7,15 +7,6 @@
   (let [rng (java.util.Random. seed)]
     (fn [& _] (.nextInt rng))))
 
-(defn straight-sort [test-plan]
-  (if-let [tests (:kaocha.test-plan/tests test-plan)]
-    (assoc test-plan
-           :kaocha.test-plan/tests
-           (->> tests
-                (sort-by :kaocha.testable/id)
-                (map straight-sort)))
-    test-plan))
-
 (defmacro or-some
   ([] nil)
   ([x] x)
@@ -73,9 +64,7 @@
   (post-load [test-plan]
     (if-let [seed (::seed test-plan)]
       (let [rng (rng seed)]
-        (->> test-plan
-             straight-sort
-             (rng-sort rng (get-randomize test-plan))))
+        (rng-sort rng (get-randomize test-plan) test-plan))
       test-plan))
 
   (post-run [test-plan]
