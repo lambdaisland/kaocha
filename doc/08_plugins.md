@@ -180,3 +180,54 @@ To customize which keys to print, use Kaocha's "bindings" functionality, in `tes
 ``` clojure
 :kaocha/bindings {kaocha.plugin.debug/*keys* [,,,]}
 ```
+
+## Randomize
+
+The randomize plugin picks a random seed during the `config` hook and uses that
+seed to randomize the order of test suites, namespaces, and test vars during the
+`post-load` hook. 
+
+Randomization can be toggled at the following places.
+
+1. top level config
+2. test suite config
+3. namespace metadata
+
+At each level, changing the randomize value will override the previously set 
+value. For example, you could: 
+
+- randomize by default (top level `:kaocha.plugin.randomize/randomize? true`, 
+  which is the default)
+- exclude a specific test suite by setting `:kaocha.plugin.randomize/randomize? false`
+  on the suite in tests.edn
+- but randomize a single namespace within that suite `(ns ^{:kaocha.plugin.randomize/randomize? true} ...)`
+
+Or the inverse (case 2)
+
+- turn it off at the top level
+- but turn it on for certain tests suites
+- with the exception of certain namespaces
+
+Passing the `--no-randomize` CLI flag will force all randomization to be disabled. 
+
+### Enabling
+
+The randomize plugin is enabled by default. Enable or disable randomization by
+setting the `:kaocha.plugin.randomize/randomize?` key in tests.edn at the top-level,
+in a specific test suite, or on the metadata of a namespace.
+
+### Plugin-specific command line flags
+
+```shell
+--[no-]randomize                  Run test namespaces and vars in random order.
+--seed SEED                       Provide a seed to determine the random order of tests.
+```
+
+### Plugin-specific configuration options
+
+Shown with their default values:
+
+```clojure
+#kaocha/v1
+{:kaocha.plugin.randomize/randomize? true}
+```
