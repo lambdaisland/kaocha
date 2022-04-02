@@ -13,18 +13,17 @@ Feature: CLI: Print the Kaocha configuration
     When I run `bin/kaocha --print-config`
     Then the output should contain:
       """ clojure
-      {:kaocha.plugin.randomize/randomize? false,
-       :kaocha/reporter [kaocha.report/dots],
-       :kaocha/color? false,
-       :kaocha/fail-fast? false,
+       :kaocha.plugin.randomize/randomize? false,
       """
     And the output should contain:
       """ clojure
-       :kaocha/tests
-       [{:kaocha.testable/type :kaocha.type/clojure.test,
-         :kaocha.testable/id :unit,
-         :kaocha/ns-patterns ["-test$"],
-         :kaocha/source-paths ["src"],
-         :kaocha/test-paths ["test"],
-         :kaocha.filter/skip-meta [:kaocha/skip]}],
+       :kaocha/reporter [kaocha.report/dots]
+      """
+    And the output should contain:
+      """ clojure
+       :kaocha/color? false,
+      """
+    And the output should contain:
+      """ clojure
+       :kaocha/fail-fast? false,
       """
