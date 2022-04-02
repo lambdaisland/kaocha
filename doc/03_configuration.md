@@ -216,7 +216,7 @@ bin/kaocha --plugin profiling
 Some plugins are needed for the normal functioning of Kaocha. These are added
 automatically when using the `#kaocha/v1 {}` reader literal. They are
 
-- `:kaocha.plugin/randomize`: randomize test order
+- `:kaocha.plugin/randomize`: randomize test order ([documentation](08_plugins.md#randomize))
 - `:kaocha.plugin/filter`: allow filtering and "focusing" of tests
 - `:kaocha.plugin/capture-output`: implements output capturing during tests
 
