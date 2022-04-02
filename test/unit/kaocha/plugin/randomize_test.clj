@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [kaocha.test-helper :refer :all]
             [kaocha.plugin :as plugin]
-            [kaocha.testable :as testable]))
+            [kaocha.testable :as testable]
+            [kaocha.plugin.randomize :as randomize]))
 
 
 (def plugin-chain (plugin/register :kaocha.plugin/randomize []))
@@ -13,6 +14,26 @@
                  :kaocha/source-paths  []
                  :kaocha/test-paths    ["fixtures/c-tests"]
                  :kaocha/ns-patterns   [".*"]})
+
+(deftest rng-sort-test
+  (let [rng (randomize/rng 123)]
+    (is (= {}
+          (randomize/rng-sort rng true
+            {})))
+    (is (= {:kaocha.test-plan/tests [{:kaocha.plugin.randomize/sort-key -1188957731}]}
+          (randomize/rng-sort rng true
+            {:kaocha.test-plan/tests [{}]})))
+    (is (= {:kaocha.test-plan/tests [{}]}
+          (randomize/rng-sort rng false
+            {:kaocha.test-plan/tests [{}]})))
+    (is (match? {:kaocha.test-plan/tests [{}]}
+          (randomize/rng-sort rng true
+            {:kaocha.testable/meta   {:kaocha.plugin.randomize/randomize? false}
+             :kaocha.test-plan/tests [{}]})))
+    (is (match? {:kaocha.test-plan/tests [{}]}
+          (randomize/rng-sort rng true
+            {:kaocha.plugin.randomize/randomize? false
+             :kaocha.test-plan/tests             [{}]})))))
 
 (deftest randomize-test
   (plugin/with-plugins plugin-chain
