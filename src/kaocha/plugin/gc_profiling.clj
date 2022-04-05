@@ -69,9 +69,7 @@
                 longest  (->> tests
                               (map :kaocha.testable/id) 
                               (map count)
-                              (reduce (fn  
-                                        ([] 0) ;in case of empty coll
-                                        ([a b] (Math/max a b))))
+                              (reduce (fn  ([a b] (Math/max a b))) 0)
                               (+ 2)) ;Leave space for identation
                 types     (group-by :kaocha.testable/type tests)
                negative-allocations? (some neg? (remove nil? (map ::delta (testable/test-seq result))))]
