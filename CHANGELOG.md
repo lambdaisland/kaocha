@@ -5,6 +5,8 @@
 ## Fixed
 
 - Fix issue with `gc-profiling` plugin when there's a syntax error.
+- Ensure that modifications that are done by deleting and recreating the file
+    are picked up by using `--watch` with Beholder.
 
 ## Changed
 

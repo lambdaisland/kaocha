@@ -118,8 +118,6 @@
                      ;; If a Git pattern contains braces, those should be treated literally
                      ;; Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
                      ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  )
-
-
                      (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
     (cond->> cleaned
       ;; If it starts with a single *, it should have **
@@ -131,7 +129,7 @@
       (re-find #"/$" cleaned) (format "%s**")
 
       ;; Otherwise, it should have the same behavior
-)))
+      )))
 
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
 
@@ -158,8 +156,8 @@
     (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files)))
 
 (s/fdef merge-ignore-files
-        :args (s/cat :dir string?)
-        :ret (s/coll-of string?))
+  :args (s/cat :dir string?)
+  :ret (s/coll-of string?))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
@@ -230,30 +228,30 @@ Behind the scenes we add this plugin to the start of the plugin chain. It takes
 care of reloading namespaces inside a Kaocha run, so we can report any load
 errors as test errors."
   (pre-load [{::keys [tracker focus] :as config}]
-            (print-scheduled-operations! tracker focus)
-            (let [tracker    (track-reload! tracker)
-                  config     (assoc config ::tracker tracker)
-                  error      (::ctn-reload/error tracker)
-                  error-ns   (::ctn-reload/error-ns tracker)
-                  load-error (::ctn-file/load-error tracker)]
-              (if (and error error-ns)
-                (let [[file line] (util/compiler-exception-file-and-line error)]
-                  (-> config
-                      (assoc ::error? true)
-                      (update :kaocha/tests
-                              (fn [suites]
+    (print-scheduled-operations! tracker focus)
+    (let [tracker    (track-reload! tracker)
+          config     (assoc config ::tracker tracker)
+          error      (::ctn-reload/error tracker)
+          error-ns   (::ctn-reload/error-ns tracker)
+          load-error (::ctn-file/load-error tracker)]
+      (if (and error error-ns)
+        (let [[file line] (util/compiler-exception-file-and-line error)]
+          (-> config
+              (assoc ::error? true)
+              (update :kaocha/tests
+                      (fn [suites]
                         ;; We don't really know which suite the load error
                         ;; belongs to, it could well be in a file shared by all
                         ;; suites, so we arbitrarily put the load error on the
                         ;; first and skip the rest, so that it gets reported
                         ;; properly.
-                                (into [(assoc (first suites)
-                                              ::testable/load-error error
-                                              ::testable/load-error-file (or file (util/ns-file error-ns))
-                                              ::testable/load-error-line line
-                                              ::testable/load-error-message (str "Failed reloading " error-ns ":"))]
-                                      (map #(assoc % ::testable/skip true))
-                                      (rest suites))))))
+                        (into [(assoc (first suites)
+                                      ::testable/load-error error
+                                      ::testable/load-error-file (or file (util/ns-file error-ns))
+                                      ::testable/load-error-line line
+                                      ::testable/load-error-message (str "Failed reloading " error-ns ":"))]
+                              (map #(assoc % ::testable/skip true))
+                              (rest suites))))))
                 config))))
 
 (defn watch-paths [config]
@@ -297,7 +295,7 @@ errors as test errors."
                                 :lambdaisland.tools.namespace.track/load))]
 
     (when (or (= watcher-type :hawk) (::hawk-opts config))
-      (output/warn "Hawk watcher is deprecated in favour of beholder. Kaocha will soon get rid of hawk completely."))
+      (output/warn "Hawk watcher is deprecated in favour of Beholder. Kaocha will soon get rid of Hawk completely."))
 
     (watch! {:type watcher-type
              :q q
