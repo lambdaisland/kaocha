@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- Fix issue with `gc-profiling` plugin when there's a syntax error.
+
 ## Changed
 
 # 1.64.1010 (2022-03-17 / e203099)
