@@ -47,9 +47,9 @@
     (stop testable))
 
  (cli-options [opts]
-               (conj opts
-                     [nil "--[no-]gc-profiling" "Show the approximate memory used by each test."]
-                     [nil "--[no-]gc-profiling-individual" "Show the details of individual tests."]))
+              (conj opts
+                    [nil "--[no-]gc-profiling" "Show the approximate memory used by each test."]
+                    [nil "--[no-]gc-profiling-individual" "Show the details of individual tests."]))
 
   (config [{:kaocha/keys [cli-options] :as config}]
           (assoc config
