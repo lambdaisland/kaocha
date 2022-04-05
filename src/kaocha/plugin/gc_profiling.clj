@@ -46,10 +46,10 @@
   (post-test [testable _]
     (stop testable))
 
-  (cli-options [opts]
-               (conj opts
-                     [nil "--[no-]gc-profiling" "Show the approximate memory used by each test."]
-                     [nil "--[no-]gc-profiling-individual" "Show the details of individual tests."]))
+ (cli-options [opts]
+              (conj opts
+                    [nil "--[no-]gc-profiling" "Show the approximate memory used by each test."]
+                    [nil "--[no-]gc-profiling-individual" "Show the details of individual tests."]))
 
   (config [{:kaocha/keys [cli-options] :as config}]
           (assoc config
@@ -69,7 +69,7 @@
                 longest  (->> tests
                               (map :kaocha.testable/id) 
                               (map count)
-                              (reduce (fn [a b] (Math/max a b)))
+                              (reduce (fn  ([a b] (Math/max a b))) 0)
                               (+ 2)) ;Leave space for identation
                 types     (group-by :kaocha.testable/type tests)
                negative-allocations? (some neg? (remove nil? (map ::delta (testable/test-seq result))))]
