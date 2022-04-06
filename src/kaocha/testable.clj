@@ -244,20 +244,6 @@
         (try-run-testable test test-plan (dec n))) ;otherwise retry
 ))
 
-(defn f [acc value]
-  (if (instance? BlockingQueue value)
-    (.drainTo value acc)
-    (.put acc value))
-  acc)
-
-(defn f [acc value] (doto acc (.put value)))
-
-(def q (ArrayBlockingQueue. 1024))
-(def r (ArrayBlockingQueue. 1024))
-
-(.put r 5)
-
-(reduce f [q 1 2 r])
 
 (defn run-testables-serial
   "Run a collection of testables, returning a result collection."

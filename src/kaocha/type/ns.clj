@@ -16,8 +16,6 @@
 (defn run-tests [testable test-plan fixture-fn]
   ;; It's not guaranteed the the fixture-fn returns the result of calling the
   ;; tests function, so we need to put it in a box for reference.
-  ;; (println (keys test-plan))
-  ;; (println (:kaocha.testable/meta test-plan))
   (let [result (atom (:kaocha.test-plan/tests testable))]
     (fixture-fn #(swap! result testable/run-testables test-plan))
     @result))

@@ -76,12 +76,8 @@
                                  :kaocha/ns-patterns      ["-test$"]
                                  :kaocha/source-paths     ["src"]
                                  :kaocha/test-paths       ["fixtures/f-tests"]
-                                 :kaocha.filter/skip-meta [:kaocha/skip]})
+                                 :kaocha.filter/skip-meta [:kaocha/skip]})]
 
-        #_(testable/load {:kaocha.testable/type :kaocha.type/ns
-                                 :kaocha.testable/id   :foo.bar-test
-                                 :kaocha.testable/desc "foo.bar-test"
-                                 :kaocha.ns/name       'foo.bar-test})]
     (is (match? {:kaocha.testable/type :kaocha.type/ns
                  :kaocha.testable/id   :foo.bar-test
                  :kaocha.ns/name       'foo.bar-test
@@ -103,6 +99,5 @@
     (is (not (nil? (:result
                  (binding [testable/*config* (assoc testable/*config* :parallel true)]
                    (with-test-ctx {:fail-fast? true
-                                 :parallel true }
-                   (testable/run testable testable)))))))
-    ))
+                                 :parallel true}
+                   (testable/run testable testable)))))))))
