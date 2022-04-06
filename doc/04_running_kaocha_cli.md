@@ -95,6 +95,31 @@ unhelpful output in a particular scenario, you can turn it off using the
 
 ![Terminal screenshot showing an expected value of "{:expected-key 1}" and an actual value. ":unexpected-key 1" is in green because it is an extra key not expected and "expected-key 1" is in red because it was expected but not present.](./deep-diff.png)
 
+## Parallelization
+
+Kaocha allows you to run tests in parallel using the `:parallel` key or
+`--parallel` flag. This is primarily useful for I/O heavy tests, but could also
+be useful for CPU-bound tests.
+
+Before enabling parallelization, be sure to test it. Consider using a tool like
+`bench` or `hyperfine`. While Kaocha's built-in profiling tools are great for
+identifying specific slow tests, but don't repeatedly measure your entire test suite
+to account for variation and noise. If you want to test it on CI, test it for CI
+specifically. CI runners are often lower powered than even a middle-of-the-road laptop.
+
+`test.check` tests consist of repeatedly testing a property against random data.
+In principle, these tests would be an excellent use case for parallelization.
+Because this repeated testing happens within `test.check`, Kaocha sees it as a
+single test. If you have many property-based tests that take a similar amount of
+time, parallelization is a great fit. However, if you have one or two
+property-based tests that take the bulk of the time, parallelization may not
+make a significant difference because the work cannot be split up.
+
+If you want to disable parallelization that's enabled in your configuration, you can
+pass `--no-parallel`. If you find yourself frequently reaching for this flag,
+it's probably worth reconsidering your configuration---having to frequently
+disable parallelization might be negating any time saved by parallelization.
+
 ## Debug information
 
 `--version` prints version information, whereas `--test-help` will print the
