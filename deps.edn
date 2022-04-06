@@ -4,6 +4,8 @@
  {org.clojure/clojure          {:mvn/version "1.10.3"}
   org.clojure/spec.alpha       {:mvn/version "0.3.218"}
   org.clojure/tools.cli        {:mvn/version "1.0.206"}
+  io.github.nextjournal/clerk {:git/sha "32ef18e12df6cfd2a38c13ccaa9d6fa932fa0fdb"
+                               #_#_:local/root "../clerk"}
   lambdaisland/tools.namespace {:mvn/version "0.1.247"}
   lambdaisland/deep-diff       {:mvn/version "0.0-47"}
   org.tcrawley/dynapath        {:mvn/version "1.1.0"}

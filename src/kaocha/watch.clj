@@ -17,6 +17,7 @@
             [kaocha.result :as result]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
+            [kaocha.watch-deps :as watch-deps]
             [kaocha.util :as util]
             [lambdaisland.tools.namespace.dir :as ctn-dir]
             [lambdaisland.tools.namespace.file :as ctn-file]
@@ -42,12 +43,12 @@
 (defn drain-queue! [q]
   (doall (take-while identity (repeatedly #(qpoll q)))))
 
-(defn- try-run [config focus tracker]
-  (let [config (if (seq focus)
-                 (assoc config :kaocha.filter/focus focus)
+(defn- try-run [config fail-focus tracker]
+  (let [config (if (seq fail-focus)
+                 (assoc config :kaocha.filter/focus fail-focus)
                  config)
         config (-> config
-                   (assoc ::focus focus)
+                   (assoc ::fail-focus fail-focus)
                    (assoc ::tracker tracker)
                    (update :kaocha/plugins #(cons ::plugin %)))
         result (try
@@ -60,20 +61,23 @@
 (defn track-reload! [tracker]
   (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {})))
 
-(defn print-scheduled-operations! [tracker focus]
+(defn tracker-changes [tracker]
   (let [unload (set (::ctn-track/unload tracker))
         load   (set (::ctn-track/load tracker))
-        reload (set/intersection unload load)
-        unload (set/difference unload reload)
-        load   (set/difference load reload)]
-    (when (seq unload)
-      (println "[watch] Unloading" unload))
-    (when (seq load)
-      (println "[watch] Loading" load))
-    (when (seq reload)
-      (println "[watch] Reloading" reload))
-    (when (seq focus)
-      (println "[watch] Re-running failed tests" (set focus)))))
+        reload (set/intersection unload load)]
+    {:load   (set/difference load reload)
+     :unload (set/difference unload reload)
+     :reload reload}))
+
+(defn print-scheduled-operations! [{:keys [unload load reload]} fail-focus]
+  (when (seq unload)
+    (println "[watch] Unloading" unload))
+  (when (seq load)
+    (println "[watch] Loading" load))
+  (when (seq reload)
+    (println "[watch] Reloading" reload))
+  (when (seq fail-focus)
+    (println "[watch] Re-running failed tests" (set fail-focus))))
 
 (defn drain-and-rescan! [q tracker watch-paths]
   (drain-queue! q)
@@ -185,41 +189,48 @@
       [config plugin-chain])
     [config plugin-chain]))
 
-(defn run-loop [finish? config tracker q watch-paths]
-  (loop [tracker      tracker
-         config       config
-         plugin-chain plugin/*current-chain*
-         focus        nil]
-    (when-not @finish?
-      (let [result  (try-run config focus tracker)
-            tracker (::tracker result)
-            error?  (::error? result)
-            ignore  (if (::use-ignore-file config)
-                      (into (::ignore config)
-                            (merge-ignore-files "."))
-                      (::ignore config))]
-        (cond
-          error?
-          (do
-            (println "[watch] Error reloading, all tests skipped.")
-            (let [[tracker _] (wait-and-rescan! q tracker watch-paths ignore)
-                  [config plugin-chain] (reload-config config plugin-chain)]
-              (recur tracker config plugin-chain nil)))
+(defn run-loop [finish? config q watch-paths]
+  (let [tracker (-> (ctn-track/tracker)
+                    (ctn-dir/scan-dirs watch-paths)
+                    (dissoc :lambdaisland.tools.namespace.track/unload
+                            :lambdaisland.tools.namespace.track/load))]
+    (loop [tracker      tracker
+           config       config
+           plugin-chain plugin/*current-chain*
+           fail-focus   nil
+           first?       true]
+      (when-not @finish?
+        (let [result  (try-run config fail-focus tracker)
+              tracker (::tracker result)
+              error?  (::error? result)
+              ignore  (if (::use-ignore-file config)
+                        (into (::ignore config)
+                              (merge-ignore-files "."))
+                        (::ignore config))]
+          (when first?
+            (watch-deps/init! (:lambdaisland.tools.namespace.file/filemap tracker)))
+          (cond
+            error?
+            (do
+              (println "[watch] Error reloading, all tests skipped.")
+              (let [[tracker _] (wait-and-rescan! q tracker watch-paths ignore)
+                    [config plugin-chain] (reload-config config plugin-chain)]
+                (recur tracker config plugin-chain nil false)))
 
-          (and (seq focus) (not (result/failed? result)))
-          (do
-            (println "[watch] Failed tests pass, re-running all tests.")
-            (recur (drain-and-rescan! q tracker watch-paths) config plugin-chain nil))
+            (and (seq fail-focus) (not (result/failed? result)))
+            (do
+              (println "[watch] Failed tests pass, re-running all tests.")
+              (recur (drain-and-rescan! q tracker watch-paths) config plugin-chain nil false))
 
-          :else
-          (let [[tracker trigger] (wait-and-rescan! q tracker watch-paths ignore)
-                [config plugin-chain] (reload-config config plugin-chain)
-                focus (when-not (= :enter trigger)
-                        (->> result
-                             testable/test-seq
-                             (filter result/failed-one?)
-                             (map ::testable/id)))]
-            (recur tracker config plugin-chain focus)))))))
+            :else
+            (let [[tracker trigger] (wait-and-rescan! q tracker watch-paths ignore)
+                  [config plugin-chain] (reload-config config plugin-chain)
+                  fail-focus (when-not (= :enter trigger)
+                               (->> result
+                                    testable/test-seq
+                                    (filter result/failed-one?)
+                                    (map ::testable/id)))]
+              (recur tracker config plugin-chain fail-focus false))))))))
 
 (defplugin kaocha.watch/plugin
   "This is an internal plugin, don't use it directly.
@@ -227,13 +238,32 @@
 Behind the scenes we add this plugin to the start of the plugin chain. It takes
 care of reloading namespaces inside a Kaocha run, so we can report any load
 errors as test errors."
-  (pre-load [{::keys [tracker focus] :as config}]
-    (print-scheduled-operations! tracker focus)
-    (let [tracker    (track-reload! tracker)
-          config     (assoc config ::tracker tracker)
-          error      (::ctn-reload/error tracker)
-          error-ns   (::ctn-reload/error-ns tracker)
-          load-error (::ctn-file/load-error tracker)]
+  (pre-load [{::keys [tracker fail-focus] :as config}]
+    (let [changes (tracker-changes tracker)]
+      (print-scheduled-operations! changes fail-focus)
+      (let [tracker    (track-reload! tracker)
+            ;; TODO: handle unload
+            change-focus (when-let [last-changes (->> (select-keys changes [:reload :load])
+                                                      vals
+                                                      (map (partial into []))
+                                                      flatten
+                                                      seq)]
+                           (reduce (fn [acc ns]
+                                     (let [f (some (fn [[k v]] (when (= v ns) k))
+                                                   (:lambdaisland.tools.namespace.file/filemap tracker))]
+                                       (concat acc (watch-deps/update-file! f ns))))
+                                   []
+                                   last-changes))
+            ;; TODO: when focus is empty, don't run any tests
+            focus      (concat fail-focus change-focus)
+            config     (assoc config
+                              ::tracker tracker
+                              :kaocha.filter/focus focus)
+            error      (::ctn-reload/error tracker)
+            error-ns   (::ctn-reload/error-ns tracker)
+            load-error (::ctn-file/load-error tracker)]
+        (when (seq change-focus)
+          (println "[watch] Running tests affected by changes" (set change-focus)))
       (if (and error error-ns)
         (let [[file line] (util/compiler-exception-file-and-line error)]
           (-> config
@@ -252,7 +282,7 @@ errors as test errors."
                                       ::testable/load-error-message (str "Failed reloading " error-ns ":"))]
                               (map #(assoc % ::testable/skip true))
                               (rest suites))))))
-        config))))
+        config)))))
 
 (defn watch-paths [config]
   (into #{}
@@ -288,11 +318,7 @@ errors as test errors."
         watch-paths (if (:kaocha.watch/use-ignore-file config)
                       (set/union (watch-paths config)
                                  (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
-                      (watch-paths config))
-        tracker     (-> (ctn-track/tracker)
-                        (ctn-dir/scan-dirs watch-paths)
-                        (dissoc :lambdaisland.tools.namespace.track/unload
-                                :lambdaisland.tools.namespace.track/load))]
+                      (watch-paths config))]
 
     (when (or (= watcher-type :hawk) (::hawk-opts config))
       (output/warn "Hawk watcher is deprecated in favour of beholder. Kaocha will soon get rid of hawk completely."))
@@ -315,7 +341,7 @@ errors as test errors."
             (qput q :enter)
             (Thread/sleep 100)))))
 
-    (run-loop finish? config tracker q watch-paths)))
+    (run-loop finish? config q watch-paths)))
 
 (defn run [config]
   (let [finish?   (atom false)
