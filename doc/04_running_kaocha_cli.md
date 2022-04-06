@@ -117,7 +117,7 @@ make a significant difference because the work cannot be split up.
 
 If you want to disable parallelization that's enabled in your configuration, you can
 pass `--no-parallel`. If you find yourself frequently reaching for this flag,
-it's probably worth reconsidering your configuration---having to frequently
+it's probably worth reconsidering your configuration—having to frequently
 disable parallelization might be negating any time saved by parallelization.
 
 ## Debug information
