@@ -146,14 +146,14 @@
   "Finds ignore files in the local directory and the system."
   [dir]
   (let [absolute-files [(io/file (str (System/getProperty "user.home") "/.config/git/ignore"))]
-        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"] ) (file-seq (io/file dir)))]
+        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"]) (file-seq (io/file dir)))]
     (into absolute-files relative-files)))
 
 (defn merge-ignore-files
   "Combines and parses ignore files."
   [dir]
   (let [all-files  (find-ignore-files dir)]
-    (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files )))
+    (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files)))
 
 (s/fdef merge-ignore-files
   :args (s/cat :dir string?)
@@ -252,7 +252,7 @@ errors as test errors."
                                       ::testable/load-error-message (str "Failed reloading " error-ns ":"))]
                               (map #(assoc % ::testable/skip true))
                               (rest suites))))))
-        config))))
+                config))))
 
 (defn watch-paths [config]
   (into #{}
@@ -275,7 +275,7 @@ errors as test errors."
 (defmethod watch! :beholder [{:keys [q watch-paths]}]
   (apply beholder/watch
          (fn [{:keys [type path]}]
-           (when (= type :modify)
+           (when (contains? #{:modify :create} type)
              (qput q path)))
          (map str watch-paths)))
 
@@ -295,7 +295,7 @@ errors as test errors."
                                 :lambdaisland.tools.namespace.track/load))]
 
     (when (or (= watcher-type :hawk) (::hawk-opts config))
-      (output/warn "Hawk watcher is deprecated in favour of beholder. Kaocha will soon get rid of hawk completely."))
+      (output/warn "Hawk watcher is deprecated in favour of Beholder. Kaocha will soon get rid of Hawk completely."))
 
     (watch! {:type watcher-type
              :q q
