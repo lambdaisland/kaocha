@@ -101,18 +101,19 @@ Kaocha allows you to run tests in parallel using the `:parallel` key or
 `--parallel` flag. This is primarily useful for I/O heavy tests, but could also
 be useful for CPU-bound tests.
 
-Before enabling parallelization, be sure to test it. Consider using a tool like
+Before enabling parallelization, strongly consider timing it to ensure it
+actually makes a difference. Consider using a tool like
 `bench` or `hyperfine`. While Kaocha's built-in profiling tools are great for
-identifying specific slow tests, but don't repeatedly measure your entire test suite
-to account for variation and noise. If you want to test it on CI, test it for CI
-specifically. CI runners are often lower powered than even a middle-of-the-road laptop.
+identifying specific tests that take a disproportionate amount of time, they don't repeatedly measure your entire test suite
+to account for variation and noise. If you want to use parallelization to
+speed up continuous integration, try to use the CI service itself or similar hardware. CI runners are often lower powered than even a middle-of-the-road laptop.
 
 `test.check` tests consist of repeatedly testing a property against random data.
 In principle, these tests would be an excellent use case for parallelization.
-Because this repeated testing happens within `test.check`, Kaocha sees it as a
-single test. If you have many property-based tests that take a similar amount of
+However, because this repeated testing happens within `test.check`, Kaocha sees each `defspec` as a
+single test. If you have many property-based tests that take a significant amount of
 time, parallelization is a great fit. However, if you have one or two
-property-based tests that take the bulk of the time, parallelization may not
+property-based tests that take up the bulk of the runtme time, parallelization may not
 make a significant difference because the work cannot be split up.
 
 If you want to disable parallelization that's enabled in your configuration, you can
