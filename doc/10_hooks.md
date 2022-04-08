@@ -157,7 +157,7 @@ gets loaded or run.
 
 ``` clojure
 #kaocha/v1
-{:tests [{:kaocha/pre-load-test [...]}]}
+{:tests [{:kaocha.hooks/pre-load-test [...]}]}
 ```
 
 These can be used for instance with kaocha-cljs2 to prepare the ClojureScript
