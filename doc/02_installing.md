@@ -9,7 +9,7 @@ The main namespace for use at the command line is `kaocha.runner`, regardless of
 For example:
 
 ``` shell
-clojure -Sdeps '{:deps {lambdaisland/kaocha {:mvn/version "1.64.1010"}}}' -m kaocha.runner --test-help
+clojure -Sdeps '{:deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}' -m kaocha.runner --test-help
 ```
 
 Below are instructions on the recommended way to set things up for various build tools.
@@ -22,7 +22,7 @@ In `deps.edn`, create a `test` "alias" (profile) that loads the `lambdaisland/ka
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.64.1010"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}}}
 ```
 
 Other dependencies that are only used for tests, like test framework or assertion
@@ -81,7 +81,7 @@ options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.64.1010"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}}}
 ```
@@ -102,10 +102,10 @@ of tests skipped. You could save that configuration with an additional alias:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.64.1010"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
- :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.64.1010"}}
+ :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {:watch? true
 	 :skip-meta :slow
@@ -122,7 +122,7 @@ Add Kaocha to your `:dev` profile, then add an alias that invokes `lein run -m k
 ``` clojure
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:dev {:dependencies [,,, [lambdaisland/kaocha "1.64.1010"]]}}
+  :profiles {:dev {:dependencies [,,, [lambdaisland/kaocha "1.65.1029"]]}}
   :aliases {"kaocha" ["run" "-m" "kaocha.runner"]})
 ```
 
@@ -155,7 +155,7 @@ alias that activates the profile and invokes `lein run -m kaocha.runner`:
 ``` clojure
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.64.1010"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.65.1029"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
