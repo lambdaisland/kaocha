@@ -1,6 +1,8 @@
 (ns kaocha.config-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [kaocha.config :as c]
+            [matcher-combinators.matchers :as m]
             [slingshot.slingshot :refer [try+]]))
 
 (def rename-key @#'c/rename-key)
@@ -18,19 +20,22 @@
          (rename-key {:xxx 123 :yyy 456}
                      :xxx :yyy))))
 
+(def expected-default-config
+  {:kaocha/reporter   ['kaocha.report/dots]
+   :kaocha/color?     true
+   :kaocha/fail-fast? false
+   :kaocha/plugins [:kaocha.plugin/randomize
+                    :kaocha.plugin/filter
+                    :kaocha.plugin/capture-output]
+   :kaocha/tests [{:kaocha.testable/type    :kaocha.type/clojure.test
+                   :kaocha.testable/id      :unit
+                   :kaocha/ns-patterns      ["-test$"]
+                   :kaocha/source-paths     ["src"]
+                   :kaocha/test-paths       ["test"]
+                   :kaocha.filter/skip-meta [:kaocha/skip]}]})
+
 (deftest default-config-test
-  (is (= {:kaocha/reporter   ['kaocha.report/dots]
-          :kaocha/color?     true
-          :kaocha/fail-fast? false
-          :kaocha/plugins [:kaocha.plugin/randomize
-                           :kaocha.plugin/filter
-                           :kaocha.plugin/capture-output]
-          :kaocha/tests [{:kaocha.testable/type    :kaocha.type/clojure.test
-                          :kaocha.testable/id      :unit
-                          :kaocha/ns-patterns      ["-test$"]
-                          :kaocha/source-paths     ["src"]
-                          :kaocha/test-paths       ["test"]
-                          :kaocha.filter/skip-meta [:kaocha/skip]}]}
+  (is (= expected-default-config
          (c/default-config))))
 
 (deftest merge-config-test
@@ -99,11 +104,32 @@
                 (c/normalize {:capture-output? :sentinel1
                               :randomize? :sentinel2})))))
 
-(deftest load-config-test []
-  (testing "loads the config file in the project root"
-    (is (match? {:kaocha/tests [{:kaocha.testable/id :unit}
-                                {:kaocha.testable/id :integration}]}
-                (c/load-config)))))
+(deftest load-config-test
+  (testing "from file path"
+    (testing "loads the config file in the project root"
+      (is (match? {:kaocha/tests [{:kaocha.testable/id :unit}
+                                  {:kaocha.testable/id :integration}]}
+                  (c/load-config))))
+
+    (testing "supports Aero manipulation"
+      (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
+                   :kaocha/plugins  (m/embeds [:some.kaocha.plugin/foo :other.kaocha.plugin/bar])}
+                  (c/load-config "test/unit/kaocha/config/loaded-test.edn"))))
+
+    (testing "falls back to default when file does not exist"
+      (is (= expected-default-config
+             (c/load-config "file-that-does-not-exist.edn")))))
+
+  (testing "from resource"
+    (testing "supports Aero manipulation"
+      (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
+                   :kaocha/fail-fast? true
+                   :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
+                  (c/load-config (io/resource "kaocha/config/loaded-test-resource.edn")))))
+
+    (testing "falls back to default when resource does not exist"
+      (is (= expected-default-config
+             (c/load-config (io/resource "resource-that-does-not-exist.edn")))))))
 
 (deftest apply-cli-opts-test
   (is (= {:kaocha/fail-fast? true,

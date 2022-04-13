@@ -1,0 +1,2 @@
+{:reporter [kaocha.report.progress/report]
+ :plugins [:other.kaocha.plugin/bar]}
