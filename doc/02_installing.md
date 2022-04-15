@@ -22,7 +22,8 @@ In `deps.edn`, create a `test` "alias" (profile) that loads the `lambdaisland/ka
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}}}
+ {:test {:main-opts ["-m" "kaocha.runner"]
+         :extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}}}
 ```
 
 Other dependencies that are only used for tests, like test framework or assertion
@@ -39,7 +40,7 @@ namespace. This is what `bin/kaocha` by default looks like. Make sure to add
 ``` shell
 #!/usr/bin/env bash
 
-clojure -A:test -m kaocha.runner "$@"
+clojure -M:test "$@"
 ```
 
 Make sure the script is executable:
