@@ -56,7 +56,7 @@ needed in order for tests to run correctly.
 #!/usr/bin/env bash
 
 . secrets.env
-clojure -J-Xmx512m -A:dev:test -m kaocha.runner --config-file test/tests.edn "$@"
+clojure -J-Xmx512m -M:dev:test --config-file test/tests.edn "$@"
 ```
 
 This version also sets an alternative location for Kaocha's configuration file:
