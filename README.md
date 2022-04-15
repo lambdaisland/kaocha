@@ -102,7 +102,8 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}}}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.65.1029"}}
+         :main-opts ["-m" "kaocha.runner"]}}}
 ```
 
 Add a binstub called `bin/kaocha`
@@ -110,7 +111,7 @@ Add a binstub called `bin/kaocha`
 ```
 mkdir -p bin
 echo '#!/usr/bin/env sh' > bin/kaocha
-echo 'clojure -A:test -m kaocha.runner "$@"' >> bin/kaocha
+echo 'clojure -M:test "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
 
