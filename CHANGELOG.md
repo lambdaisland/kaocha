@@ -2,6 +2,8 @@
 
 ## Added
 
+- Extend `kaocha.config/load-config` to also work on resources
+
 ## Fixed
 
 ## Changed

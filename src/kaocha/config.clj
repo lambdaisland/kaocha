@@ -4,7 +4,9 @@
             [kaocha.output :as output]
             [kaocha.report :as report]
             [slingshot.slingshot :refer [throw+]]
-            [meta-merge.core :refer [meta-merge]]))
+            [meta-merge.core :refer [meta-merge]])
+  (:import (java.io File)
+           (java.net URL)))
 
 ;the reader literal for the current default:
 (def current-reader 'kaocha/v1)
@@ -101,19 +103,92 @@
 (defmethod aero/reader 'meta-merge [_opts _tag value]
   (apply meta-merge value))
 
+(defn read-config-source [source {:aero/keys [read-config-opts] :as opts}]
+  (let [profile (:profile opts (if (= (System/getenv "CI") "true")
+                                 :ci
+                                 :default))]
+    (aero/read-config source (merge {:profile profile}
+                                    read-config-opts))))
+
+(defprotocol ConfigSource
+  (read-config [source opts]))
+
+(extend-protocol ConfigSource
+
+  nil ;; handle nil source case
+  (read-config [_ _]
+   (default-config))
+
+  Object ;; keep existing default behaviour
+  (read-config [path opts]
+    (read-config (io/file path) opts))
+
+  File
+  (read-config [^File file opts]
+   (when (.exists file)
+     ;; Note: since the default :resolver in Aero is aero/adaptive-resolver,
+     ;; #include will first check if there is a resource with that name
+     ;; and will only revert to a file if not, unless overridden in
+     ;; :aero/read-config-opts of opts
+     (read-config-source file opts))))
+
+(letfn [(only-resolve-resources-by-default [read-config-opts]
+          (merge {:resolver aero/resource-resolver} read-config-opts))]
+  (extend-protocol ConfigSource
+    URL ;; resource
+    (read-config [resource opts]
+      (when resource
+        ;; Note: we only #include resources
+        ;; unless overridden in :aero/read-config-opts of opts
+        (let [opts (update opts :aero/read-config-opts
+                           only-resolve-resources-by-default)]
+          (read-config-source resource opts))))))
+
 (defn load-config
+  "Loads and returns configuration from `source` or the file \"tests.edn\"
+  if called without arguments.
+
+  If the config value loaded from `source` is nil, it returns the default
+  configuration, which is the result of `(default-config)`.
+
+  Accepts various types as `source`:
+  - `File`   loads from a file from the file system, provided it exists
+  - `Object` coerces to `File`, treated as the single argument to (io/file),
+              like a string path
+  - `URL`    treated as a resource on the classpath
+  - `nil`    returns the default configuration
+
+  The list of supported types can be extended by extending
+  the `ConfigSource` protocol.
+
+  `opts` can be used to affect some aspects of loading, which is dependent on
+  the `source`'s `ConfigSource` implementation. For the `source`s supported
+  out of the box, [aero](https://github.com/juxt/aero) is used to parse the raw
+  data. It uses `opts` in the following way:
+
+  `(:profile opts)` can be specified to select an Aero profile
+  `(:aero/read-config-opts opts)` is passed to `aero/read-config`
+
+  By default, when loading from something that coerces to a `File`, Aero will
+  try to resolve `#include` references as resources first, then files. This is
+  the default behaviour of Aero (`aero/adaptive-resolver`) and is kept for
+  backwards-compatibility.
+
+  When loading from a resource (`URL`), we tell Aero to only try resolving
+  `#include`s to resources (`aero/resource-resolver`) to try and be less
+  surprising.
+
+  These default choices can be overridden by setting another resolver in `opts`:
+
+  `{:aero/read-config-opts {:resolver resolver-to-use}}`"
   ([]
-   (load-config "tests.edn"))
-  ([path]
-   (load-config path {}))
-  ([path opts]
-   (let [file (io/file path)
-         profile (:profile opts (if (= (System/getenv "CI") "true")
-                                  :ci
-                                  :default))]
-     (if (.exists file)
-       (aero/read-config file {:profile profile})
-       (default-config)))))
+   (load-config (io/file "tests.edn")))
+  ([source]
+   (load-config source {}))
+  ([source opts]
+   (if-some [config (read-config source opts)]
+     config
+     (read-config nil opts))))
 
 (defn apply-cli-opts [config options]
   (cond-> config
