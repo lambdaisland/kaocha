@@ -43,6 +43,14 @@
                                :leaf (s/keys :opt [::count ::pass ::error ::fail ::pending])))
   :ret ::result-map)
 
+
+
+(defn erred?
+  "Did this testable, or one of its children, end with an error?"
+  [testable]
+  (let [{::keys [error fail]} (testable-totals testable)]
+    (> error 0)))
+
 (defn failed?
   "Did this testable, or one of its children, fail or error?"
   [testable]
@@ -53,6 +61,11 @@
   "Did this testable fail or error, does not recurse."
   [{::keys [error fail] :or {error 0 fail 0}}]
   (or (> error 0) (> fail 0)))
+
+(defn erred-one?
+  "Did this testable, or one of its children, end with an error?"
+  [{::keys [error fail] :or {error 0 fail 0}}]
+  (> error 0))
 
 (defn totals->clojure-test-summary
   "Turn a kaocha-style result map into a clojure.test style summary map."

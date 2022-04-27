@@ -12,6 +12,11 @@
 
 (require 'kaocha.assertions)
 
+(deftest bad-test
+  
+  (testing "fails with exception"
+    (throw (Exception. ":("))))
+
 (deftest dispatch-extra-keys-test
   (testing "it dispatches to custom clojure.test/report extensions"
     (.addMethod r/clojure-test-report
