@@ -1,0 +1,4 @@
+#kaocha/v1 #meta-merge
+[#include "kaocha/config/included-test.edn"
+ {:fail-fast? true
+  :plugins [:some.kaocha.plugin/qux]}]

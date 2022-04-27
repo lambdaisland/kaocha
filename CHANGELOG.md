@@ -6,6 +6,12 @@
 
 ## Changed
 
+# 1.66.1034 (2022-04-26 / 7a5824a)
+
+## Added
+
+- Extend `kaocha.config/load-config` to also work on resources
+
 # 1.65.1029 (2022-04-11 / a60db27)
 
 ## Added
