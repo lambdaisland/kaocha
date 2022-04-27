@@ -22,7 +22,8 @@ In `deps.edn`, create a `test` "alias" (profile) that loads the `lambdaisland/ka
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.66.1034"}}}}}
+ {:test {:main-opts ["-m" "kaocha.runner"]
+         :extra-deps {lambdaisland/kaocha {:mvn/version "1.66.1034"}}}}}
 ```
 
 Other dependencies that are only used for tests, like test framework or assertion
@@ -39,7 +40,7 @@ namespace. This is what `bin/kaocha` by default looks like. Make sure to add
 ``` shell
 #!/usr/bin/env bash
 
-clojure -A:test -m kaocha.runner "$@"
+clojure -M:test "$@"
 ```
 
 Make sure the script is executable:
@@ -55,7 +56,7 @@ needed in order for tests to run correctly.
 #!/usr/bin/env bash
 
 . secrets.env
-clojure -J-Xmx512m -A:dev:test -m kaocha.runner --config-file test/tests.edn "$@"
+clojure -J-Xmx512m -M:dev:test --config-file test/tests.edn "$@"
 ```
 
 This version also sets an alternative location for Kaocha's configuration file:
