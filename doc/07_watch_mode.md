@@ -22,7 +22,7 @@ If any tests fail, then upon the next change first the failed tests will be run.
 Only when they pass is the complete suite run again.
 
 Sometimes your source or test directories will contain files that should be
-ignored by watch mode, for instance temporary files left by your editor. You can
+ignored by watch mode, for instance, temporary files left by your editor. You can
 tell watch mode to ignore these with the `:kaocha.watch/ignore` configuration
 key.
 
