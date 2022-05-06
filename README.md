@@ -277,7 +277,7 @@ Kaocha requires Clojure 1.9 or later.
 
 kaocha is part of a growing collection of quality Clojure libraries and
 tools released on the Lambda Island label. If you are using this project
-commercially then you are expected to pay it forward by
+commercially, then you are expected to pay it forward by
 [becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
 so that we may continue to enjoy a thriving Clojure ecosystem.
 
@@ -306,10 +306,10 @@ Contributors SHOULD
 - add tests for new functionality.
 
 If you submit a pull request that adheres to these rules, then it will almost
-certainly be merged immediately. However some things may require more
+certainly be merged immediately. However, some things may require more
 consideration. If you add new dependencies, or significantly increase the API
 surface, then we need to decide if these changes are in line with the project's
-goals. In this case you can start by [writing a pitch](https://nextjournal.com/lambdaisland/pitch-template),
+goals. In this case, you can start by [writing a pitch](https://nextjournal.com/lambdaisland/pitch-template),
 and collecting feedback on it.
 
 `*` This goes for features too, a feature needs to solve a problem. State the problem it solves, then supply a minimal solution.
@@ -322,7 +322,7 @@ changes are justified.
 <!-- license -->
 ## License
 
-Copyright &copy; 2018-2021 Arne Brasseur and contributors
+Copyright &copy; 2018-2022 Arne Brasseur and contributors
 
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
 <!-- /license -->
