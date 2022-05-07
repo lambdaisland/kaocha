@@ -93,7 +93,7 @@
               (doseq [{:keys [::delta :kaocha.testable/id] :as test} largest
                       :let [n (count (remove ::testable/skip (:kaocha.result/tests test)))]]
                 (cond 
-                  (> n 0) (let [avg (int (/ delta  n))]
+                  (> n 0) (let [avg (long (Math/round (/ delta  n)))]
                             (println (format "%s%s    \n%s\033[1m%s\033[0m average (%s / %d tests)" indentation-str 
                                              id (str indentation-str indentation-str)
                                              (convert-bytes avg) (convert-bytes delta) n)))
