@@ -104,7 +104,7 @@
          (first (w/reload-config {:kaocha/cli-options {:config-file (str tmp-file)}} []))))))
 
 
-(deftest watch-test
+(deftest ^{:min-java-version "1.11"} watch-test
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
         config (-> (config/load-config config-file)
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
@@ -154,7 +154,7 @@
     (integration/spit-file  m (str test-dir "/src/.gitignore") "two" )
     (is (=  #{"one" "two"}   (set (w/merge-ignore-files (str test-dir)))))))
 
-(deftest ^{:min-java-version "1.11"} watch-set-dynamic-vars-test
+(deftest watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file
   ; is checked via ./bin/kaocha with --watch mode
   (is (do (set! *warn-on-reflection* false)
