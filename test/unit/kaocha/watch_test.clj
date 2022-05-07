@@ -71,8 +71,7 @@
   (is (not (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxy*")])))
   (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "**xxx.clj")]))
   (is (w/glob? (.toPath (io/file "test/xxxx.clj")) [(w/convert "**xxx.clj")]))
-  (is (w/glob? (.toPath (io/file "test/xxxx.clj")) [(w/convert "***xxx.clj")]))
-  )
+  (is (w/glob? (.toPath (io/file "test/xxxx.clj")) [(w/convert "***xxx.clj")])))
 
 (deftest glob-converted-test
   ; Validate that incompatible patterns are converted and match after conversion. 
@@ -114,8 +113,7 @@
         finish? (atom false)
         q       (w/make-queue)
         out-str (promise)
-        test-file-path (str "test/" prefix "/bar_test.clj")
-        ]
+        test-file-path (str "test/" prefix "/bar_test.clj")]
     (integration/spit-file m "tests.edn" (prn-str config))
     (integration/spit-file m test-file-path (str "(ns " prefix ".bar-test (:require [clojure.test :refer :all])) (deftest xxx-test (is (= :xxx :yyy)))"))
 
