@@ -154,7 +154,7 @@
     (integration/spit-file  m (str test-dir "/src/.gitignore") "two" )
     (is (=  #{"one" "two"}   (set (w/merge-ignore-files (str test-dir)))))))
 
-(deftest watch-set-dynamic-vars-test
+(deftest ^{:min-java-version "1.11"} watch-set-dynamic-vars-test
   ; sanity test for #133. Should succeed when this file
   ; is checked via ./bin/kaocha with --watch mode
   (is (do (set! *warn-on-reflection* false)

@@ -3,7 +3,8 @@
            :profiling
            :print-invocations
            :hooks
-           :notifier]
+           :notifier
+           :kaocha.plugin/version-filter]
 
  :tests [{:id         :unit
           :test-paths ["test/shared"
