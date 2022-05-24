@@ -99,12 +99,20 @@
           (with-bindings (config/binding-map config)
             (let [config (resolve-reporter config)]
               (let [test-plan (test-plan config)]
+                
                 (when-not (some #(or (hierarchy/leaf? %)
                                      (::testable/load-error %))
                                 (testable/test-seq test-plan))
-                  (output/warn (str "No tests were found, make sure :test-paths and "
-                                    ":ns-patterns are configured correctly in tests.edn."))
+                  (if (not (zero? (count (filter ::testable/skip (testable/test-seq-with-skipped test-plan)))))
+                    (output/warn (str "No tests were found and some tests were"
+                                      " skipped; check for misspelled settings"
+                                      " or combinations of settings that no tests"
+                                      " satisfy."))
+                    (output/warn (str "No tests were found. This may be an issue in your test configuration."
+                                      " To investigate, check the :test-paths and :ns-patterns keys in tests.edn."))
+                    )
                   (throw+ {:kaocha/early-exit 0 }))
+                
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 
