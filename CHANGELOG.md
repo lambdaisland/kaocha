@@ -1,10 +1,11 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix misleading error message when all tests are filtered out. Previously, it
+    would misleadingly suggest you correct the `test-paths` and `ns-patterns`
+    configuration keys.
+- Fix overflow with the `gc-profiling` plugin when there's too many bytes.
 
 # 1.66.1034 (2022-04-26 / 7a5824a)
 
