@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   kaocha: lambdaisland/kaocha@0.0.1
-  clojure: lambdaisland/clojure@0.0.4
+  clojure: lambdaisland/clojure@0.0.5
   win: circleci/windows@2.2.0
 
 jobs:
