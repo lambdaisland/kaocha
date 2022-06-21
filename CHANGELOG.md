@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix issue in `gc-profiling`, which was caused by a prior fix from 1.67.1055.
 
 # 1.67.1055 (2022-06-16 / 1682c7e)
 
