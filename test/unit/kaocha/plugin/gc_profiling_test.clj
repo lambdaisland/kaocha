@@ -40,6 +40,36 @@
     (is
       (= "-11B" (gc/convert-bytes -11)))))
 
+(deftest rounding-divide
+  (testing "Yielding whole numbers."
+    (is 
+      (= 2 (gc/rounding-divide 4 2)))
+    (is 
+      (= 2 (gc/rounding-divide 4.0 2)))
+    (is 
+      (= 2 (gc/rounding-divide 4 2.0)))
+    (is 
+      (= 2 (gc/rounding-divide 4.0 2.0))))
+  (testing "Yielding rational numbers as decimals."
+    (is 
+      (= 3 (gc/rounding-divide 5 2)))
+    (is 
+      (= 3 (gc/rounding-divide 5 2.0)))
+    (is 
+      (= 3 (gc/rounding-divide 5.0 2)))
+    (is
+      (= 3 (gc/rounding-divide 5.0 2.0))))
+  (testing "Yielding rational numbers as decimals."
+    (is 
+      (= -2 (gc/rounding-divide -5 2)))
+    (is 
+      (= -2 (gc/rounding-divide -5 2.0)))
+    (is 
+      (= -2 (gc/rounding-divide -5.0 2)))
+    (is
+      (= -2 (gc/rounding-divide -5.0 2.0)))))
+
+
 (deftest gc-profiling-test
   (plugin/with-plugins plugin-chain
     (is 

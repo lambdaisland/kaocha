@@ -25,6 +25,13 @@
   (- (.totalMemory (Runtime/getRuntime))
      (.freeMemory (Runtime/getRuntime))))
 
+(defn rounding-divide 
+  "Divide two numbers and round them.
+  
+  Unlike quot, this rounds rather than truncates."
+  [m n]
+  (Math/round (double (/ m  n))))
+
 (defn start [testable]
   (assoc testable ::start (get-memory)))
 
@@ -93,7 +100,7 @@
               (doseq [{:keys [::delta :kaocha.testable/id] :as test} largest
                       :let [n (count (remove ::testable/skip (:kaocha.result/tests test)))]]
                 (cond 
-                  (> n 0) (let [avg (long (Math/round (/ delta  n)))]
+                  (> n 0) (let [avg (rounding-divide delta n)]
                             (println (format "%s%s    \n%s\033[1m%s\033[0m average (%s / %d tests)" indentation-str 
                                              id (str indentation-str indentation-str)
                                              (convert-bytes avg) (convert-bytes delta) n)))
