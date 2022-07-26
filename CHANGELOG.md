@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix a regression where in direct usage of `kaocha.api` a reporter is specified as a function
 
 # 1.68.1059 (2022-06-20 / 4425558)
 
