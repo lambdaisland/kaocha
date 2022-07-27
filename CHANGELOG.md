@@ -1,5 +1,7 @@
 # Unreleased
 
+- Add specs for kaocha.plugin/profiling data (#302).
+
 ## Added
 
 ## Fixed
