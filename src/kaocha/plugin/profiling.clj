@@ -7,7 +7,7 @@
   (:import java.time.Instant
            java.time.temporal.ChronoUnit))
 
-(s/def ::start #(instance? Instant % ))
+(s/def ::start #(instance? Instant %))
 (s/def ::duration nat-int?)
 (s/def ::profiling? boolean?)
 (s/def ::count nat-int?)
