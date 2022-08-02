@@ -29,7 +29,7 @@
         (update config k vary-meta assoc :replace true)
         (do
           (output/error "Test suite configuration value with key " k " should be a collection or symbol, but got '" v "' of type " (type v))
-          (throw+ {:kaocha/early-exit 252}))))
+         (throw+ {:kaocha/early-exit 250}))))
     config))
 
 (defn merge-config [c1 c2]
