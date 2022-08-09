@@ -99,7 +99,6 @@
             [kaocha.plugin.capture-output :as capture]
             [kaocha.stacktrace :as stacktrace]
             [kaocha.testable :as testable]
-            [kaocha.testable :as testable]
             [kaocha.util :as util]
             [slingshot.slingshot :refer [throw+]]))
 
@@ -427,6 +426,10 @@
 (def documentation
   "Reporter that prints an overview of all tests bein run using indentation."
   [doc result])
+
+(def summary
+  "Reporter that only prints the results"
+  [result])
 
 (defn tap
   "Reporter for the TAP protocol (Test Anything Protocol)."
