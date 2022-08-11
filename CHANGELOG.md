@@ -6,6 +6,12 @@
 
 ## Changed
 
+- Some error codes were duplicated. This is a **breaking change** if you rely on error codes. 
+
+    - When a test suite configuration value is not a collection or symbol, the
+	error code is now 250 instead of 252.
+    - When registering a plugin fails, the error code is now 249 instead of 254.
+
 # 1.69.1069 (2022-07-26 / 07574ec)
 
 ## Fixed
