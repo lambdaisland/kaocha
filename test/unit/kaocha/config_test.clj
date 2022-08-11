@@ -57,7 +57,7 @@
 
 (deftest merge-ns-patterns-issue-124-test
   (testing "https://github.com/lambdaisland/kaocha/issues/124"
-    (is (= #:kaocha{:early-exit 252}
+    (is (= #:kaocha{:early-exit 250}
            (try+
             (c/merge-config {:kaocha/ns-patterns "test"} {:kaocha/ns-patterns "test"})
             (catch :kaocha/early-exit e
