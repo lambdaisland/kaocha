@@ -1,10 +1,16 @@
 (ns kaocha.plugin.profiling
   (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [kaocha.plugin :as plugin :refer [defplugin]]
             [kaocha.testable :as testable])
   (:import java.time.Instant
            java.time.temporal.ChronoUnit))
+
+(s/def ::start #(instance? Instant %))
+(s/def ::duration nat-int?)
+(s/def ::profiling? boolean?)
+(s/def ::count nat-int?)
 
 (defn start [testable]
   (assoc testable ::start (Instant/now)))
