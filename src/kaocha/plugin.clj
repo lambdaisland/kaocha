@@ -53,7 +53,7 @@
       (and (not plugin-result)
            (> (count failed-ns) 1))
       (output/error-and-throw
-        {:kaocha/early-exit 249} nil
+        {:kaocha/early-exit 248} nil
         (format (str "Couldn't load plugin %s. Failed to load namespaces %s. This could be caused by a misspelling or a missing dependency."
                      (when  (and 
                               (str/includes? (name plugin-name) "." )
@@ -65,7 +65,7 @@
       ;; This is a separate case mostly so we can get the error message's grammar right.
       (not plugin-result)
       (output/error-and-throw
-        {:kaocha/early-exit 249} nil
+        {:kaocha/early-exit 248} nil
         (format (str "Couldn't load plugin %s. Failed to load namespace %s. This could be caused by a misspelling or a missing dependency."
                      (when  (and
                              (str/includes? (name plugin-name) "." )
