@@ -94,9 +94,10 @@ The primary advantage to using the `#meta-merge` tag over aero's
 `#merge` is that meta-merge will do a deep merge of the tree; meaning
 developers can more easily inherit changes to the base configuration.
 
-Meta-merge is also applied by default for ???. You can use `^:prepend`, :`^append`, and` ^:replace` to
-control the merging.  For example, if you wanted to overide the list of default
-plugins rather than add on to it, write:
+Meta-merge is also applied by default for most keys, with some exceptions listed
+below. You can use `^:prepend`, :`^append`, and` ^:replace` to control the
+merging.  For example, if you wanted to overide the list of default plugins
+rather than add on to it, write:
 
 
 ```
