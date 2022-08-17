@@ -21,7 +21,7 @@
 
 (defn replace-by-default [config k]
   (if-let [v (get config k)]
-    (if (#{:prepend :append} (meta v))
+    (if (some #{:prepend :append} (keys (meta v)))
       config
       (if (or (coll? v)
               (symbol? v)
