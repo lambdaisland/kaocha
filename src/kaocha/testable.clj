@@ -268,7 +268,7 @@
             #(binding [*config*
                        (-> *config*
                            (dissoc :parallel)
-                           (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
+                           (update :levels (fnil inc 0)))]
                (run-testable % test-plan))
             nses)))))))
 
