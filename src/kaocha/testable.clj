@@ -1,9 +1,9 @@
 (ns kaocha.testable
   (:refer-clojure :exclude [load])
   (:require [clojure.java.io :as io]
-            [clojure.pprint :as pprint]
             [clojure.spec.alpha :as s]
             [clojure.test :as t]
+            [com.climate.claypoole :as cp]
             [kaocha.classpath :as classpath]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.history :as history]
@@ -11,10 +11,7 @@
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.specs :refer [assert-spec]]
-            [kaocha.util :as util]
-            [kaocha.hierarchy :as hierarchy])
-  (:import [clojure.lang Compiler$CompilerException]
-           [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
+            [kaocha.util :as util]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -55,16 +52,6 @@
     (if (or result (<= n 1)) result
         (retry-assert-spec type testable (dec n))) ;otherwise, retry
 ))
-
-(defn deref-recur [testables]
-  (cond (future? testables) (deref testables)
-        (vector? testables) (doall (mapv deref-recur testables))
-        (seq? testables) (deref-recur (into [] (doall testables)))
-        (contains? testables :kaocha.test-plan/tests)
-        (update testables :kaocha.test-plan/tests deref-recur)
-        (contains? testables :kaocha.result/tests)
-        (update testables :kaocha.result/tests deref-recur)
-        :else testables))
 
 (defn- load-type+validate
   "Try to load a testable type, and validate it both to be a valid generic testable, and a valid instance given the type.
@@ -267,36 +254,28 @@
 (defn run-testables-parallel
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-  (doall testables)
-  (let [load-error? (some ::load-error testables)
-        types (set (:parallel-children-exclude *config*))
-        futures (map #(do
-                        (future
-                          (binding [*config*
-                                    (cond-> *config*
-                                      (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
-                                      true (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
-                            (run-testable % test-plan))))
-                     testables)]
-    (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
-                    [test & testables] testables]
-               (if test
-                 (let [test (cond-> test
-                              (and load-error? (not (::load-error test)))
-                              (assoc ::skip true))
-                       r (run-testable test test-plan)]
-                   (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-                     ;(reduce put-return result [[r] testables])
-                     (reduce into result [[r] testables])
-                     ;(recur (doto result (.put r)) testables)
-                     (recur (conj result r) testables)))
-                 result)))
-    (deref-recur futures)))
+  (let [num-threads (or (:parallel-threads *config*) (* 2 (inc (cp/ncpus))))
+        pred #(= :kaocha.type/ns (:kaocha.testable/type %))
+        nses (seq (filter pred testables))
+        others (seq (remove pred testables))]
+    (concat
+     (when others (run-testables-serial others test-plan))
+     (when nses
+       (cp/with-shutdown! [pool (cp/threadpool num-threads :name "kaocha-test-runner")]
+         (doall
+          (cp/pmap
+            pool
+            #(binding [*config*
+                       (-> *config*
+                           (dissoc :parallel)
+                           (update :levels (fnil inc 0)))]
+               (run-testable % test-plan))
+            nses)))))))
 
-(defn run-testables
+(defn run-testables 
   [testables test-plan]
   (if (:parallel *config*)
-    (doall (run-testables-parallel testables test-plan))
+    (run-testables-parallel testables test-plan)
     (run-testables-serial testables test-plan)))
 
 (defn test-seq [testable]

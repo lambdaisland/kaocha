@@ -69,15 +69,12 @@
                    (testable/run testable testable)))))))
 
 (deftest run-test-parallel 
-  (classpath/add-classpath "fixtures/f-tests")
+  (classpath/add-classpath "fixtures/a-tests")
 
-  (let [testable (testable/load {:kaocha.testable/type    :kaocha.type/clojure.test
-                                 :kaocha.testable/id      :unit
-                                 :kaocha/ns-patterns      ["-test$"]
-                                 :kaocha/source-paths     ["src"]
-                                 :kaocha/test-paths       ["fixtures/f-tests"]
-                                 :kaocha.filter/skip-meta [:kaocha/skip]})]
-
+  (let [testable (testable/load {:kaocha.testable/type :kaocha.type/ns
+                                 :kaocha.testable/id   :foo.bar-test
+                                 :kaocha.testable/desc "foo.bar-test"
+                                 :kaocha.ns/name       'foo.bar-test})]
     (is (match? {:kaocha.testable/type :kaocha.type/ns
                  :kaocha.testable/id   :foo.bar-test
                  :kaocha.ns/name       'foo.bar-test
@@ -94,10 +91,10 @@
                                          :kaocha.result/pending 0
                                          :kaocha.result/fail    0}]}
                 (:result
-                 (with-test-ctx {:fail-fast? true}
+                 (with-test-ctx {:fail-fast? true :parallel true}
                    (testable/run testable testable)))))
     (is (not (nil? (:result
-                 (binding [testable/*config* (assoc testable/*config* :parallel true)]
-                   (with-test-ctx {:fail-fast? true
-                                 :parallel true}
-                   (testable/run testable testable)))))))))
+                    (binding [testable/*config* (assoc testable/*config* :parallel true)]
+                      (with-test-ctx {:fail-fast? true
+                                      :parallel true}
+                        (testable/run testable testable)))))))))
