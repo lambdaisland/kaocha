@@ -271,11 +271,13 @@
   (doall testables)
   (let [load-error? (some ::load-error testables)
         types (set (:parallel-children-exclude *config*))
+        suites  (:parallel-suites-exclude *config*) 
         futures (map #(do
                         (future
                           (binding [*config*
                                     (cond-> *config*
                                       (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
+                                      (and (hierarchy/suite? %) (contains? suites (:kaocha.testable/desc %))) (dissoc :parallel)
                                       true (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
                             (run-testable % test-plan))))
                      testables)]
