@@ -264,6 +264,12 @@
             (recur (conj result r) testables)))
         result))))
 
+(defn current-thread-info []
+  (let [thread (Thread/currentThread)]
+    {:name (.getName thread) 
+     :id (.getId thread) 
+     :group-name (.getName (.getThreadGroup thread))}))
+
 (defn run-testables-parallel
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
@@ -278,7 +284,7 @@
                                       (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
                                       (and (hierarchy/suite? %) (contains? suites (:kaocha.testable/desc %))) (dissoc :parallel)
                                       true (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
-                            (run-testable % test-plan))))
+                            (run-testable (assoc % ::thread (current-thread-info) ) test-plan))))
                      testables)]
     (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
                     [test & testables] testables]
@@ -310,7 +316,7 @@
     (:kaocha.testable/id testable)
     (cons testable)))
 
-(defn test-seq-with-skipped 
+(defn test-seq-with-skipped
   [testable]
  "Create a seq of all tests, including any skipped tests.
  
