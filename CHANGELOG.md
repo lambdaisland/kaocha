@@ -8,6 +8,18 @@
 
 ## Changed
 
+- Some error codes were duplicated. This is a **breaking change** if you rely on error codes. 
+
+    - When a test suite configuration value is not a collection or symbol, the
+	error code is now 250 instead of 252. The error code 252 is still used
+	when the configuration file fails to load.
+    - When registering a plugin fails due to being unable to load a namespace,
+	the error code is now 249 instead of 254. When registering a plugin
+	fails for other reasons, the error code is now 248 instead of 254. When
+	resolving a reporter var fails, the error code is still 254. You can
+	test for error codes between 240 and 249 to check for plugin errors
+	regardless of cause.
+
 # 1.69.1069 (2022-07-26 / 07574ec)
 
 ## Fixed
