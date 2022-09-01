@@ -1,11 +1,10 @@
 (ns kaocha.report-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :as t :refer :all]
             [kaocha.report :as r]
             [kaocha.type :as type]
             [kaocha.test-util :refer [with-test-out-str]]
             [kaocha.output :as output]
             [kaocha.hierarchy :as hierarchy]
-            [clojure.test :as t]
             [kaocha.history :as history]
             [kaocha.testable :as testable]
             [slingshot.slingshot :refer [try+]]))
@@ -153,7 +152,7 @@
            (r/print-expr {:expected 1
                           :actual 2}))))
 
-  (is (= "Expected:\n[36m  1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n"
+  (is (= "Expected:\n  [36m1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n"
          (with-out-str
            (r/print-expr {:expected '(= 1 (+ 1 1))
                           :actual '(not (= 1 2))})))))
@@ -164,7 +163,7 @@
                 "it does the thing\n"
                 "Numbers are not equal\n"
                 "Expected:\n"
-                "[36m  1[0m\n"
+                "  [36m1[0m\n"
                 "Actual:\n"
                 "  [31m-1[0m [32m+2[0m\n")
          (with-out-str
@@ -226,7 +225,7 @@
              (r/result {:type :summary :test 5 :pass 5 :fail 0 :error 0 :pending 0}))))))
 
 (deftest result-failures-test
-  (is (= "\n[31mFAIL[m in foo/bar-test (foo.clj:42)\nit does the thing\nNumbers are not equal\nExpected:\n[36m  1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n[31m5 tests, 6 assertions, 1 failures.[m\n"
+  (is (= "\n[31mFAIL[m in foo/bar-test (foo.clj:42)\nit does the thing\nNumbers are not equal\nExpected:\n  [36m1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n[31m5 tests, 6 assertions, 1 failures.[m\n"
          (with-test-out-str
            (binding [
                      history/*history* (atom [{:type :fail

@@ -37,7 +37,7 @@
   (throw+ object cause? (apply str args)))
 
 (defn printer [& [opts]]
-  ((jit lambdaisland.deep-diff/printer) (merge {:print-color *colored-output*} opts)))
+  ((jit lambdaisland.deep-diff2/printer) (merge {:print-color *colored-output*} opts)))
 
 (defn print-doc
   ([doc]
@@ -49,4 +49,4 @@
   ([doc]
    (format-doc doc (printer)))
   ([doc printer]
-   ((jit puget.printer/format-doc) printer doc)))
+   ((jit lambdaisland.deep-diff2.puget.printer/format-doc) printer doc)))

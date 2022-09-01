@@ -50,8 +50,8 @@
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
-      <artifactId>deep-diff</artifactId>
-      <version>0.0-47</version>
+      <artifactId>deep-diff2</artifactId>
+      <version>2.4.138</version>
     </dependency>
     <dependency>
       <groupId>slingshot</groupId>

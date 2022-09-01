@@ -3,11 +3,11 @@
             [kaocha.output :as output]
             [kaocha.hierarchy :as hierarchy]
             [clojure.test :as t]
-            [lambdaisland.deep-diff :as ddiff]
-            [lambdaisland.deep-diff.printer :as printer]
-            [puget.printer :as puget]
+            [lambdaisland.deep-diff2 :as ddiff]
+            [lambdaisland.deep-diff2.printer-impl :as printer]
+            [lambdaisland.deep-diff2.puget.printer :as puget]
             [fipp.engine :as fipp]
-            [puget.color :as color]))
+            [lambdaisland.deep-diff2.puget.color :as color]))
 
 (def print-handlers {'matcher_combinators.model.Mismatch
                      (fn [printer expr]
