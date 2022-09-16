@@ -6,6 +6,9 @@
 
 ## Fixed
 
+- Fix issue where diffing `(is (= ...))` assertions sometimes fails
+  when comparing records.
+
 ## Changed
 
 - Some error codes were duplicated. This is a **breaking change** if you rely on error codes. 
@@ -19,6 +22,7 @@
 	resolving a reporter var fails, the error code is still 254. You can
 	test for error codes between 240 and 249 to check for plugin errors
 	regardless of cause.
+- Upgraded `lambdaisland/deep-diff` to `lambdaisland/deep-diff2`
 
 # 1.69.1069 (2022-07-26 / 07574ec)
 

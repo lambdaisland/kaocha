@@ -77,7 +77,7 @@
 
   (testing "respects *print-length*"
     (is (= {:err "",
-            :out "[1;31m[[0m[1;33m:aaa[0m\n[1;33m :bbb[0m\n[1;33m :ccc[0m[1;31m][0m\n",
+            :out "[1;31m[[0m[1;33m:aaa[0m\n [1;33m:bbb[0m\n [1;33m:ccc[0m[1;31m][0m\n",
             :result nil}
            (util/with-out-err
              (binding [*print-length* 1]

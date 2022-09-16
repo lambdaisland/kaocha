@@ -2,7 +2,7 @@
   (:require [kaocha.output :as output]
             [clojure.test :as t]
             [kaocha.report :as report]
-            [puget.color :as color]
+            [lambdaisland.deep-diff2.puget.color :as color]
             [clojure.string :as str]
             [slingshot.slingshot :refer [try+ throw+]]))
 
