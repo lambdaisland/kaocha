@@ -9,10 +9,10 @@ useful in combination with `--watch`, e.g. `bin/kaocha --plugin notifier
 --watch`.
 
 It does this by invoking a shell command which can be configured, so it can be
-used to invoke an arbitrary command or script. By default it will try to
+used to invoke an arbitrary command or script. By default, it will try to
 detect which command to use, using either `notify-send` (Linux) or
 `terminal-notifier` (Mac OS X), either of which may need to be installed
-first.
+first. If those commands aren't available, it uses Java's included notifier. 
 
 Several replacement patterns are available:
 
@@ -28,8 +28,19 @@ Several replacement patterns are available:
 - `%{urgency}` : `normal` if the tests pass, `critical` otherwise, meant for use with `notify-send`
 
 If no command is configured, and neither notification command is found, then
-the plugin will silently do nothing. You can explicitly inhibit its behaviour
+the plugin will print a warning. You can explicitly inhibit its behaviour
 with `--no-notifications`.
+
+You can combine the feature with the profiles feature:
+
+
+``` clojure
+{:plugins #profile {:default [:kaocha.plugin/notifier]
+:ci []}}
+```
+
+This will silence the "Notification not shown because system does not support
+it." warning.
 
 ## Enabling Desktop Notifications
 
