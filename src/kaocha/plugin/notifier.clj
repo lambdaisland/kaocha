@@ -157,7 +157,8 @@
                (::notifications? config true)))))
 
   (post-run [result]
-    (if-let [command (and (::notifications? result) (::command result))]
-      (run-command command result)
-      (send-tray-notification result))
+    (when (::notifications? result)
+      (if-let [command (::command result)]
+        (run-command command result)
+        (send-tray-notification result)))
     result))

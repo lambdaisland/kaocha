@@ -1,18 +1,18 @@
 # Unreleased
 
-- Add specs for kaocha.plugin/profiling data (#302).
-
 ## Added
+
+- Add specs for kaocha.plugin/profiling data (#302).
 
 ## Fixed
 
 - Fix issue where diffing `(is (= ...))` assertions sometimes fails
   when comparing records.
+- Fix the `--no-notifications` flag in the Notifier plugin
 
 ## Changed
 
 - Some error codes were duplicated. This is a **breaking change** if you rely on error codes. 
-
     - When a test suite configuration value is not a collection or symbol, the
 	error code is now 250 instead of 252. The error code 252 is still used
 	when the configuration file fails to load.
