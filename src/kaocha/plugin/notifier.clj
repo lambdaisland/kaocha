@@ -95,17 +95,13 @@
     (let [icon (tray-icon "kaocha/clojure_logo.png")
           urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
       (.displayMessage icon (title result) (message result) urgency))
-    (catch java.awt.HeadlessException e
-      (output/warn (str "Notification not shown because system is headless. AWT error: " e 
-                        "\nConsider disabling the notifier plugin when using in this context."
-                        "\nIf running on a CI system, you can provide a separate list of plugins for the CI profile."
-                        )) )
-    (catch java.lang.UnsupportedOperationException e
-      (output/warn (str "Notification not shown because system does not support it. " e
+    (catch java.awt.HeadlessException _e
+      (output/warn (str "Notification not shown because system is headless." 
+                        "\nConsider disabling the notifier plugin when using in this context.")))
+    (catch java.lang.UnsupportedOperationException _e
+      (output/warn (str "Notification not shown because system does not support it."
                         "\nConsider disabling the notifier plugin when using in this context or installing" 
-                        "\neither notify-send (Linux) or terminal-notifier (macOS)."
-                        "\nIf running on a CI system, you can provide a separate list of plugins with notifier removed for the CI profile."
-                        )))))
+                        "\neither notify-send (Linux) or terminal-notifier (macOS).")))))
 
 (defn expand-command
   "Takes a command string including replacement patterns, and a map of
