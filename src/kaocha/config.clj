@@ -21,7 +21,7 @@
 
 (defn replace-by-default [config k]
   (if-let [v (get config k)]
-    (if (#{:prepend :append} (meta v))
+    (if (some #{:prepend :append} (keys (meta v)))
       config
       (if (or (coll? v)
               (symbol? v)
@@ -32,7 +32,10 @@
           (throw+ {:kaocha/early-exit 250}))))
     config))
 
-(defn merge-config [c1 c2]
+(defn merge-config
+  "Applies meta-merge to c1 and c2, using ^:replace for certain keys if no
+  metadata is specified."
+  [c1 c2]
   (meta-merge c1 (-> c2
                      (replace-by-default :kaocha/reporter)
                      (replace-by-default :kaocha/tests)

@@ -53,7 +53,16 @@
   (testing "defaults to replacing for certain keys"
     (is (= {:kaocha/reporter ['yyy]}
            (c/merge-config {:kaocha/reporter '[xxx]}
-                           {:kaocha/reporter '[yyy]})))))
+                           {:kaocha/reporter '[yyy]}))))
+  (testing "does not override metadata for replace-by-default key tests"
+    (is (= {:kaocha/tests [{:id :integration} {:id :unit}]}
+          (c/merge-config {:kaocha/tests [{:id :unit}]}
+                          {:kaocha/tests ^:prepend [{:id :integration}]}))))
+  (testing "does not override metadata for replace-by-default key test-paths"
+    (print (meta (:kaocha/test-paths {:kaocha/test-paths ^:append ["integration-tests"]})))
+    (is (= {:kaocha/test-paths ["unit-tests" "integration-tests" ]}
+          (c/merge-config {:kaocha/test-paths ["unit-tests"]}
+                          {:kaocha/test-paths ^:append ["integration-tests"]})))))
 
 (deftest merge-ns-patterns-issue-124-test
   (testing "https://github.com/lambdaisland/kaocha/issues/124"
