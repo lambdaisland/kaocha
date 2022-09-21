@@ -3,6 +3,8 @@
             [clojure.java.io :as io]
             [kaocha.output :as output]
             [kaocha.report :as report]
+            [kaocha.plugin :as plugin]
+            [kaocha.specs :as specs]
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]])
   (:import (java.io File)
@@ -147,7 +149,8 @@
                    #(merge {:resolver aero/resource-resolver} %))
            (read-config-source resource)))))
 
-(defn load-config
+
+(defn load-config-file
   "Loads and returns configuration from `source` or the file \"tests.edn\"
   if called without arguments.
 
@@ -185,13 +188,16 @@
 
   `{:aero/read-config-opts {:resolver resolver-to-use}}`"
   ([]
-   (load-config (io/file "tests.edn")))
+   (load-config-file (io/file "tests.edn")))
   ([source]
-   (load-config source {}))
+   (load-config-file source {}))
   ([source opts]
    (if-some [config (read-config source opts)]
      config
      (read-config nil opts))))
+
+;Alias for backward compatibility
+(def load-config load-config-file)
 
 (defn apply-cli-opts [config options]
   (cond-> config
@@ -216,6 +222,43 @@
                               (assoc :kaocha.testable/skip true)))
                           tests)))))
     config))
+
+(defn load-config2
+  "Loads config, factoring in profiles, and handling errors."
+  ([config-file profile]
+   (load-config2 config-file profile {} nil nil))
+  ([config-file profile opts]
+   (load-config2 config-file profile opts nil nil))
+  ([config-file profile opts cli-options cli-args]
+   (let [config (cond-> config-file
+                    true (load-config-file (if profile (assoc opts :profile profile) opts))
+                    cli-options (apply-cli-opts cli-options)
+                    cli-args (apply-cli-args cli-args))
+
+         check_config_file (when (not (. (File. (or config-file "tests.edn")) exists))
+                             (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
+                                          "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
+                                          "To create a configuration file using the current defaults, create a file named tests.edn that contains '#%s {}'.")
+                                     current-reader)))
+         check  (try
+                  (specs/assert-spec :kaocha/config config)
+                  (catch AssertionError e
+                    (output/error "Invalid configuration file:\n"
+                                  (.getMessage e))
+                    (throw+ {:kaocha/early-exit 252}))) ]
+     (cond-> config
+       check_config_file (update ::warnings conj check_config_file)
+       check (update ::warnings conj check)))))
+
+;;Do we really need this?
+(defn plugin-chain-from-config [config cli-options]
+  (plugin/load-all (concat (:kaocha/plugins config) (when cli-options (:plugin cli-options)))))
+
+(defn reload-config [config plugin-chain]
+  (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
+    (let [profile (get-in config [:kaocha/cli-options :profile])]
+      [(load-config2 config-file profile) plugin-chain])
+    [config plugin-chain]))
 
 (defn resolve-reporter [reporter]
   (cond

@@ -178,10 +178,7 @@
   (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
     (let [{:kaocha/keys [cli-options cli-args]} config
           profile (get-in config [:kaocha/cli-options :profile])
-          config (-> config-file
-                     (config/load-config (if profile {:profile profile} {}))
-                     (config/apply-cli-opts cli-options)
-                     (config/apply-cli-args cli-args))
+          config (config/load-config2 config-file profile {} cli-options cli-args)
           plugin-chain (plugin/load-all (concat (:kaocha/plugins config) (:plugin cli-options)))]
       [config plugin-chain])
     [config plugin-chain]))
