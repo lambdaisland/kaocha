@@ -75,10 +75,12 @@
                                                 :kaocha.result/pass 2
                                                 :kaocha.result/fail 1
                                                 :kaocha.result/error 4
-                                                :kaocha.result/pending 5}]}))))
+                                                :kaocha.result/pending 5}]}
+                        -1))))
 
 (deftest notifier-cli-options-hook-test
-  (is (= [[nil "--[no-]notifications" "Enable/disable the notifier plugin, providing desktop notifications. Defaults to true."]]
+  (is (= [[nil "--[no-]notifications" "Enable/disable the notifier plugin, providing desktop notifications. Defaults to true."]
+          [nil "--notification-timeout TIMEOUT" "Set a timeout value for desktop notifications through the notifier plugin."]]
          (n/notifier-cli-options-hook []))))
 
 (deftest notifier-config-hook-test
