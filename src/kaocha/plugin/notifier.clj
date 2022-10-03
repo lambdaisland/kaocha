@@ -126,11 +126,10 @@
         title   (title result)
         icon    (icon-path)
         failed? (result/failed? result)
-        urgency (if failed? "critical" "normal")]
-    (apply sh (expand-command command {:message message
+        urgency (if failed? "critical" "normal")
+        expanded-command (expand-command command {:message message
                                        :title title
                                        :icon icon
-
                                        :urgency urgency
                                        :count count
                                        :pass pass
@@ -138,7 +137,16 @@
                                        :error error
                                        :pending pending
                                        :failed? failed?
-                                       :timeout timeout}))))
+                                       :timeout timeout})
+      {:keys [exit err] :as  command-result} (apply sh expanded-command)
+        ]
+    (when (not (zero? exit))
+      (output/warn (format
+                     "Notification command exited with status code %s\nand message \"%s\"\nand command \"%s\""
+                     exit
+                     err
+                     (apply str (interpose \space expanded-command)))))
+    command-result))
 
 (defplugin kaocha.plugin/notifier
   "Run a shell command after each completed test run, by default will run a
