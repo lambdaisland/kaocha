@@ -142,7 +142,11 @@
         ]
     (when (not (zero? exit))
       (output/warn (format
-                     "Notification command exited with status code %s\nand message \"%s\"\nand command \"%s\""
+                     (str 
+                       "Notification command exited with status code: %s"
+                       "Error message (stderr): \"%s\""
+                       "Command: \"%s\""
+                       "Check your configuration for :kaocha.plugin.notifier/notification-timeout and :kaocha.plugin.notifier/command.")
                      exit
                      err
                      (apply str (interpose \space expanded-command)))))
