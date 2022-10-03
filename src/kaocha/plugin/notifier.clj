@@ -155,10 +155,11 @@
 
   (config [config]
     (let [cli-options (:kaocha/cli-options config)
-          cli-flag (:notifications cli-options)]
+          cli-flag (:notifications cli-options)
+          timeout (:notification-timeout cli-options (::timeout config -1))]
       (assoc config
              ::command (::command config (detect-command))
-             ::timeout (:notification-timeout cli-options (::timeout config))
+             ::timeout timeout 
              ::notifications?
              (if (some? cli-flag)
                cli-flag
@@ -167,6 +168,6 @@
   (post-run [result]
     (when (::notifications? result)
       (if-let [command (::command result)]
-        (run-command command result (::timeout result -1)) ;; -1 appears to use default behavior. 0 appears to keep it on screen indefinitely.
+        (run-command command result (::timeout result))
         (send-tray-notification result)))
     result))
