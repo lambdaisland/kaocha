@@ -238,10 +238,11 @@
                     cli-options (apply-cli-opts cli-options)
                     cli-args (apply-cli-args cli-args))
 
-         check_config_file (when (not (. (File. (or config-file "tests.edn")) exists))
+         check_config_file (when (not (. (io/file (or config-file "tests.edn")) exists))
                              (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
                                           "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
-                                          "To create a configuration file using the current defaults, create a file named tests.edn that contains '#%s {}'.")
+                                          "To create a configuration file using the current defaults and configuration file location, create a file named %s that contains '#%s {}'.")
+                                                  config-file
                                      current-reader)))
          check  (try
                   (specs/assert-spec :kaocha/config config)

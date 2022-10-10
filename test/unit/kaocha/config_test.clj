@@ -59,7 +59,6 @@
           (c/merge-config {:kaocha/tests [{:id :unit}]}
                           {:kaocha/tests ^:prepend [{:id :integration}]}))))
   (testing "does not override metadata for replace-by-default key test-paths"
-    (print (meta (:kaocha/test-paths {:kaocha/test-paths ^:append ["integration-tests"]})))
     (is (= {:kaocha/test-paths ["unit-tests" "integration-tests" ]}
           (c/merge-config {:kaocha/test-paths ["unit-tests"]}
                           {:kaocha/test-paths ^:append ["integration-tests"]})))))
@@ -139,6 +138,29 @@
     (testing "falls back to default when resource does not exist"
       (is (= expected-default-config
              (c/load-config (io/resource "resource-that-does-not-exist.edn")))))))
+
+(deftest load-config2-test
+  (testing "from file path"
+
+    (testing "supports Aero manipulation"
+      (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
+                   :kaocha/plugins  (m/embeds [:some.kaocha.plugin/foo :other.kaocha.plugin/bar])}
+                  (c/load-config2 "test/unit/kaocha/config/loaded-test.edn"))))
+
+    (testing "falls back to default when file does not exist"
+      (is (= expected-default-config
+             (c/load-config2 "file-that-does-not-exist.edn")))))
+
+  (testing "from resource"
+    (testing "supports Aero manipulation"
+      (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
+                   :kaocha/fail-fast? true
+                   :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
+                  (c/load-config2 (io/resource "kaocha/config/loaded-test-resource.edn")))))
+
+    (testing "falls back to default when resource does not exist"
+      (is (= expected-default-config
+             (c/load-config2 (io/resource "resource-that-does-not-exist.edn")))))))
 
 (deftest apply-cli-opts-test
   (is (= {:kaocha/fail-fast? true,
