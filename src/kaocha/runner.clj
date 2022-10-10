@@ -149,29 +149,10 @@
   (binding [spec/*explain-out* expound/printer]
     (let [{{:keys [config-file plugin profile]} :options} (cli/parse-opts args cli-options)
           config (config/load-config2 config-file (when profile {:profile profile}) {})
-          ;; config                                          (-> config-file
-          ;;                                                     (or "tests.edn")
-          ;;                                                     (config/load-config (if profile
-          ;;                                                                           {:profile profile}
-          ;;                                                                           {})))
-          ;; _check_config_file                              (when (not (. (File. (or config-file "tests.edn")) exists))
-          ;;                                                   (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
-          ;;                                                                             "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
-          ;;                                                                             "To create a configuration file using the current defaults, create a file named tests.edn that contains '#%s {}'.")
-          ;;                                                                        config/current-reader)))
-          ;; _check                                         (try
-          ;;                                                  (specs/assert-spec :kaocha/config config)
-          ;;                                                  (catch AssertionError e
-          ;;                                                    (output/error "Invalid configuration file:\n"
-          ;;                                                                  (.getMessage e))
-          ;;                                                    (throw+ {:kaocha/early-exit 252})))
           plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
           {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
-          ;; config                                     (-> config
-          ;;                                                (config/apply-cli-opts options)
-          ;;                                                (config/apply-cli-args (map parse-kw arguments)))
           config (config/load-config2 config-file (when profile profile) {} options (map parse-kw arguments))
           suites                                     (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
