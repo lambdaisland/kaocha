@@ -154,13 +154,20 @@
   (testing "from resource"
     (testing "supports Aero manipulation"
       (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
-                   :kaocha/fail-fast? true
                    :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
                   (c/load-config2 (io/resource "kaocha/config/loaded-test-resource.edn")))))
 
     (testing "falls back to default when resource does not exist"
       (is (= expected-default-config
-             (c/load-config2 (io/resource "resource-that-does-not-exist.edn")))))))
+             (c/load-config2 (io/resource "resource-that-does-not-exist.edn"))))))
+  (testing "loading a file with profiles"
+    (testing "specifying a profile"
+      (is (match? {:kaocha/reporter 'kaocha.report.progress/report }
+                  (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn" :test))))
+    (testing "not specifying a profile"
+      (is (match? { :kaocha/reporter 'kaocha.report/documentation }
+                  (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn"))))))
+
 
 (deftest apply-cli-opts-test
   (is (= {:kaocha/fail-fast? true,

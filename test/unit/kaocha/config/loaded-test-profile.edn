@@ -1,0 +1,5 @@
+
+#kaocha/v1 
+{:reporter #profile {:test kaocha.report.progress/report 
+                     :ci kaocha.report/documentation
+                     :default kaocha.report/documentation}}
