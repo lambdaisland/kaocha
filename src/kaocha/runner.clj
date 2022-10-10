@@ -172,7 +172,7 @@
           ;; config                                     (-> config
           ;;                                                (config/apply-cli-opts options)
           ;;                                                (config/apply-cli-args (map parse-kw arguments)))
-          config (config/load-config2 config-file (when profile {:profile profile}) {} options (map parse-kw arguments))
+          config (config/load-config2 config-file (when profile profile) {} options (map parse-kw arguments))
           suites                                     (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
         (run {:config  config

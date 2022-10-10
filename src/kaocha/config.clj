@@ -224,7 +224,8 @@
     config))
 
 (defn load-config2
-  "Loads config, factoring in profiles, and handling errors."
+  "Loads config from config-file, factoring in profile specified using profile,
+  and displaying messages about any errors."
   ([config-file profile]
    (load-config2 config-file profile {} nil nil))
   ([config-file profile opts]
