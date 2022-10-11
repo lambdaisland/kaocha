@@ -58,7 +58,7 @@ out what's going on. The [[config]] and [[test-plan]] functions provide this
 kind of debugging information.
 
 These will particularly come in handy when developing plugins."}
- kaocha.repl
+    kaocha.repl
   (:require [kaocha.config :as config]
             [kaocha.plugin :as plugin]
             [kaocha.api :as api]

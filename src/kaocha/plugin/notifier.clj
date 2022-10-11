@@ -96,11 +96,11 @@
           urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
       (.displayMessage icon (title result) (message result) urgency))
     (catch java.awt.HeadlessException _e
-      (output/warn (str "Notification not shown because system is headless." 
+      (output/warn (str "Notification not shown because system is headless."
                         "\nConsider disabling the notifier plugin when using in this context.")))
     (catch java.lang.UnsupportedOperationException _e
       (output/warn (str "Notification not shown because system does not support it."
-                        "\nConsider disabling the notifier plugin when using in this context or installing" 
+                        "\nConsider disabling the notifier plugin when using in this context or installing"
                         "\neither notify-send (Linux) or terminal-notifier (macOS).")))))
 
 (defn expand-command
@@ -120,36 +120,36 @@
 (defn run-command
   "Run the given command string, replacing patterns with values based on the given
   test result."
-  [command result timeout]
+  [command result]
   (let [{::result/keys [count pass fail error pending]} (result/testable-totals result)
+        timeout (::timeout result)
         message (message result)
         title   (title result)
         icon    (icon-path)
         failed? (result/failed? result)
         urgency (if failed? "critical" "normal")
         expanded-command (expand-command command {:message message
-                                       :title title
-                                       :icon icon
-                                       :urgency urgency
-                                       :count count
-                                       :pass pass
-                                       :fail fail
-                                       :error error
-                                       :pending pending
-                                       :failed? failed?
-                                       :timeout timeout})
-      {:keys [exit err] :as  command-result} (apply sh expanded-command)
-        ]
+                                                  :title title
+                                                  :icon icon
+                                                  :urgency urgency
+                                                  :count count
+                                                  :pass pass
+                                                  :fail fail
+                                                  :error error
+                                                  :pending pending
+                                                  :failed? failed?
+                                                  :timeout timeout})
+        {:keys [exit err] :as  command-result} (apply sh expanded-command)]
     (when (not (zero? exit))
       (output/warn (format
-                     (str 
-                       "Notification command exited with status code: %s"
-                       "Error message (stderr): \"%s\""
-                       "Command: \"%s\""
-                       "Check your configuration for :kaocha.plugin.notifier/notification-timeout and :kaocha.plugin.notifier/command.")
-                     exit
-                     err
-                     (apply str (interpose \space expanded-command)))))
+                    (str
+                     "Notification command exited with status code: %s"
+                     "Error message (stderr): \"%s\""
+                     "Command: \"%s\""
+                     "Check your configuration for :kaocha.plugin.notifier/command and :kaocha.plugin.notifier/notification-timeout.")
+                    exit
+                    err
+                    (apply str (interpose \space expanded-command)))))
     command-result))
 
 (defplugin kaocha.plugin/notifier
@@ -161,7 +161,7 @@
   Requires https://github.com/julienXX/terminal-notifier on mac or `libnotify` /
   `notify-send` on linux."
   (cli-options [opts]
-    (conj opts 
+    (conj opts
           [nil "--[no-]notifications" "Enable/disable the notifier plugin, providing desktop notifications. Defaults to true."]
           [nil "--notification-timeout TIMEOUT" "Set a timeout value for desktop notifications through the notifier plugin."]))
 
@@ -171,7 +171,7 @@
           timeout (:notification-timeout cli-options (::timeout config -1))]
       (assoc config
              ::command (::command config (detect-command))
-             ::timeout timeout 
+             ::timeout timeout
              ::notifications?
              (if (some? cli-flag)
                cli-flag
@@ -180,6 +180,6 @@
   (post-run [result]
     (when (::notifications? result)
       (if-let [command (::command result)]
-        (run-command command result (::timeout result))
+        (run-command command result)
         (send-tray-notification result)))
     result))
