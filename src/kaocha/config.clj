@@ -136,17 +136,19 @@
      ;; :aero/read-config-opts of opts
      (read-config-source file opts))))
 
-(letfn [(only-resolve-resources-by-default [read-config-opts]
-          (merge {:resolver aero/resource-resolver} read-config-opts))]
-  (extend-protocol ConfigSource
-    URL ;; resource
-    (read-config [resource opts]
-      (when resource
-        ;; Note: we only #include resources
-        ;; unless overridden in :aero/read-config-opts of opts
-        (let [opts (update opts :aero/read-config-opts
-                           only-resolve-resources-by-default)]
-          (read-config-source resource opts))))))
+(def- only-resolve-resources-by-default [read-config-opts]
+  (merge {:resolver aero/resource-resolver}
+         read-config-opts))
+
+(extend-protocol ConfigSource
+  URL ;; resource
+  (read-config [resource opts]
+    (when resource
+      ;; Note: we only #include resources
+      ;; unless overridden in :aero/read-config-opts of opts
+      (let [opts (update opts :aero/read-config-opts
+                         only-resolve-resources-by-default)]
+        (read-config-source resource opts)))))
 
 (defn load-config
   "Loads and returns configuration from `source` or the file \"tests.edn\"
