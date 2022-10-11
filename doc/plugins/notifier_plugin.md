@@ -8,16 +8,16 @@ of tests passed/errored/failed at the end of each test run. It's particularly
 useful in combination with `--watch`, e.g. `bin/kaocha --plugin notifier
 --watch`.
 
-It does this by invoking a shell command which can be configured, so it can be
-used to invoke an arbitrary command or script. By default, it will try to
-detect which command to use, using either `notify-send` (Linux) or
-`terminal-notifier` (Mac OS X), either of which may need to be installed
-first. If those commands aren't available, it uses Java's included notifier. 
+It does this by invoking a shell command that can be configured, so it can be
+used to invoke an arbitrary command or script. By default, it will try to detect
+which command to use, using either `notify-send` (Linux) or `terminal-notifier`
+(Mac OS X), either of which may need to be installed first. If those commands
+aren't available, it uses Java's included notifier. 
 
 Several replacement patterns are available:
 
 - `%{title}` : The notification title, either `⛔️ Failing` or `✅ Passing`
-- `%{message}` : Test result summary, e.g. `5 tests, 12 assertions, 0 failures`
+- `%{message}` : Test result summary, e.g., `5 tests, 12 assertions, 0 failures`
 - `%{icon}` : Full local path to an icon to use (currently uses the Clojure icon)
 - `%{failed?}` : `true` if any tests failed or errored, `false` otherwise
 - `%{count}` : the number of tests
@@ -26,6 +26,14 @@ Several replacement patterns are available:
 - `%{error}` : the number of errors
 - `%{pending}` : the number of pending tests
 - `%{urgency}` : `normal` if the tests pass, `critical` otherwise, meant for use with `notify-send`
+- '%{timeout}` : configured timeout in milliseconds before the notification should disappear. By
+    default, it passes -1, which corresponds to the default timeout when using
+    `notify-send`.
+
+Note that notifications don't time out on
+[GNOME](https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/112) and Ubuntu when
+using [Notify
+OSD](https://bugs.launchpad.net/ubuntu/+source/notify-osd/+bug/390508).
 
 If no command is configured, and neither notification command is found, then
 the plugin will print a warning. You can explicitly inhibit its behaviour

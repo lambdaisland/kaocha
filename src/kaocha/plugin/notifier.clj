@@ -32,13 +32,13 @@
               "where.exe" "which" )]
     (try
       (= 0 (:exit (sh cmd program)))
-      (catch IOException e  ;in the unlikely event where.exe or which isn't available
+      (catch IOException e  ;in the unlikely event neither where.exe nor which is available
         (output/warn (format "Unable to determine whether '%s' exists. Notifications may not work." program)) ))))
 
 (defn detect-command []
   (cond
     (exists? "notify-send")
-    "notify-send -a Kaocha %{title} %{message} -i %{icon} -u %{urgency}"
+    "notify-send -a Kaocha %{title} %{message} -i %{icon} -u %{urgency} -t %{timeout}"
 
     (exists? "terminal-notifier")
     "terminal-notifier -message %{message} -title %{title} -appIcon %{icon}"))
@@ -96,11 +96,11 @@
           urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
       (.displayMessage icon (title result) (message result) urgency))
     (catch java.awt.HeadlessException _e
-      (output/warn (str "Notification not shown because system is headless." 
+      (output/warn (str "Notification not shown because system is headless."
                         "\nConsider disabling the notifier plugin when using in this context.")))
     (catch java.lang.UnsupportedOperationException _e
       (output/warn (str "Notification not shown because system does not support it."
-                        "\nConsider disabling the notifier plugin when using in this context or installing" 
+                        "\nConsider disabling the notifier plugin when using in this context or installing"
                         "\neither notify-send (Linux) or terminal-notifier (macOS).")))))
 
 (defn expand-command
@@ -122,22 +122,35 @@
   test result."
   [command result]
   (let [{::result/keys [count pass fail error pending]} (result/testable-totals result)
+        timeout (::timeout result)
         message (message result)
         title   (title result)
         icon    (icon-path)
         failed? (result/failed? result)
-        urgency (if failed? "critical" "normal")]
-    (apply sh (expand-command command {:message message
-                                       :title title
-                                       :icon icon
-
-                                       :urgency urgency
-                                       :count count
-                                       :pass pass
-                                       :fail fail
-                                       :error error
-                                       :pending pending
-                                       :failed? failed?}))))
+        urgency (if failed? "critical" "normal")
+        expanded-command (expand-command command {:message message
+                                                  :title title
+                                                  :icon icon
+                                                  :urgency urgency
+                                                  :count count
+                                                  :pass pass
+                                                  :fail fail
+                                                  :error error
+                                                  :pending pending
+                                                  :failed? failed?
+                                                  :timeout timeout})
+        {:keys [exit err] :as  command-result} (apply sh expanded-command)]
+    (when (not (zero? exit))
+      (output/warn (format
+                    (str
+                     "Notification command exited with status code: %s"
+                     "Error message (stderr): \"%s\""
+                     "Command: \"%s\""
+                     "Check your configuration for :kaocha.plugin.notifier/command and :kaocha.plugin.notifier/notification-timeout.")
+                    exit
+                    err
+                    (apply str (interpose \space expanded-command)))))
+    command-result))
 
 (defplugin kaocha.plugin/notifier
   "Run a shell command after each completed test run, by default will run a
@@ -148,12 +161,17 @@
   Requires https://github.com/julienXX/terminal-notifier on mac or `libnotify` /
   `notify-send` on linux."
   (cli-options [opts]
-    (conj opts [nil "--[no-]notifications" "Enable/disable the notifier plugin, providing desktop notifications. Defaults to true."]))
+    (conj opts
+          [nil "--[no-]notifications" "Enable/disable the notifier plugin, providing desktop notifications. Defaults to true."]
+          [nil "--notification-timeout TIMEOUT" "Set a timeout value for desktop notifications through the notifier plugin."]))
 
   (config [config]
-    (let [cli-flag (get-in config [:kaocha/cli-options :notifications])]
+    (let [cli-options (:kaocha/cli-options config)
+          cli-flag (:notifications cli-options)
+          timeout (:notification-timeout cli-options (::timeout config -1))]
       (assoc config
              ::command (::command config (detect-command))
+             ::timeout timeout
              ::notifications?
              (if (some? cli-flag)
                cli-flag

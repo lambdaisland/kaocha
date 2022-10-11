@@ -2,11 +2,14 @@
 
 ## Added
 
+- Configure a timeout for notifications with --notification-timeout or :kaocha.plugin.notifier/timeout.
+
 ## Fixed
 
 - Fix configuration parsing when using `--watch`. Previously, profiles would be
-    respected on the initial load, but not after watch reloaded the
-    configuration.
+  respected on the initial load, but not after watch reloaded the configuration.
+- Notifier now reports errors in your notification command instead of silently
+  failing.
 
 ## Changed
 
@@ -25,15 +28,15 @@
 ## Changed
 
 - Some error codes were duplicated. This is a **breaking change** if you rely on error codes. 
-    - When a test suite configuration value is not a collection or symbol, the
-	error code is now 250 instead of 252. The error code 252 is still used
-	when the configuration file fails to load.
-    - When registering a plugin fails due to being unable to load a namespace,
-	the error code is now 249 instead of 254. When registering a plugin
-	fails for other reasons, the error code is now 248 instead of 254. When
-	resolving a reporter var fails, the error code is still 254. You can
-	test for error codes between 240 and 249 to check for plugin errors
-	regardless of cause.
+  - When a test suite configuration value is not a collection or symbol, the
+    error code is now 250 instead of 252. The error code 252 is still used
+    when the configuration file fails to load.
+  - When registering a plugin fails due to being unable to load a namespace,
+    the error code is now 249 instead of 254. When registering a plugin
+    fails for other reasons, the error code is now 248 instead of 254. When
+    resolving a reporter var fails, the error code is still 254. You can
+    test for error codes between 240 and 249 to check for plugin errors
+    regardless of cause.
 - Upgraded `lambdaisland/deep-diff` to `lambdaisland/deep-diff2`
 
 # 1.69.1069 (2022-07-26 / 07574ec)
@@ -53,8 +56,8 @@
 ## Fixed
 
 - Fix misleading error message when all tests are filtered out. Previously, it
-    would misleadingly suggest you correct the `test-paths` and `ns-patterns`
-    configuration keys.
+  would misleadingly suggest you correct the `test-paths` and `ns-patterns`
+  configuration keys.
 - Fix overflow with the `gc-profiling` plugin when there's too many bytes.
 
 # 1.66.1034 (2022-04-26 / 7a5824a)
@@ -71,7 +74,7 @@
 
 - Fix issue with `gc-profiling` plugin when there's a syntax error.
 - Ensure that modifications that are done by deleting and recreating the file
-    are picked up by using `--watch` with Beholder.
+  are picked up by using `--watch` with Beholder.
 
 ## Changed
 

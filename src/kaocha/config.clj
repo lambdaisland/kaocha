@@ -8,7 +8,7 @@
   (:import (java.io File)
            (java.net URL)))
 
-;the reader literal for the current default:
+;; the reader literal for the current default:
 (def current-reader 'kaocha/v1)
 
 (defn default-config []
@@ -121,7 +121,7 @@
 
   nil ;; handle nil source case
   (read-config [_ _]
-   (default-config))
+    (default-config))
 
   Object ;; keep existing default behaviour
   (read-config [path opts]
@@ -129,24 +129,23 @@
 
   File
   (read-config [^File file opts]
-   (when (.exists file)
-     ;; Note: since the default :resolver in Aero is aero/adaptive-resolver,
-     ;; #include will first check if there is a resource with that name
-     ;; and will only revert to a file if not, unless overridden in
-     ;; :aero/read-config-opts of opts
-     (read-config-source file opts))))
+    (when (.exists file)
+      ;; Note: since the default :resolver in Aero is aero/adaptive-resolver,
+      ;; #include will first check if there is a resource with that name
+      ;; and will only revert to a file if not, unless overridden in
+      ;; :aero/read-config-opts of opts
+      (read-config-source file opts))))
 
-(letfn [(only-resolve-resources-by-default [read-config-opts]
-          (merge {:resolver aero/resource-resolver} read-config-opts))]
-  (extend-protocol ConfigSource
-    URL ;; resource
-    (read-config [resource opts]
-      (when resource
-        ;; Note: we only #include resources
-        ;; unless overridden in :aero/read-config-opts of opts
-        (let [opts (update opts :aero/read-config-opts
-                           only-resolve-resources-by-default)]
-          (read-config-source resource opts))))))
+(extend-protocol ConfigSource
+  URL ;; resource
+  (read-config [resource opts]
+    (when resource
+      ;; Note: we only #include resources
+      ;; unless overridden in :aero/read-config-opts of opts
+      (->> (update opts
+                   :aero/read-config-opts
+                   #(merge {:resolver aero/resource-resolver} %))
+           (read-config-source resource)))))
 
 (defn load-config
   "Loads and returns configuration from `source` or the file \"tests.edn\"
