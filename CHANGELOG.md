@@ -4,6 +4,10 @@
 
 ## Fixed
 
+- Fix configuration parsing when using `--watch`. Previously, profiles would be
+    respected on the initial load, but not after watch reloaded the
+    configuration.
+
 ## Changed
 
 # 1.70.1086 (2022-09-19 / f8d8ad5)
