@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  kaocha: lambdaisland/kaocha@0.0.3
+  kaocha: lambdaisland/kaocha@0.0.1
   clojure: lambdaisland/clojure@0.0.8
   win: circleci/windows@2.2.0
 
@@ -57,7 +57,7 @@ workflows:
       - test:
           matrix:
             parameters:
-              os: [clojure/openjdk19, clojure/openjdk17, clojure/openjdk16,  clojure/openjdk15, clojure/openjdk11, clojure/openjdk8]
+              os: [clojure/openjdk16,  clojure/openjdk15, clojure/openjdk11, clojure/openjdk8]
               clojure_version: ["1.9.0", "1.10.3", "1.11.1"]
 
       # - windows-test
