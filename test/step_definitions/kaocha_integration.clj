@@ -1,7 +1,8 @@
 (ns features.steps.kaocha-integration
   ^{:clojure.tools.namespace.repl/load false
     :clojure.tools.namespace.repl/unload false}
-  (:require [clojure.java.io :as io]
+  (:require [clojure.edn :as edn]
+            [clojure.java.io :as io]
             [clojure.java.shell :as shell]
             [clojure.string :as str]
             [clojure.test :as t :refer :all]
@@ -63,6 +64,13 @@
 (Then "the output should not contain" [m output]
   (is (not (str/includes? (:out m) output)))
   m)
+
+(Then "the EDN output should contain:" [m output]
+      (let  [actual (edn/read-string (:out m))
+             expected (edn/read-string output)]
+        (is (= (select-keys actual (keys expected)) expected)))
+      m)
+
 
 (Then "stderr should contain" [m output]
   (is (substring? output (:err m)))
