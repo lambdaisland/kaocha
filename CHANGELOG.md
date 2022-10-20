@@ -10,6 +10,8 @@
   respected on the initial load, but not after watch reloaded the configuration.
 - Notifier now reports errors in your notification command instead of silently
   failing.
+- Fixed `java.lang.IllegalArgumentException: No matching clause: []` exception
+  when `:kaocha.spec.test.check/syms` is a collection.
 
 ## Changed
 

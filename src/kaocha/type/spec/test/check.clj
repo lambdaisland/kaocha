@@ -32,7 +32,8 @@
     (condp = syms
       :all-fdefs   (all-fdef-tests check)
       :other-fdefs nil ;; TODO: this requires orchestration from the plugin
-      :else        (type.fdef/load-testables check syms))))
+      ;; else
+      (type.fdef/load-testables check syms))))
 
 (defn checks [{checks :kaocha.spec.test.check/checks :as testable}]
   (let [checks (or checks [{}])]
