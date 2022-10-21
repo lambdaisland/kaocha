@@ -9,6 +9,14 @@ Feature: CLI: Print the Kaocha configuration
   configuration from any available sources, runs it through any active plugins,
   and then pretty prints the result, an EDN map.
 
+  Note that the ordering, while not expected to change, is not guaranteed. We
+  recommend parsing the configuration as EDN and not relying on order. If you
+  are manipulating the output as text (say, on the command line) and can't
+  avoid relying on the order, run it through a tool like
+  [puget](https://github.com/greglook/puget) or
+  [zprint](https://github.com/kkinnear/zprint) that sorts the keys
+  alphabetically first.
+
   Scenario: Using `--print-config`
     When I run `bin/kaocha --print-config`
     Then the EDN output should contain:
