@@ -228,8 +228,6 @@
   and displaying messages about any errors."
   ([config-file]
    (load-config2 config-file nil {} nil nil))
-  ([config-file profile]
-   (load-config2 config-file profile {} nil nil))
   ([config-file profile opts]
    (load-config2 config-file profile opts nil nil))
   ([config-file profile opts cli-options cli-args]
