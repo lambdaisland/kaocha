@@ -2,7 +2,10 @@
 
 ## Added
 
-- Configure a timeout for notifications with --notification-timeout or :kaocha.plugin.notifier/timeout.
+- Configure a timeout for notifications with `--notification-timeout` or
+  `:kaocha.plugin.notifier/timeout`. Note that this feature doesn't work for
+  terminal-notifier on macOS, with Java's built-in TrayIcon, or with
+  notify-send on certain Linux desktop environments and distributions.
 
 ## Fixed
 
@@ -12,8 +15,6 @@
   failing.
 - Fixed `java.lang.IllegalArgumentException: No matching clause: []` exception
   when `:kaocha.spec.test.check/syms` is a collection.
-
-## Changed
 
 # 1.70.1086 (2022-09-19 / f8d8ad5)
 
