@@ -4,6 +4,9 @@
 
 ## Fixed
 
+- Configuration errors are reported as warnings, rather than causing the entire
+    watcher to crash.
+
 ## Changed
 
 # 1.75.1190 (2023-01-20 / 29f98cc)
