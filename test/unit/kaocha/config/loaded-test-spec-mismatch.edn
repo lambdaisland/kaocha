@@ -1,0 +1,4 @@
+
+#kaocha/v1 #meta-merge
+[#include "./included-test.edn"
+ {:plugins :some.kaocha.plugin/foo}]
