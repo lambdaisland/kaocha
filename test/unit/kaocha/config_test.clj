@@ -1,8 +1,8 @@
 (ns kaocha.config-test
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
-            [kaocha.test-util :refer [with-test-out-str]]
             [kaocha.config :as c]
+            [clojure.spec.alpha :as s]
             [matcher-combinators.matchers :as m]
             [slingshot.slingshot :refer [try+]]))
 
@@ -174,6 +174,21 @@
     #_(is (re-find #"[Ii]nvalid configuration" 
                     (with-test-out-str (try (c/load-config2 "test/unit/kaocha/config/loaded-test-spec-mismatch.edn")
                                          (catch Exception _e)))))))
+
+(deftest reload-test
+  (testing "reloading a configuration file produces valid config"
+    (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test.edn")
+          [reloaded-config _] (c/reload-config orig-config nil)] 
+      (is (s/valid? :kaocha/config reloaded-config)
+          (s/explain :kaocha/config reloaded-config))))
+  (testing "reloading a configuration file produces the same config"
+    (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test.edn")
+          [reloaded-config _] (c/reload-config orig-config nil)] 
+      (is (= orig-config reloaded-config))))
+  (testing "reloading a configuration file produces the same config when using a profile"
+    (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn" :test {})
+          [reloaded-config _] (c/reload-config orig-config nil)] 
+      (is (= orig-config reloaded-config)))))
 
 
 (deftest apply-cli-opts-test
