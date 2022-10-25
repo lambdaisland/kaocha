@@ -256,11 +256,6 @@
 (defn plugin-chain-from-config [config cli-options]
   (plugin/load-all (concat (:kaocha/plugins config) (when cli-options (:plugin cli-options)))))
 
-(defn reload-config [config plugin-chain]
-  (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
-    (let [profile (get-in config [:kaocha/cli-options :profile])]
-      [(load-config2 config-file profile {}) plugin-chain])
-    [config plugin-chain]))
 
 (defn resolve-reporter [reporter]
   (cond

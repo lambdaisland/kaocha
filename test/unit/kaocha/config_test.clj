@@ -175,20 +175,7 @@
                     (with-test-out-str (try (c/load-config2 "test/unit/kaocha/config/loaded-test-spec-mismatch.edn")
                                          (catch Exception _e)))))))
 
-(deftest reload-test
-  (testing "reloading a configuration file produces valid config"
-    (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test.edn")
-          [reloaded-config _] (c/reload-config orig-config nil)] 
-      (is (s/valid? :kaocha/config reloaded-config)
-          (s/explain :kaocha/config reloaded-config))))
-  (testing "reloading a configuration file produces the same config"
-    (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test.edn")
-          [reloaded-config _] (c/reload-config orig-config nil)] 
-      (is (= orig-config reloaded-config))))
-  (testing "reloading a configuration file produces the same config when using a profile"
-    (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn" :test {})
-          [reloaded-config _] (c/reload-config orig-config nil)] 
-      (is (= orig-config reloaded-config)))))
+
 
 
 (deftest apply-cli-opts-test
