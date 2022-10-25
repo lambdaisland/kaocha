@@ -67,7 +67,6 @@
   (is (= "README.md" (w/convert "README.md")))
   (is (= "README.md" (w/convert "README.md "))))
 
-
 (deftest glob-converted-unchanged-test
   ; Validate that compatible patterns still match/fail to match after conversion.
   (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*")]))
@@ -105,7 +104,6 @@
        (let [tmp-file (File/createTempFile "tests" ".edn")]
          (spit tmp-file "#kaocha/v1 {:tests [{:id :foo}]}")
          (first (w/reload-config {:kaocha/cli-options {:config-file (str tmp-file)}} []))))))
-
 
 (deftest ^{:min-java-version "1.11"} watch-test
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
@@ -194,16 +192,16 @@
 (deftest reload-test
   (testing "reloading a configuration file produces valid config"
     (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test.edn")
-          [reloaded-config _] (w/reload-config orig-config nil)] 
+          [reloaded-config _] (w/reload-config orig-config nil)]
       (is (s/valid? :kaocha/config reloaded-config)
           (s/explain :kaocha/config reloaded-config))))
   (testing "reloading a configuration file produces the same config"
     (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test.edn")
-          [reloaded-config _] (w/reload-config orig-config nil)] 
+          [reloaded-config _] (w/reload-config orig-config nil)]
       (is (= orig-config reloaded-config))))
   (testing "reloading a configuration file produces the same config when using a profile"
     (let [orig-config (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn" :test {})
-          [reloaded-config _] (w/reload-config orig-config nil)] 
+          [reloaded-config _] (w/reload-config orig-config nil)]
       (is (= orig-config reloaded-config)))))
      
 ;;TODO move to cucumber

@@ -99,7 +99,7 @@
           (with-bindings (config/binding-map config)
             (let [config (resolve-reporter config)]
               (let [test-plan (test-plan config)]
-                
+
                 (when-not (some #(or (hierarchy/leaf? %)
                                      (::testable/load-error %))
                                 (testable/test-seq test-plan))
@@ -111,7 +111,7 @@
                     (output/warn (str "No tests were found. This may be an issue in your Kaocha test configuration."
                                       " To investigate, check the :test-paths and :ns-patterns keys in tests.edn.")))
                   (throw+ {:kaocha/early-exit 0 }))
-                
+
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 

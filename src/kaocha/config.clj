@@ -149,7 +149,6 @@
                    #(merge {:resolver aero/resource-resolver} %))
            (read-config-source resource)))))
 
-
 (defn load-config-file
   "Loads and returns configuration from `source` or the file \"tests.edn\"
   if called without arguments.
@@ -247,7 +246,7 @@
                   (catch AssertionError e
                     (output/error "Invalid configuration file:\n"
                                   (.getMessage e))
-                    (throw+ {:kaocha/early-exit 252}))) ]
+                    (throw+ {:kaocha/early-exit 252})))]
      (cond-> config
        check_config_file (update ::warnings conj check_config_file)
        check (update ::warnings conj check)))))
@@ -255,7 +254,6 @@
 ;;Do we really need this?
 (defn plugin-chain-from-config [config cli-options]
   (plugin/load-all (concat (:kaocha/plugins config) (when cli-options (:plugin cli-options)))))
-
 
 (defn resolve-reporter [reporter]
   (cond

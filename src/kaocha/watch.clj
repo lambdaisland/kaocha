@@ -119,6 +119,8 @@
                      ;; If a Git pattern contains braces, those should be treated literally
                      ;; Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
                      ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  )
+
+
                      (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
     (cond->> cleaned
       ;; If it starts with a single *, it should have **
@@ -130,7 +132,7 @@
       (re-find #"/$" cleaned) (format "%s**")
 
       ;; Otherwise, it should have the same behavior
-      )))
+)))
 
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
 
@@ -179,10 +181,10 @@
   (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
     (let [{:kaocha/keys [cli-options cli-args]} config
           profile (get-in config [:kaocha/cli-options :profile])
-          config (try+ 
-                   (config/load-config2 config-file profile {} cli-options cli-args)
-                   (catch :kaocha/early-exit  e
-                     (output/warn "Error loading config: " e "\nFalling back to prior config.")))
+          config (try+
+                  (config/load-config2 config-file profile {} cli-options cli-args)
+                  (catch :kaocha/early-exit  e
+                    (output/warn "Error loading config: " e "\nFalling back to prior config.")))
           plugin-chain (plugin/load-all (concat (:kaocha/plugins config) (:plugin cli-options)))]
       [config plugin-chain])
     [config plugin-chain]))

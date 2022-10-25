@@ -57,12 +57,12 @@
                            {:kaocha/reporter '[yyy]}))))
   (testing "does not override metadata for replace-by-default key tests"
     (is (= {:kaocha/tests [{:id :integration} {:id :unit}]}
-          (c/merge-config {:kaocha/tests [{:id :unit}]}
-                          {:kaocha/tests ^:prepend [{:id :integration}]}))))
+           (c/merge-config {:kaocha/tests [{:id :unit}]}
+                           {:kaocha/tests ^:prepend [{:id :integration}]}))))
   (testing "does not override metadata for replace-by-default key test-paths"
-    (is (= {:kaocha/test-paths ["unit-tests" "integration-tests" ]}
-          (c/merge-config {:kaocha/test-paths ["unit-tests"]}
-                          {:kaocha/test-paths ^:append ["integration-tests"]})))))
+    (is (= {:kaocha/test-paths ["unit-tests" "integration-tests"]}
+           (c/merge-config {:kaocha/test-paths ["unit-tests"]}
+                           {:kaocha/test-paths ^:append ["integration-tests"]})))))
 
 (deftest merge-ns-patterns-issue-124-test
   (testing "https://github.com/lambdaisland/kaocha/issues/124"
@@ -163,20 +163,14 @@
              (c/load-config2 (io/resource "resource-that-does-not-exist.edn"))))))
   (testing "loading a file with profiles"
     (testing "specifying a profile"
-      (is (match? {:kaocha/reporter 'kaocha.report.progress/report }
+      (is (match? {:kaocha/reporter 'kaocha.report.progress/report}
                   (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn" :test {}))))
     (testing "not specifying a profile"
-      (is (match? { :kaocha/reporter 'kaocha.report/documentation }
+      (is (match? {:kaocha/reporter 'kaocha.report/documentation}
                   (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn")))))
   (testing "loading a file that doesn't conform to spec"
     (is (thrown-with-msg? Exception #":early-exit 252"
-                          (c/load-config2 "test/unit/kaocha/config/loaded-test-spec-mismatch.edn")))
-    #_(is (re-find #"[Ii]nvalid configuration" 
-                    (with-test-out-str (try (c/load-config2 "test/unit/kaocha/config/loaded-test-spec-mismatch.edn")
-                                         (catch Exception _e)))))))
-
-
-
+                          (c/load-config2 "test/unit/kaocha/config/loaded-test-spec-mismatch.edn")))))
 
 (deftest apply-cli-opts-test
   (is (= {:kaocha/fail-fast? true,
