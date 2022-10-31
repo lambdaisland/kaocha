@@ -162,6 +162,11 @@ Preload namespaces. Useful for loading specs and installing instrumentation.
  :kaocha.plugin.preloads/ns-names [my.acme.specs]}
 ```
 
+This plugin works for only Clojure namespaces. For ClojureScript namespaces, use
+the [`:preloads`
+functionality](https://clojurescript.org/reference/compiler-options#preloads) of the
+ClojureScript compiler.
+
 ## Debug
 
 Inspect Kaocha's process by printing out a message at every single hook. This is

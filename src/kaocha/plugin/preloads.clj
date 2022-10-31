@@ -3,9 +3,11 @@
 
   Useful for preloading specs and other instrumentation.
 
-  This calls `require` on the given namespace names before loading any tests.
-  Only works for Clojure namespaces, for ClojureScript use the :preloads
-  functionality of the ClojureScript compiler."
+  This plugin calls `require` on the given namespace names before loading any
+  tests.
+
+  This plugin works for only Clojure namespaces. For ClojureScript namespaces,
+  use the :preloads functionality of the ClojureScript compiler."
   (:require [kaocha.plugin :refer [defplugin]]))
 
 (defplugin kaocha.plugin/preloads
