@@ -164,7 +164,7 @@ Preload namespaces. Useful for loading specs and installing instrumentation.
 
 This plugin works for only Clojure namespaces. For ClojureScript namespaces, use
 the [`:preloads`
-functionality](https://cljs.github.io/api/compiler-options/preloads) of the
+functionality](https://clojurescript.org/reference/compiler-options#preloads) of the
 ClojureScript compiler.
 
 ## Debug
