@@ -172,10 +172,10 @@ Most of Kaocha's hooks have `pre-` and `post-` variants, but we don't have
 per-test level, in this case you can use `wrap-run` to "wrap" Kaocha's run
 function.
 
-In particular this wraps `kaocha.testable/-run`, so it receives a two argument function (the arguments are testable and test-plan), and should return such a function. `wrap-run` also receives the test-plan directly.
+In particular this wraps `kaocha.testable/-run`, so it receives a two argument function `run` (the arguments are testable and test-plan), and should return such a function.
 
 ``` clojure
-(defn my-wrap-run-hook [run _test-plan]
+(defn my-wrap-run-hook [run]
   (fn [testable test-plan]
     (println "about to run" (:kaocha.testable/id testable))
     (run testable test-plan)))
