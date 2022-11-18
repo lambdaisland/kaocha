@@ -59,10 +59,12 @@ instruments your functions.
 ``` nil
 ERROR in orchestra-test/spec-fail-test (orchestra_test.clj:11)
 Just testing simple-fn
-Call to #'orchestra-test/simple-fn did not conform to spec.
+Call to orchestra-test/simple-fn did not conform to spec.
 orchestra_test.clj:11
 
 -- Spec failed --------------------
+
+Return value
 
   "x"
 
