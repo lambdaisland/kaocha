@@ -37,9 +37,12 @@ Features include:
 - Extensible through plugins
 - Tool agnostic (Clojure CLI, Leiningen, boot)
 
-Currently Kaocha's versioning scheme is `1.${release count}-${commit count}`, and releases are
-made often. Kaocha is stable, but we occasionally release breaking changes. We try to minimize 
-the impact and the number of people affected, but it's still good to keep an eye on the CHANGELOG.
+Currently Kaocha's versioning scheme is `1.${release count}-${commit count}`,
+and releases are made often. Kaocha is stable and we try to avoid breaking
+changes. If they aren't avoidable, we minimize their impact and the number of
+people affected. We especially avoid changes to APIs. However, breaking changes are
+sometimes necessary to fix a bug or UI pain point, so it's still good to keep
+an eye on the CHANGELOG.
 
 Kaocha requires Clojure 1.9. ClojureScript support requires Clojure and
 ClojureScript 1.10.
