@@ -2,7 +2,8 @@
   "This is the add-classpath function from Pomegranate 1.0.0, extracted so we
   don't need to pull in Aether."
   (:refer-clojure :exclude [add-classpath])
-  (:require [dynapath.util :as dp]
+  (:require #_[dynapath.util :as dp]
+            [kaocha.jit :as jit]
             [clojure.java.io :as io]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12,7 +13,7 @@
   "Ensures the clojure.lang.Compiler/LOADER var is bound to a DynamicClassLoader,
   so that we can add to Clojure's classpath dynamically."
   []
-  (when-not (bound? Compiler/LOADER)
+  #_(when-not (bound? Compiler/LOADER)
     (.bindRoot Compiler/LOADER (clojure.lang.DynamicClassLoader. (clojure.lang.RT/baseLoader)))))
 
 (defn- classloader-hierarchy
@@ -21,7 +22,7 @@
    if one is not provided."
   ([]
    (ensure-compiler-loader)
-   (classloader-hierarchy (deref clojure.lang.Compiler/LOADER)))
+   #_(classloader-hierarchy (deref clojure.lang.Compiler/LOADER)))
   ([tip]
    (->> tip
         (iterate #(.getParent ^ClassLoader %))
@@ -32,7 +33,7 @@
    the dynapath.dynamic-classpath/DynamicClasspath protocol, and it can
    be modified."
   [cl]
-  (dp/addable-classpath? cl))
+  ((jit/jit dynapath.util/addable-classpath?) cl))
 
 (defn add-classpath
   "A corollary to the (deprecated) `add-classpath` in clojure.core. This implementation
@@ -40,7 +41,7 @@
    to add that path to the right classloader (with the search rooted at the current
    thread's context classloader)."
   ([jar-or-dir classloader]
-   (if-not (dp/add-classpath-url classloader (.toURL (.toURI (io/file jar-or-dir))))
+   (if-not ((jit/jit dynapath.utill/add-classpath-url) classloader (.toURL (.toURI (io/file jar-or-dir))))
      (throw (IllegalStateException. (str classloader " is not a modifiable classloader")))))
   ([jar-or-dir]
    (let [classloaders (classloader-hierarchy)]

@@ -11,8 +11,7 @@
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.specs :refer [assert-spec]]
-            [kaocha.util :as util])
-  (:import (clojure.lang Compiler$CompilerException)))
+            [kaocha.util :as util]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"

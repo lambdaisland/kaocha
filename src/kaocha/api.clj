@@ -126,7 +126,7 @@
                                       ;; don't know where in the process we've
                                       ;; been interrupted, output capturing may
                                       ;; still be in effect.
-                                      (System/setOut
+                                      #_(System/setOut
                                        (java.io.PrintStream.
                                         (java.io.BufferedOutputStream.
                                          (java.io.FileOutputStream. java.io.FileDescriptor/out))))

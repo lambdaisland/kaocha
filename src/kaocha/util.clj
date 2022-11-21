@@ -20,11 +20,13 @@
 (defn compiler-exception-file-and-line
   "Try to get the file and line number from a CompilerException"
   [^Throwable error]
-  (if (instance? clojure.lang.Compiler$CompilerException error)
+  #_(if (instance? clojure.lang.Compiler$CompilerException error)
     [(.-source ^clojure.lang.Compiler$CompilerException error)
      (.-line ^clojure.lang.Compiler$CompilerException error)]
     (when-let [error (.getCause error)]
-      (recur error))))
+      (recur error)))
+  (when-let [error (.getCause error)]
+    (recur error)))
 
 (defn minimal-test-event
   "Return a reduced version of a test event map, so debug output doesn't blow up

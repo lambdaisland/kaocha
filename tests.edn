@@ -3,8 +3,9 @@
            :profiling
            :print-invocations
            :hooks
-           :notifier
+           ;; :notifier
            :kaocha.plugin/version-filter]
+;;  :kaocha.testable/skip-add-classpath? false
 
  :tests [{:id         :unit
           :test-paths ["test/shared"
