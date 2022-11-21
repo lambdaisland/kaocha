@@ -10,7 +10,9 @@
  :tests [{:id         :unit
           :test-paths ["test/shared"
                        "test/unit"]}
-         {:id                  :integration
+         ;; disabling for Babashka testing purposes because we won't support
+         ;; Cucumber tests right away.
+         #_{:id                  :integration
           :type                :kaocha.type/cucumber
           :test-paths          ["test/shared"
                                 "test/features"]
