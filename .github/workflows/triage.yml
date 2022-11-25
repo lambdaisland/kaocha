@@ -7,7 +7,7 @@ jobs:
     name: Add issue to project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@v0.4.0
+      - uses: actions/add-to-project@v0.3.0
         with:
           project-url: https://github.com/orgs/lambdaisland/projects/2
           github-token: ${{ secrets.GITHUB_TOKEN }}
