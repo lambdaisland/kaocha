@@ -10,7 +10,7 @@ jobs:
       if: github.event_name == 'issues' && github.event.action == 'opened'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_PROJECT_URL: https://github.com/orgs/lambdaisland/projects/2/views/1
+        GITHUB_PROJECT_URL: https://github.com/orgs/lambdaisland/projects/2
         GITHUB_PROJECT_COLUMN_NAME: Triage
     
     - name: add-new-prs-to-repository-based-project-column
@@ -18,6 +18,6 @@ jobs:
       if: github.event_name == 'pull_request' && github.event.action == 'opened'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_PROJECT_URL: https://github.com/orgs/lambdaisland/projects/2/views/1
+        GITHUB_PROJECT_URL: https://github.com/orgs/lambdaisland/projects/2
         GITHUB_PROJECT_COLUMN_NAME: Triage
         
