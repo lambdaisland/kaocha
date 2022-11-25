@@ -1,18 +1,23 @@
-name: Add Triage for pull requests to projects
-
-on:
-  pull_request:
-    types:
-      - labeled
-      - opened
-
+name: Add a new GitHub Project card linked to a GitHub issue to the specified project column
+on: [issues, pull_request]
 jobs:
-  add-to-project:
-    name: Add issue or pr with triage tag to project
+  github-actions-automate-projects:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@RELEASE_VERSION
-        with:
-          project-url: https://github.com/lambdaisland/kaocha
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          labeled: Triage
+    
+    - name: add-new-issues-to-repository-based-project-column 
+      uses: docker://takanabe/github-actions-automate-projects:v0.0.1
+      if: github.event_name == 'issues' && github.event.action == 'opened'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PROJECT_URL: https://github.com/orgs/lambdaisland/projects/2/views/1
+        GITHUB_PROJECT_COLUMN_NAME: Triage
+    
+    - name: add-new-prs-to-repository-based-project-column
+      uses: docker://takanabe/github-actions-automate-projects:v0.0.1
+      if: github.event_name == 'pull_request' && github.event.action == 'opened'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PROJECT_URL: https://github.com/orgs/lambdaisland/projects/2/views/1
+        GITHUB_PROJECT_COLUMN_NAME: Triage
+        
