@@ -1,0 +1,9 @@
+name: Add new pr or issue to project board 
+
+on: [issues, pull_request]    
+
+jobs:
+  add-to-project:
+    uses: lambdaisland/open-source/.github/workflows/add-to-project-board.yml@main
+    secrets: inherit
+    
