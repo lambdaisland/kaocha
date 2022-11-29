@@ -4,4 +4,4 @@ on: [issues, pull_request]
 
 jobs:
   add-to-project:
-    uses: lambdaisland/open-source/.github/workflows/add-to-project-board.yml@LIOSS-1/add-pr-and-issue-to-project-board
+    uses: lambdaisland/open-source/.github/workflows/add-to-project-board.yml@main
