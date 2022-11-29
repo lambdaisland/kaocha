@@ -1,5 +1,7 @@
 name: Add a new GitHub Project card linked to a GitHub issue or a new pr to the Triage project column (reuseble workflow)
 
-on:
-  workflow_call:
+on: [issues, pull_request]    
+
+jobs:
+  add-to-project:
     uses: lambdaisland/open-source/.github/workflows/add-to-project-board.yml@LIOSS-1/add-pr-and-issue-to-project-board
