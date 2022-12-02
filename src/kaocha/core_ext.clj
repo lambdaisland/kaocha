@@ -58,7 +58,8 @@
      (instance? clojure.lang.Var name) (.toSymbol ^clojure.lang.Var name)
      (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
      :else (throw (IllegalArgumentException. "no conversion to symbol"))))
-  ([ns name] (clojure.lang.Symbol/intern ns name)))
+  ([ns name] #?(:bb (symbol ns name) ;;bb support requires a very recent version anyway.
+                :clj (clojure.lang.Symbol/intern ns name))))
 
 ;; 1.10 backport
 (when-not (resolve 'clojure.core/requiring-resolve)
