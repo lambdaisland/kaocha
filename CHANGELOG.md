@@ -2,6 +2,9 @@
 
 ## Added
 
+- `kaocha.plugin.capture-output/bypass` macro, for temporarily bypassing output
+  capturing
+
 ## Fixed
 
 ## Changed
