@@ -2,13 +2,16 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.test :refer [is]]
-            [kaocha.platform :as platform]
-            matcher-combinators.test)
-  (:import java.io.File
-           [java.nio.file Files OpenOption Path Paths]
-           [java.nio.file.attribute FileAttribute PosixFilePermissions]))
+            [kaocha.platform :as platform])
+  (:import (java.io File)
+           (java.nio.file Files
+                          OpenOption
+                          Path
+                          Paths)
+           (java.nio.file.attribute FileAttribute
+                                    PosixFilePermissions)))
 
-(require 'kaocha.assertions)
+(require 'kaocha.assertions 'matcher-combinators.test)
 
 (defprotocol Joinable
   (join [this that]))
@@ -171,18 +174,18 @@
   m is the output from `test-dir-setup`
   args is a collection of arguments after ./bin/kaocha.
   e.g., [\"--watch\" \"--focus\" \"foo\"]
-  
+
   Kills the process after 30 seconds if it has not already
   been exited. Ensures the process is killed immediately after
   body is executed. Returns the exit code.
-  
+
   Executes body in the following environment:
   *process* is the running Process executing `./bin/kaocha ~@args`
   *in* is bound to the output stream of this Process
   - e.g., use (read-line) to read the output of ./bin/kaocha
   *out* is bound to the input stream of this Process
   - e.g., use (println) to send input to ./bin/kaocha
-  
+
   Tips:
   - avoid using `testing` or `is` in ways that can swallow exceptions
   in `body`. The first exception that's thrown in your test should contain
@@ -221,7 +224,7 @@
 
 (defn next-line-matches
   "Checks that the next line from the integration process matches function f.
-  
+
   If not, slurps the rest of the output for debugging purposes and throws an exception."
   [f]
   (let [s (try (read-line-or-throw)
@@ -235,7 +238,7 @@
 
 (defn read-until
   "Keep reading from integration process output until f is true.
-  
+
   If never true, reports all the strings that failed."
   [f]
   ;; can't recur across try, use atom

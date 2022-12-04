@@ -8,7 +8,7 @@
             [clojure.spec.alpha :as s]
             [expound.alpha :as expound]
             [orchestra.spec.test :as orchestra])
-  (:import [clojure.lang ExceptionInfo]))
+  (:import (clojure.lang ExceptionInfo)))
 
 (require 'matcher-combinators.clj-test)
 

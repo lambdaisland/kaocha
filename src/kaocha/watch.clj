@@ -24,8 +24,8 @@
             [lambdaisland.tools.namespace.reload :as ctn-reload]
             [lambdaisland.tools.namespace.track :as ctn-track]
             [nextjournal.beholder :as beholder])
-  (:import [java.nio.file FileSystems]
-           [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
+  (:import (java.nio.file FileSystems)
+           (java.util.concurrent ArrayBlockingQueue BlockingQueue)))
 
 (defn make-queue []
   (ArrayBlockingQueue. 1024))

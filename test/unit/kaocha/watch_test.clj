@@ -12,9 +12,10 @@
             [kaocha.config :as config]
             [clojure.test :as t]
             [clojure.string :as str]
-            [slingshot.slingshot :refer [try+]]
-            matcher-combinators.test)
-  (:import [java.io File]))
+            [slingshot.slingshot :refer [try+]])
+  (:import (java.io File)))
+
+(require 'matcher-combinators.test)
 
 (deftest make-queue-test
   (is (instance? java.util.concurrent.BlockingQueue (w/make-queue))))
@@ -75,14 +76,14 @@
   (is (w/glob? (.toPath (io/file "test/xxxx.clj")) [(w/convert "***xxx.clj")])))
 
 (deftest glob-converted-test
-  ; Validate that incompatible patterns are converted and match after conversion. 
-  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx* ")])) 
+  ; Validate that incompatible patterns are converted and match after conversion.
+  (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx* ")]))
   (is (w/glob? (.toPath (io/file "xxxx.clj")) [(w/convert "xxx*  ")]))
-  (when-not (platform/on-windows?) 
+  (when-not (platform/on-windows?)
     (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\ ")])))
-  (when-not (platform/on-windows?) 
+  (when-not (platform/on-windows?)
    (is (w/glob? (.toPath (io/file "xxxx.clj ")) [(w/convert "xxx*\\  ")])))
-  (when-not (platform/on-windows?) 
+  (when-not (platform/on-windows?)
    (is (w/glob? (.toPath (io/file "xxxx.clj  ")) [(w/convert "xxx*\\ \\ ")])))
   (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "src/")]))
   (is (w/glob? (.toPath (io/file "src/xxx.class")) [(w/convert "*.class")]))
@@ -134,9 +135,9 @@
     (is (str/includes?
            @out-str
           (str/replace
-             
+
               "[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:yyy\n1 tests, 1 assertions, 1 failures.\n\n[watch] Reloading #{foo.bar-test}\n[watch] Re-running failed tests #{:foo.bar-test/xxx-test}\n[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:zzz"
-             
+
                      "foo"
                      prefix)))))
 

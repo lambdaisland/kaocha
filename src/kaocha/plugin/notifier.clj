@@ -20,9 +20,12 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [slingshot.slingshot :refer [throw+]])
-  (:import [java.nio.file Files]
-           [java.io IOException]
-           [java.awt SystemTray TrayIcon TrayIcon$MessageType Toolkit]))
+  (:import (java.nio.file Files)
+           (java.io IOException)
+           (java.awt SystemTray
+                     TrayIcon
+                     TrayIcon$MessageType
+                     Toolkit)))
 
 ;; special thanks for terminal-notify stuff to
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj

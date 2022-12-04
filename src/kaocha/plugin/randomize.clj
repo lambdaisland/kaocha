@@ -1,7 +1,7 @@
 (ns kaocha.plugin.randomize
   (:require [kaocha.plugin :as plugin :refer [defplugin]]
             [kaocha.result :as result])
-  (:import [java.util Random]))
+  (:import (java.util Random)))
 
 (defn rng [seed]
   (let [rng (java.util.Random. seed)]

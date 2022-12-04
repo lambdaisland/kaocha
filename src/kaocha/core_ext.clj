@@ -1,7 +1,7 @@
 (ns kaocha.core-ext
   "Core language extensions"
   (:refer-clojure :exclude [symbol])
-  (:import [java.util.regex Pattern]))
+  (:import (java.util.regex Pattern)))
 
 (defn regex? [x]
   (instance? Pattern x))
