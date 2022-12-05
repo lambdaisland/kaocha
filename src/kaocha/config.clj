@@ -220,6 +220,31 @@
                           tests)))))
     config))
 
+(defn apply-cli
+  "Applies command-line options and arguments to the configuration."
+  [config cli-opts cli-args]
+  (some-> config
+      cli-opts (apply-cli-opts cli-opts)
+      cli-args (apply-cli-args cli-args)))
+
+(defn validate-config!
+  "Validates the configuration, printing any warnings and errors and possibly throwing."
+  [config config-file]
+  ;;Check for configuration existence.
+  (when (not (.exists (io/file (or config-file "tests.edn"))))
+    (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
+                              "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
+                              "To create a configuration file using the current defaults and configuration file location, create a file named %s that contains '#%s {}'.")
+                         config-file
+                         current-reader))
+    ;;Check configuration conforms to spec
+    (try
+      (specs/assert-spec :kaocha/config config)
+      (catch AssertionError e
+        (output/error "Invalid configuration file:\n"
+                      (.getMessage e))
+        (throw+ {:kaocha/early-exit 252})))))
+
 (defn load-config2
   "Loads config from config-file, factoring in profile specified using profile,
   and displaying messages about any errors."
