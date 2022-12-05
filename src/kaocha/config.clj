@@ -149,9 +149,9 @@
                    #(merge {:resolver aero/resource-resolver} %))
            (read-config-source resource)))))
 
-(defn load-config-file
+(defn load-config
   "Loads and returns configuration from `source` or the file \"tests.edn\"
-  if called without arguments.
+  if called without arguments, without doing further processing.
 
   If the config value loaded from `source` is nil, it returns the default
   configuration, which is the result of `(default-config)`.
@@ -187,16 +187,14 @@
 
   `{:aero/read-config-opts {:resolver resolver-to-use}}`"
   ([]
-   (load-config-file (io/file "tests.edn")))
+   (load-config (io/file "tests.edn")))
   ([source]
-   (load-config-file source {}))
+   (load-config source {}))
   ([source opts]
    (if-some [config (read-config source opts)]
      config
      (read-config nil opts))))
 
-;Alias for backward compatibility
-(def load-config load-config-file)
 
 (defn apply-cli-opts [config options]
   (cond-> config
@@ -231,7 +229,7 @@
    (load-config2 config-file profile opts nil nil))
   ([config-file profile opts cli-options cli-args]
    (let [config (cond-> config-file
-                    true (load-config-file (if profile (assoc opts :profile profile) opts))
+                    true (load-config (if profile (assoc opts :profile profile) opts))
                     cli-options (apply-cli-opts cli-options)
                     cli-args (apply-cli-args cli-args))
 
