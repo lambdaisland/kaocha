@@ -147,14 +147,20 @@
     (throw+ {:kaocha/early-exit 253}))
 
   (binding [spec/*explain-out* expound/printer]
-    (let [{{:keys [config-file plugin profile]} :options} (cli/parse-opts args cli-options)
-          config (config/load-config2 config-file (when profile {:profile profile}) {})
-          plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
-          cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
+    (let [{{:keys [config-file plugin arguments profile]} :options} (cli/parse-opts args cli-options)
+          ;; Initial configuration load to determine plugins.
+          config                                                    (->  (config/load-config config-file (if profile {:profile profile} {}))
+                                                                        (config/apply-cli {} (map parse-kw arguments))
+                                                                        (config/validate! config-file))
+          plugin-chain                                              (plugin/load-all (concat (:kaocha/plugins config) plugin))
+          cli-options                                               (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
-          {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
-          config (config/load-config2 config-file (when profile profile) {} options (map parse-kw arguments))
-          suites                                     (into #{} (map parse-kw) arguments)]
+          {:keys [errors options summary arguments]}                (cli/parse-opts args cli-options)
+          ;; Final configuration load once all plugins are loaded:
+          config                                                    (->  (config/load-config config-file (if profile {:profile profile} {}))
+                                                                        (config/apply-cli options (map parse-kw arguments))
+                                                                        (config/validate! config-file))
+          suites                                                    (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
         (run {:config  config
               :options options
