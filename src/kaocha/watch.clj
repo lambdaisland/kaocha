@@ -119,8 +119,6 @@
                      ;; If a Git pattern contains braces, those should be treated literally
                      ;; Example: src/{ill-advised-filename}.clj => src/\{ill-advised-filename\}.clj
                      ;; (re-find #"[{}]" pattern) (str/replace pattern #"\{(.*)\}" "\\\\{$1\\\\}"  )
-
-
                      (str/replace #"\{(.*)\}" "\\\\{$1\\\\}"))]
     (cond->> cleaned
       ;; If it starts with a single *, it should have **
