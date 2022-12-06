@@ -182,8 +182,10 @@
     (let [{:kaocha/keys [cli-options cli-args]} config
           profile (get-in config [:kaocha/cli-options :profile])
           config (try+
-                  (config/load-config2 config-file profile {} cli-options cli-args)
-                  (catch :kaocha/early-exit  e
+                  (-> (config/load-config config-file {:profile profile})
+                      (config/apply-cli cli-options cli-args)
+                      (config/validate! config-file))
+                  (catch :kaocha/early-exit e
                     (output/warn "Error loading config: " e "\nFalling back to prior config.")))
           plugin-chain (plugin/load-all (concat (:kaocha/plugins config) (:plugin cli-options)))]
       [config plugin-chain])
