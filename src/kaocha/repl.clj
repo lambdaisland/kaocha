@@ -79,9 +79,9 @@ These will particularly come in handy when developing plugins."}
   alternative configuration file to use with `:config-file`."
   ([]
    (config {}))
-  ([extra-config]
+  ([{:keys [profile] :as  extra-config}]
    (let [config-file (:config-file extra-config "tests.edn")
-         config      (-> (config/load-config config-file)
+         config      (-> (config/load-config config-file {:profile profile})
                          (config/merge-config (config/normalize extra-config))
                          (config/validate! config-file))
          plugin-chain (plugin/load-all (:kaocha/plugins config))]
