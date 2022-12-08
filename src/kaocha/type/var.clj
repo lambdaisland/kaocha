@@ -23,15 +23,17 @@
                                             meta'   :kaocha.testable/meta
                                             :as     testable} test-plan]
   (type/with-report-counters
-    (let [test (reduce #(%2 %1) test wrap)]
-      (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
-        (t/do-report {:type :begin-test-var, :var the-var})
-        (try
-          (test)
-          (catch clojure.lang.ExceptionInfo e
-            (when-not (:kaocha/fail-fast (ex-data e))
-              (report/report-exception e)))
-          (catch Throwable e (report/report-exception e))))
+    (let [test-fn
+          (fn [] (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
+                   (t/do-report {:type :begin-test-var, :var the-var})
+                   (try
+                     (test)
+                     (catch clojure.lang.ExceptionInfo e
+                       (when-not (:kaocha/fail-fast (ex-data e))
+                         (report/report-exception e)))
+                     (catch Throwable e (report/report-exception e)))))
+          wrapped-test (reduce #(%2 %1) test-fn wrap)]
+      (wrapped-test)
       (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
         (when (= pass error fail pending 0)
           (binding [testable/*fail-fast?* false

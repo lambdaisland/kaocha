@@ -21,6 +21,17 @@
               :kaocha/ns-patterns   ["-test$"]
               :kaocha.result/tests
               [{:kaocha.testable/type :kaocha.type/ns
+                :kaocha.testable/id   :baz.qux-test
+                :kaocha.result/tests
+                [{:kaocha.testable/type :kaocha.type/var
+                  :kaocha.testable/id   :baz.qux-test/nested-test
+                  :kaocha.testable/desc "nested-test"
+                  :kaocha.var/name      'baz.qux-test/nested-test
+                  :kaocha.result/count  1
+                  :kaocha.result/pass   1
+                  :kaocha.result/error  1
+                  :kaocha.result/fail   0}]}
+               {:kaocha.testable/type :kaocha.type/ns
                 :kaocha.testable/id   :foo.bar-test
                 :kaocha.result/tests
                 [{:kaocha.testable/type :kaocha.type/var
