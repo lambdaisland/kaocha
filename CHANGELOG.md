@@ -4,6 +4,12 @@
 
 ## Fixed
 
+- Using a try-catch (without rethrowing) in an `:each` fixture could swallow
+  thrown exceptions, resulting in a test being treated as passing when it should
+  have been reported as an error. Fixed by changing how `:each` fixtures wrap
+  the test function in execution. (thanks
+  [@NoahTheDuke](https://github.com/NoahTheDuke))
+
 ## Changed
 
 # 1.71.1119 (2022-10-24 / 4317878)
