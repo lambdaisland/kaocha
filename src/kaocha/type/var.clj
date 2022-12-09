@@ -17,23 +17,25 @@
   (println "Test ran without assertions. Did you forget an (is ...)?")
   (report/print-output m))
 
+(defn wrap-test [test the-var]
+  (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
+    (t/do-report {:type :begin-test-var, :var the-var})
+    (try
+      (test)
+      (catch clojure.lang.ExceptionInfo e
+        (when-not (:kaocha/fail-fast (ex-data e))
+          (report/report-exception e)))
+      (catch Throwable e (report/report-exception e)))))
+
 (defmethod testable/-run :kaocha.type/var [{test    :kaocha.var/test
                                             wrap    :kaocha.testable/wrap
                                             the-var :kaocha.var/var
                                             meta'   :kaocha.testable/meta
                                             :as     testable} test-plan]
   (type/with-report-counters
-    (let [test-fn
-          (fn [] (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
-                   (t/do-report {:type :begin-test-var, :var the-var})
-                   (try
-                     (test)
-                     (catch clojure.lang.ExceptionInfo e
-                       (when-not (:kaocha/fail-fast (ex-data e))
-                         (report/report-exception e)))
-                     (catch Throwable e (report/report-exception e)))))
-          wrapped-test (reduce #(%2 %1) test-fn wrap)]
-      (wrapped-test)
+    (let [test-fn (fn [] (wrap-test test the-var))
+          merged-wraps (reduce #(%2 %1) test-fn wrap)]
+      (merged-wraps)
       (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
         (when (= pass error fail pending 0)
           (binding [testable/*fail-fast?* false
