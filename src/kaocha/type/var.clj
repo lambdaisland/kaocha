@@ -17,31 +17,30 @@
   (println "Test ran without assertions. Did you forget an (is ...)?")
   (report/print-output m))
 
-(defn wrap-test-var [{test    :kaocha.var/test
-                      the-var :kaocha.var/var
-                      meta'   :kaocha.testable/meta
-                      :as     testable}]
-  (fn []
-    (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
-      (t/do-report {:type :begin-test-var, :var the-var})
-      (try
-        (test)
-        (catch clojure.lang.ExceptionInfo e
-          (when-not (:kaocha/fail-fast (ex-data e))
-            (report/report-exception e)))
-        (catch Throwable e (report/report-exception e)))
-      (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
-        (when (= pass error fail pending 0)
-          (binding [testable/*fail-fast?* false
-                    testable/*test-location* {:file (:file meta') :line (:line meta')}]
-            (t/do-report {:type ::zero-assertions}))))
-      (t/do-report {:type :end-test-var, :var the-var})
-      (merge testable {:kaocha.result/count 1} (type/report-count)))))
+(defn test-var [{test    :kaocha.var/test
+                 the-var :kaocha.var/var
+                 meta'   :kaocha.testable/meta
+                 :as     testable}]
+  (binding [t/*testing-vars* (conj t/*testing-vars* the-var)]
+    (t/do-report {:type :begin-test-var, :var the-var})
+    (try
+      (test)
+      (catch clojure.lang.ExceptionInfo e
+        (when-not (:kaocha/fail-fast (ex-data e))
+          (report/report-exception e)))
+      (catch Throwable e (report/report-exception e)))
+    (let [{::result/keys [pass error fail pending] :as result} (type/report-count)]
+      (when (= pass error fail pending 0)
+        (binding [testable/*fail-fast?* false
+                  testable/*test-location* {:file (:file meta') :line (:line meta')}]
+          (t/do-report {:type ::zero-assertions}))))
+    (t/do-report {:type :end-test-var, :var the-var})
+    (merge testable {:kaocha.result/count 1} (type/report-count))))
 
 (defmethod testable/-run :kaocha.type/var [{wrap :kaocha.testable/wrap
                                             :as  testable} test-plan]
   (type/with-report-counters
-    (let [wrapped-test (wrap-test-var testable)
+    (let [wrapped-test (fn [] (test-var testable))
           wrapped-test (reduce #(%2 %1) wrapped-test wrap)]
       (wrapped-test))))
 
