@@ -247,6 +247,7 @@ errors as test errors."
                         ;; first and skip the rest, so that it gets reported
                         ;; properly.
                         (into [(assoc (first suites)
+                                      ::testable/skip false
                                       ::testable/load-error error
                                       ::testable/load-error-file (or file (util/ns-file error-ns))
                                       ::testable/load-error-line line
