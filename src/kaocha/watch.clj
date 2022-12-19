@@ -244,16 +244,20 @@ errors as test errors."
                         ;; We don't really know which suite the load error
                         ;; belongs to, it could well be in a file shared by all
                         ;; suites, so we arbitrarily put the load error on the
-                        ;; first and skip the rest, so that it gets reported
-                        ;; properly.
-                        (into [(assoc (first suites)
-                                      ::testable/skip false
-                                      ::testable/load-error error
-                                      ::testable/load-error-file (or file (util/ns-file error-ns))
-                                      ::testable/load-error-line line
-                                      ::testable/load-error-message (str "Failed reloading " error-ns ":"))]
-                              (map #(assoc % ::testable/skip true))
-                              (rest suites))))))
+                        ;; first non-skipped suite and skip all others, so that
+                        ;; it gets reported properly.
+                        (let [applied? (volatile! false)]
+                          (into [] (map (fn [suite]
+                                          (if (and (not @applied?)
+                                                   (not (::testable/skip suite)))
+                                            (do (vreset! applied? true)
+                                                (assoc suite
+                                                       ::testable/load-error error
+                                                       ::testable/load-error-file (or file (util/ns-file error-ns))
+                                                       ::testable/load-error-line line
+                                                       ::testable/load-error-message (str "Failed reloading " error-ns ":")))
+                                            (assoc suite ::testable/skip true))))
+                                suites))))))
                 config))))
 
 (defn watch-paths [config]
