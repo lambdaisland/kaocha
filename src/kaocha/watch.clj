@@ -57,8 +57,9 @@
     (println)
     result))
 
-(defn track-reload! [tracker]
-  (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {})))
+(defn track-reload! [{::keys [tracker-error] :as tracker}]
+  (cond-> (assoc tracker ::ctn-file/load-error {})
+    (not tracker-error) ctn-reload/track-reload))
 
 (defn print-scheduled-operations! [tracker focus]
   (let [unload (set (::ctn-track/unload tracker))
@@ -75,9 +76,17 @@
     (when (seq focus)
       (println "[watch] Re-running failed tests" (set focus)))))
 
+(defn- circular-dependency? [e]
+  (= :lambdaisland.tools.namespace.dependency/circular-dependency
+     (:reason (ex-data e))))
+
 (defn drain-and-rescan! [q tracker watch-paths]
   (drain-queue! q)
-  (ctn-dir/scan-dirs tracker watch-paths))
+  (try (ctn-dir/scan-dirs tracker watch-paths)
+       (catch clojure.lang.ExceptionInfo e
+         (if (circular-dependency? e)
+           (assoc tracker ::tracker-error e)
+           (throw e)))))
 
 (defn glob?
   "Does path match any of the glob patterns.
@@ -193,7 +202,7 @@
          focus        nil]
     (when-not @finish?
       (let [result  (try-run config focus tracker)
-            tracker (::tracker result)
+            tracker (dissoc (::tracker result) ::tracker-error)
             error?  (::error? result)
             ignore  (if (::use-ignore-file config)
                       (into (::ignore config)
@@ -232,9 +241,11 @@ errors as test errors."
     (print-scheduled-operations! tracker focus)
     (let [tracker    (track-reload! tracker)
           config     (assoc config ::tracker tracker)
-          error      (::ctn-reload/error tracker)
-          error-ns   (::ctn-reload/error-ns tracker)
-          load-error (::ctn-file/load-error tracker)]
+          error      (or (::tracker-error tracker)
+                         (::ctn-reload/error tracker))
+          error-ns   (if (circular-dependency? error)
+                       (:node (ex-data error))
+                       (::ctn-reload/error-ns tracker))]
       (if (and error error-ns)
         (let [[file line] (util/compiler-exception-file-and-line error)]
           (-> config
@@ -290,10 +301,18 @@ errors as test errors."
                       (set/union (watch-paths config)
                                  (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
                       (watch-paths config))
-        tracker     (-> (ctn-track/tracker)
-                        (ctn-dir/scan-dirs watch-paths)
-                        (dissoc :lambdaisland.tools.namespace.track/unload
-                                :lambdaisland.tools.namespace.track/load))]
+        tracker (ctn-track/tracker)
+        ;; if t.n fails due to circular dependencies, do not track-reload.
+        ;; instead, report the failure as a compilation error. repeat this
+        ;; strategy each time around run-loop.
+        tracker (try (-> tracker
+                         (ctn-dir/scan-dirs watch-paths)
+                         (dissoc :lambdaisland.tools.namespace.track/unload
+                                 :lambdaisland.tools.namespace.track/load))
+                     (catch clojure.lang.ExceptionInfo e
+                       (if (circular-dependency? e)
+                         (assoc tracker ::tracker-error e)
+                         (throw e))))]
 
     (when (or (= watcher-type :hawk) (::hawk-opts config))
       (output/warn "Hawk watcher is deprecated in favour of Beholder. Kaocha will soon get rid of Hawk completely."))

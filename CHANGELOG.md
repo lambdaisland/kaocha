@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- Circular dependencies in watch mode no longer kills the process.
+
 ## Changed
 
 # 1.71.1119 (2022-10-24 / 4317878)
