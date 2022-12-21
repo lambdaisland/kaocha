@@ -81,9 +81,9 @@ These will particularly come in handy when developing plugins."}
    (config {}))
   ([{:keys [profile] :as  extra-config}]
    (let [config-file (:config-file extra-config "tests.edn")
-         config      (-> (config/load-config config-file {:profile profile})
+         config      (-> (config/load-config (config/find-config-and-warn config-file) {:profile profile})
                          (config/merge-config (config/normalize extra-config))
-                         (config/validate! config-file))
+                         (config/validate!))
          plugin-chain (plugin/load-all (:kaocha/plugins config))]
      (plugin/with-plugins plugin-chain
        (plugin/run-hook :kaocha.hooks/config config)))))

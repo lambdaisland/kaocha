@@ -227,17 +227,20 @@
       cli-opts (apply-cli-opts cli-opts)
       cli-args (apply-cli-args cli-args)))
 
+(defn find-config-and-warn 
+  [config-file]
+  (let [final-config-file (or config-file "tests.edn")]
+    (when (not (.exists (io/file (or config-file "tests.edn"))))
+      (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
+                                "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
+                                "To create a configuration file using the current defaults and configuration file location, create a file named %s that contains '#%s {}'.")
+                           config-file
+                           current-reader)))
+    final-config-file))
+
 (defn validate!
   "Validates the configuration, printing any warnings and errors and possibly throwing."
-  [config config-file]
-  ;;Check for configuration existence.
-  (when (not (.exists (io/file (or config-file "tests.edn"))))
-    (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
-                              "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
-                              "To create a configuration file using the current defaults and configuration file location, create a file named %s that contains '#%s {}'.")
-                         config-file
-                         current-reader)))
-  ;Check configuration conforms to spec
+  [config]
     (try
       (specs/assert-spec :kaocha/config config)
       config
@@ -250,9 +253,9 @@
   "Loads config from config-file, factoring in profile specified using profile,
   and displaying messages about any errors."
   ([config-file {:keys [cli-opts cli-args] :as opts}]
-   (-> (load-config config-file opts)
+   (-> (load-config (find-config-and-warn config-file) opts)
        (apply-cli cli-opts cli-args)
-       (validate! config-file))))
+       (validate!))))
 
 ;;Do we really need this?
 (defn plugin-chain-from-config [config cli-options]

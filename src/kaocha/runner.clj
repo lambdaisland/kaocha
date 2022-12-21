@@ -182,7 +182,8 @@
   [m]
   (try+
    (let [config (-> (config/load-config)
-                    (config/merge-config (config/normalize m)))]
+                    (config/merge-config (config/normalize m))
+                    (config/validate!))]
      (if (:kaocha/watch? config)
        (let [[exit-code finish!] ((jit kaocha.watch/run) config)]
          (System/exit @exit-code))
