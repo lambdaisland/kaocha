@@ -148,10 +148,11 @@
 
   (binding [spec/*explain-out* expound/printer]
     (let [{{:keys [config-file plugin arguments profile]} :options} (cli/parse-opts args cli-options)
+          config-file                                               (config/find-config-and-warn config-file)
           ;; Initial configuration load to determine plugins.
           config                                                    (->  (config/load-config config-file (if profile {:profile profile} {}))
                                                                         (config/apply-cli {} (map parse-kw arguments))
-                                                                        (config/validate! config-file))
+                                                                        (config/validate!))
           plugin-chain                                              (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                               (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
@@ -159,7 +160,7 @@
           ;; Final configuration load once all plugins are loaded:
           config                                                    (-> (config/load-config config-file (if profile {:profile profile} {}))
                                                                         (config/apply-cli options (map parse-kw arguments))
-                                                                        (config/validate! config-file))
+                                                                        (config/validate!))
           suites                                                    (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
         (run {:config  config
