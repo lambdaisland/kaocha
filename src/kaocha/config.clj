@@ -246,34 +246,13 @@
                       (.getMessage e))
         (throw+ {:kaocha/early-exit 252}))))
 
-(defn load-config2
+(defn load-config-for-cli-and-validate
   "Loads config from config-file, factoring in profile specified using profile,
   and displaying messages about any errors."
-  ([config-file]
-   (load-config2 config-file nil {} nil nil))
-  ([config-file profile opts]
-   (load-config2 config-file profile opts nil nil))
-  ([config-file profile opts cli-options cli-args]
-   (let [config (cond-> config-file
-                    true (load-config (if profile (assoc opts :profile profile) opts))
-                    cli-options (apply-cli-opts cli-options)
-                    cli-args (apply-cli-args cli-args))
-
-         check_config_file (when (not (. (io/file (or config-file "tests.edn")) exists))
-                             (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
-                                          "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
-                                          "To create a configuration file using the current defaults and configuration file location, create a file named %s that contains '#%s {}'.")
-                                                  config-file
-                                     current-reader)))
-         check  (try
-                  (specs/assert-spec :kaocha/config config)
-                  (catch AssertionError e
-                    (output/error "Invalid configuration file:\n"
-                                  (.getMessage e))
-                    (throw+ {:kaocha/early-exit 252})))]
-     (cond-> config
-       check_config_file (update ::warnings conj check_config_file)
-       check (update ::warnings conj check)))))
+  ([config-file {:keys [cli-opts cli-args] :as opts}]
+   (-> (load-config config-file opts)
+       (apply-cli cli-opts cli-args)
+       (validate! config-file))))
 
 ;;Do we really need this?
 (defn plugin-chain-from-config [config cli-options]

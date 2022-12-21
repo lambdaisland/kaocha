@@ -157,7 +157,7 @@
 
           {:keys [errors options summary arguments]}                (cli/parse-opts args cli-options)
           ;; Final configuration load once all plugins are loaded:
-          config                                                    (->  (config/load-config config-file (if profile {:profile profile} {}))
+          config                                                    (-> (config/load-config config-file (if profile {:profile profile} {}))
                                                                         (config/apply-cli options (map parse-kw arguments))
                                                                         (config/validate! config-file))
           suites                                                    (into #{} (map parse-kw) arguments)]

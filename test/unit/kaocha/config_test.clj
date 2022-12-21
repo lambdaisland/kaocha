@@ -140,37 +140,37 @@
       (is (= expected-default-config
              (c/load-config (io/resource "resource-that-does-not-exist.edn")))))))
 
-(deftest load-config2-test
+(deftest load-config-for-cli-and-validate-test
   (testing "from file path"
 
     (testing "supports Aero manipulation"
       (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
                    :kaocha/plugins  (m/embeds [:some.kaocha.plugin/foo :other.kaocha.plugin/bar])}
-                  (c/load-config2 "test/unit/kaocha/config/loaded-test.edn"))))
+                  (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test.edn" {}))))
 
     (testing "falls back to default when file does not exist"
       (is (= expected-default-config
-             (c/load-config2 "file-that-does-not-exist.edn")))))
+             (c/load-config-for-cli-and-validate "file-that-does-not-exist.edn" {})))))
 
   (testing "from resource"
     (testing "supports Aero manipulation"
       (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
                    :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
-                  (c/load-config2 (io/resource "kaocha/config/loaded-test-resource.edn")))))
+                  (c/load-config-for-cli-and-validate (io/resource "kaocha/config/loaded-test-resource.edn") {}))))
 
     (testing "falls back to default when resource does not exist"
       (is (= expected-default-config
-             (c/load-config2 (io/resource "resource-that-does-not-exist.edn"))))))
+             (c/load-config-for-cli-and-validate (io/resource "resource-that-does-not-exist.edn") {})))))
   (testing "loading a file with profiles"
     (testing "specifying a profile"
       (is (match? {:kaocha/reporter 'kaocha.report.progress/report}
-                  (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn" :test {}))))
+                  (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-profile.edn" {:profile :test}))))
     (testing "not specifying a profile"
       (is (match? {:kaocha/reporter 'kaocha.report/documentation}
-                  (c/load-config2 "test/unit/kaocha/config/loaded-test-profile.edn")))))
+                  (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-profile.edn" {})))))
   (testing "loading a file that doesn't conform to spec"
     (is (thrown-with-msg? Exception #":early-exit 252"
-                          (c/load-config2 "test/unit/kaocha/config/loaded-test-spec-mismatch.edn")))))
+                          (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-spec-mismatch.edn" {})))))
 
 (deftest apply-cli-opts-test
   (is (= {:kaocha/fail-fast? true,
