@@ -157,9 +157,11 @@
       (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
                    :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
                   (c/load-config-for-cli-and-validate (io/resource "kaocha/config/loaded-test-resource.edn") {}))))
-
     (testing "falls back to default when resource does not exist"
-      (is (= expected-default-config
+      (is (match? 
+            ;; Deliberately minimal case because we want to test this behavior
+            ;; (fallback to tests.edn) without tying too much to tests.edn
+            {:kaocha.hooks/pre-load ['kaocha.assertions/load-assertions] }
              (c/load-config-for-cli-and-validate (io/resource "resource-that-does-not-exist.edn") {})))))
   (testing "loading a file with profiles"
     (testing "specifying a profile"
