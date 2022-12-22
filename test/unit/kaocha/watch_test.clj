@@ -192,49 +192,51 @@
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
         config (-> (config/load-config config-file)
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
-                   (assoc :kaocha.filter/focus [:second-suite])
                    (update :kaocha/tests (fn [suites]
                                            (let [base-suite (assoc (first suites)
                                                                   :kaocha/source-paths []
                                                                   :kaocha/test-paths [(str test-dir)])]
                                              [(assoc base-suite :kaocha.testable/id :first-suite)
                                               (assoc base-suite :kaocha.testable/id :second-suite)]))))
-        _ (integration/spit-file m "tests.edn" (pr-str config))
-        _ (integration/spit-file m "test/bar_test.clj" (str "(ns bar-test) (throw (Exception. \"Intentional compilation error\"))"))
+        _ (spit (str config-file) (pr-str config))
+        spit-good-test #(integration/spit-file m "test/bar_test.clj" (str "(ns bar-test (:require [clojure.test :refer :all])) (deftest good-test (is true))"))
+        spit-bad-test #(integration/spit-file m "test/bar_test.clj" (str "(ns bar-test) (throw (Exception. \"Intentional compilation error\"))"))
 
         dbg (bound-fn* prn)
         _ (dbg "before")
-        exit (integration/interactive-process m ["second-suite" "--watch"]
+        _ (spit-good-test)
+        exit (integration/interactive-process m [":second-suite" "--watch"]
                (try
                  (dbg "first lines")
                  (integration/expect-lines
-                   ["[E]"
+                   ["[(.)]"
+                    "1 tests, 1 assertions, 0 failures."
+                    ""])
+                 (spit-bad-test)
+                 (dbg "after bad test")
+                 (integration/expect-lines
+                   ["[watch] Reloading #{bar-test}"
+                    "[E]"
                     ""
                     "ERROR in second-suite (bar_test.clj:1)"
-                    "Failed loading tests:"])
+                    "Failed reloading bar-test:"])
                  (dbg "compiler exception")
-                 (testing "CompilerException line"
-                   (integration/next-line-matches
-                     #{"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."
-                       "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (bar_test.clj:1:15)."
-                       "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(bar_test.clj:1:15)"}))
+                 (integration/next-line-matches
+                   #{"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."
+                     "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (bar_test.clj:1:15)."
+                     "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(bar_test.clj:1:15)"})
                  (dbg "big trace")
-                 (testing "skip a big stacktrace"
-                   (integration/read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."}))
-                 (integration/expect-lines [""])
+                 (integration/read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."})
+                 (integration/expect-lines
+                   [""
+                    "[watch] Error reloading, all tests skipped."])
                  ;; fix the compilation error...
-                 (integration/spit-file m "test/bar_test.clj" (str "(ns bar-test (:require [clojure.test :refer :all])) (deftest good-test (is true))"))
+                 (spit-good-test)
                  (dbg "after good-test")
                  (integration/expect-lines
                    ["[watch] Reloading #{bar-test}"
-                    "[watch] Re-running failed tests #{:second-suite}"
                     "[(.)]"
-                    "1 tests, 1 assertions, 0 failures."
-                    ""
-                    "[watch] Failed tests pass, re-running all tests."
-                    "[(.)]"
-                    "1 tests, 1 assertions, 0 failures."
-                    ""])
+                    "1 tests, 1 assertions, 0 failures."])
                  (finally
                    ;; unsure how to exit process via (println) ... eg., how to enter ^C ?
                    (.destroy integration/*process*))))]

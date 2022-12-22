@@ -183,7 +183,13 @@
   *in* is bound to the output stream of this Process
   - eg., use (read-line) to read the output of ./bin/kaocha
   *out* is bound to the input stream of this Process
-  - eg., use (println) to send input to ./bin/kaocha"
+  - eg., use (println) to send input to ./bin/kaocha
+  
+  Tips:
+  - avoid using `testing` or `is` in ways that can swallow exceptions
+  in body. Try and make the first exception that's thrown contain
+  all the debugging information you need using the helpers in the
+  rest of this file."
   [m args & body]
   `(interactive-process* ~m ~args #(do ~@body)))
 
@@ -206,10 +212,11 @@
   If not, slurps the rest of the output for debugging purposes and throws an exception."
   [lines]
   (mapv (fn [l]
-          (or (is (= l (read-string-line)))
-              (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
-                                      l lines (slurp *in*))
-                              {}))))
+          (let [s (read-string-line)]
+            (or (is (= l s))
+                (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
+                                        (pr-str l) lines (str/split-lines (slurp *in*)))
+                                {})))))
         lines))
 
 (defn next-line-matches
@@ -223,7 +230,7 @@
                  (throw e)))]
     (or (f s)
         (throw (ex-info (format "Failed next-line-matches call\nFound: %s\nRest of stream:\n%s"
-                                s (slurp *in*))
+                                (pr-str s) (str/split-lines (slurp *in*)))
                         {})))))
 
 (defn read-until
@@ -240,5 +247,5 @@
             (swap! seen conj s)
             (recur))))
       (catch Throwable e
-        (is false (format "Failed read-until\nSeen:\n%s" (str/join "\n" seen)))
+        (is false (format "Failed read-until\nSeen:\n%s" (str/join "\n" @seen)))
         (throw e)))))
