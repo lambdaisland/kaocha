@@ -148,8 +148,8 @@
           (with-open [w (io/writer input)]
             (with-open [r (io/reader output)]
               (future
-                ;; unblock read-line calls after 10 seconds and abandon test
-                (Thread/sleep (cond-> 10000
+                ;; unblock read-line calls after 30 seconds and abandon test
+                (Thread/sleep (cond-> 30000
                                 (System/getenv "CI") (* 5)))
                 @kill)
               (binding [*in* r
@@ -192,3 +192,48 @@
                          (let [l1 (read-line)
                                _ (assert (= "hello" l1) (pr-str l1))])))
   )
+
+(defn read-string-line
+  "Read a line from the current integration test and throw
+  if the process has died."
+  []
+  (or (read-line)
+      (throw (ex-info "Process killed!!" {}))))
+
+(defn expect-lines
+  "Assert that lines, a vector of strings, matches the next lines from the integration process."
+  [lines]
+  (mapv (fn [l]
+          (or (is (= l (read-string-line)))
+              (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
+                                      l lines (slurp *in*))
+                              {}))))
+        lines))
+
+(defn next-line-matches
+  "Checks that the next line from the integration process matches function f."
+  [f]
+  (let [s (try (read-string-line)
+               (catch Throwable e
+                 (is nil (format "Failed to match one of %s\nRest of stream:\n%s"
+                                 (slurp *in*)))
+                 (throw e)))]
+    (or (f s)
+        (throw (ex-info (format "Failed to match one of %s\nFound: %s\nRest of stream:\n%s"
+                                s (slurp *in*))
+                        {})))))
+
+(defn read-until
+  "Keep reading from integration process output until f is true."
+  [f]
+  ;; can't recur across try, use atom
+  (let [seen (atom [])]
+    (try
+      (loop []
+        (let [s (read-string-line)]
+          (when-not (f s)
+            (swap! seen conj s)
+            (recur))))
+      (catch Throwable e
+        (is false (format "Failed read-until\nSeen:\n%s" (str/join "\n" seen)))
+        (throw e)))))

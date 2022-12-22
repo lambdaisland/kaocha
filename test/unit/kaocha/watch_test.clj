@@ -201,32 +201,31 @@
                                               (assoc base-suite :kaocha.testable/id :second-suite)]))))
         _ (integration/spit-file m "tests.edn" (pr-str config))
         _ (integration/spit-file m "test/bar_test.clj" (str "(ns bar-test) (throw (Exception. \"Intentional compilation error\"))"))
+
         dbg (bound-fn* prn)
-        expect-lines (fn [lines]
-                       (doseq [l lines]
-                         (is (= l (read-line)) (pr-str l))))
-        read-until (fn [f]
-                     (loop []
-                       (when-not (f (read-line))
-                         (recur))))
+        _ (dbg "before")
         exit (integration/interactive-process m ["second-suite" "--watch"]
                (try
-                 (expect-lines
+                 (dbg "first lines")
+                 (integration/expect-lines
                    ["[E]"
                     ""
                     "ERROR in second-suite (bar_test.clj:1)"
                     "Failed loading tests:"])
-                 (is (contains?
-                       #{"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."
-                         "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (bar_test.clj:1:15)."
-                         "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(bar_test.clj:1:15)"}
-                       (read-line)))
-                 ;; ... skip a big stacktrace ...
-                 (read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."})
-                 (expect-lines [""])
+                 (dbg "compiler exception")
+                 (testing "CompilerException line"
+                   (integration/next-line-matches
+                     #{"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."
+                       "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (bar_test.clj:1:15)."
+                       "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(bar_test.clj:1:15)"}))
+                 (dbg "big trace")
+                 (testing "skip a big stacktrace"
+                   (integration/read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."}))
+                 (integration/expect-lines [""])
                  ;; fix the compilation error...
                  (integration/spit-file m "test/bar_test.clj" (str "(ns bar-test (:require [clojure.test :refer :all])) (deftest good-test (is true))"))
-                 (expect-lines
+                 (dbg "after good-test")
+                 (integration/expect-lines
                    ["[watch] Reloading #{bar-test}"
                     "[watch] Re-running failed tests #{:second-suite}"
                     "[(.)]"
