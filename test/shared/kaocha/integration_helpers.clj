@@ -149,7 +149,8 @@
             (with-open [r (io/reader output)]
               (future
                 ;; unblock read-line calls after 10 seconds and abandon test
-                (Thread/sleep 10000)
+                (Thread/sleep (cond-> 10000
+                                (System/getenv "CI") (* 5)))
                 @kill)
               (binding [*in* r
                         *out* w]
