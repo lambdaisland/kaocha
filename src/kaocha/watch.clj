@@ -247,16 +247,16 @@ errors as test errors."
                         ;; first non-skipped suite and skip all others, so that
                         ;; it gets reported properly.
                         (let [applied? (volatile! false)]
-                          (into [] (map (fn [suite]
-                                          (if (and (not @applied?)
-                                                   (not (::testable/skip suite)))
-                                            (do (vreset! applied? true)
-                                                (assoc suite
-                                                       ::testable/load-error error
-                                                       ::testable/load-error-file (or file (util/ns-file error-ns))
-                                                       ::testable/load-error-line line
-                                                       ::testable/load-error-message (str "Failed reloading " error-ns ":")))
-                                            (assoc suite ::testable/skip true))))
+                          (mapv (fn [suite]
+                                  (if (and (not @applied?)
+                                           (not (::testable/skip suite)))
+                                    (do (vreset! applied? true)
+                                        (assoc suite
+                                               ::testable/load-error error
+                                               ::testable/load-error-file (or file (util/ns-file error-ns))
+                                               ::testable/load-error-line line
+                                               ::testable/load-error-message (str "Failed reloading " error-ns ":")))
+                                    (assoc suite ::testable/skip true)))
                                 suites))))))
                 config))))
 

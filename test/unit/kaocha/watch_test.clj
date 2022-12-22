@@ -12,7 +12,8 @@
             [kaocha.config :as config]
             [clojure.test :as t]
             [clojure.string :as str]
-            [slingshot.slingshot :refer [try+]])
+            [slingshot.slingshot :refer [try+]]
+            matcher-combinators.test)
   (:import [java.io File]))
 
 (deftest make-queue-test
@@ -186,3 +187,52 @@
     (is (= "[(.)]\n1 tests, 1 assertions, 0 failures.\n\n[watch] watching stopped.\n"
            @out-str))
     (is (= 0 @exit-code))))
+
+(deftest watch-load-error-test
+  (let [{:keys [run-kaocha config-file test-dir] :as m} (integration/test-dir-setup {})
+        config (-> (config/load-config config-file)
+                   (assoc-in [:kaocha/cli-options :config-file] (str config-file))
+                   (assoc :kaocha.filter/focus [:second-suite])
+                   (update :kaocha/tests (fn [suites]
+                                           (let [base-suite (assoc (first suites)
+                                                                  :kaocha/source-paths []
+                                                                  :kaocha/test-paths [(str test-dir)])]
+                                             [(assoc base-suite :kaocha.testable/id :first-suite)
+                                              (assoc base-suite :kaocha.testable/id :second-suite)]))))
+        _ (integration/spit-file m "tests.edn" (pr-str config))
+        _ (integration/spit-file m "test/bar_test.clj" (str "(ns bar-test) (throw (Exception. \"Intentional compilation error\"))"))
+        dbg (bound-fn* prn)
+        expect-lines (fn [lines]
+                       (doseq [l lines]
+                         (is (= l (read-line)) (pr-str l))))
+        read-until (fn [f]
+                     (loop []
+                       (when-not (f (read-line))
+                         (recur))))
+        exit (integration/interactive-process m ["second-suite" "--watch"]
+               (try
+                 (expect-lines
+                   ["[E]"
+                    ""
+                    "ERROR in second-suite (bar_test.clj:1)"
+                    "Failed loading tests:"
+                    "Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."])
+                 ;; ... skip a big stacktrace ...
+                 (read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."})
+                 (expect-lines [""])
+                 ;; fix the compilation error...
+                 (integration/spit-file m "test/bar_test.clj" (str "(ns bar-test (:require [clojure.test :refer :all])) (deftest good-test (is true))"))
+                 (expect-lines
+                   ["[watch] Reloading #{bar-test}"
+                    "[watch] Re-running failed tests #{:second-suite}"
+                    "[(.)]"
+                    "1 tests, 1 assertions, 0 failures."
+                    ""
+                    "[watch] Failed tests pass, re-running all tests."
+                    "[(.)]"
+                    "1 tests, 1 assertions, 0 failures."
+                    ""])
+                 (finally
+                   ;; unsure how to exit process via (println) ... eg., how to enter ^C ?
+                   (.destroy integration/*process*))))]
+    (is (= 143 exit))))

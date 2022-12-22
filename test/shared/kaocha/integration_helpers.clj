@@ -1,10 +1,13 @@
 (ns kaocha.integration-helpers
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
+            [clojure.test :refer [is]]
             [kaocha.platform :as platform])
   (:import java.io.File
            [java.nio.file Files OpenOption Path Paths]
            [java.nio.file.attribute FileAttribute PosixFilePermissions]))
+
+(set! *warn-on-reflection* true)
 
 (require 'kaocha.assertions)
 
@@ -126,6 +129,65 @@
 (defn spit-file [m path contents]
   (let [{:keys [dir] :as m} (test-dir-setup m)
         path (join dir path)]
-    (mkdir (.getParent path))
+    (mkdir (.getParent ^Path path))
     (spit path contents)
     m))
+
+(def ^:dynamic ^Process *process* nil)
+
+(defn interactive-process* ^Process
+  [{:keys [dir runner] :as _m} args f]
+  (let [p (-> (doto (ProcessBuilder. ^java.util.List (cons (str runner) args))
+                (.directory (io/file dir)))
+              .start)
+        kill (delay (.destroy p))]
+    (binding [*process* p]
+      (try
+        (let [input (.getOutputStream p)
+              output (.getInputStream p)]
+          (with-open [w (io/writer input)]
+            (with-open [r (io/reader output)]
+              (future
+                ;; unblock read-line calls after 10 seconds and abandon test
+                (Thread/sleep 10000)
+                @kill)
+              (binding [*in* r
+                        *out* w]
+                (f)))))
+        (assert (.waitFor p 10 (java.util.concurrent.TimeUnit/SECONDS))
+                "Process failed to stop!")
+        (.exitValue p)
+        (finally
+          (is (not (realized? kill)) "Process was killed after 10s timeout!!")
+          (try (.exitValue p)
+               (catch IllegalThreadStateException _
+                 (is nil "Process was killed after executing entire test suite!!")
+                 @kill)))))))
+
+(defmacro interactive-process
+  "Simulate a test run of a bin/kaocha integration test
+  using (read-line) and (println).
+
+  m is the output from `test-dir-setup`
+  args is a collection of arguments after ./bin/kaocha.
+  eg., [\"--watch\" \"--focus\" \"foo\"]
+  
+  Kills the process after 10 seconds if it has not already
+  been exited. Ensures the process is killed immediately after
+  body is executed. Returns the exit code.
+  
+  Executes body in the following environment:
+  *process* is the running Process executing `./bin/kaocha ~@args`
+  *in* is bound to the output stream of this Process
+  - eg., use (read-line) to read the output of ./bin/kaocha
+  *out* is bound to the input stream of this Process
+  - eg., use (println) to send input to ./bin/kaocha"
+  [m args & body]
+  `(interactive-process* ~m ~args #(do ~@body)))
+
+(comment
+  (zero?
+    (interactive-process {:dir "." :runner (io/file "echo")} ["hello"]
+                         (let [l1 (read-line)
+                               _ (assert (= "hello" l1) (pr-str l1))])))
+  )
