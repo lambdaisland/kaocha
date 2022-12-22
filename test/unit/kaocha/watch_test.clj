@@ -215,8 +215,10 @@
                    ["[E]"
                     ""
                     "ERROR in second-suite (bar_test.clj:1)"
-                    "Failed loading tests:"
-                    "Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."])
+                    "Failed loading tests:"])
+                 (is (#{"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."
+                        "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (bar_test.clj:1:15)."}
+                       (read-line)))
                  ;; ... skip a big stacktrace ...
                  (read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."})
                  (expect-lines [""])
