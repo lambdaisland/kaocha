@@ -142,7 +142,7 @@
               .start)
         kill (delay (.destroy p))
         timeout-ms (cond-> 30000
-                     (System/getenv "CI") (* 5))]
+                     (System/getenv "CI") (* 2))]
     (binding [*process* p]
       (try
         (let [input (.getOutputStream p)
