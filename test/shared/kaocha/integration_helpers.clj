@@ -218,11 +218,10 @@
   [f]
   (let [s (try (read-string-line)
                (catch Throwable e
-                 (is nil (format "Failed to match one of %s\nRest of stream:\n%s"
-                                 (slurp *in*)))
+                 (is nil "Failed next-line-matches call: process ended!!")
                  (throw e)))]
     (or (f s)
-        (throw (ex-info (format "Failed to match one of %s\nFound: %s\nRest of stream:\n%s"
+        (throw (ex-info (format "Failed next-line-matches call\nFound: %s\nRest of stream:\n%s"
                                 s (slurp *in*))
                         {})))))
 
