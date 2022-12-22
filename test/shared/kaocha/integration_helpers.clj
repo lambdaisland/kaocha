@@ -135,7 +135,7 @@
 
 (def ^:dynamic ^Process *process* nil)
 
-(defn interactive-process* ^Process
+(defn interactive-process*
   [{:keys [dir runner] :as _m} args f]
   (let [p (-> (doto (ProcessBuilder. ^java.util.List (cons (str runner) args))
                 (.directory (io/file dir)))
