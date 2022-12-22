@@ -140,7 +140,9 @@
   (let [p (-> (doto (ProcessBuilder. ^java.util.List (cons (str runner) args))
                 (.directory (io/file dir)))
               .start)
-        kill (delay (.destroy p))]
+        kill (delay (.destroy p))
+        timeout-ms (cond-> 30000
+                     (System/getenv "CI") (* 5))]
     (binding [*process* p]
       (try
         (let [input (.getOutputStream p)
@@ -149,8 +151,7 @@
             (with-open [r (io/reader output)]
               (future
                 ;; unblock read-line calls after 30 seconds and abandon test
-                (Thread/sleep (cond-> 30000
-                                (System/getenv "CI") (* 5)))
+                (Thread/sleep timeout-ms)
                 @kill)
               (binding [*in* r
                         *out* w]
@@ -159,7 +160,7 @@
                 "Process failed to stop!")
         (.exitValue p)
         (finally
-          (is (not (realized? kill)) "Process was killed after 10s timeout!!")
+          (is (not (realized? kill)) (format "Process was killed after %sms timeout!!" timeout-ms))
           (try (.exitValue p)
                (catch IllegalThreadStateException _
                  (is nil "Process was killed after executing entire test suite!!")
