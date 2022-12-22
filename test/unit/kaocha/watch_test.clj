@@ -189,7 +189,7 @@
     (is (= 0 @exit-code))))
 
 (deftest watch-load-error-test
-  (let [{:keys [run-kaocha config-file test-dir] :as m} (integration/test-dir-setup {})
+  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
         config (-> (config/load-config config-file)
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
                    (assoc :kaocha.filter/focus [:second-suite])
