@@ -173,7 +173,7 @@
   args is a collection of arguments after ./bin/kaocha.
   eg., [\"--watch\" \"--focus\" \"foo\"]
   
-  Kills the process after 10 seconds if it has not already
+  Kills the process after 30 seconds if it has not already
   been exited. Ensures the process is killed immediately after
   body is executed. Returns the exit code.
   
@@ -194,14 +194,15 @@
   )
 
 (defn read-string-line
-  "Read a line from the current integration test and throw
-  if the process has died."
+  "Read a line from the current integration test and throw if the process has died."
   []
   (or (read-line)
       (throw (ex-info "Process killed!!" {}))))
 
 (defn expect-lines
-  "Assert that lines, a vector of strings, matches the next lines from the integration process."
+  "Assert that lines, a vector of strings, matches the next lines from the integration process.
+
+  If not, slurps the rest of the output for debugging purposes and throws an exception."
   [lines]
   (mapv (fn [l]
           (or (is (= l (read-string-line)))
@@ -211,7 +212,9 @@
         lines))
 
 (defn next-line-matches
-  "Checks that the next line from the integration process matches function f."
+  "Checks that the next line from the integration process matches function f.
+  
+  If not, slurps the rest of the output for debugging purposes and throws an exception."
   [f]
   (let [s (try (read-string-line)
                (catch Throwable e
@@ -224,7 +227,9 @@
                         {})))))
 
 (defn read-until
-  "Keep reading from integration process output until f is true."
+  "Keep reading from integration process output until f is true.
+  
+  If never true, reports all the strings that failed."
   [f]
   ;; can't recur across try, use atom
   (let [seen (atom [])]
