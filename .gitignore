@@ -4,3 +4,4 @@ target
 node_modules
 package-lock.json
 .store
+.clj-kondo/
