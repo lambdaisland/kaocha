@@ -27,6 +27,8 @@
 (defn nomis-emit-hacked-version-message []
   (println "\u001b[35;1m[watch] You are using Simon's hacked Kaocha\u001b[0m" ))
 
+(def nomis-no-focus? true)
+
 (defn make-queue []
   (ArrayBlockingQueue. 1024))
 
@@ -43,7 +45,8 @@
   (doall (take-while identity (repeatedly #(qpoll q)))))
 
 (defn- try-run [config focus tracker]
-  (let [config (if (seq focus)
+  (let [focus  (if nomis-no-focus? nil focus)
+        config (if (seq focus)
                  (assoc config :kaocha.filter/focus focus)
                  config)
         config (-> config
@@ -219,7 +222,7 @@
                   [config plugin-chain] (reload-config config plugin-chain)]
               (recur tracker config plugin-chain nil)))
 
-          (and (seq focus) (not (result/failed? result)))
+          (and (not nomis-no-focus?) (seq focus) (not (result/failed? result)))
           (do
             (println "[watch] Failed tests pass, re-running all tests.")
             (recur (drain-and-rescan! q tracker watch-paths) config plugin-chain nil))
