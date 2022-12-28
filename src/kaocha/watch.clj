@@ -27,6 +27,9 @@
   (:import [java.nio.file FileSystems]
            [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
+(defn nomis-emit-hacked-version-message []
+  (println "\u001b[35;1m[watch] You are using Simon's hacked Kaocha\u001b[0m" ))
+
 (defn make-queue []
   (ArrayBlockingQueue. 1024))
 
@@ -61,6 +64,7 @@
   (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {})))
 
 (defn print-scheduled-operations! [tracker focus]
+  (nomis-emit-hacked-version-message)
   (let [unload (set (::ctn-track/unload tracker))
         load   (set (::ctn-track/load tracker))
         reload (set/intersection unload load)
@@ -319,6 +323,7 @@ errors as test errors."
     (run-loop finish? config tracker q watch-paths)))
 
 (defn run [config]
+  (nomis-emit-hacked-version-message)
   (let [finish?   (atom false)
         q         (make-queue)
         finish!   (fn []
