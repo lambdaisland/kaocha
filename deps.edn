@@ -37,4 +37,28 @@
    :extra-deps  {djblue/portal {:mvn/version "RELEASE"}}}
 
   :bb
-  {:extra-deps {nubank/matcher-combinators {:mvn/version "3.8.5"}}}}}
+  {:extra-deps {nubank/matcher-combinators {:mvn/version "3.8.5"}}}
+
+  :pack {:deps {io.github.juxt/pack.alpha {:git/sha "843475881c5b3ba1a2c9f102f6f5f86f3293a574"}}
+         :ns-default juxt.pack.cli.api}
+
+  ;; Stuff for building and deploying.
+  ;; Refs:
+  ;; - https://cljdoc.org/d/com.github.seancorfield/depstar/2.1.303/doc/getting-started/building-a-library-jar
+  ;; - https://github.com/seancorfield/depstar
+  ;;   - Deprecated.
+  ;;   - Should use https://github.com/clojure/tools.build instead.
+  ;; - https://github.com/slipset/deps-deploy
+  ;; See README-NOMIS-DEPLOY.md for how to build and deploy.
+  :jar {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.1.303"}}
+        :exec-fn      hf.depstar/jar
+        :exec-args    {}}
+  :install {:replace-deps {slipset/deps-deploy {:mvn/version "RELEASE"}}
+            :exec-fn deps-deploy.deps-deploy/deploy
+            :exec-args {:installer :local
+                        :artifact "target/the-jar-file.jar"}}
+  :deploy {:extra-deps {slipset/deps-deploy {:mvn/version "RELEASE"}}
+           :exec-fn    deps-deploy.deps-deploy/deploy
+           :exec-args  {:installer :remote
+                        ;; :sign-releases? true
+                        :artifact "target/the-jar-file.jar"}}}}
