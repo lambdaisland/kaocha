@@ -22,7 +22,9 @@
             [slingshot.slingshot :refer [try+]]
             [nextjournal.beholder :as beholder])
   (:import (java.nio.file FileSystems)
-           (java.util.concurrent ArrayBlockingQueue BlockingQueue)))
+           (java.util.concurrent ArrayBlockingQueue BlockingQueue)
+           (io.methvin.watcher DirectoryWatcher)
+           (io.methvin.watcher.hashing FileHasher)))
 
 (defn nomis-emit-hacked-version-message []
   (println "\u001b[35;1m[watch] You are using Simon's hacked Kaocha\u001b[0m" ))
@@ -295,8 +297,23 @@ errors as test errors."
                             (when (= (:kind event) :modify)
                               (qput q (:file event))))}]))
 
+(defn- nomis-beholder-create
+  "Hacked version of beholder/create"
+  [cb paths]
+  (-> (DirectoryWatcher/builder)
+      (.paths (map @#'beholder/to-path paths))
+      (.listener (@#'beholder/fn->listener cb))
+      (.fileHasher FileHasher/LAST_MODIFIED_TIME)
+      (.build)))
+
+(defn- nomis-beholder-watch
+  "Hacked version of beholder/watch"
+  [cb & paths]
+  (doto (nomis-beholder-create cb paths)
+    (.watchAsync)))
+
 (defmethod watch! :beholder [{:keys [q watch-paths]}]
-  (apply beholder/watch
+  (apply nomis-beholder-watch
          (fn [{:keys [type path]}]
            (when (contains? #{:modify :create} type)
              (qput q path)))
