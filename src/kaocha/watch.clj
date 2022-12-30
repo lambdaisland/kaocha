@@ -26,10 +26,29 @@
            (io.methvin.watcher DirectoryWatcher)
            (io.methvin.watcher.hashing FileHasher)))
 
+(def ansi-reset  "\u001B[0m")
+(def ansi-black  "\u001B[30m")
+(def ansi-red    "\u001B[31m")
+(def ansi-green  "\u001B[32m")
+(def ansi-yellow "\u001B[33m")
+(def ansi-blue   "\u001B[34m")
+(def ansi-purple "\u001B[35m")
+(def ansi-cyan   "\u001B[36m")
+(def ansi-white  "\u001B[37m")
+
+(defn println-using-color [color & xs]
+  (println (apply str
+                  (concat [color]
+                          xs
+                          [ansi-reset]))))
+
 (defn nomis-emit-hacked-version-message []
-  (println)
-  (println "\u001b[35;1m[watch] _______________________________________________________________________\u001b[0m" )
-  (println "\u001b[35;1m[watch] You are using Simon's hacked Kaocha\u001b[0m" ))
+  (let [color ansi-cyan]
+    (println)
+    (println-using-color color
+                         "[watch] " (apply str (repeat 72 \_)))
+    (println-using-color color
+                         "[watch] You are using Simon's hacked Kaocha")))
 
 (def nomis-no-focus? true)
 
