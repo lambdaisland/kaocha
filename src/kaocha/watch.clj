@@ -27,6 +27,8 @@
            (io.methvin.watcher.hashing FileHasher)))
 
 (defn nomis-emit-hacked-version-message []
+  (println)
+  (println "\u001b[35;1m[watch] _______________________________________________________________________\u001b[0m" )
   (println "\u001b[35;1m[watch] You are using Simon's hacked Kaocha\u001b[0m" ))
 
 (def nomis-no-focus? true)
