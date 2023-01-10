@@ -19,6 +19,15 @@
                :kaocha/test-paths      ["fixtures/a-tests"]
                :kaocha/ns-patterns     [".*"]
                :kaocha.test-plan/tests [{:kaocha.testable/type   :kaocha.type/ns
+                                         :kaocha.testable/id     :baz.qux-test
+                                         :kaocha.ns/name         'baz.qux-test
+                                         :kaocha.ns/ns           ns?
+                                         :kaocha.test-plan/tests [{:kaocha.testable/type :kaocha.type/var
+                                                                   :kaocha.testable/id   :baz.qux-test/nested-test
+                                                                   :kaocha.var/name      'baz.qux-test/nested-test
+                                                                   :kaocha.var/var       var?
+                                                                   :kaocha.var/test      fn?}]}
+                                        {:kaocha.testable/type   :kaocha.type/ns
                                          :kaocha.testable/id     :foo.bar-test
                                          :kaocha.ns/name         'foo.bar-test
                                          :kaocha.ns/ns           ns?
@@ -38,6 +47,20 @@
                  :kaocha/test-paths    ["fixtures/a-tests"]
                  :kaocha/ns-patterns   [".*"]
                  :kaocha.result/tests  [{:kaocha.testable/type :kaocha.type/ns
+                                         :kaocha.testable/id   :baz.qux-test
+                                         :kaocha.ns/name       'baz.qux-test
+                                         :kaocha.ns/ns         ns?
+                                         :kaocha.result/tests  [{:kaocha.testable/type  :kaocha.type/var
+                                                                 :kaocha.testable/id    :baz.qux-test/nested-test
+                                                                 :kaocha.var/name       'baz.qux-test/nested-test
+                                                                 :kaocha.var/var        var?
+                                                                 :kaocha.var/test       fn?
+                                                                 :kaocha.result/count   1
+                                                                 :kaocha.result/pass    1
+                                                                 :kaocha.result/error   1
+                                                                 :kaocha.result/fail    0
+                                                                 :kaocha.result/pending 0}]}
+                                        {:kaocha.testable/type :kaocha.type/ns
                                          :kaocha.testable/id   :foo.bar-test
                                          :kaocha.ns/name       'foo.bar-test
                                          :kaocha.ns/ns         ns?

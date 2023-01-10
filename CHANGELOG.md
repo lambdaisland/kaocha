@@ -4,6 +4,11 @@
 
 ## Fixed
 
+- Using a try-catch (without rethrowing) in an `:each` fixture could swallow
+  thrown exceptions, resulting in a test being treated as passing when it should
+  have been reported as an error. Fixed by changing how `:each` fixtures wrap
+  the test function in execution. (thanks
+  [@NoahTheDuke](https://github.com/NoahTheDuke))
 * Fix crash on Windows when using `--watch` with the default Beholder watcher.
 
 ## Changed
