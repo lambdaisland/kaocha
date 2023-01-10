@@ -4,6 +4,8 @@
 
 ## Fixed
 
+* Fix crash on Windows when using `--watch` with the default Beholder watcher.
+
 ## Changed
 
 # 1.72.1136 (2023-01-09 / d9f0728)

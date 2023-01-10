@@ -303,7 +303,8 @@ errors as test errors."
              :watch-paths watch-paths
              :opts watcher-opts})
     (when-let [config-file (get-in config [:kaocha/cli-options :config-file])]
-      (when (.exists (io/file config-file))
+      (when (and (= watcher-type :hawk) ;;Only Hawk supports watching single files.
+                 (.exists (io/file config-file)))
         (watch! {:type watcher-type
                  :q q
                  :watch-paths #{config-file}
