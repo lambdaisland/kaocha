@@ -22,10 +22,10 @@
             [slingshot.slingshot :refer [throw+]])
   (:import (java.nio.file Files)
            (java.io IOException)
-           (java.awt SystemTray
-                     TrayIcon
-                     TrayIcon$MessageType
-                     Toolkit)))
+           #?@ (:bb ()
+                :clj ((java.awt SystemTray TrayIcon TrayIcon$MessageType Toolkit))  
+                       TrayIcon$MessageType
+                       Toolkit)))
 
 ;; special thanks for terminal-notify stuff to
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
@@ -67,26 +67,28 @@
 
   If Kaocha is running from a jar, then extract the icon to a temp file first,
   so external programs have access to it. "
-  (memoize
-   (fn []
-     (let [resource (io/resource "kaocha/clojure_logo.png")]
-       (if (= "file" (.getProtocol resource))
-         (str (io/file resource))
-         (let [file (java.io.File/createTempFile "clojure_logo" ".png")]
-           (io/copy (io/make-input-stream resource {}) file)
-           (str file)))))))
+  #? (:bb ()
+      :clj (memoize
+             (fn []
+               (let [resource (io/resource "kaocha/clojure_logo.png")]
+                 (if (= "file" (.getProtocol resource))
+                   (str (io/file resource))
+                   (let [file (java.io.File/createTempFile "clojure_logo" ".png")]
+                     (io/copy (io/make-input-stream resource {}) file)
+                     (str file))))))))
 
 (def tray-icon
   "Creates a system tray icon."
-  (memoize
-   (fn [icon-path]
-     (let [^java.awt.Toolkit toolkit (Toolkit/getDefaultToolkit)
-           tray-icon (-> toolkit
-                         (.getImage ^String icon-path)
-                         (TrayIcon. "Kaocha Notification"))]
-       (doto (SystemTray/getSystemTray)
-         (.add tray-icon))
-       tray-icon))))
+  #?(:bb ()
+     :clj (memoize
+            (fn [icon-path]
+              (let [^java.awt.Toolkit toolkit (Toolkit/getDefaultToolkit)
+                    tray-icon (-> toolkit
+                                  (.getImage ^String icon-path)
+                                  (TrayIcon. "Kaocha Notification"))]
+                (doto (SystemTray/getSystemTray)
+                  (.add tray-icon))
+                tray-icon)))))
 
 (defn send-tray-notification
   "Use Java's built-in functionality to display a notification.
@@ -94,17 +96,18 @@
   Not preferred over shelling out because the built-in notification sometimes
   looks out of place, and isn't consistently available on Linux."
   [result]
-  (try
-    (let [icon (tray-icon "kaocha/clojure_logo.png")
-          urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
-      (.displayMessage icon (title result) (message result) urgency))
-    (catch java.awt.HeadlessException _e
-      (output/warn (str "Notification not shown because system is headless."
-                        "\nConsider disabling the notifier plugin when using in this context.")))
-    (catch java.lang.UnsupportedOperationException _e
-      (output/warn (str "Notification not shown because system does not support it."
-                        "\nConsider disabling the notifier plugin when using in this context or installing"
-                        "\neither notify-send (Linux) or terminal-notifier (macOS).")))))
+  #? (:bb ()
+      :clj (try
+             (let [icon (tray-icon "kaocha/clojure_logo.png")
+                   urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
+               (.displayMessage icon (title result) (message result) urgency))
+             (catch java.awt.HeadlessException _e
+               (output/warn (str "Notification not shown because system is headless."
+                                 "\nConsider disabling the notifier plugin when using in this context.")))
+             (catch java.lang.UnsupportedOperationException _e
+               (output/warn (str "Notification not shown because system does not support it."
+                                 "\nConsider disabling the notifier plugin when using in this context or installing"
+                                 "\neither notify-send (Linux) or terminal-notifier (macOS)."))))))
 
 (defn expand-command
   "Takes a command string including replacement patterns, and a map of
