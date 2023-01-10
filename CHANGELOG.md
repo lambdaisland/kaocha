@@ -9,6 +9,15 @@
   have been reported as an error. Fixed by changing how `:each` fixtures wrap
   the test function in execution. (thanks
   [@NoahTheDuke](https://github.com/NoahTheDuke))
+* Fix crash on Windows when using `--watch` with the default Beholder watcher.
+
+## Changed
+
+# 1.72.1136 (2023-01-09 / d9f0728)
+
+## Added
+
+## Fixed
 
 ## Changed
 
