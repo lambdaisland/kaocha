@@ -15,11 +15,9 @@
 
 # 1.72.1136 (2023-01-09 / d9f0728)
 
-## Added
-
 ## Fixed
 
-## Changed
+- Documentation fixes and improvements
 
 # 1.71.1119 (2022-10-24 / 4317878)
 
