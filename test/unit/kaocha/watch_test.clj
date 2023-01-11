@@ -238,6 +238,9 @@
                     "[(.)]"
                     "1 tests, 1 assertions, 0 failures."])
                  (finally
-                   ;; unsure how to exit process via (println) ... eg., how to enter ^C ?
+                   ;; FIXME unsure how to exit process via (println) ... eg., how to enter ^C ?
+                   ;; Idea from Alys: What you have seems to work, but maybe if *process* were a map in an atom,
+                   ;; you could have a :process key containing an actual Process and :continue key telling it whether to keep going?
+                   ;; I think this might make *interactive-process* a little tidier, too.
                    (.destroy integration/*process*))))]
     (is (= 143 exit))))
