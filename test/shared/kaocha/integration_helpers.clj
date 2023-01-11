@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.test :refer [is]]
-            [kaocha.platform :as platform])
+            [kaocha.platform :as platform]
+            matcher-combinators.test)
   (:import java.io.File
            [java.nio.file Files OpenOption Path Paths]
            [java.nio.file.attribute FileAttribute PosixFilePermissions]))
@@ -211,7 +212,7 @@
   [lines]
   (mapv (fn [l]
           (let [s (read-line-or-throw)]
-            (or (is (= l s))
+            (or (is (match? l s))
                 (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
                                         (pr-str l) lines (str/split-lines (slurp *in*)))
                                 {})))))
