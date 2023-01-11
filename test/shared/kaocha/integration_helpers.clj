@@ -198,7 +198,7 @@
                                _ (assert (= "hello" l1) (pr-str l1))])))
   )
 
-(defn read-string-line-or-throw
+(defn read-line-or-throw
   "Read a line from the current integration test and throw if the process has died."
   []
   (or (read-line)
@@ -210,7 +210,7 @@
   If not, slurps the rest of the output for debugging purposes and throws an exception."
   [lines]
   (mapv (fn [l]
-          (let [s (read-string-line-or-throw)]
+          (let [s (read-line-or-throw)]
             (or (is (= l s))
                 (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
                                         (pr-str l) lines (str/split-lines (slurp *in*)))
@@ -222,7 +222,7 @@
   
   If not, slurps the rest of the output for debugging purposes and throws an exception."
   [f]
-  (let [s (try (read-string-line-or-throw)
+  (let [s (try (read-line-or-throw)
                (catch clojure.lang.ExceptionInfo e
                  (is nil "Failed next-line-matches call: process ended")
                  (throw e)))]
@@ -240,7 +240,7 @@
   (let [seen (atom [])]
     (try
       (loop []
-        (let [s (read-string-line-or-throw)]
+        (let [s (read-line-or-throw)]
           (when-not (f s)
             (swap! seen conj s)
             (recur))))
