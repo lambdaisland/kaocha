@@ -186,9 +186,11 @@
   
   Tips:
   - avoid using `testing` or `is` in ways that can swallow exceptions
-  in body. Try and make the first exception that's thrown contain
-  all the debugging information you need using the helpers in the
-  rest of this file."
+  in `body`. The first exception that's thrown in your test should contain
+  all of the debugging information you need using the helpers in the
+  rest of this file. If exceptions are swallowed, then more read-line's
+  may happen after the test has already failed, making it very difficult
+  to understand test failures."
   [m args & body]
   `(interactive-process* ~m ~args #(do ~@body)))
 
