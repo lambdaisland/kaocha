@@ -1,5 +1,7 @@
 <p align="center"><img src="kaocha.png"></p>
 
+this is test
+
 Full featured next generation test runner for Clojure.
 
 Jump to [Quick start](#quick-start) | [Docs](#docs)
