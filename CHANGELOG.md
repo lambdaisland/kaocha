@@ -1,7 +1,5 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
 - Ensure reloading errors are printed in watch mode when the first test suite is disabled.
@@ -11,8 +9,6 @@
   the test function in execution. (thanks
   [@NoahTheDuke](https://github.com/NoahTheDuke))
 - Fix crash on Windows when using `--watch` with the default Beholder watcher.
-
-## Changed
 
 # 1.72.1136 (2023-01-09 / d9f0728)
 
