@@ -1,7 +1,9 @@
 (ns kaocha.integration-helpers
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [kaocha.platform :as platform])
+            [clojure.test :refer [is]]
+            [kaocha.platform :as platform]
+            matcher-combinators.test)
   (:import java.io.File
            [java.nio.file Files OpenOption Path Paths]
            [java.nio.file.attribute FileAttribute PosixFilePermissions]))
@@ -126,6 +128,124 @@
 (defn spit-file [m path contents]
   (let [{:keys [dir] :as m} (test-dir-setup m)
         path (join dir path)]
-    (mkdir (.getParent path))
+    (mkdir (.getParent ^Path path))
     (spit path contents)
     m))
+
+(def ^:dynamic ^Process *process* nil)
+
+(defn interactive-process*
+  [{:keys [dir runner] :as _m} args f]
+  (let [p (-> (doto (ProcessBuilder. ^java.util.List (cons (str runner) args))
+                (.directory (io/file dir)))
+              .start)
+        kill (delay (.destroy p))
+        timeout-ms 30000]
+    (binding [*process* p]
+      (try
+        (let [input (.getOutputStream p)
+              output (.getInputStream p)]
+          (with-open [w (io/writer input)
+                      r (io/reader output)]
+            (future
+              ;; unblock read-line calls after 30 seconds and abandon test
+              (Thread/sleep timeout-ms)
+              @kill)
+            (binding [*in* r
+                      *out* w]
+              (f))))
+        (assert (.waitFor p 10 (java.util.concurrent.TimeUnit/SECONDS))
+                "Process failed to stop!")
+        (.exitValue p)
+        (finally
+          (is (not (realized? kill)) (format "Process was killed after %sms timeout" timeout-ms))
+          (try (.exitValue p)
+               (catch IllegalThreadStateException _
+                 (is nil "Process was killed after executing entire test suite")
+                 @kill)))))))
+
+(defmacro interactive-process
+  "Simulate a test run of a bin/kaocha integration test
+  using (read-line) and (println).
+
+  m is the output from `test-dir-setup`
+  args is a collection of arguments after ./bin/kaocha.
+  e.g., [\"--watch\" \"--focus\" \"foo\"]
+  
+  Kills the process after 30 seconds if it has not already
+  been exited. Ensures the process is killed immediately after
+  body is executed. Returns the exit code.
+  
+  Executes body in the following environment:
+  *process* is the running Process executing `./bin/kaocha ~@args`
+  *in* is bound to the output stream of this Process
+  - e.g., use (read-line) to read the output of ./bin/kaocha
+  *out* is bound to the input stream of this Process
+  - e.g., use (println) to send input to ./bin/kaocha
+  
+  Tips:
+  - avoid using `testing` or `is` in ways that can swallow exceptions
+  in `body`. The first exception that's thrown in your test should contain
+  all of the debugging information you need using the helpers in the
+  rest of this file. If exceptions are swallowed, then more read-line's
+  may happen after the test has already failed, making it very difficult
+  to understand test failures."
+  [m args & body]
+  `(interactive-process* ~m ~args #(do ~@body)))
+
+(comment
+  (zero?
+    (interactive-process {:dir "." :runner (io/file "echo")} ["hello"]
+                         (let [l1 (read-line)
+                               _ (assert (= "hello" l1) (pr-str l1))])))
+  )
+
+(defn read-line-or-throw
+  "Read a line from the current integration test and throw if the process has died."
+  []
+  (or (read-line)
+      (throw (ex-info "Process killed" {}))))
+
+(defn expect-lines
+  "Assert that lines, a vector of strings, matches the next lines from the integration process.
+
+  If not, slurps the rest of the output for debugging purposes and throws an exception."
+  [lines]
+  (mapv (fn [l]
+          (let [s (read-line-or-throw)]
+            (or (is (match? l s))
+                (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
+                                        (pr-str l) lines (str/split-lines (slurp *in*)))
+                                {})))))
+        lines))
+
+(defn next-line-matches
+  "Checks that the next line from the integration process matches function f.
+  
+  If not, slurps the rest of the output for debugging purposes and throws an exception."
+  [f]
+  (let [s (try (read-line-or-throw)
+               (catch clojure.lang.ExceptionInfo e
+                 (is nil "Failed next-line-matches call: process ended")
+                 (throw e)))]
+    (or (f s)
+        (throw (ex-info (format "Failed next-line-matches call\nFound: %s\nRest of stream:\n%s"
+                                (pr-str s) (str/split-lines (slurp *in*)))
+                        {})))))
+
+(defn read-until
+  "Keep reading from integration process output until f is true.
+  
+  If never true, reports all the strings that failed."
+  [f]
+  ;; can't recur across try, use atom
+  (let [seen (atom [])]
+    (try
+      (loop []
+        (let [s (read-line-or-throw)]
+          (when-not (f s)
+            (swap! seen conj s)
+            (recur))))
+      (catch clojure.lang.ExceptionInfo e
+        (is false (format "Failed read-until\nSeen:\n%s" (str/join "\n" @seen)))
+        (throw e)))))
