@@ -82,7 +82,8 @@ Currently these features of `.gitignore` are not supported:
 
 Kaocha uses [Beholder](https://github.com/nextjournal/beholder) to watch the
 filesystem for changes. By default Beholder will pick a mechanism suitable for
-your operating system. Beholder works with OSX and M1 mac machines as well.
+your operating system. Beholder works with macOS and ARM Mac machines (Apple silicon)
+as well.
 
 Previously Kaocha used another watcher, [Hawk](https://github.com/wkf/hawk), which
 has been deprecated in favour of Beholder. If you still want to use it for some

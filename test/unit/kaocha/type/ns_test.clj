@@ -66,4 +66,27 @@
                                          :kaocha.result/fail    0}]}
                 (:result
                  (with-test-ctx {:fail-fast? true}
-                   (testable/run testable testable)))))))
+                   (testable/run testable testable))))))
+
+  (let [testable (testable/load {:kaocha.testable/type :kaocha.type/ns
+                                 :kaocha.testable/id   :baz.qux-test
+                                 :kaocha.testable/desc "baz.qux-test"
+                                 :kaocha.ns/name       'baz.qux-test})]
+    (is (match? {:kaocha.testable/type :kaocha.type/ns
+                 :kaocha.testable/id   :baz.qux-test
+                 :kaocha.ns/name       'baz.qux-test
+                 :kaocha.ns/ns         ns?
+                 :kaocha.result/tests  [{:kaocha.testable/type  :kaocha.type/var
+                                         :kaocha.testable/id    :baz.qux-test/nested-test
+                                         :kaocha.testable/desc  "nested-test"
+                                         :kaocha.var/name       'baz.qux-test/nested-test
+                                         :kaocha.var/var        var?
+                                         :kaocha.var/test       fn?
+                                         :kaocha.result/count   1
+                                         :kaocha.result/pass    1
+                                         :kaocha.result/error   1
+                                         :kaocha.result/pending 0
+                                         :kaocha.result/fail    0}]}
+                (:result
+                  (with-test-ctx {}
+                    (testable/run testable testable)))))))

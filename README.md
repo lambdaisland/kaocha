@@ -69,6 +69,7 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [Orchestra (spec instrumentation)](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/orchestra-spec-instrumentation-)
 - [Plugin: Clojure/Java Version filter](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/plugin-clojure-java-version-filter)
 - [Automatic spec test check generation](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/automatic-spec-test-check-generation)
+- [Syntax errors are preserved](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/syntax-errors-are-preserved)
 <!-- /docs-toc -->
 
 ## Features
@@ -102,7 +103,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.71.1119"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.72.1136"}}
          :main-opts ["-m" "kaocha.runner"]}}}
 ```
 
@@ -123,7 +124,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.71.1119"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.72.1136"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
@@ -167,7 +168,7 @@ options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.71.1119"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.72.1136"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}}}
 ```
@@ -188,10 +189,10 @@ of tests skipped. You could save that configuration with an additional alias:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.71.1119"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.72.1136"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
- :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.71.1119"}}
+ :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.72.1136"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {:watch? true
 	 :skip-meta :slow
