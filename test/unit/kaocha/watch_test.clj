@@ -188,6 +188,7 @@
            @out-str))
     (is (= 0 @exit-code))))
 
+;;TODO move to cucumber
 (deftest ^{:min-java-version "1.11"} watch-load-error-test
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
         config (-> (config/load-config config-file)

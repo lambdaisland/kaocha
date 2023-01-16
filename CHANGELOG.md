@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- Ensure reloading errors are printed in watch mode when the first test suite is disabled.
+
 ## Changed
 
 # 1.71.1119 (2022-10-24 / 4317878)
