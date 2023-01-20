@@ -1,10 +1,11 @@
 <!-- This document is generated based on a corresponding .feature file, do not edit directly -->
 
-# Capability check for org.clojure/tools.cli If a project's dependency
+# Capability check for org.clojure/tools.cli
 
-pulls in an old version of tools.cli, then this may break command line flags
-of the form `--[no-]xxx`. Before starting the main command line runner, Kaocha
-verifies that tools.cli has the necessary capabilities.
+If a project's dependency pulls in an old version of tools.cli, then this may
+  break command line flags of the form `--[no-]xxx`. Before starting the main
+  command line runner, Kaocha verifies that tools.cli has the necessary
+  capabilities.
 
 ## With an outdated tools.cli
 

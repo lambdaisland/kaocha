@@ -12,7 +12,7 @@
             [kaocha.result :as result]
             [kaocha.specs :refer [assert-spec]]
             [kaocha.util :as util])
-  (:import [clojure.lang Compiler$CompilerException]))
+  (:import (clojure.lang Compiler$CompilerException)))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -236,11 +236,11 @@
     (:kaocha.testable/id testable)
     (cons testable)))
 
-(defn test-seq-with-skipped 
+(defn test-seq-with-skipped
   [testable]
  "Create a seq of all tests, including any skipped tests.
- 
- Typically you want to look at `test-seq` instead." 
+
+ Typically you want to look at `test-seq` instead."
   (cond->> (mapcat test-seq (or (:kaocha/tests testable)
                                                (:kaocha.test-plan/tests testable)
                                                (:kaocha.result/tests testable)))

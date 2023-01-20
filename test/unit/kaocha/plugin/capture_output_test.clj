@@ -3,7 +3,7 @@
             [clojure.tools.cli :as cli]
             [kaocha.plugin :as plugin]
             [kaocha.plugin.capture-output :as c])
-  (:import java.io.ByteArrayOutputStream))
+  (:import (java.io ByteArrayOutputStream)))
 
 (deftest read-buffer-test
   (is (= "" (c/read-buffer (c/make-buffer))))

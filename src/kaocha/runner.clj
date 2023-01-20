@@ -17,7 +17,7 @@
             [kaocha.result :as result]
             [kaocha.specs :as specs]
             [slingshot.slingshot :refer [throw+ try+]])
-  (:import java.io.File))
+  (:import (java.io File)))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))

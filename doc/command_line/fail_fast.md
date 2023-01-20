@@ -3,9 +3,9 @@
 # CLI: `--fail-fast` option
 
 Kaocha by default runs all tests it can find, providing a final summary on
-failures and errors when all tests have finished. With the `--fail-fast`
-option the test run will be interrupted as soon as a single failure or error
-has occured. Afterwards a summary of the test run so far is printed.
+  failures and errors when all tests have finished. With the `--fail-fast`
+  option the test run will be interrupted as soon as a single failure or error
+  has occured. Afterwards a summary of the test run so far is printed.
 
 ## Failing fast
 

@@ -51,7 +51,7 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [9. Extending](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/9-extending)
 - [10. Hooks](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/10-hooks)
 - [`clojure.test` assertion extensions](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/-clojure-test-assertion-extensions)
-- [Capability check for org.clojure/tools.cli If a project's dependency](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/capability-check-for-org-clojure-tools-cli-if-a-project-s-dependency)
+- [Capability check for org.clojure/tools.cli](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/capability-check-for-org-clojure-tools-cli)
 - [CLI: `--fail-fast` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-fail-fast-option)
 - [CLI: Print the Kaocha configuration](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-print-the-kaocha-configuration)
 - [CLI: `--profile` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-profile-option)
@@ -267,25 +267,26 @@ bin/kaocha --test-help
 Kaocha requires Clojure 1.9 or later.
 
 <!-- opencollective -->
+## Lambda Island Open Source
 
-&nbsp;
+[Become a backer](https://opencollective.com/lambda-) and show your support to our open source project on [our site](https://mochajs.org/#backers).
 
+<a href="https://opencollective.com/mochajs"><img src="https://opencollective.com/mochajs/tiers/backers.svg?limit=30&button=false&avatarHeight=46&width=750"></a>
 <img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
 
 &nbsp;
 
-## Support Lambda Island Open Source
+kaocha is part of a growing collection of quality Clojure libraries created and maintained
+by the fine folks at [Gaiwan](https://gaiwan.co).
 
-kaocha is part of a growing collection of quality Clojure libraries and
-tools released on the Lambda Island label. If you are using this project
-commercially, then you are expected to pay it forward by
-[becoming a backer on Open Collective](http://opencollective.com/lambda-island#section-contribute),
+Pay it forward by [becoming a backer on our Open Collective](http://opencollective.com/lambda-island),
 so that we may continue to enjoy a thriving Clojure ecosystem.
 
-&nbsp;
+You can find an overview of our projects at [lambdaisland/open-source](https://github.com/lambdaisland/open-source).
 
 &nbsp;
 
+&nbsp;
 <!-- /opencollective -->
 
 <!-- contributing -->
@@ -323,7 +324,7 @@ changes are justified.
 <!-- license -->
 ## License
 
-Copyright &copy; 2018-2022 Arne Brasseur and contributors
+Copyright &copy; 2018-2023 Arne Brasseur and contributors
 
 Available under the terms of the Eclipse Public License 1.0, see LICENSE.txt
 <!-- /license -->

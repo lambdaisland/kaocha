@@ -1,8 +1,13 @@
 (ns kaocha.plugin.capture-output
-  (:require [kaocha.plugin :as plugin :refer [defplugin]]
-            [kaocha.testable :as testable]
-            [kaocha.hierarchy :as hierarchy])
-  (:import [java.io OutputStream ByteArrayOutputStream PrintStream PrintWriter]))
+  (:require [clojure.java.io :as io]
+            [kaocha.hierarchy :as hierarchy]
+            [kaocha.plugin :as plugin :refer [defplugin]]
+            [kaocha.testable :as testable])
+  (:import (java.io ByteArrayOutputStream
+                    FileOutputStream
+                    OutputStream
+                    PrintStream
+                    PrintWriter)))
 
 ;; Many props to eftest for much of this code
 
@@ -98,3 +103,13 @@
           (assoc ::output (read-buffer (::buffer testable)))
           (dissoc ::buffer))
       testable)))
+
+#?(:bb nil
+   :clj
+   (defmacro bypass
+     "Bypass output-capturing within this code block, so any print statements go to
+  the process out/err streams without being captured."
+     [& body]
+     `(binding [*out* (io/writer (PrintStream. (FileOutputStream. java.io.FileDescriptor/out)))
+                *err* (io/writer (PrintStream. (FileOutputStream. java.io.FileDescriptor/err)))]
+        ~@body)))

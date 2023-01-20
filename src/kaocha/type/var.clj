@@ -8,7 +8,7 @@
             [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str])
-  (:import [clojure.lang Var]))
+  (:import (clojure.lang Var)))
 
 (defmethod report/fail-summary ::zero-assertions [{:keys [testing-contexts testing-vars] :as m}]
   (println "\nFAIL in" (report/testing-vars-str m))
