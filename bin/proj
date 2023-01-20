@@ -7,6 +7,7 @@
                    [lioss.version :as version]))
 
 (defn update-docs [opts]
+  (subshell/spawn "clojure" "-M:feature-docs" "-m" "lioss.cucumber" ".")
   (doseq [file (filter #(str/ends-with? % ".md") (file-seq (io/file "doc")))]
     (version/update-versions-in file (:module-versions opts)))
   (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed")
@@ -21,7 +22,7 @@
   :pre-release-hook update-docs
   :group-id         "lambdaisland"
   :commands         ["update-docs"
-                     {:description "Update the ToC and version strings in md files"
+                     {:description "Rebuild cucumber docs, update the ToC and version strings in md files"
                       :command     update-docs}]
   :aliases-as-optional-deps [:test]})
 
