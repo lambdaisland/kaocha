@@ -3,15 +3,15 @@
 # CLI: `--reporter` option
 
 The progress and summary printed by Kaocha are done by one or more "reporter"
-functions. A reporter can be specified with the `--reporter` option followed
-by a fully qualified function name.
+  functions. A reporter can be specified with the `--reporter` option followed
+  by a fully qualified function name.
 
-Reporters in the `kaocha.report` namespace can be specified without a
-namespace prefix.
+  Reporters in the `kaocha.report` namespace can be specified without a
+  namespace prefix.
 
-See the
-[`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj)
-namespace for built-in reporters.
+  See the
+  [`kaocha.report`](https://github.com/lambdaisland/kaocha/blob/master/src/kaocha/report.clj)
+  namespace for built-in reporters.
 
 ## Background: An example test
 

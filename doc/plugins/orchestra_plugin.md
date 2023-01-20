@@ -3,14 +3,14 @@
 # Orchestra (spec instrumentation)
 
 You can enable spec instrumentation of your functions before running
-tests with the `:kaocha.plugin/orchestra` plugin. This uses the
-[Orchestra](https://github.com/jeaye/orchestra) library to instrument
-`:args`, `:ret`, and `:fn` specs.
+  tests with the `:kaocha.plugin/orchestra` plugin. This uses the
+  [Orchestra](https://github.com/jeaye/orchestra) library to instrument
+  `:args`, `:ret`, and `:fn` specs.
 
-You can use the `:kaocha.plugin/preloads` plugin to ensure namespaces
-are required (similar to ClojureScript's preloads feature). This is
-useful to ensure that your specs required before the orchestra plugin
-instruments your functions.
+  You can use the `:kaocha.plugin/preloads` plugin to ensure namespaces
+  are required (similar to ClojureScript's preloads feature). This is
+  useful to ensure that your specs required before the orchestra plugin
+  instruments your functions.
 
 ## Enabling Orchestra
 

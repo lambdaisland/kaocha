@@ -3,15 +3,15 @@
 # Skipping based on metadata
 
 You can limit the test run based on test's metadata. How to associate metadata
-with a test depends on the test type, for `clojure.test` type tests metadata
-can be associated with a test var or test namespace.
+  with a test depends on the test type, for `clojure.test` type tests metadata
+  can be associated with a test var or test namespace.
 
-Using the `--skip-meta` command line flag, or `:kaocha.filter/skip-meta` key
-in test suite configuration, you can tell Kaocha to completely ignore those
-tests where the given metadata key has a truthy value associated with it.
+  Using the `--skip-meta` command line flag, or `:kaocha.filter/skip-meta` key
+  in test suite configuration, you can tell Kaocha to completely ignore those
+  tests where the given metadata key has a truthy value associated with it.
 
-The default value for `:kaocha.filter/skip-meta` is `[:kaocha/skip]`, so you
-can use `^:kaocha/skip` to ignore tests without extra configuration.
+  The default value for `:kaocha.filter/skip-meta` is `[:kaocha/skip]`, so you
+  can use `^:kaocha/skip` to ignore tests without extra configuration.
 
 ## Skipping a test based on metadata from the command line
 

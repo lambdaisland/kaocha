@@ -3,8 +3,8 @@
 # Focusing on specific tests
 
 You can limit the test run to only specific tests or test groups (e.g.
-namespaces) using the `--focus` command line flag, or `:kaocha.filter/focus`
-key in test suite configuration.
+  namespaces) using the `--focus` command line flag, or `:kaocha.filter/focus`
+  key in test suite configuration.
 
 ## Background: A simple test suite
 
