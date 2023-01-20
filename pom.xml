@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.73.1175</version>
+  <version>1.74.1181</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -25,18 +25,18 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>ebc1467879512dccbf9ce702e0f85519a573875e</tag>
+    <tag>c750b50e9ae589e79aafbf42e0851e418784f14f</tag>
   </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.11.0</version>
+      <version>1.11.1</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>deep-diff2</artifactId>
-      <version>2.4.138</version>
+      <version>2.7.169</version>
     </dependency>
     <dependency>
       <groupId>expound</groupId>
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
-      <version>1.0.206</version>
+      <version>1.0.214</version>
     </dependency>
     <dependency>
       <groupId>slingshot</groupId>
@@ -61,7 +61,7 @@
     <dependency>
       <groupId>com.nextjournal</groupId>
       <artifactId>beholder</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
       <groupId>aero</groupId>
@@ -108,7 +108,7 @@
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>kaocha-cloverage</artifactId>
-      <version>1.0.75</version>
+      <version>1.1.89</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -157,7 +157,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>ebc1467879512dccbf9ce702e0f85519a573875e</git-revision>
+              <git-revision>c750b50e9ae589e79aafbf42e0851e418784f14f</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
