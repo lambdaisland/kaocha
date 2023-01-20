@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- Dependency version bumps
 
 # 1.73.1175 (2023-01-16 / 664b83a)
 

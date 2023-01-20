@@ -1,15 +1,15 @@
 {:paths ["src" "resources"]
 
  :deps
- {org.clojure/clojure          {:mvn/version "1.11.0"}
+ {org.clojure/clojure          {:mvn/version "1.11.1"}
   org.clojure/spec.alpha       {:mvn/version "0.3.218"}
-  org.clojure/tools.cli        {:mvn/version "1.0.206"}
+  org.clojure/tools.cli        {:mvn/version "1.0.214"}
   lambdaisland/tools.namespace {:mvn/version "0.1.247"}
-  lambdaisland/deep-diff2      {:mvn/version "2.4.138"}
+  lambdaisland/deep-diff2      {:mvn/version "2.7.169"}
   org.tcrawley/dynapath        {:mvn/version "1.1.0"}
   slingshot/slingshot          {:mvn/version "0.12.2"}
   hawk/hawk                    {:mvn/version "0.2.11"}
-  com.nextjournal/beholder     {:mvn/version "1.0.0"}
+  com.nextjournal/beholder     {:mvn/version "1.0.1"}
   expound/expound              {:mvn/version "0.9.0"}
   aero/aero                    {:mvn/version "1.1.6"}
   progrock/progrock            {:mvn/version "0.1.2"}
@@ -20,8 +20,8 @@
   {:extra-paths ["test/shared" "test/unit"]
    :extra-deps  {org.clojure/test.check        {:mvn/version "1.1.1"}
                  lambdaisland/kaocha-cucumber  {:mvn/version "0.0-53" :exclusions [lambdaisland/kaocha]}
-                 lambdaisland/kaocha-cloverage {:mvn/version "1.0.75" :exclusions [lambdaisland/kaocha]}
-                 nubank/matcher-combinators    {:mvn/version "1.5.2"}
+                 lambdaisland/kaocha-cloverage {:mvn/version "1.1.89" :exclusions [lambdaisland/kaocha]}
+                 nubank/matcher-combinators    {:mvn/version "1.5.72"}
                  akvo/fs                       {:mvn/version "20180904-152732.6dad3934"}
                  orchestra/orchestra           {:mvn/version "2021.01.01-1"}}}
 
