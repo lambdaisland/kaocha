@@ -3,6 +3,8 @@
             [clojure.java.io :as io]
             [kaocha.output :as output]
             [kaocha.report :as report]
+            [kaocha.plugin :as plugin]
+            [kaocha.specs :as specs]
             [slingshot.slingshot :refer [throw+]]
             [meta-merge.core :refer [meta-merge]])
   (:import (java.io File)
@@ -149,7 +151,7 @@
 
 (defn load-config
   "Loads and returns configuration from `source` or the file \"tests.edn\"
-  if called without arguments.
+  if called without arguments, without doing further processing.
 
   If the config value loaded from `source` is nil, it returns the default
   configuration, which is the result of `(default-config)`.
@@ -193,6 +195,7 @@
      config
      (read-config nil opts))))
 
+
 (defn apply-cli-opts [config options]
   (cond-> config
     (some? (:fail-fast options))  (assoc :kaocha/fail-fast? (:fail-fast options))
@@ -216,6 +219,47 @@
                               (assoc :kaocha.testable/skip true)))
                           tests)))))
     config))
+
+(defn apply-cli
+  "Applies command-line options and arguments to the configuration."
+  [config cli-opts cli-args]
+  (cond-> config
+      cli-opts (apply-cli-opts cli-opts)
+      cli-args (apply-cli-args cli-args)))
+
+(defn find-config-and-warn 
+  [config-file]
+  (let [final-config-file (or config-file "tests.edn")]
+    (when (not (.exists (io/file (or config-file "tests.edn"))))
+      (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
+                                "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
+                                "To create a configuration file using the current defaults and configuration file location, create a file named %s that contains '#%s {}'.")
+                           config-file
+                           current-reader)))
+    final-config-file))
+
+(defn validate!
+  "Validates the configuration, printing any warnings and errors and possibly throwing."
+  [config]
+    (try
+      (specs/assert-spec :kaocha/config config)
+      config
+      (catch AssertionError e
+        (output/error "Invalid configuration file:\n"
+                      (.getMessage e))
+        (throw+ {:kaocha/early-exit 252}))))
+
+(defn load-config-for-cli-and-validate
+  "Loads config from config-file, factoring in profile specified using profile,
+  and displaying messages about any errors."
+  ([config-file {:keys [cli-opts cli-args] :as opts}]
+   (-> (load-config (find-config-and-warn config-file) opts)
+       (apply-cli cli-opts cli-args)
+       (validate!))))
+
+;;Do we really need this?
+(defn plugin-chain-from-config [config cli-options]
+  (plugin/load-all (concat (:kaocha/plugins config) (when cli-options (:plugin cli-options)))))
 
 (defn resolve-reporter [reporter]
   (cond

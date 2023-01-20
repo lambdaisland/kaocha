@@ -147,31 +147,21 @@
     (throw+ {:kaocha/early-exit 253}))
 
   (binding [spec/*explain-out* expound/printer]
-    (let [{{:keys [config-file plugin profile]} :options} (cli/parse-opts args cli-options)
-          config                                          (-> config-file
-                                                              (or "tests.edn")
-                                                              (config/load-config (if profile
-                                                                                    {:profile profile}
-                                                                                    {})))
-          _check_config_file                              (when (not (. (File. (or config-file "tests.edn")) exists))
-                                                            (output/warn (format (str "Did not load a configuration file and using the defaults.\n"
-                                                                                      "This is fine for experimenting, but for long-term use, we recommend creating a configuration file to avoid changes in behavior between releases.\n"
-                                                                                      "To create a configuration file using the current defaults, create a file named tests.edn that contains '#%s {}'.")
-                                                                                 config/current-reader)))
-          _check                                         (try
-                                                           (specs/assert-spec :kaocha/config config)
-                                                           (catch AssertionError e
-                                                             (output/error "Invalid configuration file:\n"
-                                                                           (.getMessage e))
-                                                             (throw+ {:kaocha/early-exit 252})))
-          plugin-chain                                    (plugin/load-all (concat (:kaocha/plugins config) plugin))
-          cli-options                                     (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
+    (let [{{:keys [config-file plugin arguments profile]} :options} (cli/parse-opts args cli-options)
+          config-file                                               (config/find-config-and-warn config-file)
+          ;; Initial configuration load to determine plugins.
+          config                                                    (->  (config/load-config config-file (if profile {:profile profile} {}))
+                                                                        (config/apply-cli {} (map parse-kw arguments))
+                                                                        (config/validate!))
+          plugin-chain                                              (plugin/load-all (concat (:kaocha/plugins config) plugin))
+          cli-options                                               (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
-          {:keys [errors options arguments summary]} (cli/parse-opts args cli-options)
-          config                                     (-> config
-                                                         (config/apply-cli-opts options)
-                                                         (config/apply-cli-args (map parse-kw arguments)))
-          suites                                     (into #{} (map parse-kw) arguments)]
+          {:keys [errors options summary arguments]}                (cli/parse-opts args cli-options)
+          ;; Final configuration load once all plugins are loaded:
+          config                                                    (-> (config/load-config config-file (if profile {:profile profile} {}))
+                                                                        (config/apply-cli options (map parse-kw arguments))
+                                                                        (config/validate!))
+          suites                                                    (into #{} (map parse-kw) arguments)]
       (plugin/with-plugins plugin-chain
         (run {:config  config
               :options options
@@ -193,7 +183,8 @@
   [m]
   (try+
    (let [config (-> (config/load-config)
-                    (config/merge-config (config/normalize m)))]
+                    (config/merge-config (config/normalize m))
+                    (config/validate!))]
      (if (:kaocha/watch? config)
        (let [[exit-code finish!] ((jit kaocha.watch/run) config)]
          (System/exit @exit-code))

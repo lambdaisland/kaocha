@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
             [kaocha.config :as c]
+            [clojure.spec.alpha :as s]
             [matcher-combinators.matchers :as m]
             [slingshot.slingshot :refer [try+]]))
 
@@ -56,13 +57,12 @@
                            {:kaocha/reporter '[yyy]}))))
   (testing "does not override metadata for replace-by-default key tests"
     (is (= {:kaocha/tests [{:id :integration} {:id :unit}]}
-          (c/merge-config {:kaocha/tests [{:id :unit}]}
-                          {:kaocha/tests ^:prepend [{:id :integration}]}))))
+           (c/merge-config {:kaocha/tests [{:id :unit}]}
+                           {:kaocha/tests ^:prepend [{:id :integration}]}))))
   (testing "does not override metadata for replace-by-default key test-paths"
-    (print (meta (:kaocha/test-paths {:kaocha/test-paths ^:append ["integration-tests"]})))
-    (is (= {:kaocha/test-paths ["unit-tests" "integration-tests" ]}
-          (c/merge-config {:kaocha/test-paths ["unit-tests"]}
-                          {:kaocha/test-paths ^:append ["integration-tests"]})))))
+    (is (= {:kaocha/test-paths ["unit-tests" "integration-tests"]}
+           (c/merge-config {:kaocha/test-paths ["unit-tests"]}
+                           {:kaocha/test-paths ^:append ["integration-tests"]})))))
 
 (deftest merge-ns-patterns-issue-124-test
   (testing "https://github.com/lambdaisland/kaocha/issues/124"
@@ -139,6 +139,40 @@
     (testing "falls back to default when resource does not exist"
       (is (= expected-default-config
              (c/load-config (io/resource "resource-that-does-not-exist.edn")))))))
+
+(deftest load-config-for-cli-and-validate-test
+  (testing "from file path"
+
+    (testing "supports Aero manipulation"
+      (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
+                   :kaocha/plugins  (m/embeds [:some.kaocha.plugin/foo :other.kaocha.plugin/bar])}
+                  (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test.edn" {}))))
+
+    (testing "falls back to default when file does not exist"
+      (is (= expected-default-config
+             (c/load-config-for-cli-and-validate "file-that-does-not-exist.edn" {})))))
+
+  (testing "from resource"
+    (testing "supports Aero manipulation"
+      (is (match? {:kaocha/reporter ['kaocha.report.progress/report]
+                   :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
+                  (c/load-config-for-cli-and-validate (io/resource "kaocha/config/loaded-test-resource.edn") {}))))
+    (testing "falls back to default when resource does not exist"
+      (is (match? 
+            ;; Deliberately minimal case because we want to test this behavior
+            ;; (fallback to tests.edn) without tying too much to tests.edn
+            {:kaocha.hooks/pre-load ['kaocha.assertions/load-assertions] }
+             (c/load-config-for-cli-and-validate (io/resource "resource-that-does-not-exist.edn") {})))))
+  (testing "loading a file with profiles"
+    (testing "specifying a profile"
+      (is (match? {:kaocha/reporter 'kaocha.report.progress/report}
+                  (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-profile.edn" {:profile :test}))))
+    (testing "not specifying a profile"
+      (is (match? {:kaocha/reporter 'kaocha.report/documentation}
+                  (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-profile.edn" {})))))
+  (testing "loading a file that doesn't conform to spec"
+    (is (thrown-with-msg? Exception #":early-exit 252"
+                          (c/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-spec-mismatch.edn" {})))))
 
 (deftest apply-cli-opts-test
   (is (= {:kaocha/fail-fast? true,

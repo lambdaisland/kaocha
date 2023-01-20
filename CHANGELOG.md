@@ -2,7 +2,12 @@
 
 ## Added
 
+- `kaocha.repl/config` accepts a `:profile` key when specifying extra options.
+
 ## Fixed
+
+- Configuration errors are reported as warnings, rather than causing the entire
+    watcher to crash.
 
 ## Changed
 

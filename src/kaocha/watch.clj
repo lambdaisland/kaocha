@@ -23,6 +23,7 @@
             [lambdaisland.tools.namespace.parse :as ctn-parse]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
             [lambdaisland.tools.namespace.track :as ctn-track]
+            [slingshot.slingshot :refer [try+]]
             [nextjournal.beholder :as beholder])
   (:import (java.nio.file FileSystems)
            (java.util.concurrent ArrayBlockingQueue BlockingQueue)))
@@ -129,7 +130,7 @@
       (re-find #"/$" cleaned) (format "%s**")
 
       ;; Otherwise, it should have the same behavior
-      )))
+)))
 
 (s/fdef convert :args (s/cat :pattern string?) :ret string?)
 
@@ -178,10 +179,12 @@
   (if-let [config-file (get-in config [:kaocha/cli-options :config-file])]
     (let [{:kaocha/keys [cli-options cli-args]} config
           profile (get-in config [:kaocha/cli-options :profile])
-          config (-> config-file
-                     (config/load-config (if profile {:profile profile} {}))
-                     (config/apply-cli-opts cli-options)
-                     (config/apply-cli-args cli-args))
+          config (try+
+                  (-> (config/load-config (config/find-config-and-warn config-file) {:profile profile})
+                      (config/apply-cli cli-options cli-args)
+                      (config/validate!))
+                  (catch :kaocha/early-exit e
+                    (output/warn "Error loading config: " e "\nFalling back to prior config.")))
           plugin-chain (plugin/load-all (concat (:kaocha/plugins config) (:plugin cli-options)))]
       [config plugin-chain])
     [config plugin-chain]))
