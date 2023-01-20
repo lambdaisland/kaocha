@@ -308,10 +308,10 @@ Contributors SHOULD
 - add tests for new functionality.
 
 If you submit a pull request that adheres to these rules, then it will almost
-certainly be merged immediately. However, some things may require more
+certainly be merged immediately. However some things may require more
 consideration. If you add new dependencies, or significantly increase the API
 surface, then we need to decide if these changes are in line with the project's
-goals. In this case, you can start by [writing a pitch](https://nextjournal.com/lambdaisland/pitch-template),
+goals. In this case you can start by [writing a pitch](https://nextjournal.com/lambdaisland/pitch-template),
 and collecting feedback on it.
 
 `*` This goes for features too, a feature needs to solve a problem. State the problem it solves, then supply a minimal solution.
