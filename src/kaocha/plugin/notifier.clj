@@ -67,7 +67,7 @@
 
   If Kaocha is running from a jar, then extract the icon to a temp file first,
   so external programs have access to it. "
-  #? (:bb ()
+  #? (:bb (fn [])
       :clj (memoize
              (fn []
                (let [resource (io/resource "kaocha/clojure_logo.png")]
