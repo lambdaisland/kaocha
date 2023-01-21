@@ -183,10 +183,11 @@
                             "\n\nOptions may be repeated multiple times for a logical OR effect.")})))))
 
 (defn -main [& args]
-  (try+
+  #_(try+
    (System/exit (apply -main* args))
    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
-     (System/exit exit-code))))
+     (System/exit exit-code)))
+  (apply -main* args))
 
 (defn exec-fn
   "Entry point for use with deps.tools' -X feature."
