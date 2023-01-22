@@ -6,7 +6,7 @@
 
 ## Create jar file:
 
-`clj -X:jar :jar target/the-jar-file.jar`
+`rm -rf target ; clj -X:jar :jar target/the-jar-file.jar`
 
 ## Local deploy:
 
