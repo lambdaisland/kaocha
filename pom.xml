@@ -1,32 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemalocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>lambdaisland</groupId>
-  <artifactId>kaocha</artifactId>
-  <version>1.75.1190</version>
-  <name>kaocha</name>
+  <packaging>jar</packaging>
+  <groupId>com.nomistech</groupId>
+  <artifactId>kaocha-with-nomis-hacks</artifactId>
+  <version>0.4.0-SNAPSHOT</version>
+  <name>kaocha-with-nomis-hacks</name>
   <description>Full featured next generation test runner for Clojure.</description>
-  <url>https://github.com/lambdaisland/kaocha</url>
+  <url>https://github.com/simon-katz/kaocha-with-nomis-hacks</url>
   <inceptionYear>2018</inceptionYear>
-  <organization>
-    <name>Lambda Island</name>
-    <url>https://lambdaisland.com</url>
-  </organization>
-  <properties>
-    <project class="build sourceEncoding">UTF-8</project>
-  </properties>
   <licenses>
     <license>
       <name>Eclipse Public License 1.0</name>
       <url>https://www.eclipse.org/legal/epl-v10.html</url>
     </license>
   </licenses>
-  <scm>
-    <url>https://github.com/lambdaisland/kaocha</url>
-    <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>7807b14f30db000f46ab5a274b97c2cf4bc74f61</tag>
-  </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
@@ -93,90 +81,9 @@
       <artifactId>meta-merge</artifactId>
       <version>1.0.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.clojure</groupId>
-      <artifactId>test.check</artifactId>
-      <version>1.1.1</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>lambdaisland</groupId>
-      <artifactId>kaocha-cucumber</artifactId>
-      <version>0.0-53</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>lambdaisland</groupId>
-      <artifactId>kaocha-cloverage</artifactId>
-      <version>1.1.89</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>nubank</groupId>
-      <artifactId>matcher-combinators</artifactId>
-      <version>1.5.2</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>akvo</groupId>
-      <artifactId>fs</artifactId>
-      <version>20180904-152732.6dad3934</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>orchestra</groupId>
-      <artifactId>orchestra</artifactId>
-      <version>2021.01.01-1</version>
-      <optional>true</optional>
-    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
-    <resources>
-      <resource>
-        <directory>src</directory>
-      </resource>
-      <resource>
-        <directory>resources</directory>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <git-revision>7807b14f30db000f46ab5a274b97c2cf4bc74f61</git-revision>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.6</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
   <repositories>
     <repository>
@@ -184,11 +91,4 @@
       <url>https://repo.clojars.org/</url>
     </repository>
   </repositories>
-  <distributionManagement>
-    <repository>
-      <id>clojars</id>
-      <name>Clojars repository</name>
-      <url>https://clojars.org/repo</url>
-    </repository>
-  </distributionManagement>
 </project>

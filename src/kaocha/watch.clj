@@ -26,7 +26,35 @@
             [slingshot.slingshot :refer [try+]]
             [nextjournal.beholder :as beholder])
   (:import (java.nio.file FileSystems)
-           (java.util.concurrent ArrayBlockingQueue BlockingQueue)))
+           (java.util.concurrent ArrayBlockingQueue BlockingQueue)
+           (io.methvin.watcher DirectoryWatcher)
+           (io.methvin.watcher.hashing FileHasher)))
+
+(def ansi-reset  "\u001B[0m")
+(def ansi-black  "\u001B[30m")
+(def ansi-red    "\u001B[31m")
+(def ansi-green  "\u001B[32m")
+(def ansi-yellow "\u001B[33m")
+(def ansi-blue   "\u001B[34m")
+(def ansi-purple "\u001B[35m")
+(def ansi-cyan   "\u001B[36m")
+(def ansi-white  "\u001B[37m")
+
+(defn println-using-color [color & xs]
+  (println (apply str
+                  (concat [color]
+                          xs
+                          [ansi-reset]))))
+
+(defn nomis-emit-hacked-version-message []
+  (let [color ansi-cyan]
+    (println)
+    (println-using-color color
+                         "[watch] " (apply str (repeat 72 \_)))
+    (println-using-color color
+                         "[watch] You are using Simon's hacked Kaocha")))
+
+(def nomis-no-focus? true)
 
 (defn make-queue []
   (ArrayBlockingQueue. 1024))
@@ -44,7 +72,8 @@
   (doall (take-while identity (repeatedly #(qpoll q)))))
 
 (defn- try-run [config focus tracker]
-  (let [config (if (seq focus)
+  (let [focus  (if nomis-no-focus? nil focus)
+        config (if (seq focus)
                  (assoc config :kaocha.filter/focus focus)
                  config)
         config (-> config
@@ -62,6 +91,7 @@
   (ctn-reload/track-reload (assoc tracker ::ctn-file/load-error {})))
 
 (defn print-scheduled-operations! [tracker focus]
+  (nomis-emit-hacked-version-message)
   (let [unload (set (::ctn-track/unload tracker))
         load   (set (::ctn-track/load tracker))
         reload (set/intersection unload load)
@@ -210,7 +240,7 @@
                   [config plugin-chain] (reload-config config plugin-chain)]
               (recur tracker config plugin-chain nil)))
 
-          (and (seq focus) (not (result/failed? result)))
+          (and (not nomis-no-focus?) (seq focus) (not (result/failed? result)))
           (do
             (println "[watch] Failed tests pass, re-running all tests.")
             (recur (drain-and-rescan! q tracker watch-paths) config plugin-chain nil))
@@ -281,8 +311,23 @@ errors as test errors."
                             (when (= (:kind event) :modify)
                               (qput q (:file event))))}]))
 
+(defn- nomis-beholder-create
+  "Hacked version of beholder/create"
+  [cb paths]
+  (-> (DirectoryWatcher/builder)
+      (.paths (map @#'beholder/to-path paths))
+      (.listener (@#'beholder/fn->listener cb))
+      (.fileHasher FileHasher/LAST_MODIFIED_TIME)
+      (.build)))
+
+(defn- nomis-beholder-watch
+  "Hacked version of beholder/watch"
+  [cb & paths]
+  (doto (nomis-beholder-create cb paths)
+    (.watchAsync)))
+
 (defmethod watch! :beholder [{:keys [q watch-paths]}]
-  (apply beholder/watch
+  (apply nomis-beholder-watch
          (fn [{:keys [type path]}]
            (when (contains? #{:modify :create} type)
              (qput q path)))
@@ -328,6 +373,7 @@ errors as test errors."
     (run-loop finish? config tracker q watch-paths)))
 
 (defn run [config]
+  (nomis-emit-hacked-version-message)
   (let [finish?   (atom false)
         q         (make-queue)
         finish!   (fn []
