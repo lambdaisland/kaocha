@@ -6,8 +6,8 @@
 
 ## Fixed
 
-- Configuration errors are reported as warnings, rather than causing the entire
-    watcher to crash.
+- Configuration errors and circular dependencies are reported as warnings, 
+    rather than causing the entirewatcher to crash.
 
 ## Changed
 
