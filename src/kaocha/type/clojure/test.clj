@@ -4,7 +4,6 @@
             [clojure.spec.alpha :as spec]
             [kaocha.type.ns :as type.ns]
             [kaocha.testable :as testable]
-            [kaocha.classpath :as classpath]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
             [kaocha.specs]

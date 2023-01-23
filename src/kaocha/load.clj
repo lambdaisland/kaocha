@@ -1,7 +1,6 @@
 (ns kaocha.load
   (:refer-clojure :exclude [symbol])
   (:require [kaocha.core-ext :refer :all]
-            [kaocha.classpath :as classpath]
             [kaocha.testable :as testable]
             [clojure.java.io :as io]
             [lambdaisland.tools.namespace.find :as ctn-find]
