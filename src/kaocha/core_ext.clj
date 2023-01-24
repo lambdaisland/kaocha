@@ -1,5 +1,6 @@
 (ns kaocha.core-ext
   "Core language extensions"
+  (:require [kaocha.platform :as platform])
   (:refer-clojure :exclude [symbol])
   (:import (java.util.regex Pattern)))
 
@@ -58,7 +59,9 @@
      (instance? clojure.lang.Var name) (.toSymbol ^clojure.lang.Var name)
      (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
      :else (throw (IllegalArgumentException. "no conversion to symbol"))))
-  ([ns name] (clojure.lang.Symbol/intern ns name)))
+  ([ns name] (platform/if-babashka 
+               (clojure.core/symbol ns name)
+               (clojure.lang.Symbol/intern ns name))))
 
 ;; 1.10 backport
 (when-not (resolve 'clojure.core/requiring-resolve)
