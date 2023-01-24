@@ -9,23 +9,20 @@
   - terminal-notifier
   - java.awt.SystemTray
   "
-  {:authors ["Ryan McCuaig (@rgm)"
-             "Arne Brasseur (@plexus)"]}
-  (:require [clojure.java.shell :refer [sh]]
-            [kaocha.output :as output]
-            [kaocha.plugin :refer [defplugin]]
-            [kaocha.result :as result]
-            [kaocha.platform :as platform]
-            [kaocha.shellwords :refer [shellwords]]
-            [clojure.string :as str]
-            [clojure.java.io :as io]
-            [slingshot.slingshot :refer [throw+]])
-  (:import (java.nio.file Files)
-           (java.io IOException)
-           (java.awt SystemTray
-                     TrayIcon
-                     TrayIcon$MessageType
-                     Toolkit)))
+  {:authors ["Ryan McCuaig (@rgm)" "Arne Brasseur (@plexus)" "Alys Brooks"]}
+  (:require
+   [clojure.java.io :as io]
+   [clojure.java.shell :refer [sh]]
+   [clojure.string :as str]
+   [kaocha.output :as output]
+   [kaocha.platform :as platform]
+   [kaocha.plugin :refer [defplugin]]
+   [kaocha.result :as result]
+   [kaocha.shellwords :refer [shellwords]]
+   [kaocha.systray :as systray])
+  (:import
+   (java.io FileInputStream IOException)
+   (java.net URL)))
 
 ;; special thanks for terminal-notify stuff to
 ;; https://github.com/glittershark/midje-notifier/blob/master/src/midje/notifier.clj
@@ -62,6 +59,13 @@
     "⛔️ Failing"
     "✅ Passing"))
 
+(defn url-input-stream
+  "Inlined partial version of io/make-input-stream, for babashka."
+  [^URL x opts]
+  (if (= "file" (.getProtocol x))
+    (FileInputStream. (io/as-file x))
+    (.openStream x)) opts)
+
 (def icon-path
   "Return a local path to the Clojure icon.
 
@@ -73,20 +77,8 @@
        (if (= "file" (.getProtocol resource))
          (str (io/file resource))
          (let [file (java.io.File/createTempFile "clojure_logo" ".png")]
-           (io/copy (io/make-input-stream resource {}) file)
+           (io/copy (url-input-stream resource {}) file)
            (str file)))))))
-
-(def tray-icon
-  "Creates a system tray icon."
-  (memoize
-   (fn [icon-path]
-     (let [^java.awt.Toolkit toolkit (Toolkit/getDefaultToolkit)
-           tray-icon (-> toolkit
-                         (.getImage ^String icon-path)
-                         (TrayIcon. "Kaocha Notification"))]
-       (doto (SystemTray/getSystemTray)
-         (.add tray-icon))
-       tray-icon))))
 
 (defn send-tray-notification
   "Use Java's built-in functionality to display a notification.
@@ -95,16 +87,16 @@
   looks out of place, and isn't consistently available on Linux."
   [result]
   (try
-    (let [icon (tray-icon "kaocha/clojure_logo.png")
-          urgency (if (result/failed? result) TrayIcon$MessageType/ERROR TrayIcon$MessageType/INFO) ]
-      (.displayMessage icon (title result) (message result) urgency))
-    (catch java.awt.HeadlessException _e
-      (output/warn (str "Notification not shown because system is headless."
-                        "\nConsider disabling the notifier plugin when using in this context.")))
-    (catch java.lang.UnsupportedOperationException _e
-      (output/warn (str "Notification not shown because system does not support it."
-                        "\nConsider disabling the notifier plugin when using in this context or installing"
-                        "\neither notify-send (Linux) or terminal-notifier (macOS).")))))
+    (let [urgency (if (result/failed? result) :error :info) ]
+      (case (systray/display-message (title result) (message result) urgency)
+        :ok :ok
+        :headless
+        (output/warn (str "Notification not shown because system is headless."
+                          "\nConsider disabling the notifier plugin when using in this context."))
+        :unsupported
+        (output/warn (str "Notification not shown because system does not support it."
+                          "\nConsider disabling the notifier plugin when using in this context or installing"
+                          "\neither notify-send (Linux) or terminal-notifier (macOS)."))))))
 
 (defn expand-command
   "Takes a command string including replacement patterns, and a map of

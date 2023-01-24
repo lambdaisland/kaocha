@@ -1,25 +1,12 @@
-(ns kaocha.platform "Utility functions for specific platforms.")
+(ns kaocha.platform
+  "Utility functions for specific platforms.")
 
-
-(defn on-windows? 
+(defn on-windows?
   "Return whether we're running on Windows."
   []
   (re-find #"Windows" (System/getProperty "os.name")))
-
 
 (defn on-posix?
   "Return whether we're running on a Posix system."
   []
   (re-find #"(?ix)(MacOS|Linux)" (System/getProperty "os.name")))
-
-(defn on-babashka?
-  "Return whether we're running on Babashka."
-  []
-  (boolean (System/getProperty "babashka.version")))
-
-
-(defmacro if-babashka 
-  [babashka-form clojure-form]
-  (if (on-babashka?)
-    babashka-form
-    clojure-form))

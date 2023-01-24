@@ -59,9 +59,8 @@
      (instance? clojure.lang.Var name) (.toSymbol ^clojure.lang.Var name)
      (instance? clojure.lang.Keyword name) (.sym ^clojure.lang.Keyword name)
      :else (throw (IllegalArgumentException. "no conversion to symbol"))))
-  ([ns name] (platform/if-babashka 
-               (clojure.core/symbol ns name)
-               (clojure.lang.Symbol/intern ns name))))
+  ([ns name]
+   (clojure.core/symbol ns name)))
 
 ;; 1.10 backport
 (when-not (resolve 'clojure.core/requiring-resolve)
