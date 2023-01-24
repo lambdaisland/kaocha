@@ -11,3 +11,15 @@
   "Return whether we're running on a Posix system."
   []
   (re-find #"(?ix)(MacOS|Linux)" (System/getProperty "os.name")))
+
+(defn on-babashka?
+  "Return whether we're running on Babashka."
+  []
+  (boolean (System/getProperty "babashka.version")))
+
+
+(defmacro if-babashka 
+  [babashka-form clojure-form]
+  (if (on-babashka?)
+    babashka-form
+    clojure-form))

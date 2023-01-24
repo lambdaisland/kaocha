@@ -1,4 +1,5 @@
-(ns kaocha.util)
+(ns kaocha.util
+  (:require [kaocha.platform :as platform]))
 
 (defn lib-path
   "Returns the path for a lib"
@@ -20,11 +21,18 @@
 (defn compiler-exception-file-and-line
   "Try to get the file and line number from a CompilerException"
   [^Throwable error]
-  (if (instance? clojure.lang.Compiler$CompilerException error)
-    [(.-source ^clojure.lang.Compiler$CompilerException error)
-     (.-line ^clojure.lang.Compiler$CompilerException error)]
-    (when-let [error (.getCause error)]
-      (recur error))))
+  (platform/if-babashka 
+    (if (instance? clojure.lang.ExceptionInfo error)
+      (when-let [ {:keys [line #_column #_type file]} (ex-data error)]
+        [file line])
+      (when-let [error (.getCause error)]
+        (recur error)))
+    
+    (if (instance? clojure.lang.Compiler$CompilerException error)
+      [(.-source ^clojure.lang.Compiler$CompilerException error)
+       (.-line ^clojure.lang.Compiler$CompilerException error)]
+      (when-let [error (.getCause error)]
+        (recur error)))))
 
 (defn minimal-test-event
   "Return a reduced version of a test event map, so debug output doesn't blow up
