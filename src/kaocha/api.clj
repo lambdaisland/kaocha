@@ -17,6 +17,8 @@
 ;; Prevent clj-refactor from "cleaning" these from the ns form
 (require 'kaocha.monkey-patch)
 
+(def orig-out *out*)
+
 (def ^:dynamic *active?*
   "Is Kaocha currently active? i.e. loading or runnning tests."
   false)
@@ -127,9 +129,7 @@
                                       ;; been interrupted, output capturing may
                                       ;; still be in effect.
                                       (System/setOut
-                                       (java.io.PrintStream.
-                                        (java.io.BufferedOutputStream.
-                                         (java.io.FileOutputStream. java.io.FileDescriptor/out))))
+                                        orig-out)
                                       (binding [history/*history* history]
                                         (t/do-report (history/clojure-test-summary)))
                                       (catch Throwable t
