@@ -7,7 +7,8 @@
 ## Fixed
 
 - Configuration errors and circular dependencies are reported as warnings, 
-    rather than causing the entirewatcher to crash.
+    rather than causing the entire watcher to crash. (thanks
+    [@frenchy64](https://github.com/frenchy64))
 - Fix bug added in [#384](https://github.com/lambdaisland/kaocha/issues/384):
     assertions in the tail position of an each fixture would return the result
     of the assertion instead of the testable object with the merged report data.
@@ -24,7 +25,8 @@
 
 ## Fixed
 
-- Circular dependencies in watch mode no longer kills the process.
+- Circular dependencies in watch mode no longer kills the process. (thanks
+    [@frenchy64](https://github.com/frenchy64))
 
 ## Changed
 
