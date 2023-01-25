@@ -58,6 +58,7 @@ There is also a [#kaocha](https://clojurians.slack.com/messages/CCY2V0U6A/convo/
 - [CLI: `--reporter` option](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-reporter-option)
 - [CLI: Selecting test suites](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/cli-selecting-test-suites)
 - [Configuration: Bindings](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/configuration-bindings)
+- [Configuration: Warnings](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/configuration-warnings)
 - [Focusing based on metadata](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/focusing-based-on-metadata)
 - [Focusing on specific tests](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/focusing-on-specific-tests)
 - [Skipping based on metadata](https://cljdoc.org/d/lambdaisland/kaocha/CURRENT/doc/skipping-based-on-metadata)
@@ -103,7 +104,7 @@ Add Kaocha as a dependency, preferably under an alias.
 ;; deps.edn
 {:deps { ,,, }
  :aliases
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.75.1190"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.76.1230"}}
          :main-opts ["-m" "kaocha.runner"]}}}
 ```
 
@@ -124,7 +125,7 @@ Add a profile and alias
 ;; project.clj
 (defproject my-proj "0.1.0"
   :dependencies [,,,]
-  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.75.1190"]]}}
+  :profiles {:kaocha {:dependencies [[lambdaisland/kaocha "1.76.1230"]]}}
   :aliases {"kaocha" ["with-profile" "+kaocha" "run" "-m" "kaocha.runner"]})
 ```
 
@@ -168,7 +169,7 @@ options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.75.1190"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.76.1230"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}}}
 ```
@@ -189,10 +190,10 @@ of tests skipped. You could save that configuration with an additional alias:
 ;; deps.edn
 {:deps { ,,, }
  :aliases 
- {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.75.1190"}}
+ {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.76.1230"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
- :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.75.1190"}}
+ :watch-test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.76.1230"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {:watch? true
 	 :skip-meta :slow
