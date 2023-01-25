@@ -1,5 +1,5 @@
 (ns kaocha.platform
-  "Utility functions for specific platforms.")
+  "Utility functions for specific operating systems")
 
 (defn on-windows?
   "Return whether we're running on Windows."

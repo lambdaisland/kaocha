@@ -1,4 +1,4 @@
-(ns kaocha.systray
+(ns kaocha.platform.systray
   (:import (java.nio.file Files)
            (java.io IOException)
            #_       (java.awt SystemTray

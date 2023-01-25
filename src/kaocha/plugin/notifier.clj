@@ -16,10 +16,11 @@
    [clojure.string :as str]
    [kaocha.output :as output]
    [kaocha.platform :as platform]
+   [kaocha.platform.systray :as systray] 
    [kaocha.plugin :refer [defplugin]]
    [kaocha.result :as result]
    [kaocha.shellwords :refer [shellwords]]
-   [kaocha.systray :as systray])
+   )
   (:import
    (java.io FileInputStream IOException)
    (java.net URL)))

@@ -1,4 +1,4 @@
-(ns kaocha.systray
+(ns kaocha.platform.systray
   "Null-implementation for babashka")
 
 
