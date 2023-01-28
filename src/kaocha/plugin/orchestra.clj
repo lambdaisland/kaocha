@@ -3,7 +3,7 @@
   arguments and return values based on clojure.spec.alpha."
   (:require [kaocha.plugin :refer [defplugin]]
             [orchestra.spec.test :as orchestra]
-            [clojure.spec.alpha :as spec]))
+            [clojure.spec.alpha :as s]))
 
 (defplugin kaocha.plugin/orchestra
   (post-load [test-plan]
@@ -27,5 +27,5 @@
       (if (and (= :error type) (:clojure.spec.alpha/problems data))
         (assoc event :kaocha.report/printed-expression
                (str (.getMessage actual) "\n"
-                    (with-out-str (spec/explain-out data))))
+                    (with-out-str (s/explain-out data))))
         event))))
