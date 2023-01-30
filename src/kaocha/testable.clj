@@ -1,7 +1,6 @@
 (ns kaocha.testable
   (:refer-clojure :exclude [load])
   (:require [clojure.java.io :as io]
-            [clojure.pprint :as pprint]
             [clojure.spec.alpha :as spec]
             [clojure.test :as t]
             [kaocha.classpath :as classpath]

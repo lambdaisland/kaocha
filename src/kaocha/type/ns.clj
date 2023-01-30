@@ -3,7 +3,6 @@
   (:require [clojure.spec.alpha :as spec]
             [clojure.test :as t]
             [kaocha.core-ext :refer :all]
-            [kaocha.hierarchy :as hierarchy]
             [kaocha.ns :as ns]
             [kaocha.testable :as testable]
             [kaocha.type :as type]))

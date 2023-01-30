@@ -7,7 +7,7 @@
             [kaocha.history :as history]
             [kaocha.output :as output]
             [kaocha.plugin :as plugin]
-            [kaocha.report :as report]
+            [kaocha.report :as report] ;; required for resolve?
             [kaocha.result :as result]
             [kaocha.util :as util]
             [kaocha.stacktrace :as stacktrace]

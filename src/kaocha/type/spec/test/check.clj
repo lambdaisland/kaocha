@@ -8,7 +8,6 @@
             [kaocha.specs]
             [kaocha.test-suite :as test-suite]
             [kaocha.testable :as testable]
-            [kaocha.type :as type]
             [kaocha.type.spec.test.fdef :as type.fdef]
             [kaocha.type.spec.test.ns :as type.spec.ns]))
 

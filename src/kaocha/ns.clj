@@ -1,12 +1,7 @@
 (ns kaocha.ns
   (:refer-clojure :exclude [symbol])
   (:require [clojure.spec.alpha :as spec]
-            [clojure.string :as str]
-            [clojure.test :as t]
-            [kaocha.core-ext :refer :all]
-            [kaocha.result :as result]
-            [kaocha.testable :as testable]
-            [kaocha.type :as type]))
+            [kaocha.core-ext :refer :all]))
 
 (defn required-ns [ns-name]
   (when-not (and (find-ns ns-name)

@@ -1,11 +1,10 @@
 (ns kaocha.plugin.capture-output
-  (:require 
+  (:require
     [clojure.java.io :as io]
     [kaocha.hierarchy :as hierarchy]
-    [kaocha.plugin :as plugin :refer [defplugin]]
-    [kaocha.testable :as testable])
+            [kaocha.plugin :as plugin :refer [defplugin]])
   (:import (java.io ByteArrayOutputStream
-                    FileOutputStream
+                    FileOutputStream ;; false positive
                     OutputStream
                     PrintStream
                     PrintWriter)))
