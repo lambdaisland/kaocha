@@ -3,6 +3,7 @@
 ## Added
 
 ## Fixed
+- Fix bug causing namepaces to not be loaded if an alias was already created for them using `:as-alias`
 
 ## Changed
 
