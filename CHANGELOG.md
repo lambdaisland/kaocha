@@ -1,11 +1,7 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 - Fix bug causing namepaces to not be loaded if an alias was already created for them using `:as-alias`
-
-## Changed
 
 # 1.76.1230 (2023-01-25 / 2b9d9df)
 
