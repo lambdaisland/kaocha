@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [load])
   (:require [clojure.java.io :as io]
             [clojure.pprint :as pprint]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [clojure.test :as t]
             [kaocha.classpath :as classpath]
             [kaocha.hierarchy :as hierarchy]
@@ -99,8 +99,8 @@
         (assoc testable ::load-error t)
         (throw t)))))
 
-(s/fdef load
-  :args (s/cat :testable :kaocha/testable)
+(spec/fdef load
+  :args (spec/cat :testable :kaocha/testable)
   :ret :kaocha.test-plan/testable)
 
 (defmulti -run
@@ -136,8 +136,8 @@
                        @history))
         result))))
 
-(s/fdef run
-        :args (s/cat :testable :kaocha.test-plan/testable
+(spec/fdef run
+        :args (spec/cat :testable :kaocha.test-plan/testable
                      :test-plan :kaocha/test-plan)
         :ret :kaocha.result/testable)
 

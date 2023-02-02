@@ -1,7 +1,7 @@
 (ns kaocha.type.clojure.test
   (:refer-clojure :exclude [symbol])
   (:require [kaocha.core-ext :refer :all]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [kaocha.type.ns :as type.ns]
             [kaocha.testable :as testable]
             [kaocha.classpath :as classpath]
@@ -20,7 +20,7 @@
 (defmethod testable/-run :kaocha.type/clojure.test [testable test-plan]
   (test-suite/run testable test-plan))
 
-(s/def :kaocha.type/clojure.test (s/keys :req [:kaocha/source-paths
+(spec/def :kaocha.type/clojure.test (spec/keys :req [:kaocha/source-paths
                                                :kaocha/test-paths
                                                :kaocha/ns-patterns]))
 

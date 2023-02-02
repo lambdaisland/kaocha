@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
             [kaocha.config :as config]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [matcher-combinators.matchers :as m]
             [slingshot.slingshot :refer [try+]]))
 

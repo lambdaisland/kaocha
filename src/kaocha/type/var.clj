@@ -5,7 +5,7 @@
             [kaocha.result :as result]
             [kaocha.report :as report]
             [kaocha.hierarchy :as hierarchy]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str])
   (:import (clojure.lang Var)))
@@ -44,18 +44,18 @@
       (t/do-report {:type :end-test-var, :var the-var})
       (merge testable {:kaocha.result/count 1} (type/report-count)))))
 
-(s/def :kaocha.type/var (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha.type/var (spec/keys :req [:kaocha.testable/type
                                       :kaocha.testable/id
                                       :kaocha.var/name
                                       :kaocha.var/var
                                       :kaocha.var/test]))
 
-(s/def :kaocha.var/name qualified-symbol?)
-(s/def :kaocha.var/test (s/spec ifn?
+(spec/def :kaocha.var/name qualified-symbol?)
+(spec/def :kaocha.var/test (spec/spec ifn?
                                 :gen (fn []
                                        (gen/one-of [(gen/return (fn [] (t/is true)))
                                                     (gen/return (fn [] (t/is false)))]))))
-(s/def :kaocha.var/var (s/spec var?
+(spec/def :kaocha.var/var (spec/spec var?
                                :gen (fn []
                                       (gen/return (.setDynamic (Var/create))))))
 

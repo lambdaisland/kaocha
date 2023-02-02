@@ -1,5 +1,5 @@
 (ns kaocha.plugin.alpha.spec-test-check
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.spec.test.alpha]
             [kaocha.plugin :refer [defplugin]]
             [kaocha.specs]
@@ -11,8 +11,8 @@
 ;; requiring clojure.spec.test.alpha
 (alias 'stc 'clojure.spec.test.check)
 
-(s/def ::config-path
-  (s/coll-of keyword? :min-count 1))
+(spec/def ::config-path
+  (spec/coll-of keyword? :min-count 1))
 
 (def ^:private config-paths
   [[::stc/instrument?]
@@ -20,27 +20,27 @@
    [::stc/opts :num-tests]
    [::stc/opts :max-size]])
 
-(s/def ::config-mapping
-  (s/map-of ::config-path ::config-path
+(spec/def ::config-mapping
+  (spec/map-of ::config-path ::config-path
             :count        (count config-paths)))
 
-(s/def ::stc-config
-  (s/keys :opt [::stc/instrument?
+(spec/def ::stc-config
+  (spec/keys :opt [::stc/instrument?
                 ::stc/check-asserts?
                 ::stc/opts]))
 
-(s/def ::cli ::stc-config)
-(s/def ::global ::stc-config)
+(spec/def ::cli ::stc-config)
+(spec/def ::global ::stc-config)
 
-(s/def ::stc-configs
-  (s/keys :opt [::cli ::global]))
+(spec/def ::stc-configs
+  (spec/keys :opt [::cli ::global]))
 
-(s/def ::test
-  (s/or :stc-test   :kaocha.type/spec.test.check
+(spec/def ::test
+  (spec/or :stc-test   :kaocha.type/spec.test.check
         :other-test :kaocha/testable))
 
-(s/def ::tests
-  (s/coll-of ::test))
+(spec/def ::tests
+  (spec/coll-of ::test))
 
 (defn-spec ^:private is-stc? boolean?
   [test ::test]
@@ -76,7 +76,7 @@
    ::global (apply make-config-mapping config-paths)})
 
 (defn-spec ^:private override-test-stc-config ::tests
-  [tests       (s/nilable ::tests)
+  [tests       (spec/nilable ::tests)
    stc-configs ::stc-configs]
   (map (fn [test]
          (if (is-stc? test)
@@ -109,7 +109,7 @@
         (update :kaocha/tests override-test-stc-config stc-configs))))
 
 (defn-spec ^:private ensure-stc-suite ::tests
-  [tests (s/nilable ::tests)]
+  [tests (spec/nilable ::tests)]
   (if (some is-stc? tests)
     tests
     (conj tests default-stc-suite)))
@@ -118,7 +118,7 @@
   (comp (filter is-stc?)
         (map :kaocha.testable/id)))
 
-(defn-spec ^:private stc-suite-ids (s/coll-of keyword?)
+(defn-spec ^:private stc-suite-ids (spec/coll-of keyword?)
   [config :kaocha/config]
   (into #{} extract-stc-suite-ids-xform (:kaocha/tests config)))
 
@@ -138,7 +138,7 @@
   (cli-options [opts]
     (conj opts
           [nil "--[no-]stc-instrumentation" "spec.test.check: Turn on orchestra instrumentation during fdef checks"]
-          [nil "--[no-]stc-asserts"         "spec.test.check: Run s/check-asserts during fdef checks"]
+          [nil "--[no-]stc-asserts"         "spec.test.check: Run spec/check-asserts during fdef checks"]
           [nil "--stc-num-tests NUM"        "spec.test.check: Test iterations per fdef"
            :parse-fn #(Integer/parseInt %)]
           [nil "--stc-max-size SIZE"        "spec.test.check: Maximum length of generated collections"

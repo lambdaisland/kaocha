@@ -1,5 +1,5 @@
 (ns kaocha.type.spec.test.fdef
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.spec.test.alpha :as stest]
             [clojure.string :as str]
             [clojure.test :as t]
@@ -61,7 +61,7 @@
    _test-plan]
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
-    (when check-asserts? (s/check-asserts true))
+    (when check-asserts? (spec/check-asserts true))
     (t/do-report {:type :kaocha.stc/begin-fdef, :var the-var})
     (try
       (let [location       (select-keys (meta the-var) [:file :line])
@@ -79,14 +79,14 @@
         (report/report-exception e)))
     (t/do-report {:type :kaocha.stc/end-fdef, :var the-var})
     (when instrument? (orchestra/unstrument))
-    (when check-asserts? (s/check-asserts false))
+    (when check-asserts? (spec/check-asserts false))
     (merge testable {:kaocha.result/count 1} (type/report-count))))
 
-(s/def :kaocha.spec.fdef/var var?)
-(s/def :kaocha.spec.fdef/sym qualified-symbol?)
+(spec/def :kaocha.spec.fdef/var var?)
+(spec/def :kaocha.spec.fdef/sym qualified-symbol?)
 
-(s/def :kaocha.type/spec.test.fdef
-  (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha.type/spec.test.fdef
+  (spec/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
                 :kaocha.spec.fdef/var]))
 

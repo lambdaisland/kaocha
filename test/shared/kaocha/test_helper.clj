@@ -5,7 +5,7 @@
             [matcher-combinators.result :as mc.result]
             [matcher-combinators.core :as mc.core]
             [matcher-combinators.model :as mc.model]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [expound.alpha :as expound]
             [orchestra.spec.test :as orchestra])
   (:import (clojure.lang ExceptionInfo)))
@@ -68,12 +68,12 @@
 (defn spec-valid?
   "Asserts that the value matches the spec."
   [spec value & [msg]]
-  (s/valid? spec value))
+  (spec/valid? spec value))
 
 (defmethod t/assert-expr 'spec-valid? [msg form]
   `(let [[spec# value#] (list ~@(rest form))]
      (t/do-report
-      (if (s/valid? spec# value#)
+      (if (spec/valid? spec# value#)
         {:type :pass
          :message ~msg
          :expected '~form

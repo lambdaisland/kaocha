@@ -1,6 +1,6 @@
 (ns kaocha.type.ns
   (:refer-clojure :exclude [symbol])
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.test :as t]
             [kaocha.core-ext :refer :all]
             [kaocha.hierarchy :as hierarchy]
@@ -64,7 +64,7 @@
         (do-report {:type :end-test-ns})
         result))))
 
-(s/def :kaocha.type/ns (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha.type/ns (spec/keys :req [:kaocha.testable/type
                                      :kaocha.testable/id
                                      :kaocha.ns/name]
                                :opt [:kaocha.ns/ns

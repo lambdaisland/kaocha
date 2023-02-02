@@ -23,12 +23,12 @@ Feature: Orchestra (spec instrumentation)
     """ clojure
     (ns orchestra-test
       (:require [clojure.test :refer :all]
-                [clojure.spec.alpha :as s]))
+                [clojure.spec.alpha :as spec]))
 
     (defn simple-fn []
       "x")
 
-    (s/fdef simple-fn :ret :simple/int)
+    (spec/fdef simple-fn :ret :simple/int)
 
     (deftest spec-fail-test
       (is (= "x" (simple-fn)) "Just testing simple-fn"))
@@ -36,9 +36,9 @@ Feature: Orchestra (spec instrumentation)
     And a file named "src/my/specs.clj" with:
     """ clojure
     (ns my.specs
-      (:require [clojure.spec.alpha :as s]))
+      (:require [clojure.spec.alpha :as spec]))
 
-    (s/def :simple/int int?)
+    (spec/def :simple/int int?)
     """
     When I run `bin/kaocha`
     Then the output should contain:

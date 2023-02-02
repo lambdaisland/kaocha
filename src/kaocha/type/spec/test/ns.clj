@@ -1,5 +1,5 @@
 (ns kaocha.type.spec.test.ns
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.spec.test.alpha :as stest]
             [clojure.spec.test.alpha]
             [clojure.test :as t]
@@ -51,7 +51,7 @@
         (do-report {:type :kaocha.stc/end-ns})
         result))))
 
-(s/def :kaocha.type/spec.test.ns (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha.type/spec.test.ns (spec/keys :req [:kaocha.testable/type
                                                :kaocha.testable/id
                                                :kaocha.ns/name]
                                          :opt [:kaocha.ns/ns

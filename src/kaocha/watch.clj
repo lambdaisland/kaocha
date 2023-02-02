@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [symbol])
   (:require [clojure.java.io :as io]
             [clojure.set :as set]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [clojure.stacktrace :as st]
             [clojure.string :as str]
             [clojure.test :as t]
@@ -141,7 +141,7 @@
       ;; Otherwise, it should have the same behavior
 )))
 
-(s/fdef convert :args (s/cat :pattern string?) :ret string?)
+(spec/fdef convert :args (spec/cat :pattern string?) :ret string?)
 
 (defn parse-ignore-file
   "Parses an individual ignore file."
@@ -165,9 +165,9 @@
   (let [all-files  (find-ignore-files dir)]
     (mapcat #(when (.exists (io/file %)) (parse-ignore-file %)) all-files)))
 
-(s/fdef merge-ignore-files
-  :args (s/cat :dir string?)
-  :ret (s/coll-of string?))
+(spec/fdef merge-ignore-files
+  :args (spec/cat :dir string?)
+  :ret (spec/coll-of string?))
 
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]

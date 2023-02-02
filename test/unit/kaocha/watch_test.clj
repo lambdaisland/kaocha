@@ -1,6 +1,6 @@
 (ns kaocha.watch-test
   (:require [clojure.test :refer :all]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [kaocha.watch :as w]
             [kaocha.platform :as platform]
             [kaocha.test-util :as util]
@@ -192,8 +192,8 @@
   (testing "reloading a configuration file produces valid config"
     (let [orig-config (config/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test.edn" {})
           [reloaded-config _] (w/reload-config orig-config nil)]
-      (is (s/valid? :kaocha/config reloaded-config)
-          (s/explain :kaocha/config reloaded-config))))
+      (is (spec/valid? :kaocha/config reloaded-config)
+          (spec/explain :kaocha/config reloaded-config))))
   (testing "reloading a configuration file produces the same config"
     (let [orig-config (config/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test.edn" {})
           [reloaded-config _] (w/reload-config orig-config nil)]
