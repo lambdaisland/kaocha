@@ -1,6 +1,6 @@
 (ns kaocha.test-util
   (:require [clojure.test :as t]
-            [clojure.spec.alpha :as s]
+            [clojure.spec.alpha :as spec]
             [expound.alpha :as expound]
             [kaocha.report :as report]
             [kaocha.testable :as testable]

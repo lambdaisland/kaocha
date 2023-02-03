@@ -1,6 +1,6 @@
 (ns kaocha.type.spec.test.check
   (:refer-clojure :exclude [symbol])
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.spec.test.alpha]
             [kaocha.core-ext :refer :all]
             [kaocha.hierarchy :as hierarchy]
@@ -49,23 +49,23 @@
 (defmethod testable/-run :kaocha.type/spec.test.check [testable test-plan]
   (test-suite/run testable test-plan))
 
-(s/def :kaocha.spec.test.check/syms
-  (s/or :given-symbols (s/coll-of symbol?)
+(spec/def :kaocha.spec.test.check/syms
+  (spec/or :given-symbols (spec/coll-of symbol?)
         :catch-all #{:all-fdefs :other-fdefs}))
 
-(s/def :kaocha.spec.test.check/ns-patterns :kaocha/ns-patterns)
+(spec/def :kaocha.spec.test.check/ns-patterns :kaocha/ns-patterns)
 
-(s/def :kaocha.spec.test.check/check
-  (s/keys :opt [:kaocha.spec.test.check/syms
+(spec/def :kaocha.spec.test.check/check
+  (spec/keys :opt [:kaocha.spec.test.check/syms
                 ::stc/instrument?
                 ::stc/check-asserts?
                 ::stc/opts
                 :kaocha.spec.test.check/ns-patterns]))
 
-(s/def :kaocha.spec.test.check/checks (s/coll-of :kaocha.spec.test.check/check))
+(spec/def :kaocha.spec.test.check/checks (spec/coll-of :kaocha.spec.test.check/check))
 
-(s/def :kaocha.type/spec.test.check
-  (s/merge (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha.type/spec.test.check
+  (spec/merge (spec/keys :req [:kaocha.testable/type
                          :kaocha.testable/id
                          :kaocha/source-paths]
                    :opt [:kaocha.filter/skip-meta

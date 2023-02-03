@@ -1,5 +1,5 @@
 (ns kaocha.result
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as spec]))
 
 (defn diff-test-result
   "Subtract two clojure.test style summary maps."
@@ -18,10 +18,10 @@
    ::fail    (apply + (map #(::fail % 0) rs))
    ::pending (apply + (map #(::pending % 0) rs))})
 
-(s/def ::result-map (s/keys :req [::count ::pass ::error ::fail ::pending]))
+(spec/def ::result-map (spec/keys :req [::count ::pass ::error ::fail ::pending]))
 
-(s/fdef sum
-  :args (s/cat :args (s/* ::result-map))
+(spec/fdef sum
+  :args (spec/cat :args (spec/* ::result-map))
   :ret ::result-map)
 
 (declare testable-totals)
@@ -38,9 +38,9 @@
     (merge testable (totals testables))
     (merge (sum) testable)))
 
-(s/fdef testable-totals
-  :args (s/cat :testable (s/or :group (s/keys :req [:kaocha.result/tests])
-                               :leaf (s/keys :opt [::count ::pass ::error ::fail ::pending])))
+(spec/fdef testable-totals
+  :args (spec/cat :testable (spec/or :group (spec/keys :req [:kaocha.result/tests])
+                               :leaf (spec/keys :opt [::count ::pass ::error ::fail ::pending])))
   :ret ::result-map)
 
 (defn failed?

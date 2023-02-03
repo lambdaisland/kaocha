@@ -1,12 +1,12 @@
 (ns kaocha.testable-test
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.test :as t :refer :all]
             [kaocha.report :as report]
             [kaocha.testable :as testable]
             [kaocha.test-helper]
             [kaocha.test-factories :as f]))
 
-(s/def :kaocha.type/unknown map?)
+(spec/def :kaocha.type/unknown map?)
 
 (deftest load--default
   (is (thrown-ex-data? "No implementation of kaocha.testable/load for :kaocha.type/unknown"

@@ -6,7 +6,7 @@
             [kaocha.test-helper]
             [kaocha.classpath :as classpath]
             [kaocha.test-util :as util :refer [with-test-ctx]]
-            [kaocha.output :as out]))
+            [kaocha.output :as output]))
 
 (defn var-name?
   "Predicate for the name of a var, for use in matchers."

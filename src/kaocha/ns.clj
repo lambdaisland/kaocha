@@ -1,6 +1,6 @@
 (ns kaocha.ns
   (:refer-clojure :exclude [symbol])
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.string :as str]
             [clojure.test :as t]
             [kaocha.core-ext :refer :all]
@@ -16,5 +16,5 @@
     (the-ns ns-name)
     (catch Exception _)))
 
-(s/def ::name simple-symbol?)
-(s/def ::ns   ns?)
+(spec/def ::name simple-symbol?)
+(spec/def ::ns   ns?)

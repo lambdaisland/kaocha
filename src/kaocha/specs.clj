@@ -1,5 +1,5 @@
 (ns kaocha.specs
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.test :as t]
             [expound.alpha :as expound])
   (:import (java.io FileNotFoundException)))
@@ -12,26 +12,26 @@
   (require 'clojure.test.check.generators)
   (def s-gen @(resolve 'clojure.spec.alpha/gen))
   (def s-with-gen @(resolve 'clojure.spec.alpha/with-gen))
-  (defmacro s-fspec [& args] `(s/fspec ~@args))
+  (defmacro s-fspec [& args] `(spec/fspec ~@args))
   (catch FileNotFoundException _))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; global
 
-(s/def :kaocha/color? boolean?)
+(spec/def :kaocha/color? boolean?)
 
-(s/def :kaocha/fail-fast? boolean?)
+(spec/def :kaocha/fail-fast? boolean?)
 
-(s/def :kaocha/watch? boolean?)
+(spec/def :kaocha/watch? boolean?)
 
-(s/def :kaocha/plugins (s/coll-of keyword?))
+(spec/def :kaocha/plugins (spec/coll-of keyword?))
 
-(s/def :kaocha/reporter (s/or :fn      (s-fspec :args (s/cat :m map?))
+(spec/def :kaocha/reporter (spec/or :fn      (s-fspec :args (spec/cat :m map?))
                               :symbol  symbol?
-                              :symbols (s/coll-of symbol? :kind vector?)))
+                              :symbols (spec/coll-of symbol? :kind vector?)))
 
-(s/def :kaocha/global-opts
-  (s/keys :opt [:kaocha/reporter
+(spec/def :kaocha/global-opts
+  (spec/keys :opt [:kaocha/reporter
                 :kaocha/color?
                 :kaocha/fail-fast?
                 :kaocha/watch?
@@ -40,68 +40,68 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; config
 
-(s/def :kaocha/config (s/merge :kaocha/global-opts
-                               (s/keys :opt [:kaocha/tests])))
+(spec/def :kaocha/config (spec/merge :kaocha/global-opts
+                               (spec/keys :opt [:kaocha/tests])))
 
-(s/def :kaocha/tests (s/coll-of :kaocha/testable))
+(spec/def :kaocha/tests (spec/coll-of :kaocha/testable))
 
-(s/def :kaocha/testable (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha/testable (spec/keys :req [:kaocha.testable/type
                                       :kaocha.testable/id]
                                 :opt [:kaocha.testable/meta
                                       :kaocha.testable/wrap]))
 
-(s/def :kaocha/source-paths (s/coll-of string?))
+(spec/def :kaocha/source-paths (spec/coll-of string?))
 
-(s/def :kaocha/test-paths (s/coll-of string?))
+(spec/def :kaocha/test-paths (spec/coll-of string?))
 
-(s/def :kaocha/ns-patterns (s/coll-of string?))
+(spec/def :kaocha/ns-patterns (spec/coll-of string?))
 
-(s/def :kaocha.filter/skip-meta (s/coll-of keyword?))
+(spec/def :kaocha.filter/skip-meta (spec/coll-of keyword?))
 
-(s/def :kaocha.testable/meta (s/nilable map?))
+(spec/def :kaocha.testable/meta (spec/nilable map?))
 
-(s/def :kaocha.testable/type qualified-keyword?)
+(spec/def :kaocha.testable/type qualified-keyword?)
 
-(s/def :kaocha.testable/id keyword?)
+(spec/def :kaocha.testable/id keyword?)
 
 ;; Short description as used by the documentation reporter. No newlines.
-(s/def :kaocha.testable/desc string?)
+(spec/def :kaocha.testable/desc string?)
 
-(s/def :kaocha.testable/wrap
+(spec/def :kaocha.testable/wrap
   (s-with-gen
-   (s/coll-of fn? :into [])
+   (spec/coll-of fn? :into [])
    #(s-gen #{[]})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test plan
 
-(s/def :kaocha/test-plan
-  (s/merge :kaocha/global-opts
-           (s/keys :opt [:kaocha.test-plan/tests])))
+(spec/def :kaocha/test-plan
+  (spec/merge :kaocha/global-opts
+           (spec/keys :opt [:kaocha.test-plan/tests])))
 
-(s/def :kaocha.test-plan/tests (s/coll-of :kaocha.test-plan/testable))
+(spec/def :kaocha.test-plan/tests (spec/coll-of :kaocha.test-plan/testable))
 
-(s/def :kaocha.test-plan/testable (s/merge :kaocha/testable
-                                           (s/keys :req []
+(spec/def :kaocha.test-plan/testable (spec/merge :kaocha/testable
+                                           (spec/keys :req []
                                                    :opt [:kaocha.testable/desc
                                                          :kaocha.test-plan/tests
                                                          :kaocha.testable/load-error])))
 
-(s/def :kaocha.testable/load-error (s-with-gen
+(spec/def :kaocha.testable/load-error (s-with-gen
                                     #(instance? Throwable %)
                                     #(s-gen #{(ex-info "load error" {:oops "not good"})})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; result
 
-(s/def :kaocha/result
-  (s/merge :kaocha/global-opts
-           (s/keys :opt [:kaocha.result/tests])))
+(spec/def :kaocha/result
+  (spec/merge :kaocha/global-opts
+           (spec/keys :opt [:kaocha.result/tests])))
 
-(s/def :kaocha.result/tests (s/coll-of :kaocha.result/testable))
+(spec/def :kaocha.result/tests (spec/coll-of :kaocha.result/testable))
 
-(s/def :kaocha.result/testable (s/merge :kaocha.test-plan/testable
-                                        (s/keys :opt [:kaocha.result/count
+(spec/def :kaocha.result/testable (spec/merge :kaocha.test-plan/testable
+                                        (spec/keys :opt [:kaocha.result/count
                                                       :kaocha.result/tests
                                                       :kaocha.result/pass
                                                       :kaocha.result/error
@@ -110,21 +110,21 @@
                                                       :kaocha.result/err
                                                       :kaocha.result/time])))
 
-(s/def ::small-int (s-with-gen
+(spec/def ::small-int (s-with-gen
                     nat-int?
-                    (constantly (or (some-> (resolve `clojure.test.check.generators/small-integer) deref)
+                    (constantly (or (some-> (resolve `clojure.test.check.generatorspec/small-integer) deref)
                                     (s-gen nat-int?)))))
 
-(s/def :kaocha.result/count ::small-int)
-(s/def :kaocha.result/pass ::small-int)
-(s/def :kaocha.result/fail ::small-int)
-(s/def :kaocha.result/pending ::small-int)
-(s/def :kaocha.result/error ::small-int)
+(spec/def :kaocha.result/count ::small-int)
+(spec/def :kaocha.result/pass ::small-int)
+(spec/def :kaocha.result/fail ::small-int)
+(spec/def :kaocha.result/pending ::small-int)
+(spec/def :kaocha.result/error ::small-int)
 
-(s/def :kaocha.result/out string?)
-(s/def :kaocha.result/err string?)
+(spec/def :kaocha.result/out string?)
+(spec/def :kaocha.result/err string?)
 
-(s/def :kaocha.result/time nat-int?)
+(spec/def :kaocha.result/time nat-int?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; clojure.spec.test
@@ -135,21 +135,21 @@
   (catch FileNotFoundException _))
 
 (when (find-ns 'clojure.spec.test.check)
-  (s/def ::stc/instrument? (s/nilable boolean?))
-  (s/def ::stc/check-asserts? (s/nilable boolean?))
+  (spec/def ::stc/instrument? (spec/nilable boolean?))
+  (spec/def ::stc/check-asserts? (spec/nilable boolean?))
 
   ;; TODO: Why is this not defined in core? Furthermore, I'm annoyed that the
   ;; implementation of clojure.spec.alpha.test does not follow spec's guideline of
   ;; using flat maps with namespaced keys. :clojure.spec.test.check/opts is a sub-map with
   ;; un-namespaced keys, and that's now propagating out into this library.
-  (s/def ::stc/num-tests (s/nilable nat-int?))
-  (s/def ::stc/max-size (s/nilable nat-int?))
-  (s/def ::stc/opts (s/nilable (s/keys :opt-un [::stc/num-tests
+  (spec/def ::stc/num-tests (spec/nilable nat-int?))
+  (spec/def ::stc/max-size (spec/nilable nat-int?))
+  (spec/def ::stc/opts (spec/nilable (spec/keys :opt-un [::stc/num-tests
                                                 ::stc/max-size]))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helpers
 
 (defn assert-spec [spec value]
-  (when-not (s/valid? spec value)
+  (when-not (spec/valid? spec value)
     (throw (AssertionError. (expound/expound-str spec value)))))

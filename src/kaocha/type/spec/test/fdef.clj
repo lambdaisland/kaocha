@@ -1,8 +1,8 @@
 (ns kaocha.type.spec.test.fdef
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as spec]
             [clojure.spec.test.alpha :as stest]
             [clojure.string :as str]
-            [clojure.test :as test]
+            [clojure.test :as t]
             [expound.alpha :as expound]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.report :as report]
@@ -33,7 +33,7 @@
          (map (partial load-testable stc-config)))))
 
 (defn report-success [check-results]
-  (test/do-report
+  (t/do-report
    {:type    :pass
     :message (str "Generative tests pass for "
                   (str/join ", " (map :sym check-results)))}))
@@ -42,7 +42,7 @@
   (doseq [failed-check (filter :failure check-results)]
     (let [r       (stest/abbrev-result failed-check)
           failure (:failure r)]
-      (test/do-report
+      (t/do-report
        {:type     :fail
         :message  (expound/explain-results-str check-results)
         :expected (->> r :spec rest (apply hash-map) :ret)
@@ -61,8 +61,8 @@
    _test-plan]
   (type/with-report-counters
     (when instrument? (orchestra/instrument))
-    (when check-asserts? (s/check-asserts true))
-    (test/do-report {:type :kaocha.stc/begin-fdef, :var the-var})
+    (when check-asserts? (spec/check-asserts true))
+    (t/do-report {:type :kaocha.stc/begin-fdef, :var the-var})
     (try
       (let [location       (select-keys (meta the-var) [:file :line])
             test           (reduce #(%2 %1) (partial stest/check sym {::stc/opts opts}) wrap)
@@ -77,16 +77,16 @@
           (report/report-exception e)))
       (catch Throwable e
         (report/report-exception e)))
-    (test/do-report {:type :kaocha.stc/end-fdef, :var the-var})
+    (t/do-report {:type :kaocha.stc/end-fdef, :var the-var})
     (when instrument? (orchestra/unstrument))
-    (when check-asserts? (s/check-asserts false))
+    (when check-asserts? (spec/check-asserts false))
     (merge testable {:kaocha.result/count 1} (type/report-count))))
 
-(s/def :kaocha.spec.fdef/var var?)
-(s/def :kaocha.spec.fdef/sym qualified-symbol?)
+(spec/def :kaocha.spec.fdef/var var?)
+(spec/def :kaocha.spec.fdef/sym qualified-symbol?)
 
-(s/def :kaocha.type/spec.test.fdef
-  (s/keys :req [:kaocha.testable/type
+(spec/def :kaocha.type/spec.test.fdef
+  (spec/keys :req [:kaocha.testable/type
                 :kaocha.testable/id
                 :kaocha.spec.fdef/var]))
 
