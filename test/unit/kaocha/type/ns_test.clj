@@ -4,7 +4,7 @@
             [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
             [kaocha.test-helper]
-            [kaocha.platform.classpath :as classpath]
+            [kaocha.classpath :as classpath]
             [kaocha.test-util :as util :refer [with-test-ctx]]
             [kaocha.output :as output]))
 

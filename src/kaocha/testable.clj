@@ -4,7 +4,7 @@
             [clojure.pprint :as pprint]
             [clojure.spec.alpha :as spec]
             [clojure.test :as t]
-            [kaocha.platform.classpath :as classpath]
+            [kaocha.classpath :as classpath]
             [kaocha.hierarchy :as hierarchy]
             [kaocha.history :as history]
             [kaocha.output :as output]

@@ -1,4 +1,4 @@
-(ns kaocha.platform.classpath
+(ns kaocha.classpath
   "This is the add-classpath function from Pomegranate 1.0.0, extracted so we
   don't need to pull in Aether."
   (:refer-clojure :exclude [add-classpath])

@@ -4,7 +4,7 @@
             [kaocha.test-factories :as f]
             [kaocha.testable :as testable]
             [kaocha.report :as report]
-            [kaocha.platform.classpath :as classpath]
+            [kaocha.classpath :as classpath]
             [kaocha.test-helper]
             [kaocha.core-ext :refer :all]
             [kaocha.config :as config]
