@@ -1,16 +1,16 @@
 (ns kaocha.platform.systray
   (:import (java.nio.file Files)
            (java.io IOException)
-           #_       (java.awt SystemTray
-                              TrayIcon
-                              TrayIcon$MessageType
-                              Toolkit)))
+           (java.awt SystemTray
+                     TrayIcon
+                     TrayIcon$MessageType
+                     Toolkit)))
 
 (def tray-icon
   "Creates a system tray icon."
   (memoize
    (fn [icon-path]
-     #_(let [^java.awt.Toolkit toolkit (Toolkit/getDefaultToolkit)
+     (let [^java.awt.Toolkit toolkit (Toolkit/getDefaultToolkit)
              tray-icon (-> toolkit
                            (.getImage ^String icon-path)
                            (TrayIcon. "Kaocha Notification"))]
@@ -24,7 +24,7 @@
   Not preferred over shelling out because the built-in notification sometimes
   looks out of place, and isn't consistently available on Linux."
   [title message urgency]
-  #_(try
+  (try
       (.displayMessage (tray-icon "kaocha/clojure_logo.png")
                        title
                        message

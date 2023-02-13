@@ -34,7 +34,7 @@
     (try
       (= 0 (:exit (sh cmd program)))
       (catch IOException e  ;in the unlikely event neither where.exe nor which is available
-        (output/warn (format "Unable to determine whether '%s' exists. Notifications may not work." program)) ))))
+        (output/warn (format "Unable to determine whether '%s' exists. Notifications may not work." program))))))
 
 (defn detect-command []
   (cond
@@ -87,17 +87,16 @@
   Not preferred over shelling out because the built-in notification sometimes
   looks out of place, and isn't consistently available on Linux."
   [result]
-  (try
-    (let [urgency (if (result/failed? result) :error :info) ]
-      (case (systray/display-message (title result) (message result) urgency)
-        :ok :ok
-        :headless
-        (output/warn (str "Notification not shown because system is headless."
-                          "\nConsider disabling the notifier plugin when using in this context."))
-        :unsupported
-        (output/warn (str "Notification not shown because system does not support it."
-                          "\nConsider disabling the notifier plugin when using in this context or installing"
-                          "\neither notify-send (Linux) or terminal-notifier (macOS)."))))))
+  (let [urgency (if (result/failed? result) :error :info)]
+    (case (systray/display-message (title result) (message result) urgency)
+      :ok :ok
+      :headless
+      (output/warn (str "Notification not shown because system is headless."
+                        "\nConsider disabling the notifier plugin when using in this context."))
+      :unsupported
+      (output/warn (str "Notification not shown because system does not support it."
+                        "\nConsider disabling the notifier plugin when using in this context or installing"
+                        "\neither notify-send (Linux) or terminal-notifier (macOS).")))))
 
 (defn expand-command
   "Takes a command string including replacement patterns, and a map of
