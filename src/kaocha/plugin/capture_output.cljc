@@ -1,5 +1,6 @@
 (ns kaocha.plugin.capture-output
-  (:require [clojure.java.io :as io]
+  (:require 
+    #?(:clj [clojure.java.io :as io])
             [kaocha.hierarchy :as hierarchy]
             [kaocha.plugin :as plugin :refer [defplugin]]
             [kaocha.testable :as testable])
