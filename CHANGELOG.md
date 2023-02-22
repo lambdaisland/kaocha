@@ -3,6 +3,7 @@
 ## Added
 
 ## Fixed
+* Fix issue with `--watch` and Neovim by bumping Beholder to `1.0.2`
 
 ## Changed
 
