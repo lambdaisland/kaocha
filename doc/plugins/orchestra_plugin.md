@@ -30,12 +30,12 @@ You can enable spec instrumentation of your functions before running
 ``` clojure
 (ns orchestra-test
   (:require [clojure.test :refer :all]
-            [clojure.spec.alpha :as s]))
+            [clojure.spec.alpha :as spec]))
 
 (defn simple-fn []
   "x")
 
-(s/fdef simple-fn :ret :simple/int)
+(spec/fdef simple-fn :ret :simple/int)
 
 (deftest spec-fail-test
   (is (= "x" (simple-fn)) "Just testing simple-fn"))
@@ -46,9 +46,9 @@ You can enable spec instrumentation of your functions before running
 
 ``` clojure
 (ns my.specs
-  (:require [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as spec]))
 
-(s/def :simple/int int?)
+(spec/def :simple/int int?)
 ```
 
 
