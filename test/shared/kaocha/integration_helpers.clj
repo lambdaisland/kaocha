@@ -217,8 +217,10 @@
   (mapv (fn [l]
           (let [s (read-line-or-throw)]
             (or (is (match? l s))
-                (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nRest of stream:\n%s"
-                                        (pr-str l) lines (str/split-lines (slurp *in*)))
+                (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nActual: %s\nRest of stream:\n%s"
+                                        (pr-str l) lines (str/split-lines s)  (if (.ready *in*) 
+                                                                                (str/split-lines (slurp *in*))
+                                                                                "<EOF>"))
                                 {})))))
         lines))
 
@@ -233,7 +235,7 @@
                  (throw e)))]
     (or (f s)
         (throw (ex-info (format "Failed next-line-matches call\nFound: %s\nRest of stream:\n%s"
-                                (pr-str s) (str/split-lines (slurp *in*)))
+                                (pr-str s) (if (.ready *in*) (str/split-lines (slurp *in*)) "<EOF>"))
                         {})))))
 
 (defn read-until
