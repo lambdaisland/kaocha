@@ -1,11 +1,7 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 * Fix issue with `--watch` and Neovim by bumping Beholder to `1.0.2`
-
-## Changed
 
 # 1.77.1236 (2023-02-01 / 510f450)
 
