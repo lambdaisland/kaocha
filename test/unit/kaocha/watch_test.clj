@@ -242,7 +242,7 @@
                    ;; {"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (test/bar_test.clj:1:15)."
                    ;;   "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (test/bar_test.clj:1:15)."
                    ;;   "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(test/bar_test.clj:1:15)"}
-                   #(re-matches #"Exception: clojure\.lang\.Compiler\$CompilerException: (Syntax error macroexpanding at|Syntax error compiling at |java.lang.Exception: Intentional compilation error, compiling:) \(.*bar_test.clj:1:15\)\." %)
+                   #(re-matches #"Exception: clojure\.lang\.Compiler\$CompilerException: (Syntax error macroexpanding at |Syntax error compiling at |java.lang.Exception: Intentional compilation error, compiling:)\(.*bar_test.clj:1:15\)\." %)
                    )
                  (dbg "big trace")
                  (integration/read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."})
