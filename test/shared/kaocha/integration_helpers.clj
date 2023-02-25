@@ -224,6 +224,30 @@
                                 {})))))
         lines))
 
+(defn expect-regexes
+  "Assert that lines, a vector of strings, matches the next lines from the integration process.
+
+  If not, slurps the rest of the output for debugging purposes and throws an exception."
+  [lines]
+  (mapv (fn [l]
+          (let [s (read-line-or-throw)]
+            (println l s)
+            (or (is (re-matches l s))
+                (throw (ex-info (format "Failed to match %s\nEntire expected: %s\nActual: %s\nRest of stream:\n%s"
+                                        (pr-str l) lines (str/split-lines s)  (if (.ready *in*) 
+                                                                                (str/split-lines (slurp *in*))
+                                                                                "<EOF>"))
+                                {})))))
+        lines))
+
+(defn- slurp-safely [s]
+  (if (.ready *in*) 
+    (try 
+      (slurp *in*)
+      (catch java.io.IOException _e  ;;If the stream is closed somehow?
+        "<EOF>")) 
+    "<EOF>"))
+
 (defn next-line-matches
   "Checks that the next line from the integration process matches function f.
 
@@ -235,7 +259,7 @@
                  (throw e)))]
     (or (f s)
         (throw (ex-info (format "Failed next-line-matches call\nFound: %s\nRest of stream:\n%s"
-                                (pr-str s) (if (.ready *in*) (str/split-lines (slurp *in*)) "<EOF>"))
+                                (pr-str s) (str/split-lines (slurp-safely *in*)))
                         {})))))
 
 (defn read-until
