@@ -19,8 +19,7 @@
    [kaocha.platform.systray :as systray] 
    [kaocha.plugin :refer [defplugin]]
    [kaocha.result :as result]
-   [kaocha.shellwords :refer [shellwords]]
-   )
+   [kaocha.shellwords :refer [shellwords]])
   (:import
    (java.io FileInputStream IOException)
    (java.net URL)))
