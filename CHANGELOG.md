@@ -10,22 +10,20 @@
 
 ## Added
 
-* Kaocha is now compatible with Babashka. Running under Babashka is most useful
-    for validating your Clojure code runs correctly on Babashka, but it may also
-    be faster for some test suites because of reduced start up time.
-
-## Fixed
-
-## Changed
+- Kaocha is now compatible with Babashka. Running under Babashka is most useful
+  for validating your Clojure code runs correctly on Babashka, but it may also
+  be faster for some test suites because of reduced start up time.
 
 # 1.78.1249 (2023-02-22 / 85de28d)
 
 ## Fixed
-* Fix issue with `--watch` and Neovim by bumping Beholder to `1.0.2`
+
+- Fix issue with `--watch` and Neovim by bumping Beholder to `1.0.2`
 
 # 1.77.1236 (2023-02-01 / 510f450)
 
 ## Fixed
+
 - Fix bug causing namepaces to not be loaded if an alias was already created for them using `:as-alias`
 
 # 1.76.1230 (2023-01-25 / 2b9d9df)
@@ -37,12 +35,12 @@
 ## Fixed
 
 - Configuration errors and circular dependencies are reported as warnings, 
-    rather than causing the entire watcher to crash. (thanks
-    [@frenchy64](https://github.com/frenchy64))
+  rather than causing the entire watcher to crash. (thanks
+  [@frenchy64](https://github.com/frenchy64))
 - Fix bug added in [#384](https://github.com/lambdaisland/kaocha/issues/384):
-    assertions in the tail position of an each fixture would return the result
-    of the assertion instead of the testable object with the merged report data.
-    (thanks [@NoahTheDuke](https://github.com/NoahTheDuke))
+  assertions in the tail position of an each fixture would return the result
+  of the assertion instead of the testable object with the merged report data.
+  (thanks [@NoahTheDuke](https://github.com/NoahTheDuke))
 
 ## Changed
 
@@ -56,7 +54,7 @@
 ## Fixed
 
 - Circular dependencies in watch mode no longer kills the process. (thanks
-    [@frenchy64](https://github.com/frenchy64))
+  [@frenchy64](https://github.com/frenchy64))
 
 ## Changed
 
