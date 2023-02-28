@@ -166,3 +166,30 @@ Kaocha will not be available in your REPL by default.
 ### Boot
 
 See [kaocha-boot](https://github.com/lambdaisland/kaocha-boot) for instructions.
+
+### Babashka
+
+Kaocha is compatible with [Babashka](https://github.com/babashka/babashka). The
+main reason to run tests under Babashka is to validate your library or
+application is compatible with Babashka. It may also be faster for some test
+suites because of a reduced start-up time. (If you don't care about Babashka
+compatibility and just want to improve the start-up time, consider using the
+`--watch` feature or running tests from a REPL instead.)
+
+You can create a `bb.edn` file:
+
+```clojure
+{:paths ["src" "test"]
+ :deps {lambdaisland/kaocha {:mvn/version "1.77.1236"}}}
+
+```
+
+Then you can create a bin stub:
+
+```shell
+
+#!/usr/bin/env bash
+bb -m kaocha.runner/-main  $@
+
+```
+

@@ -34,4 +34,7 @@
 
   :dev
   {:extra-paths ["dev"]
-   :extra-deps  {djblue/portal {:mvn/version "RELEASE"}}}}}
+   :extra-deps  {djblue/portal {:mvn/version "RELEASE"}}}
+
+  :bb
+  {:extra-deps {nubank/matcher-combinators {:mvn/version "3.5.1"}}}}}

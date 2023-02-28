@@ -2,6 +2,10 @@
 
 ## Added
 
+* Kaocha is now compatible with Babashka. Running under Babashka is most useful
+    for validating your Clojure code runs correctly on Babashka, but it may also
+    be faster for some test suites because of reduced start up time.
+
 ## Fixed
 
 ## Changed

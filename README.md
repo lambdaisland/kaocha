@@ -204,6 +204,30 @@ If you wanted to turn off `fail-fast` temporarily, you could run `clojure
 -X:watch-test :fail-fast? false`
 
 
+### Babashka
+
+Kaocha is compatible with [Babashka](https://github.com/babashka/babashka). 
+
+You can create a `bb.edn` file:
+
+```clojure
+{:paths ["src" "test"]
+ :deps {lambdaisland/kaocha {:mvn/version "1.77.1236"}}}
+
+```
+
+Then you can create a binstub named `bin/kaocha-bb`:
+
+```shell
+
+#!/usr/bin/env bash
+bb -m kaocha.runner/-main  $@
+
+```
+
+If you exclusively want to run tests using Babashka, you can of course call it
+`bin/kaocha`.
+
 ### All tools
 
 By default, Kaocha assumes that:

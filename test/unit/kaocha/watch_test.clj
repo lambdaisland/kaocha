@@ -230,17 +230,19 @@
                     ""])
                  (spit-bad-test)
                  (dbg "after bad test")
-                 (integration/expect-lines
-                   ["[watch] Reloading #{bar-test}"
-                    "[E]"
-                    ""
-                    "ERROR in second-suite (bar_test.clj:1)"
-                    "Failed reloading bar-test:"])
+                 (integration/expect-regexes
+                   [#"\[watch\] Reloading #\{bar-test\}"
+                    #"\[E\]"
+                    #""
+                    #"ERROR in second-suite \(.*?/bar_test.clj:35\)"
+                    #"Failed reloading bar-test:"])
                  (dbg "compiler exception")
                  (integration/next-line-matches
-                   #{"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (bar_test.clj:1:15)."
-                     "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (bar_test.clj:1:15)."
-                     "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(bar_test.clj:1:15)"})
+                   ;; Errors usually look something along the lines of:
+                   ;; {"Exception: clojure.lang.Compiler$CompilerException: Syntax error macroexpanding at (test/bar_test.clj:1:15)."
+                   ;;   "Exception: clojure.lang.Compiler$CompilerException: Syntax error compiling at (test/bar_test.clj:1:15)."
+                   ;;   "Exception: clojure.lang.Compiler$CompilerException: java.lang.Exception: Intentional compilation error, compiling:(test/bar_test.clj:1:15)"}
+                   #(re-matches #"Exception: clojure\.lang\.Compiler\$CompilerException: (Syntax error macroexpanding at |Syntax error compiling at |java.lang.Exception: Intentional compilation error, compiling:)\(.*bar_test.clj:1:15\)\.?" %))
                  (dbg "big trace")
                  (integration/read-until #{"1 tests, 1 assertions, 1 errors, 0 failures."})
                  (integration/expect-lines

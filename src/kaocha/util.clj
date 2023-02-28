@@ -1,4 +1,5 @@
-(ns kaocha.util)
+(ns kaocha.util
+  (:require [kaocha.platform :as platform]))
 
 (defn lib-path
   "Returns the path for a lib"
@@ -20,11 +21,20 @@
 (defn compiler-exception-file-and-line
   "Try to get the file and line number from a CompilerException"
   [^Throwable error]
-  (if (instance? clojure.lang.Compiler$CompilerException error)
-    [(.-source ^clojure.lang.Compiler$CompilerException error)
-     (.-line ^clojure.lang.Compiler$CompilerException error)]
-    (when-let [error (.getCause error)]
-      (recur error))))
+  ;; On Clojure we get a clojure.lang.Compiler$CompilerException, on babashka we
+  ;; get a clojure.lang.ExceptionInfo. Both implement the IExceptioninfo
+  ;; interface, so we have a uniform way of getting the location info, although
+  ;; what Clojure calls `:source` babashka calls `:file`. Calling `ex-data` on
+  ;; other exceptions will return `nil`. Note that we can't actually test
+  ;; for `(instance? IExceptioninfo)`, since babashka includes the ExceptionInfo
+  ;; class, but not the IExceptionInfo interface. Instead we assume that if we
+  ;; get the right `ex-data` that this is the exception we're looking for.
+  (let [{:keys [type line file source]} (ex-data error)
+        file (or source file)]
+    (if (and type file line)
+      [file line]
+      (when-let [error (.getCause error)]
+        (recur error)))))
 
 (defn minimal-test-event
   "Return a reduced version of a test event map, so debug output doesn't blow up

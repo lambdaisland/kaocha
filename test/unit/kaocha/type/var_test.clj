@@ -4,7 +4,7 @@
             [kaocha.test-factories :as f]
             [kaocha.testable :as testable]
             [kaocha.report :as report]
-            [kaocha.classpath]
+            [kaocha.classpath :as classpath]
             [kaocha.test-helper]
             [kaocha.core-ext :refer :all]
             [kaocha.config :as config]
@@ -13,7 +13,7 @@
 
 (deftest run-test
   (testing "a passing test var"
-    (kaocha.classpath/add-classpath "fixtures/a-tests")
+    (classpath/add-classpath "fixtures/a-tests")
     (require 'foo.bar-test)
     (let [{:keys [result report]}
           (with-test-ctx {:fail-fast? true}
