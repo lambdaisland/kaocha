@@ -16,7 +16,7 @@
    [clojure.string :as str]
    [kaocha.output :as output]
    [kaocha.platform :as platform]
-   [kaocha.platform.systray :as systray] 
+   [kaocha.platform.systray :as systray]
    [kaocha.plugin :refer [defplugin]]
    [kaocha.result :as result]
    [kaocha.shellwords :refer [shellwords]])
@@ -64,7 +64,7 @@
   [^URL x opts]
   (if (= "file" (.getProtocol x))
     (FileInputStream. (io/as-file x))
-    (.openStream x)) opts)
+    (.openStream x)))
 
 (def icon-path
   "Return a local path to the Clojure icon.

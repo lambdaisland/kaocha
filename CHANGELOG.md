@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
 ## Fixed
 
-## Changed
+- Fix regression in the notifier plugin
 
 # 1.79.1270 (2023-02-28 / 47a7b61)
 
