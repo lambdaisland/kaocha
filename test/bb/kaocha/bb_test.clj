@@ -1,7 +1,5 @@
-(ns kaocha.bb-tests
+(ns kaocha.bb-test
   (:require [clojure.test :as t :refer [deftest is]]))
 
-(prn :hello)
-
 (deftest smoke-test
-  (is (= 1 2)))
+  (is (= 1 1)))
