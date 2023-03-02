@@ -3,4 +3,5 @@
 
 
 (defn display-message
-  [title message urgency])
+  [title message urgency]
+  :unsupported)
