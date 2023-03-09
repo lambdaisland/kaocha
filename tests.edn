@@ -13,9 +13,7 @@
           :type                :kaocha.type/cucumber
           :test-paths          ["test/shared"
                                 "test/features"]
-          :cucumber/glue-paths ["test/step_definitions"]}
-         {:id         :bb
-          :test-paths ["test/bb"]}]
+          :cucumber/glue-paths ["test/step_definitions"]}]
 
  :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
 

@@ -1,0 +1,16 @@
+#kaocha/v1
+{:plugins [:kaocha.plugin.alpha/info
+           :profiling
+           :print-invocations
+           :hooks
+           :notifier
+           :kaocha.plugin/version-filter]
+
+ :tests [{:id         :bb
+          :test-paths ["test/bb"]}]
+
+ :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
+
+ :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []}
+
+ :reporter kaocha.report/documentation}
