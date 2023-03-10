@@ -2,6 +2,8 @@
 
 ## Added
 
+- Smoke tests for babashka on CI
+
 ## Fixed
 
 ## Changed
