@@ -29,7 +29,7 @@
   {:extra-deps
    {lambdaisland/kaocha-cucumber  {:mvn/version "0.0-53" :exclusions [lambdaisland/kaocha]}
     lambdaisland/open-source {:git/url "https://github.com/lambdaisland/open-source"
-                              :git/sha "8c35f8f791678492323c4b170188f6ed41593185"
+                              :git/sha "5ae5327ff37b45228a40a3981fa83ad151bedf3c"
                               #_#_:local/root "../open-source"}}}
 
   :dev
