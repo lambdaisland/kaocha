@@ -65,7 +65,7 @@
         result))))
 
 (spec/def :kaocha.type/ns (spec/keys :req [:kaocha.testable/type
-                                     :kaocha.testable/id
-                                     :kaocha.ns/name]
-                               :opt [:kaocha.ns/ns
-                                     :kaocha.test-plan/tests]))
+                                           :kaocha.testable/id
+                                           :kaocha.ns/name]
+                                     :opt [:kaocha.ns/ns
+                                           :kaocha.test-plan/tests]))

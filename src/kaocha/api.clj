@@ -129,7 +129,7 @@
                                       ;; been interrupted, output capturing may
                                       ;; still be in effect.
                                       (System/setOut
-                                        orig-out)
+                                       orig-out)
                                       (binding [history/*history* history]
                                         (t/do-report (history/clojure-test-summary)))
                                       (catch Throwable t
