@@ -6,6 +6,9 @@
 
 ## Changed
 
+- The `-load` and `-run` multimethods now use Kaocha's own hierarchy, rather
+  than the global one. (Needed to support the new doctests type)
+
 # 1.80.1274 (2023-03-01 / df82a2f)
 
 ## Fixed
