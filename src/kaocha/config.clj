@@ -195,7 +195,6 @@
      config
      (read-config nil opts))))
 
-
 (defn apply-cli-opts [config options]
   (cond-> config
     (some? (:fail-fast options))  (assoc :kaocha/fail-fast? (:fail-fast options))
@@ -224,10 +223,10 @@
   "Applies command-line options and arguments to the configuration."
   [config cli-opts cli-args]
   (cond-> config
-      cli-opts (apply-cli-opts cli-opts)
-      cli-args (apply-cli-args cli-args)))
+    cli-opts (apply-cli-opts cli-opts)
+    cli-args (apply-cli-args cli-args)))
 
-(defn find-config-and-warn 
+(defn find-config-and-warn
   [config-file]
   (let [final-config-file (or config-file "tests.edn")]
     (when (not (.exists (io/file (or config-file "tests.edn"))))
@@ -241,13 +240,13 @@
 (defn validate!
   "Validates the configuration, printing any warnings and errors and possibly throwing."
   [config]
-    (try
-      (specs/assert-spec :kaocha/config config)
-      config
-      (catch AssertionError e
-        (output/error "Invalid configuration file:\n"
-                      (.getMessage e))
-        (throw+ {:kaocha/early-exit 252}))))
+  (try
+    (specs/assert-spec :kaocha/config config)
+    config
+    (catch AssertionError e
+      (output/error "Invalid configuration file:\n"
+                    (.getMessage e))
+      (throw+ {:kaocha/early-exit 252}))))
 
 (defn load-config-for-cli-and-validate
   "Loads config from config-file, factoring in profile specified using profile,
