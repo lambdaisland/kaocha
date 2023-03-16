@@ -22,6 +22,8 @@
 
 (spec/def :kaocha/fail-fast? boolean?)
 
+(spec/def :kaocha/mute-zero-assertion? boolean?)
+
 (spec/def :kaocha/watch? boolean?)
 
 (spec/def :kaocha/plugins (spec/coll-of keyword?))
@@ -34,7 +36,7 @@
   (spec/keys :opt [:kaocha/reporter
                    :kaocha/color?
                    :kaocha/fail-fast?
-                   :kaocha/zero-assertion?
+                   :kaocha/mute-zero-assertion?
                    :kaocha/watch?
                    :kaocha/plugins]))
 
