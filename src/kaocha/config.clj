@@ -78,6 +78,7 @@
                 reporter
                 color?
                 fail-fast?
+                mute-zero-assertion?
                 diff-style
                 randomize?
                 capture-output?
@@ -91,11 +92,12 @@
       bindings                (assoc :kaocha/bindings bindings)
       (some? color?)          (assoc :kaocha/color? color?)
       (some? fail-fast?)      (assoc :kaocha/fail-fast? fail-fast?)
+      (some? mute-zero-assertion?)      (assoc :kaocha/mute-zero-assertion? mute-zero-assertion?)
       (some? diff-style)      (assoc :kaocha/diff-style diff-style)
       (some? watch?)          (assoc :kaocha/watch? watch?)
       (some? randomize?)      (assoc :kaocha.plugin.randomize/randomize? randomize?)
       (some? capture-output?) (assoc :kaocha.plugin.capture-output/capture-output? capture-output?)
-      :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
+      :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :mute-zero-assertion? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [_opts _tag value]
   (output/warn (format "The #kaocha reader literal is deprecated, please change it to %s." current-reader))
@@ -198,6 +200,7 @@
 (defn apply-cli-opts [config options]
   (cond-> config
     (some? (:fail-fast options))  (assoc :kaocha/fail-fast? (:fail-fast options))
+    (some? (:mute-zero-assertion options))  (assoc :kaocha/mute-zero-assertion? (:mute-zero-assertion options))
     (:reporter options)           (assoc :kaocha/reporter (:reporter options))
     (:watch options)              (assoc :kaocha/watch? (:watch options))
     (some? (:color options))      (assoc :kaocha/color? (:color options))

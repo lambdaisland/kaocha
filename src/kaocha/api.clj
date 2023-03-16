@@ -92,6 +92,7 @@
       (let [config     (plugin/run-hook :kaocha.hooks/config config)
             color?     (:kaocha/color? config)
             fail-fast? (:kaocha/fail-fast? config)
+            mute-zero-assertion? (:kaocha/mute-zero-assertion? config)
             history    (atom [])]
         (binding [*active?*               true
                   testable/*fail-fast?*   fail-fast?
@@ -101,6 +102,10 @@
           (with-bindings (config/binding-map config)
             (let [config (resolve-reporter config)]
               (let [test-plan (test-plan config)]
+
+                (when mute-zero-assertion?
+                  (hierarchy/underive! :kaocha.type.var/zero-assertions :kaocha/known-key)
+                  (hierarchy/underive! :kaocha.type.var/zero-assertions :kaocha/fail-type))
 
                 (when-not (some #(or (hierarchy/leaf? %)
                                      (::testable/load-error %))
@@ -112,7 +117,7 @@
                                          (count (testable/test-seq-with-skipped test-plan))))
                     (output/warn (str "No tests were found. This may be an issue in your Kaocha test configuration."
                                       " To investigate, check the :test-paths and :ns-patterns keys in tests.edn.")))
-                  (throw+ {:kaocha/early-exit 0 }))
+                  (throw+ {:kaocha/early-exit 0}))
 
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
