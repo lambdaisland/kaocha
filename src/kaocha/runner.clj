@@ -42,8 +42,7 @@
                     (symbol "kaocha.report" s))))
     :assoc-fn accumulate]
    [nil "--diff-style STYLE"    "The style of diff to print on failing tests, either :none or :deep"
-    :parse-fn parse-kw
-    ]
+    :parse-fn parse-kw]
    [nil "--plugin KEYWORD"      "Load the given plugin."
     :parse-fn (fn [s]
                 (let [kw (parse-kw s)]
@@ -151,8 +150,8 @@
           config-file                                               (config/find-config-and-warn config-file)
           ;; Initial configuration load to determine plugins.
           config                                                    (->  (config/load-config config-file (if profile {:profile profile} {}))
-                                                                        (config/apply-cli {} (map parse-kw arguments))
-                                                                        (config/validate!))
+                                                                         (config/apply-cli {} (map parse-kw arguments))
+                                                                         (config/validate!))
           plugin-chain                                              (plugin/load-all (concat (:kaocha/plugins config) plugin))
           cli-options                                               (plugin/run-hook* plugin-chain :kaocha.hooks/cli-options cli-options)
 
