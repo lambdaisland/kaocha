@@ -32,6 +32,12 @@ FAIL in sample-test/my-test (sample_test.clj:4)
 Test ran without assertions. Did you forget an (is ...)?
 ```
 
+### Missing assertions are configurable
+
+There are two ways to disable this detection:
+
+* Enable `:mute-zero-assertion?` at `tests.edn`.
+* Use `--mute-zero-assertion` in command line argument.
 
 
 ## Detecting single argument `=`
