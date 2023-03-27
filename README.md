@@ -117,6 +117,15 @@ echo 'clojure -M:test "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
 
+On Windows it might look like this instead
+
+```
+mkdir -p bin
+echo '#!/usr/bin/env sh' > bin/kaocha
+echo 'powershell -command clojure -M:test "$@"' >> bin/kaocha
+chmod +x bin/kaocha
+```
+
 ### Leiningen
 
 Add a profile and alias
