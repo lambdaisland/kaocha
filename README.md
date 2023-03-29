@@ -117,14 +117,17 @@ echo 'clojure -M:test "$@"' >> bin/kaocha
 chmod +x bin/kaocha
 ```
 
-On Windows it might look like this instead
+If you're on windows and installed clojure into powershell then you can put this into kaocha.ps1 for use with powershell.exe
 
-```
-mkdir -p bin
-echo '#!/usr/bin/env sh' > bin/kaocha
-echo 'powershell -command clojure -M:test "$@"' >> bin/kaocha
-chmod +x bin/kaocha
-```
+`clojure -M:test "$args"`
+
+Or put this in kaocha.bat for use with cmd.exe
+
+`powershell -command clojure -M:test "%*"`
+
+Or put this in kaocha for use with msys2
+
+`powershell -command clojure -M:test "$@"`
 
 ### Leiningen
 
