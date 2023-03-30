@@ -2,6 +2,9 @@
 
 ## Added
 
+- Expose `:print-config true` and `:print-test-plan true` to Clojure CLI -X
+  invocations.
+
 ## Fixed
 
 ## Changed
