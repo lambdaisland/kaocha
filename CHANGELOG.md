@@ -4,8 +4,6 @@
 
 - Smoke tests for babashka on CI
 
-## Fixed
-
 ## Changed
 
 - The `-load` and `-run` multimethods now use Kaocha's own hierarchy, rather
