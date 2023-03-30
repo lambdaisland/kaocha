@@ -306,13 +306,13 @@ Kaocha requires Clojure 1.9 or later.
 <!-- opencollective -->
 ## Lambda Island Open Source
 
-Thank you! Kaocha is made possible thanks to our generous backers. [Become a
+Thank you! kaocha is made possible thanks to our generous backers. [Become a
 backer on OpenCollective](https://opencollective.com/lambda-island) so that we
-can continue to make Kaocha better.
+can continue to make kaocha better.
 
 <a href="https://opencollective.com/lambda-island">
-<img src="https://opencollective.com/lambda-island/organizations.svg?avatarHeight=46&width=750&button=false">
-<img src="https://opencollective.com/lambda-island/individuals.svg?avatarHeight=46&width=750&button=false">
+<img src="https://opencollective.com/lambda-island/organizations.svg?avatarHeight=46&width=800&button=false">
+<img src="https://opencollective.com/lambda-island/individuals.svg?avatarHeight=46&width=800&button=false">
 </a>
 <img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
 
