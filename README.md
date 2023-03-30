@@ -306,11 +306,13 @@ Kaocha requires Clojure 1.9 or later.
 <!-- opencollective -->
 ## Lambda Island Open Source
 
-[Become a backer](https://opencollective.com/lambda-island) and show your support to our open source projects.
+Thank you! Kaocha is made possible thanks to our generous backers. [Become a
+backer on OpenCollective](https://opencollective.com/lambda-island) so that we
+can continue to make Kaocha better.
 
 <a href="https://opencollective.com/lambda-island">
-<img src="https://opencollective.com/lambda-island/organizations.svg?avatarHeight=46&width=750">
-<img src="https://opencollective.com/lambda-island/individuals.svg?avatarHeight=46&width=750">
+<img src="https://opencollective.com/lambda-island/organizations.svg?avatarHeight=46&width=750&button=false">
+<img src="https://opencollective.com/lambda-island/individuals.svg?avatarHeight=46&width=750&button=false">
 </a>
 <img align="left" src="https://github.com/lambdaisland/open-source/raw/master/artwork/lighthouse_readme.png">
 
@@ -319,10 +321,10 @@ Kaocha requires Clojure 1.9 or later.
 kaocha is part of a growing collection of quality Clojure libraries created and maintained
 by the fine folks at [Gaiwan](https://gaiwan.co).
 
-Pay it forward by [becoming a backer on our Open Collective](http://opencollective.com/lambda-island),
-so that we may continue to enjoy a thriving Clojure ecosystem.
+Pay it forward by [becoming a backer on our OpenCollective](http://opencollective.com/lambda-island),
+so that we continue to enjoy a thriving Clojure ecosystem.
 
-You can find an overview of our projects at [lambdaisland/open-source](https://github.com/lambdaisland/open-source).
+You can find an overview of all our different projects at [lambdaisland/open-source](https://github.com/lambdaisland/open-source).
 
 &nbsp;
 
