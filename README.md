@@ -215,6 +215,9 @@ of tests skipped. You could save that configuration with an additional alias:
 If you wanted to turn off `fail-fast` temporarily, you could run `clojure
 -X:watch-test :fail-fast? false`
 
+You can also pass exec-args on the command line like so:
+
+`clojure -X:test :print-config true :kaocha.plugin.randomize/seed 603964682`
 
 ### Babashka
 
