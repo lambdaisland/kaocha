@@ -29,27 +29,27 @@
         ns-obj          (ns/required-ns ns-name)
         ns-meta         (meta ns-obj)
         each-fixture-fn (t/join-fixtures (::t/each-fixtures ns-meta))]
-    (->> ns-obj
-         ns-interns
-         (filter (comp :test meta val))
-         (sort-by key)
-         (map (fn [[sym var]]
-                (let [nsname    (:kaocha.ns/name testable)
-                      test-name (symbol (str nsname) (str sym))]
-                  {:kaocha.testable/type :kaocha.type/var
-                   :kaocha.testable/id   (keyword test-name)
-                   :kaocha.testable/meta (meta var)
-                   :kaocha.testable/desc (str sym)
-                   :kaocha.var/name      test-name
-                   :kaocha.var/var       var
-                   :kaocha.var/test      (:test (meta var))
-                   :kaocha.testable/wrap (if (::t/each-fixtures ns-meta)
-                                           [(fn [t] #(each-fixture-fn t))]
-                                           [])})))
-         (assoc testable
-                :kaocha.testable/meta (meta ns-obj)
-                :kaocha.ns/ns ns-obj
-                :kaocha.test-plan/tests))))
+    (assoc testable
+           :kaocha.testable/meta (meta ns-obj)
+           :kaocha.ns/ns ns-obj
+           :kaocha.test-plan/tests
+           (->> ns-obj
+                ns-interns
+                (filter (comp :test meta val))
+                (sort-by key)
+                (map (fn [[sym var]]
+                       (let [nsname    (:kaocha.ns/name testable)
+                             test-name (symbol (str nsname) (str sym))]
+                         {:kaocha.testable/type :kaocha.type/var
+                          :kaocha.testable/id   (keyword test-name)
+                          :kaocha.testable/meta (meta var)
+                          :kaocha.testable/desc (str sym)
+                          :kaocha.var/name      test-name
+                          :kaocha.var/var       var
+                          :kaocha.var/test      (:test (meta var))
+                          :kaocha.testable/wrap (if (::t/each-fixtures ns-meta)
+                                                  [(fn [t] #(each-fixture-fn t))]
+                                                  [])})))))))
 
 (defmethod testable/-run :kaocha.type/ns [testable test-plan]
   (let [do-report #(t/do-report (merge {:ns (:kaocha.ns/ns testable)} %))]
@@ -65,7 +65,7 @@
         result))))
 
 (spec/def :kaocha.type/ns (spec/keys :req [:kaocha.testable/type
-                                     :kaocha.testable/id
-                                     :kaocha.ns/name]
-                               :opt [:kaocha.ns/ns
-                                     :kaocha.test-plan/tests]))
+                                           :kaocha.testable/id
+                                           :kaocha.ns/name]
+                                     :opt [:kaocha.ns/ns
+                                           :kaocha.test-plan/tests]))

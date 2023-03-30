@@ -60,7 +60,8 @@
 
 (defmulti -load
   "Given a testable, load the specified tests, producing a test-plan."
-  ::type)
+  ::type
+  :hierarchy #'hierarchy/hierarchy)
 
 (defmethod -load :default [testable]
   (throw (ex-info (str "No implementation of "
@@ -105,7 +106,8 @@
 (defmulti -run
   "Given a test-plan, perform the tests, returning the test results."
   (fn [testable test-plan]
-    (::type testable)))
+    (::type testable))
+  :hierarchy #'hierarchy/hierarchy)
 
 (defmethod -run :default [testable test-plan]
   (throw (ex-info (str "No implementation of "
