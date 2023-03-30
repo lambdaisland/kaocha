@@ -191,11 +191,21 @@
 
        (plugin/with-plugins (plugin/load-all (:kaocha/plugins config))
          (let [config (plugin/run-hook :kaocha.hooks/config config)]
-           (with-bindings (config/binding-map config)
-             (plugin/run-hook :kaocha.hooks/main config)
-             (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
-                   totals (result/totals (:kaocha.result/tests result))
-                   exit-code (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)]
-               (System/exit exit-code)))))))
+           (cond
+             (:print-config config)
+             (binding [clojure.core/*print-namespace-maps* false]
+               (pprint/pprint config))
+
+             (:print-test-plan config)
+             (binding [clojure.core/*print-namespace-maps* false]
+               (pprint/pprint (api/test-plan config)))
+
+             :else
+             (with-bindings (config/binding-map config)
+               (plugin/run-hook :kaocha.hooks/main config)
+               (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
+                     totals (result/totals (:kaocha.result/tests result))
+                     exit-code (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)]
+                 (System/exit exit-code))))))))
    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
      (System/exit exit-code))))
