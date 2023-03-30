@@ -45,19 +45,19 @@
       (merge testable {:kaocha.result/count 1} (type/report-count)))))
 
 (spec/def :kaocha.type/var (spec/keys :req [:kaocha.testable/type
-                                      :kaocha.testable/id
-                                      :kaocha.var/name
-                                      :kaocha.var/var
-                                      :kaocha.var/test]))
+                                            :kaocha.testable/id
+                                            :kaocha.var/name
+                                            :kaocha.var/var
+                                            :kaocha.var/test]))
 
 (spec/def :kaocha.var/name qualified-symbol?)
 (spec/def :kaocha.var/test (spec/spec ifn?
-                                :gen (fn []
-                                       (gen/one-of [(gen/return (fn [] (t/is true)))
-                                                    (gen/return (fn [] (t/is false)))]))))
+                                      :gen (fn []
+                                             (gen/one-of [(gen/return (fn [] (t/is true)))
+                                                          (gen/return (fn [] (t/is false)))]))))
 (spec/def :kaocha.var/var (spec/spec var?
-                               :gen (fn []
-                                      (gen/return (.setDynamic (Var/create))))))
+                                     :gen (fn []
+                                            (gen/return (.setDynamic (Var/create))))))
 
 (hierarchy/derive! :kaocha/begin-var :kaocha/begin-test)
 (hierarchy/derive! :kaocha/end-var :kaocha/end-test)

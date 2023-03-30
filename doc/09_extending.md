@@ -493,7 +493,7 @@ Kaocha contains fine-grained reporters, which you can combine, or mix with your 
 The `result` reporter is a special one included in all default reporters that
 takes care of the final results.
 
-Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report.history/track` reporter which takes care of that.
+Reporters intended for use with `clojure.test` will typically call `clojure.test/inc-report-counters` to keep track of stats. Reporters intended for use with Kaocha should not do this. Kaocha will always inject the `kaocha.report/report-counters` reporter which takes care of that.
 
 
 Built-in reporters include:

@@ -40,7 +40,7 @@
 
 (spec/fdef testable-totals
   :args (spec/cat :testable (spec/or :group (spec/keys :req [:kaocha.result/tests])
-                               :leaf (spec/keys :opt [::count ::pass ::error ::fail ::pending])))
+                                     :leaf (spec/keys :opt [::count ::pass ::error ::fail ::pending])))
   :ret ::result-map)
 
 (defn failed?
