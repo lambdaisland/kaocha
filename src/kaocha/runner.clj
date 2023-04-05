@@ -32,7 +32,6 @@
    [nil  "--print-test-plan"    "Load tests, build up a test plan, then print out the test plan and exit."]
    [nil  "--print-result"       "Print the test result map as returned by the Kaocha API."]
    [nil  "--[no-]fail-fast"     "Stop testing after the first failure."]
-   [nil  "--[no-]mute-zero-assertion"     "Stop raising failure when there is no assertion in test."]
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
    [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."

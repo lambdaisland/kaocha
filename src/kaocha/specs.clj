@@ -22,7 +22,7 @@
 
 (spec/def :kaocha/fail-fast? boolean?)
 
-(spec/def :kaocha/mute-zero-assertion? boolean?)
+(spec/def :kaocha/warnings (spec/map-of #{:zero-assertions} #{:silent :error}))
 
 (spec/def :kaocha/watch? boolean?)
 
@@ -36,7 +36,7 @@
   (spec/keys :opt [:kaocha/reporter
                    :kaocha/color?
                    :kaocha/fail-fast?
-                   :kaocha/mute-zero-assertion?
+                   :kaocha/warnings
                    :kaocha/watch?
                    :kaocha/plugins]))
 

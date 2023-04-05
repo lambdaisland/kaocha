@@ -92,7 +92,7 @@
       (let [config     (plugin/run-hook :kaocha.hooks/config config)
             color?     (:kaocha/color? config)
             fail-fast? (:kaocha/fail-fast? config)
-            mute-zero-assertion? (:kaocha/mute-zero-assertion? config)
+            warnings (:kaocha/warnings config)
             history    (atom [])]
         (binding [*active?*               true
                   testable/*fail-fast?*   fail-fast?
@@ -103,7 +103,7 @@
             (let [config (resolve-reporter config)]
               (let [test-plan (test-plan config)]
 
-                (when mute-zero-assertion?
+                (when (= (:zero-assertions warnings) :silent)
                   (hierarchy/underive! :kaocha.type.var/zero-assertions :kaocha/known-key)
                   (hierarchy/underive! :kaocha.type.var/zero-assertions :kaocha/fail-type))
 

@@ -20,7 +20,6 @@ Here's an example test configuration with a single test suite:
                                        :kaocha/source-paths  ["src"]
                                        :kaocha/test-paths    ["test/unit"]}]
  :kaocha/fail-fast?                  false
- :kaocha/mute-zero-assertion?        true
  :kaocha/color?                      true
  :kaocha/reporter                    [kaocha.report/dots]
  :kaocha/plugins                     [:kaocha.plugin/randomize
