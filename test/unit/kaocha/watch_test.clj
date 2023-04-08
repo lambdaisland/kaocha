@@ -133,12 +133,16 @@
 
     (is (str/includes?
            @out-str
-          (str/replace
+          (str/replace 
+            (str/replace
 
-              "[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:yyy\n1 tests, 1 assertions, 1 failures.\n\n[watch] Reloading #{foo.bar-test}\n[watch] Re-running failed tests #{:foo.bar-test/xxx-test}\n[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:zzz"
+              "[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:zzz\n1 tests, 1 assertions, 1 failures.\n\nbin/kaocha --config-file PATH --focus 'foo.bar-test/xxx-test'\n\n[watch] Reloading #{foo.bar-test}\n[watch] Re-running failed tests #{:foo.bar-test/xxx-test}\n[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:zzz"
 
                      "foo"
-                     prefix)))))
+                     prefix)
+            "PATH"
+            (str config-file)
+            )))))
 
 (deftest ignore-files-merged
   (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
