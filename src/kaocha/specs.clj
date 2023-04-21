@@ -22,7 +22,7 @@
 
 (spec/def :kaocha/fail-fast? boolean?)
 
-(spec/def :kaocha/warnings (spec/map-of #{:zero-assertions} #{:silent :error}))
+(spec/def :kaocha/warnings (spec/map-of #{:zero-assertions :zero-tests} #{:silent :error}))
 
 (spec/def :kaocha/watch? boolean?)
 

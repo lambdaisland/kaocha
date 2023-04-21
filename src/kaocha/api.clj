@@ -115,8 +115,13 @@
                                               " Check for misspelled settings in your Kaocha test configuration"
                                               " or incorrect focus or skip filters.")
                                          (count (testable/test-seq-with-skipped test-plan))))
-                    (output/warn (str "No tests were found. This may be an issue in your Kaocha test configuration."
-                                      " To investigate, check the :test-paths and :ns-patterns keys in tests.edn.")))
+                    (if (= (:zero-tests warnings) :error)
+                      (do
+                        (output/error (str "No tests were found. This may be an issue in your Kaocha test configuration."
+                                           " To investigate, check the :test-paths and :ns-patterns keys in tests.edn."))
+                        (throw+ {:kaocha/early-exit 253}))
+                      (output/warn (str "No tests were found. This may be an issue in your Kaocha test configuration."
+                                        " To investigate, check the :test-paths and :ns-patterns keys in tests.edn."))))
                   (throw+ {:kaocha/early-exit 0}))
 
                 (when (find-ns 'matcher-combinators.core)

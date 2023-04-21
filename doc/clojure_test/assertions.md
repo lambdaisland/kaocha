@@ -37,6 +37,7 @@ Test ran without assertions. Did you forget an (is ...)?
 There are two ways to disable this detection:
 
 * Add `:kaocha/warnings {:zero-assertions :silent}` into `tests.edn`.
+* Add `:kaocha/warnings {:zero-tests :error}` into `tests.edn`.
 
 ## Detecting single argument `=`
 
