@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- The watcher now prints the output from plugins, eg. `bin/kaocha --watch --plugin kaocha.plugin/profiling` 
+
 ## Changed
 
 # 1.82.1306 (2023-03-30 / 40698c5)

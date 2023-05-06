@@ -52,7 +52,7 @@
                    (assoc ::tracker tracker)
                    (update :kaocha/plugins #(cons ::plugin %)))
         result (try
-                 (api/run config)
+                 (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
                  (catch Throwable t
                    (println "[watch] Fatal error in test run" t)))]
     (println)
