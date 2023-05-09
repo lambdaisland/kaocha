@@ -17,9 +17,9 @@
 (let [temp-dir (fs/create-temp-dir)]
   (doseq [{:keys [repo-name suite]} test-suites ]
     (println "Testing " repo-name)
-    ;; (prn suite)
     (let [repo-dir (str temp-dir "/" repo-name) ]
       (shell (format "git clone %s %s" (str github-clone-url "/" repo-name) repo-dir))
-      (shell (format "echo %s" current-wd))
+      ;; (shell {:dir repo-dir}
+      ;;   (format "clojure -Sdeps '{:aliases {:test-local {:override-deps {lambdaisland/kaocha {:local/root \"%s/\"}}}}}' -A:test:test-local -Stree" current-wd))
       (shell {:dir repo-dir}
-             (format "clojure -A:test -Sdeps '{:deps {lambdaisland/kaocha {:local/root \"%s/\"}}}' -M -m kaocha.runner %s" current-wd suite)))))
+             (format "clojure -Sdeps '{:aliases {:test-local {:override-deps {lambdaisland/kaocha {:local/root \"%s/\"}}}}}' -A:test:test-local -m kaocha.runner %s" current-wd suite)))))
