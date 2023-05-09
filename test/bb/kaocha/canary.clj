@@ -8,8 +8,11 @@
 (def test-suites [{:repo-name "lambdaisland/deep-diff2"
                     :suite "clj"}
                   {:repo-name "lambdaisland/regal"
-                   :suite "clj"}])
-
+                   :suite "clj"}
+                  {:repo-name "lambdaisland/kaocha-cucumber"
+                   :suite "unit"}
+                  {:repo-name "lambdaisland/kaocha-doctest"
+                   :suite "unit"}])
 
 (def current-wd (System/getProperty "user.dir")) 
 
