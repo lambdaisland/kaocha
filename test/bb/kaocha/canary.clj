@@ -9,10 +9,16 @@
                     :suite "clj"}
                   {:repo-name "lambdaisland/regal"
                    :suite "clj"}
+                  {:repo-name "lambdaisland/uri"
+                   :suite "clj"}
                   {:repo-name "lambdaisland/kaocha-cucumber"
                    :suite "unit"}
                   {:repo-name "lambdaisland/kaocha-doctest"
-                   :suite "unit"}])
+                   :suite "unit"}
+                  {:repo-name "lambdaisland/kaocha-cloverage"
+                   :suite ""}
+                  {:repo-name "lambdaisland/kaocha-junit-xml"
+                   :suite ""} ])
 
 (def current-wd (System/getProperty "user.dir")) 
 
