@@ -14,8 +14,7 @@
             [clojure.test :as t]
             [clojure.string :as str]
             [slingshot.slingshot :refer [try+]]
-            [matcher-combinators.matchers :as matchers]
-            )
+            [matcher-combinators.matchers :as matchers])
   (:import (java.io File)))
 
 (require 'matcher-combinators.test)
