@@ -68,7 +68,7 @@
                  (with-test-ctx {:fail-fast? true}
                    (testable/run testable testable)))))))
 
-(deftest run-test-parallel 
+(deftest run-test-parallel
   (classpath/add-classpath "fixtures/f-tests")
 
   (let [testable (testable/load {:kaocha.testable/type    :kaocha.type/clojure.test
@@ -97,7 +97,7 @@
                  (with-test-ctx {:fail-fast? true}
                    (testable/run testable testable)))))
     (is (not (nil? (:result
-                 (binding [testable/*config* (assoc testable/*config* :parallel true)]
-                   (with-test-ctx {:fail-fast? true
-                                 :parallel true}
-                   (testable/run testable testable)))))))))
+                    (binding [testable/*config* (assoc testable/*config* :parallel true)]
+                      (with-test-ctx {:fail-fast? true
+                                      :parallel true}
+                        (testable/run testable testable)))))))))

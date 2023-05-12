@@ -55,7 +55,8 @@
               (rename-key :skip :kaocha.filter/skip)
               (rename-key :focus :kaocha.filter/focus)
               (rename-key :skip-meta :kaocha.filter/skip-meta)
-              (rename-key :focus-meta :kaocha.filter/focus-meta))]
+              (rename-key :focus-meta :kaocha.filter/focus-meta)
+              (rename-key :parallelize? :kaocha/parallelize?))]
     (as-> m $
       (merge-config (first (:kaocha/tests (default-config))) $)
       (merge {:kaocha.testable/desc (str (name (:kaocha.testable/id $))
@@ -82,7 +83,8 @@
                 randomize?
                 capture-output?
                 watch?
-                bindings]} config
+                bindings
+                parallelize?]} config
         tests (some->> tests (mapv normalize-test-suite))]
     (cond-> {}
       tests                   (assoc :kaocha/tests (vary-meta tests assoc :replace true))
@@ -95,6 +97,7 @@
       (some? watch?)          (assoc :kaocha/watch? watch?)
       (some? randomize?)      (assoc :kaocha.plugin.randomize/randomize? randomize?)
       (some? capture-output?) (assoc :kaocha.plugin.capture-output/capture-output? capture-output?)
+      (some? parallelize?)    (assoc :kaocha/parallelize? parallelize?)
       :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [_opts _tag value]
@@ -195,17 +198,16 @@
      config
      (read-config nil opts))))
 
-
 (defn apply-cli-opts [config options]
   (cond-> config
-    (some? (:fail-fast options))  (assoc :kaocha/fail-fast? (:fail-fast options))
-    (:reporter options)           (assoc :kaocha/reporter (:reporter options))
-    (:watch options)              (assoc :kaocha/watch? (:watch options))
-    (some? (:color options))      (assoc :kaocha/color? (:color options))
-    (some? (:diff-style options)) (assoc :kaocha/diff-style (:diff-style options))
-    (:plugin options)             (update :kaocha/plugins #(distinct (concat % (:plugin options))))
-    (some? (:parallel options))   (assoc :parallel (:parallel options))
-    true                          (assoc :kaocha/cli-options options)))
+    (some? (:fail-fast options))   (assoc :kaocha/fail-fast? (:fail-fast options))
+    (:reporter options)            (assoc :kaocha/reporter (:reporter options))
+    (:watch options)               (assoc :kaocha/watch? (:watch options))
+    (some? (:color options))       (assoc :kaocha/color? (:color options))
+    (some? (:diff-style options))  (assoc :kaocha/diff-style (:diff-style options))
+    (:plugin options)              (update :kaocha/plugins #(distinct (concat % (:plugin options))))
+    (some? (:parallelize options)) (assoc :kaocha/parallelize? (:parallelize options))
+    true                           (assoc :kaocha/cli-options options)))
 
 (defn apply-cli-args [config args]
   (if (seq args)

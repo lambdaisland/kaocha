@@ -34,7 +34,7 @@
    [nil  "--[no-]fail-fast"     "Stop testing after the first failure."]
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
-   [nil  "--[no-]parallel"           "Run tests in parallel. Warning: This feature is beta."]
+   [nil  "--[no-]parallelize"   "Run tests in parallel."]
    [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
     :parse-fn (fn [s]
                 (let [sym (symbol s)]

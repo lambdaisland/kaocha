@@ -133,7 +133,7 @@
 
     (is (str/includes?
           @out-str
-          (str/replace 
+          (str/replace
             (str/replace
               "[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:yyy\n1 tests, 1 assertions, 1 failures.\n\nbin/kaocha --config-file PATH --focus 'foo.bar-test/xxx-test'\n\n[watch] Reloading #{foo.bar-test}\n[watch] Re-running failed tests #{:foo.bar-test/xxx-test}\n[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:zzz"
               "foo"
@@ -155,8 +155,8 @@
     (is (=  #{"one" "two"}   (set (w/merge-ignore-files (str test-dir)))))))
 
 (deftest watch-set-dynamic-vars-test
-  ; sanity test for #133. Should succeed when this file
-  ; is checked via ./bin/kaocha with --watch mode
+  ;; sanity test for #133. Should succeed when this file
+  ;; is checked via ./bin/kaocha with --watch mode
   (is (do (set! *warn-on-reflection* false)
           true))
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
@@ -203,7 +203,7 @@
     (let [orig-config (config/load-config-for-cli-and-validate "test/unit/kaocha/config/loaded-test-profile.edn" {:profile :test})
           [reloaded-config _] (w/reload-config orig-config nil)]
       (is (= orig-config reloaded-config)))))
-     
+
 ;;TODO move to cucumber
 (deftest ^{:min-java-version "1.11"} watch-load-error-test
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})

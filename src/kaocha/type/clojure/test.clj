@@ -11,6 +11,7 @@
 
 (defmethod testable/-load :kaocha.type/clojure.test [testable]
   (-> testable
+      (assoc :kaocha.testable/parallelizable? true)
       (load/load-test-namespaces type.ns/->testable)
       (testable/add-desc "clojure.test")))
 

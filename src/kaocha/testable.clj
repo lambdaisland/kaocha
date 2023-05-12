@@ -49,22 +49,6 @@
       (try-require (symbol (namespace type))))
     (try-require (symbol (name type)))))
 
-(defn- retry-assert-spec [type testable n]
-  (let [result (try (assert-spec type testable) (catch Exception _e false))]
-    (if (or result (<= n 1)) result
-        (retry-assert-spec type testable (dec n))) ;otherwise, retry
-))
-
-(defn deref-recur [testables]
-  (cond (future? testables) (deref testables)
-        (vector? testables) (doall (mapv deref-recur testables))
-        (seq? testables) (deref-recur (into [] (doall testables)))
-        (contains? testables :kaocha.test-plan/tests)
-        (update testables :kaocha.test-plan/tests deref-recur)
-        (contains? testables :kaocha.result/tests)
-        (update testables :kaocha.result/tests deref-recur)
-        :else testables))
-
 (defn- load-type+validate
   "Try to load a testable type, and validate it both to be a valid generic testable, and a valid instance given the type.
 
@@ -162,9 +146,9 @@
         result))))
 
 (spec/fdef run
-        :args (spec/cat :testable :kaocha.test-plan/testable
-                     :test-plan :kaocha/test-plan)
-        :ret :kaocha.result/testable)
+  :args (spec/cat :testable :kaocha.test-plan/testable
+                  :test-plan :kaocha/test-plan)
+  :ret :kaocha.result/testable)
 
 (defn load-testables
   "Load a collection of testables, returning a test-plan collection"
@@ -240,18 +224,15 @@
 
 (defn try-run-testable [test test-plan n]
   (let [result (try (run-testable test test-plan) (catch Exception _e false))]
-    (if (or result (> n 1)) result ;success or last try, return
-        (try-run-testable test test-plan (dec n))) ;otherwise retry
-))
-
+    (if (or result (> n 1))
+      ;; success or last try, return
+      result
+      ;; otherwise retry
+      (try-run-testable test test-plan (dec n)))))
 
 (defn run-testables-serial
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
-  (doall testables)
-  #_(print "run-testables got a collection of size" (count testables)
-           " the first of which is "
-           (:kaocha.testable/type (first testables)))
   (let [load-error? (some ::load-error testables)]
     (loop [result  []
            [test & testables] testables]
@@ -261,7 +242,7 @@
                      (assoc ::skip true))
               r (run-testable test test-plan)]
           (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-            (reduce into result [[r] testables])
+            (into (conj result r) testables)
             (recur (conj result r) testables)))
         result))))
 
@@ -272,41 +253,36 @@
      :group-name (.getName (.getThreadGroup thread))}))
 
 (defn run-testables-parallel
-  "Run a collection of testables, returning a result collection."
+  "Run a collection of testables in parallel, returning a result collection."
   [testables test-plan]
-  (doall testables)
   (let [load-error? (some ::load-error testables)
-        types (set (:parallel-children-exclude *config*))
-        suites  (:parallel-suites-exclude *config*)
-        futures (map #(do
+        futures (doall
+                 (map (fn [t]
                         (future
-                          (binding [*config*
-                                    (cond-> *config*
-                                      (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
-                                      (and (hierarchy/suite? %) (contains? suites (:kaocha.testable/desc %))) (dissoc :parallel)
-                                      true (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
-                            (run-testable (assoc % ::thread (current-thread-info) ) test-plan))))
-                     testables)]
-    (comment (loop [result [] ;(ArrayBlockingQueue. 1024)
-                    [test & testables] testables]
-               (if test
-                 (let [test (cond-> test
-                              (and load-error? (not (::load-error test)))
-                              (assoc ::skip true))
-                       r (run-testable test test-plan)]
-                   (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-                     ;(reduce put-return result [[r] testables])
-                     (reduce into result [[r] testables])
-                     ;(recur (doto result (.put r)) testables)
-                     (recur (conj result r) testables)))
-                 result)))
-    (deref-recur futures)))
+                          (run-testable (assoc t ::thread-info (current-thread-info)) test-plan)))
+                      testables))]
+    (doall (map deref futures))))
 
 (defn run-testables
+  "Original run-testables, left for backwards compatibility, and still usable for
+  test types that don't want to opt-in to parallelization. Generally
+  implementations should move to [[run-testables-parent]]."
   [testables test-plan]
-  (if (:parallel *config*)
-    (doall (run-testables-parallel testables test-plan))
-    (run-testables-serial testables test-plan)))
+  (run-testables-serial testables test-plan))
+
+(defn run-testables-parent
+  "Test type implementations should call this in their [[-run]] method, rather
+  than [[run-testables]], so we can inspect the parent and parent metadata to
+  decide if the children should get parallelized."
+  [parent test-plan]
+  (let [testables (:kaocha.test-plan/tests parent)]
+    (if (or (true? (:kaocha/parallelize? (::meta parent)))               ; explicit opt-in via metadata
+            (and (:kaocha/parallelize? test-plan)                        ; enable parallelization in top-level config
+                 (or (::parallelizable? parent)                          ; test type has opted in, children are considered parallelizable
+                     (:kaocha/parallelize? parent))                      ; or we're at the top level, suites are parallelizable. Can also be used as an explicit override/opt-in
+                 (not (false? (:kaocha/parallelize? (::meta parent)))))) ; explicit opt-out via metadata
+      (run-testables-parallel testables test-plan)
+      (run-testables-serial testables test-plan))))
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
@@ -319,12 +295,12 @@
 
 (defn test-seq-with-skipped
   [testable]
- "Create a seq of all tests, including any skipped tests.
+  "Create a seq of all tests, including any skipped tests.
 
  Typically you want to look at `test-seq` instead."
   (cond->> (mapcat test-seq (or (:kaocha/tests testable)
-                                               (:kaocha.test-plan/tests testable)
-                                               (:kaocha.result/tests testable)))
+                                (:kaocha.test-plan/tests testable)
+                                (:kaocha.result/tests testable)))
     ;; When calling test-seq on the top level test-plan/result, don't include
     ;; the outer map. When running on an actual testable, do include it.
     (:kaocha.testable/id testable)

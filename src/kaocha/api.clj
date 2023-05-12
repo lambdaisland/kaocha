@@ -123,11 +123,6 @@
                                       " To investigate, check the :test-paths and :ns-patterns keys in tests.edn.")))
                   (throw+ {:kaocha/early-exit 0}))
 
-                (when (:parallel config)
-                  (output/warn (str "Parallelization enabled. This feature is in "
-                                    "beta If you encounter errors, try "
-                                    "running with the feature disabled and "
-                                    "consider filing an issue.")))
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
 
@@ -142,8 +137,7 @@
                                       ;; don't know where in the process we've
                                       ;; been interrupted, output capturing may
                                       ;; still be in effect.
-                                      (System/setOut
-                                       orig-out)
+                                      (System/setOut orig-out)
                                       (System/setErr
                                        orig-err)
                                       (binding [history/*history* history]
@@ -160,13 +154,13 @@
                                             on-exit)
                         (let [test-plan (plugin/run-hook :kaocha.hooks/pre-run test-plan)]
                           (binding [testable/*test-plan* test-plan]
-                            (let [test-plan-tests (:kaocha.test-plan/tests test-plan)
-                                  result-tests    (testable/run-testables test-plan-tests test-plan)
-                                  result          (plugin/run-hook :kaocha.hooks/post-run
-                                                                   (-> test-plan
-                                                                       (dissoc :kaocha.test-plan/tests)
-                                                                       (assoc :kaocha.result/tests result-tests)))]
-                              (assert (= (count test-plan-tests) (count (:kaocha.result/tests result))))
+                            (let [result-tests (testable/run-testables-parent test-plan test-plan)
+                                  result       (plugin/run-hook :kaocha.hooks/post-run
+                                                          (-> test-plan
+                                                              (dissoc :kaocha.test-plan/tests)
+                                                              (assoc :kaocha.result/tests result-tests)))]
+                              (assert (= (count (:kaocha.test-plan/tests test-plan))
+                                         (count (:kaocha.result/tests result))))
                               (-> result
                                   result/testable-totals
                                   result/totals->clojure-test-summary
