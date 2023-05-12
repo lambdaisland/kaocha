@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- Get rid of extra space in output when using the `:print-invocations` plugin
+
 ## Changed
 
 - Bump tools.cli to 1.0.219
