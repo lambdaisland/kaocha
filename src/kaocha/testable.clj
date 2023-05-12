@@ -123,8 +123,8 @@
         (assoc testable ::load-error t)
         (throw t)))))
 
-(s/fdef load
-  :args (s/cat :testable :kaocha/testable)
+(spec/fdef load
+  :args (spec/cat :testable :kaocha/testable)
   :ret :kaocha.test-plan/testable)
 
 (defmulti -run
@@ -267,8 +267,8 @@
 
 (defn current-thread-info []
   (let [thread (Thread/currentThread)]
-    {:name (.getName thread) 
-     :id (.getId thread) 
+    {:name (.getName thread)
+     :id (.getId thread)
      :group-name (.getName (.getThreadGroup thread))}))
 
 (defn run-testables-parallel
@@ -277,7 +277,7 @@
   (doall testables)
   (let [load-error? (some ::load-error testables)
         types (set (:parallel-children-exclude *config*))
-        suites  (:parallel-suites-exclude *config*) 
+        suites  (:parallel-suites-exclude *config*)
         futures (map #(do
                         (future
                           (binding [*config*
