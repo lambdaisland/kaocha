@@ -16,26 +16,28 @@
       (doseq [test (testable/test-seq results)]
         (if (and (not (seq (::result/tests test))) (result/failed? test))
           (let [id (str (::testable/id test))]
-            (println "bin/kaocha"
-                     (str/join
-                      " "
-                      (mapcat (fn [[k v]]
-                                (cond
-                                  (vector? v)
-                                  (mapcat (fn [v] [(str "--" (name k)) v]) v)
-                                  
-                                  (true? v)
-                                  [(str "--" (name k))]
-                                  
-                                  (false? v)
-                                  [(str "--no-" (name k))]
-                                  
-                                  :else
-                                  [(str "--" (name k))  v]))
-                              (cond-> (dissoc (:kaocha/cli-options results) :focus)
-                                (= "tests.edn" (:config-file (:kaocha/cli-options results)))
-                                (dissoc :config-file))))
-                     "--focus"
-                     (str
-                      "'" (cond-> id (= (first id) \:) (subs 1)) "'"))))))
+            (println
+             (str/join
+              " "
+              (-> ["bin/kaocha"]
+                  (into
+                   (mapcat (fn [[k v]]
+                             (cond
+                               (vector? v)
+                               (mapcat (fn [v] [(str "--" (name k)) v]) v)
+
+                               (true? v)
+                               [(str "--" (name k))]
+
+                               (false? v)
+                               [(str "--no-" (name k))]
+
+                               :else
+                               [(str "--" (name k))  v]))
+                           (cond-> (dissoc (:kaocha/cli-options results) :focus)
+                             (= "tests.edn" (:config-file (:kaocha/cli-options results)))
+                             (dissoc :config-file))))
+                  (conj "--focus"
+                        (str
+                         "'" (cond-> id (= (first id) \:) (subs 1)) "'")))))))))
     results))
