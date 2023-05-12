@@ -6,6 +6,8 @@
 
 ## Changed
 
+- Bump tools.cli to 1.0.219
+
 # 1.83.1314 (2023-05-05 / 1438ce7)
 
 ## Added
