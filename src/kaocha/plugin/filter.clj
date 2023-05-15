@@ -1,10 +1,8 @@
 (ns kaocha.plugin.filter
-  (:refer-clojure :exclude [symbol])
   (:require [kaocha.plugin :as plugin :refer [defplugin]]
             [kaocha.testable :as testable]
             [clojure.set :as set]
-            [kaocha.output :as output]
-            [kaocha.core-ext :refer [symbol]]))
+            [kaocha.output :as output]))
 
 (defn- accumulate [m k v]
   (update m k (fnil conj []) v))

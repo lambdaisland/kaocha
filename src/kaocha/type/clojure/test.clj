@@ -7,9 +7,7 @@
             [kaocha.hierarchy :as hierarchy]
             [kaocha.load :as load]
             [kaocha.specs]
-            [kaocha.test-suite :as test-suite]
-            [clojure.java.io :as io]
-            [clojure.test :as t]))
+            [kaocha.test-suite :as test-suite]))
 
 (defmethod testable/-load :kaocha.type/clojure.test [testable]
   (-> testable

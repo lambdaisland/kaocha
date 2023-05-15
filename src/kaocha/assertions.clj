@@ -3,8 +3,7 @@
             [clojure.test :as t]
             [kaocha.report :as report]
             [lambdaisland.deep-diff2.puget.color :as color]
-            [clojure.string :as str]
-            [slingshot.slingshot :refer [try+ throw+]]))
+            [clojure.string :as str]))
 
 (defmethod t/assert-expr 'substring? [msg form]
   (let [[_ s1 s2] form]

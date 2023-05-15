@@ -64,8 +64,7 @@ These will particularly come in handy when developing plugins."}
             [kaocha.api :as api]
             [kaocha.result :as result]
             [kaocha.output :as output]
-            [clojure.java.io :as io]
-            [slingshot.slingshot :refer [throw+ try+]]))
+            [slingshot.slingshot :refer [try+]]))
 
 (defn config
   "Load the Kaocha configuration

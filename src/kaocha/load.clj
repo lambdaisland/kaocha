@@ -3,8 +3,7 @@
   (:require [kaocha.core-ext :refer :all]
             [kaocha.testable :as testable]
             [clojure.java.io :as io]
-            [lambdaisland.tools.namespace.find :as ctn-find]
-            [kaocha.output :as output]))
+            [lambdaisland.tools.namespace.find :as ctn-find]))
 
 (set! *warn-on-reflection* true)
 

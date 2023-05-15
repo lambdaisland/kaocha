@@ -15,7 +15,6 @@
             [kaocha.output :as output]
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
-            [kaocha.specs :as specs]
             [slingshot.slingshot :refer [throw+ try+]])
   (:import (java.io File)))
 
