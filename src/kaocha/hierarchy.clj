@@ -8,6 +8,11 @@
   [tag parent]
   (alter-var-root #'hierarchy derive tag parent))
 
+(defn underive!
+  "Add a parent/child relationship to kaocha's keyword hierarchy."
+  [tag parent]
+  (alter-var-root #'hierarchy underive tag parent))
+
 (derive! :fail :kaocha/fail-type)
 (derive! :error :kaocha/fail-type)
 

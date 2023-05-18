@@ -32,7 +32,12 @@ FAIL in sample-test/my-test (sample_test.clj:4)
 Test ran without assertions. Did you forget an (is ...)?
 ```
 
+### Missing assertions are configurable
 
+There are two ways to disable this detection:
+
+* Add `:kaocha/warnings {:zero-assertions :silent}` into `tests.edn`.
+* Add `:kaocha/warnings {:zero-tests :error}` into `tests.edn`.
 
 ## Detecting single argument `=`
 

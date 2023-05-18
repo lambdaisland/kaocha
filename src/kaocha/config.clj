@@ -78,6 +78,7 @@
                 reporter
                 color?
                 fail-fast?
+                warnings
                 diff-style
                 randomize?
                 capture-output?
@@ -88,6 +89,7 @@
       tests                   (assoc :kaocha/tests (vary-meta tests assoc :replace true))
       plugins                 (assoc :kaocha/plugins plugins)
       reporter                (assoc :kaocha/reporter (vary-meta reporter assoc :replace true))
+      warnings                (assoc :kaocha/warnings warnings)
       bindings                (assoc :kaocha/bindings bindings)
       (some? color?)          (assoc :kaocha/color? color?)
       (some? fail-fast?)      (assoc :kaocha/fail-fast? fail-fast?)
@@ -95,7 +97,7 @@
       (some? watch?)          (assoc :kaocha/watch? watch?)
       (some? randomize?)      (assoc :kaocha.plugin.randomize/randomize? randomize?)
       (some? capture-output?) (assoc :kaocha.plugin.capture-output/capture-output? capture-output?)
-      :->                     (merge (dissoc config :tests :plugins :reporter :color? :fail-fast? :watch? :randomize?)))))
+      :->                     (merge (dissoc config :tests :plugins :reporter :warnings :color? :fail-fast? :watch? :randomize?)))))
 
 (defmethod aero/reader 'kaocha [_opts _tag value]
   (output/warn (format "The #kaocha reader literal is deprecated, please change it to %s." current-reader))
@@ -195,7 +197,6 @@
      config
      (read-config nil opts))))
 
-
 (defn apply-cli-opts [config options]
   (cond-> config
     (some? (:fail-fast options))  (assoc :kaocha/fail-fast? (:fail-fast options))
@@ -224,10 +225,10 @@
   "Applies command-line options and arguments to the configuration."
   [config cli-opts cli-args]
   (cond-> config
-      cli-opts (apply-cli-opts cli-opts)
-      cli-args (apply-cli-args cli-args)))
+    cli-opts (apply-cli-opts cli-opts)
+    cli-args (apply-cli-args cli-args)))
 
-(defn find-config-and-warn 
+(defn find-config-and-warn
   [config-file]
   (let [final-config-file (or config-file "tests.edn")]
     (when (not (.exists (io/file (or config-file "tests.edn"))))
@@ -241,13 +242,13 @@
 (defn validate!
   "Validates the configuration, printing any warnings and errors and possibly throwing."
   [config]
-    (try
-      (specs/assert-spec :kaocha/config config)
-      config
-      (catch AssertionError e
-        (output/error "Invalid configuration file:\n"
-                      (.getMessage e))
-        (throw+ {:kaocha/early-exit 252}))))
+  (try
+    (specs/assert-spec :kaocha/config config)
+    config
+    (catch AssertionError e
+      (output/error "Invalid configuration file:\n"
+                    (.getMessage e))
+      (throw+ {:kaocha/early-exit 252}))))
 
 (defn load-config-for-cli-and-validate
   "Loads config from config-file, factoring in profile specified using profile,
