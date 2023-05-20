@@ -17,6 +17,14 @@
 ;; Prevent clj-refactor from "cleaning" these from the ns form
 (require 'kaocha.monkey-patch)
 
+;; Before orig-out was set to *out*, and unfortunately that will
+;; cause a ClassCastException.
+;; => "java.io.OutputStreamWriter cannot be cast to java.io.PrintStream"
+;; Explanation:
+;; The exception is because that when user interruption happens,
+;; Kaocha will force resetting printing to stdout. However, *out*
+;; is of class java.io.OutputStreamWriter, but System/out is of
+;; class java.io.PrintStream
 (def orig-out System/out)
 (def orig-err System/err)
 
