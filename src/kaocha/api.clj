@@ -17,7 +17,16 @@
 ;; Prevent clj-refactor from "cleaning" these from the ns form
 (require 'kaocha.monkey-patch)
 
-(def orig-out *out*)
+;; Before orig-out was set to *out*, and unfortunately that will
+;; cause a ClassCastException.
+;; => "java.io.OutputStreamWriter cannot be cast to java.io.PrintStream"
+;; Explanation:
+;; The exception is because that when user interruption happens,
+;; Kaocha will force resetting printing to stdout. However, *out*
+;; is of class java.io.OutputStreamWriter, but System/out is of
+;; class java.io.PrintStream
+(def orig-out System/out)
+(def orig-err System/err)
 
 (def ^:dynamic *active?*
   "Is Kaocha currently active? i.e. loading or runnning tests."
@@ -112,7 +121,7 @@
                                          (count (testable/test-seq-with-skipped test-plan))))
                     (output/warn (str "No tests were found. This may be an issue in your Kaocha test configuration."
                                       " To investigate, check the :test-paths and :ns-patterns keys in tests.edn.")))
-                  (throw+ {:kaocha/early-exit 0 }))
+                  (throw+ {:kaocha/early-exit 0}))
 
                 (when (find-ns 'matcher-combinators.core)
                   (require 'kaocha.matcher-combinators))
@@ -130,6 +139,8 @@
                                       ;; still be in effect.
                                       (System/setOut
                                        orig-out)
+                                      (System/setErr
+                                       orig-err)
                                       (binding [history/*history* history]
                                         (t/do-report (history/clojure-test-summary)))
                                       (catch Throwable t
