@@ -5,6 +5,8 @@
 ## Fixed
 
 - Get rid of extra space in output when using the `:print-invocations` plugin
+-  Prevent `ClassCastException` when using Ctrl-C (SIGINT) after enabling
+    `--watch`
 
 ## Changed
 
