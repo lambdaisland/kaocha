@@ -6,7 +6,7 @@
 
 ## Changed
 
-- Update deep-diff2 to `2.9.202` so we can benefit from faster hash-map diffing.
+- Update deep-diff2 to `2.9.202` so Kaocha tests can benefit from faster hash-map diffing.
 
 # 1.84.1335 (2023-05-22 / 33735a1)
 
