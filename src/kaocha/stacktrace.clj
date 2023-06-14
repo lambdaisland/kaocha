@@ -7,17 +7,16 @@
                                      "clojure.lang."
                                      "clojure.core"
                                      "clojure.main"
-                                     "orchestra."
                                      "kaocha.monkey_patch"])
 
 (defn elide-element? [e]
   (some #(str/starts-with? (.getClassName ^StackTraceElement e) %) *stacktrace-filters*))
 
-(def sentinel-list ["kaocha.ns"
-                    "lambdaisland.tools.namespace.reload"])
+(def ^:dynamic *stacktrace-stop-list* ["kaocha.ns"
+                                       "lambdaisland.tools.namespace.reload"])
 
 (defn sentinel-element? [e]
-  (some #(str/starts-with? (.getClassName ^StackTraceElement e) %) sentinel-list))
+  (some #(str/starts-with? (.getClassName ^StackTraceElement e) %) *stacktrace-stop-list*))
 
 (defn print-stack-trace
   "Prints a Clojure-oriented stack trace of tr, a Throwable.

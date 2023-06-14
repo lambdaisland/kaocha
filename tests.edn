@@ -17,6 +17,7 @@
 
  :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
 
- :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []}
+ :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []
+                   kaocha.stacktrace/*stacktrace-stop-list* []}
 
  :reporter kaocha.report/documentation}
