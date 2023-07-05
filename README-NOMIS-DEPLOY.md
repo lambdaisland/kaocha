@@ -4,6 +4,8 @@
 
 `clj -Spom`
 
+Then manually remove un-needed stuff.
+
 ## Create jar file:
 
 `rm -rf target ; clj -X:jar :jar target/the-jar-file.jar`
