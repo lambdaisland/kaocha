@@ -59,11 +59,11 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    clojure.lang
+    at clojure.lang
     """
     And the output should not contain
     """
-    clojure.core
+    at clojure.core
     """
 
   Scenario: Stacktrace filtering turned off
@@ -84,7 +84,7 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    clojure.core
+    at clojure.core
     """
 
   Scenario: Stacktrace shortening
@@ -109,7 +109,7 @@ Feature: Configuration: Bindings
     """
     And the output should not contain
     """
-    kaocha.ns
+    at kaocha.ns
     """
 
   Scenario: Disable stacktrace shortening
@@ -131,7 +131,7 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    kaocha.runner
+    at kaocha.runner
     """
     And the output should not contain
     """
