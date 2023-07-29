@@ -111,6 +111,7 @@
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
                    (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
                    (assoc-in [:kaocha/tests 0 :kaocha/test-paths] [(str test-dir)]))
+        ;; _ (println config)
         prefix (str (gensym "foo"))
         finish? (atom false)
         q       (w/make-queue)
@@ -132,33 +133,33 @@
     (w/qput q :finish)
     (Thread/sleep 100)
 
-    (let [split-str (str/split-lines @out-str)]
-      (is (match?
-            (matchers/embeds
-              ["[(F)]"
-               ""
-               (str/replace "FAIL in foo.bar-test/xxx-test (bar_test.clj:1)" "foo" prefix)
-               "Expected:"
-               "  :xxx"
-               "Actual:"
-               "  -:xxx +:yyy"
-               "1 tests, 1 assertions, 1 failures."])
-            split-str))
-
-      (is (match?
-            (matchers/embeds 
-              [(format "bin/kaocha --config-file %s --focus '%s.bar-test/xxx-test'" (str config-file) prefix)
-               ""
-               (str/replace "[watch] Reloading #{foo.bar-test}" "foo" prefix)
-               (str/replace "[watch] Re-running failed tests #{:foo.bar-test/xxx-test}" "foo" prefix)
-               "[(F)]"
-               ""
-               (str/replace "FAIL in foo.bar-test/xxx-test (bar_test.clj:1)" "foo" prefix)
-               "Expected:"
-               "  :xxx"
-               "Actual:"
-               "  -:xxx +:zzz" ])
-            split-str)))))
+    (is (match?
+          (matchers/equals
+            ["[(F)]"
+             ""
+             (str/replace "FAIL in foo.bar-test/xxx-test (bar_test.clj:1)" "foo" prefix)
+             "Expected:"
+             "  :xxx"
+             "Actual: "
+             "  -:xxx +:yyy"
+             "1 tests, 1 assertions, 1 failures."
+             ""
+             (format "bin/kaocha --config-file %s --focus '%s.bar-test/xxx-test'" (str config-file) prefix)
+             ""
+             (str/replace "[watch] Reloading #{foo.bar-test}" "foo" prefix)
+             (str/replace "[watch] Re-running failed tests #{:foo.bar-test/xxx-test}" "foo" prefix)
+             "[(F)]"
+             ""
+             (str/replace "FAIL in foo.bar-test/xxx-test (bar_test.clj:1)" "foo" prefix)
+             "Expected:"
+             "  :xxx"
+             "Actual:"
+             "  -:xxx +:zzz" 
+             "1 tests, 1 assertions, 1 failures."
+             ""
+             (format "bin/kaocha --config-file %s --focus '%s.bar-test/xxx-test'" (str config-file) prefix)
+             ])
+            (str/split-lines @out-str)))))
 
 (deftest ignore-files-merged
   (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
