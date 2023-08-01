@@ -5,3 +5,5 @@ node_modules
 package-lock.json
 .store
 deps.local.edn
+/.clj-kondo/
+/.lsp/
