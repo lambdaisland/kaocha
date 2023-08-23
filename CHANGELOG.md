@@ -2,6 +2,8 @@
 
 ## Added
 
+- Fix watching when paths do not exist.
+
 ## Fixed
 
 ## Changed
