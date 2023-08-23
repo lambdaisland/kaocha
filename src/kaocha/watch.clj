@@ -301,13 +301,16 @@ errors as test errors."
                 config))))
 
 (defn watch-paths [config]
-  (into #{}
-        (comp (remove :kaocha.testable/skip)
-              (map (juxt :kaocha/test-paths :kaocha/source-paths))
-              cat
-              cat
-              (map io/file))
-        (:kaocha/tests config)))
+  (let [res (into #{}
+                  (comp (remove :kaocha.testable/skip)
+                        (map (juxt :kaocha/test-paths :kaocha/source-paths))
+                        cat
+                        cat
+                        (map io/file))
+                  (:kaocha/tests config))]
+    ;; Without this, if any path doesn't exist the watching doesn't work.
+    (filter (fn [x] (.exists x))
+            res)))
 
 (defmulti watch! :type)
 
