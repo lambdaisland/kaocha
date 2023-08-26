@@ -18,6 +18,7 @@
             [lambdaisland.tools.namespace.dir :as ctn-dir]
             [lambdaisland.tools.namespace.file :as ctn-file]
             [lambdaisland.tools.namespace.reload :as ctn-reload]
+            [lambdaisland.tools.namespace.repl :as ctn-repl]
             [lambdaisland.tools.namespace.track :as ctn-track]
             [slingshot.slingshot :refer [try+]]
             [nextjournal.beholder :as beholder])
@@ -237,38 +238,40 @@ Behind the scenes we add this plugin to the start of the plugin chain. It takes
 care of reloading namespaces inside a Kaocha run, so we can report any load
 errors as test errors."
   (pre-load [{::keys [tracker focus] :as config}]
-    (print-scheduled-operations! tracker focus)
-    (let [tracker    (track-reload! tracker)
-          config     (assoc config ::tracker tracker)
-          error      (or (::tracker-error tracker)
-                         (::ctn-reload/error tracker))
-          error-ns   (if (circular-dependency? error)
-                       (:node (ex-data error))
-                       (::ctn-reload/error-ns tracker))]
-      (if (and error error-ns)
-        (let [[file line] (util/compiler-exception-file-and-line error)]
-          (-> config
-              (assoc ::error? true)
-              (update :kaocha/tests
-                      (fn [suites]
-                        ;; We don't really know which suite the load error
-                        ;; belongs to, it could well be in a file shared by all
-                        ;; suites, so we arbitrarily put the load error on the
-                        ;; first non-skipped suite and skip all others, so that
-                        ;; it gets reported properly.
-                        (let [applied? (volatile! false)]
-                          (mapv (fn [suite]
-                                  (if (and (not @applied?)
-                                           (not (::testable/skip suite)))
-                                    (do (vreset! applied? true)
-                                        (assoc suite
-                                               ::testable/load-error error
-                                               ::testable/load-error-file (or file (util/ns-file error-ns))
-                                               ::testable/load-error-line line
-                                               ::testable/load-error-message (str "Failed reloading " error-ns ":")))
-                                    (assoc suite ::testable/skip true)))
-                                suites))))))
-                config))))
+    (let [tracker (;; TODO: Remove #' when this is made public.
+                   #'ctn-repl/remove-disabled tracker)]
+      (print-scheduled-operations! tracker focus)
+      (let [tracker    (track-reload! tracker)
+            config     (assoc config ::tracker tracker)
+            error      (or (::tracker-error tracker)
+                           (::ctn-reload/error tracker))
+            error-ns   (if (circular-dependency? error)
+                         (:node (ex-data error))
+                         (::ctn-reload/error-ns tracker))]
+        (if (and error error-ns)
+          (let [[file line] (util/compiler-exception-file-and-line error)]
+            (-> config
+                (assoc ::error? true)
+                (update :kaocha/tests
+                        (fn [suites]
+                          ;; We don't really know which suite the load error
+                          ;; belongs to, it could well be in a file shared by all
+                          ;; suites, so we arbitrarily put the load error on the
+                          ;; first non-skipped suite and skip all others, so that
+                          ;; it gets reported properly.
+                          (let [applied? (volatile! false)]
+                            (mapv (fn [suite]
+                                    (if (and (not @applied?)
+                                             (not (::testable/skip suite)))
+                                      (do (vreset! applied? true)
+                                          (assoc suite
+                                                 ::testable/load-error error
+                                                 ::testable/load-error-file (or file (util/ns-file error-ns))
+                                                 ::testable/load-error-line line
+                                                 ::testable/load-error-message (str "Failed reloading " error-ns ":")))
+                                      (assoc suite ::testable/skip true)))
+                                  suites))))))
+          config)))))
 
 (defn watch-paths [config]
   (into #{}

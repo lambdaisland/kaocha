@@ -2,6 +2,8 @@
 
 ## Added
 
+- Respect disabling of unload/reload when watching.
+
 ## Fixed
 
 ## Changed
