@@ -1,7 +1,7 @@
 {:deps
  {lambdaisland/kaocha {:local/root "."}
   lambdaisland/open-source {:git/url "https://github.com/lambdaisland/open-source"
-                            :git/sha "4d6019ed2805f701c0d626732c5a886542e3b83b"
+                            :git/sha "2dc2a8ef9978a3fc45e8f524b0e46253caa40fe2"
                             #_#_:local/root "../open-source"}}
  :tasks
  {test:bb
