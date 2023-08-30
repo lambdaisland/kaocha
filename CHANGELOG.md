@@ -1,14 +1,10 @@
 # Unreleased
 
-## Added
-
-- [watch] Fix watching when paths do not exist.
-
 ## Fixed
 
+- [watch] Fix watching when paths do not exist.
+- [watch] Respect disabling of unload/reload when watching.
 - [watch] Respect clojure.tools.namespace.repl load/unload metadata.
-
-## Changed
 
 # 1.85.1342 (2023-06-12 / eebd294)
 
@@ -18,13 +14,10 @@
 
 # 1.84.1335 (2023-05-22 / 33735a1)
 
-## Added
-
 ## Fixed
 
 - Get rid of extra space in output when using the `:print-invocations` plugin
--  Prevent `ClassCastException` when using Ctrl-C (SIGINT) after enabling
-    `--watch`
+- Prevent `ClassCastException` when using Ctrl-C (SIGINT) after enabling `--watch`
 
 ## Changed
 
@@ -32,13 +25,9 @@
 
 # 1.83.1314 (2023-05-05 / 1438ce7)
 
-## Added
-
 ## Fixed
 
 - The watcher now prints the output from plugins, eg. `bin/kaocha --watch --plugin kaocha.plugin/profiling` 
-
-## Changed
 
 # 1.82.1306 (2023-03-30 / 40698c5)
 
