@@ -2,9 +2,11 @@
 
 ## Added
 
-- Fix watching when paths do not exist.
+- [watch] Fix watching when paths do not exist.
 
 ## Fixed
+
+- [watch] Respect clojure.tools.namespace.repl load/unload metadata.
 
 ## Changed
 
