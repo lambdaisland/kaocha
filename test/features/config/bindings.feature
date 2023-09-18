@@ -109,7 +109,7 @@ Feature: Configuration: Bindings
     """
     And the output should not contain
     """
-    kaocha.runner
+    kaocha.runner$
     """
 
   Scenario: Disable stacktrace shortening
@@ -131,7 +131,7 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    kaocha.runner
+    kaocha.runner$
     """
     And the output should not contain
     """

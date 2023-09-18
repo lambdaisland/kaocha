@@ -81,14 +81,14 @@ You can configure dynamic vars from `tests.edn`, these will be bound to the
 - <em>Then </em> the output should contain:
 
 ``` nil
-at clojure.lang
+clojure.lang
 ```
 
 
 - <em>And </em> the output should not contain
 
 ``` nil
-at clojure.core
+clojure.core
 ```
 
 
@@ -120,7 +120,7 @@ at clojure.core
 - <em>Then </em> the output should contain:
 
 ``` nil
-at clojure.core
+clojure.core
 ```
 
 
@@ -131,7 +131,7 @@ at clojure.core
 
 ``` clojure
 #kaocha/v1
-{:bindings {kaocha.stacktrace/*stacktrace-stop-list* ["kaocha.ns"]}}
+{:bindings {kaocha.stacktrace/*stacktrace-stop-list* ["kaocha.runner"]}}
 ```
 
 
@@ -159,7 +159,7 @@ at clojure.core
 - <em>And </em> the output should not contain
 
 ``` nil
-at kaocha.ns
+kaocha.runner$
 ```
 
 
@@ -192,7 +192,7 @@ at kaocha.ns
 - <em>Then </em> the output should contain:
 
 ``` nil
-at kaocha.runner
+kaocha.runner$
 ```
 
 
