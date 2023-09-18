@@ -59,11 +59,11 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    at clojure.lang
+    clojure.lang
     """
     And the output should not contain
     """
-    at clojure.core
+    clojure.core
     """
 
   Scenario: Stacktrace filtering turned off
@@ -84,14 +84,14 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    at clojure.core
+    clojure.core
     """
 
   Scenario: Stacktrace shortening
     Given a file named "tests.edn" with:
     """ clojure
     #kaocha/v1
-    {:bindings {kaocha.stacktrace/*stacktrace-stop-list* ["kaocha.ns"]}}
+    {:bindings {kaocha.stacktrace/*stacktrace-stop-list* ["kaocha.runner"]}}
     """
     And a file named "test/my/erroring_test.clj" with:
     """ clojure
@@ -109,7 +109,7 @@ Feature: Configuration: Bindings
     """
     And the output should not contain
     """
-    at kaocha.ns
+    kaocha.runner
     """
 
   Scenario: Disable stacktrace shortening
@@ -131,7 +131,7 @@ Feature: Configuration: Bindings
     When I run `bin/kaocha`
     Then the output should contain:
     """
-    at kaocha.runner
+    kaocha.runner
     """
     And the output should not contain
     """
