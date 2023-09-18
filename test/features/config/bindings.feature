@@ -53,7 +53,7 @@ Feature: Configuration: Bindings
       (:require [clojure.test :refer :all]))
 
     (deftest stacktrace-test
-      (is (throw (java.lang.Exception.)))
+      (is (throw (java.lang.Exception.))))
     
     """
     When I run `bin/kaocha`
@@ -78,7 +78,7 @@ Feature: Configuration: Bindings
       (:require [clojure.test :refer :all]))
 
     (deftest stacktrace-test
-      (is (throw (java.lang.Exception.)))
+      (is (throw (java.lang.Exception.))))
     
     """
     When I run `bin/kaocha`
@@ -99,7 +99,7 @@ Feature: Configuration: Bindings
       (:require [clojure.test :refer :all]))
 
     (deftest stacktrace-test
-      (is (throw (java.lang.Exception.)))
+      (is (throw (java.lang.Exception.))))
     
     """
     When I run `bin/kaocha`
@@ -125,7 +125,7 @@ Feature: Configuration: Bindings
       (:require [clojure.test :refer :all]))
 
     (deftest stacktrace-test
-      (is (throw (java.lang.Exception.)))
+      (is (throw (java.lang.Exception.))))
     
     """
     When I run `bin/kaocha`

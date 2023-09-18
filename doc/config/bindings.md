@@ -71,7 +71,7 @@ You can configure dynamic vars from `tests.edn`, these will be bound to the
   (:require [clojure.test :refer :all]))
 
 (deftest stacktrace-test
-  (is (throw (java.lang.Exception.)))
+  (is (throw (java.lang.Exception.))))
 
 ```
 
@@ -81,14 +81,14 @@ You can configure dynamic vars from `tests.edn`, these will be bound to the
 - <em>Then </em> the output should contain:
 
 ``` nil
-clojure.lang
+at clojure.lang
 ```
 
 
 - <em>And </em> the output should not contain
 
 ``` nil
-clojure.core
+at clojure.core
 ```
 
 
@@ -110,7 +110,7 @@ clojure.core
   (:require [clojure.test :refer :all]))
 
 (deftest stacktrace-test
-  (is (throw (java.lang.Exception.)))
+  (is (throw (java.lang.Exception.))))
 
 ```
 
@@ -120,7 +120,7 @@ clojure.core
 - <em>Then </em> the output should contain:
 
 ``` nil
-clojure.core
+at clojure.core
 ```
 
 
@@ -142,7 +142,7 @@ clojure.core
   (:require [clojure.test :refer :all]))
 
 (deftest stacktrace-test
-  (is (throw (java.lang.Exception.)))
+  (is (throw (java.lang.Exception.))))
 
 ```
 
@@ -159,7 +159,7 @@ clojure.core
 - <em>And </em> the output should not contain
 
 ``` nil
-kaocha.ns
+at kaocha.ns
 ```
 
 
@@ -182,7 +182,7 @@ kaocha.ns
   (:require [clojure.test :refer :all]))
 
 (deftest stacktrace-test
-  (is (throw (java.lang.Exception.)))
+  (is (throw (java.lang.Exception.))))
 
 ```
 
@@ -192,7 +192,7 @@ kaocha.ns
 - <em>Then </em> the output should contain:
 
 ``` nil
-kaocha.runner
+at kaocha.runner
 ```
 
 
