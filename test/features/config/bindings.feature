@@ -12,6 +12,8 @@ Feature: Configuration: Bindings
 
   - `kaocha.stacktrace/*stacktrace-filters* []` disable filtering of
     stacktraces, showing all stack frames
+  - `kaocha.stacktrace/*stacktrace-stop-list* []` disable the shortening
+    of the stacktrace (by default stops printing when it sees "kaocha.ns")
   - `clojure.pprint/*print-right-margin* 120` Make pretty printing use longer
     line lengths
   - `clojure.test.check.clojure-test/*report-completion* false, clojure.test.check.clojure-test/*report-trials* false`
@@ -37,4 +39,101 @@ Feature: Configuration: Bindings
     Then the output should contain:
     """
     1 tests, 1 assertions, 0 failures.
+    """
+
+  Scenario: Stacktrace filtering
+    Given a file named "tests.edn" with:
+    """ clojure
+    #kaocha/v1
+    {:bindings {kaocha.stacktrace/*stacktrace-filters* ["clojure.core"]}}
+    """
+    And a file named "test/my/erroring_test.clj" with:
+    """ clojure
+    (ns my.erroring-test
+      (:require [clojure.test :refer :all]))
+
+    (deftest stacktrace-test
+      (is (throw (java.lang.Exception.))))
+    
+    """
+    When I run `bin/kaocha`
+    Then the output should contain:
+    """
+    clojure.lang
+    """
+    And the output should not contain
+    """
+    clojure.core
+    """
+
+  Scenario: Stacktrace filtering turned off
+    Given a file named "tests.edn" with:
+    """ clojure
+    #kaocha/v1
+    {:bindings {kaocha.stacktrace/*stacktrace-filters* []}}
+    """
+    And a file named "test/my/erroring_test.clj" with:
+    """ clojure
+    (ns my.erroring-test
+      (:require [clojure.test :refer :all]))
+
+    (deftest stacktrace-test
+      (is (throw (java.lang.Exception.))))
+    
+    """
+    When I run `bin/kaocha`
+    Then the output should contain:
+    """
+    clojure.core
+    """
+
+  Scenario: Stacktrace shortening
+    Given a file named "tests.edn" with:
+    """ clojure
+    #kaocha/v1
+    {:bindings {kaocha.stacktrace/*stacktrace-stop-list* ["kaocha.runner"]}}
+    """
+    And a file named "test/my/erroring_test.clj" with:
+    """ clojure
+    (ns my.erroring-test
+      (:require [clojure.test :refer :all]))
+
+    (deftest stacktrace-test
+      (is (throw (java.lang.Exception.))))
+    
+    """
+    When I run `bin/kaocha`
+    Then the output should contain:
+    """
+    (Rest of stacktrace elided)
+    """
+    And the output should not contain
+    """
+    kaocha.runner$
+    """
+
+  Scenario: Disable stacktrace shortening
+    Given a file named "tests.edn" with:
+    """ clojure
+    #kaocha/v1
+    {:bindings {kaocha.stacktrace/*stacktrace-filters* []
+                kaocha.stacktrace/*stacktrace-stop-list* []}}
+    """
+    And a file named "test/my/erroring_test.clj" with:
+    """ clojure
+    (ns my.erroring-test
+      (:require [clojure.test :refer :all]))
+
+    (deftest stacktrace-test
+      (is (throw (java.lang.Exception.))))
+    
+    """
+    When I run `bin/kaocha`
+    Then the output should contain:
+    """
+    kaocha.runner$
+    """
+    And the output should not contain
+    """
+    (Rest of stacktrace elided)
     """

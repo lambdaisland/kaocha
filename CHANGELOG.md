@@ -1,5 +1,7 @@
 # Unreleased
 
+- Added kaocha.stacktrace/*stacktrace-stop-list* binding to stop printing a stacktrace after matching a string
+
 ## Added
 
 ## Fixed
