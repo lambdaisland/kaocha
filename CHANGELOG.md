@@ -1,12 +1,8 @@
 # Unreleased
 
-- Added kaocha.stacktrace/*stacktrace-stop-list* binding to stop printing a stacktrace after matching a string
-
 ## Added
 
-## Fixed
-
-## Changed
+- Added `kaocha.stacktrace/*stacktrace-stop-list*` binding to stop printing a stacktrace after matching a string
 
 # 1.86.1355 (2023-08-30 / a81f4cb)
 
