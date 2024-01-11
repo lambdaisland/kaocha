@@ -180,7 +180,7 @@ options.  If you nonetheless prefer `:exec-fn`/`-X`, you can set up `deps.edn`:
 ```clojure
 ;; deps.edn
 {:deps { ,,, }
- :aliases 
+ :aliases
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}}}
@@ -201,7 +201,7 @@ of tests skipped. You could save that configuration with an additional alias:
 ```clojure
 ;; deps.edn
 {:deps { ,,, }
- :aliases 
+ :aliases
  {:test {:extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
          :exec-fn kaocha.runner/exec-fn
          :exec-args {}}
@@ -221,7 +221,7 @@ You can also pass exec-args on the command line like so:
 
 ### Babashka
 
-Kaocha is compatible with [Babashka](https://github.com/babashka/babashka). 
+Kaocha is compatible with [Babashka](https://github.com/babashka/babashka).
 
 You can create a `bb.edn` file:
 
@@ -301,6 +301,8 @@ bin/kaocha --test-help
 
 * [kaocha-noyoda](https://github.com/magnars/kaocha-noyoda) Don't speak like
   Yoda, write `(is (= actual expected))` instead of `(is (= expected actual))`
+* [kaocha-test-ns-hook](https://github.com/philoskim/kaocha-test-ns-hook)
+  A Kaocha plugin for the test-ns-hook feature in cloure.test.
 
 ## Requirements
 
@@ -340,7 +342,7 @@ You can find an overview of all our different projects at [lambdaisland/open-sou
 We warmly welcome patches to kaocha. Please keep in mind the following:
 
 - adhere to the [LambdaIsland Clojure Style Guide](https://nextjournal.com/lambdaisland/clojure-style-guide)
-- write patches that solve a problem 
+- write patches that solve a problem
 - start by stating the problem, then supply a minimal solution `*`
 - by contributing you agree to license your contributions as EPL 1.0
 - don't break the contract with downstream consumers `**`
