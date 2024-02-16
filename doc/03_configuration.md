@@ -29,7 +29,8 @@ Here's an example test configuration with a single test suite:
  :kaocha.plugin.randomize/seed       950716166
  :kaocha.plugin.randomize/randomize? true
  :kaocha.plugin.profiling/count      3
- :kaocha.plugin.profiling/profiling? true}
+ :kaocha.plugin.profiling/profiling? true
+ :kaocha/parallize?                  false}
 ```
 
 Writing a full test configuration by hand is tedious, which is why in

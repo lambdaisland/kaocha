@@ -2,6 +2,10 @@
 
 ## Added
 
+- You can now parallelize tests by enabling the `:parallel` key or
+    the `--parallel` flag. This is still a beta feature, but works on a variety
+    of code bases.
+
 ## Fixed
 
 ## Changed

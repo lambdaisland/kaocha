@@ -66,7 +66,7 @@
 
 (deftest merge-ns-patterns-issue-124-test
   (testing "https://github.com/lambdaisland/kaocha/issues/124"
-    (is (= #:kaocha{:early-exit 250}
+    (is (= #:kaocha{:early-exit 252}
            (try+
             (config/merge-config {:kaocha/ns-patterns "test"} {:kaocha/ns-patterns "test"})
             (catch :kaocha/early-exit e
@@ -158,11 +158,11 @@
                    :kaocha/plugins (m/embeds [:some.kaocha.plugin/qux :other.kaocha.plugin/bar])}
                   (config/load-config-for-cli-and-validate (io/resource "kaocha/config/loaded-test-resource.edn") {}))))
     (testing "falls back to default when resource does not exist"
-      (is (match? 
-            ;; Deliberately minimal case because we want to test this behavior
-            ;; (fallback to tests.edn) without tying too much to tests.edn
-            {:kaocha.hooks/pre-load ['kaocha.assertions/load-assertions] }
-             (config/load-config-for-cli-and-validate (io/resource "resource-that-does-not-exist.edn") {})))))
+      (is (match?
+           ;; Deliberately minimal case because we want to test this behavior
+           ;; (fallback to tests.edn) without tying too much to tests.edn
+           {:kaocha.hooks/pre-load ['kaocha.assertions/load-assertions] }
+           (config/load-config-for-cli-and-validate (io/resource "resource-that-does-not-exist.edn") {})))))
   (testing "loading a file with profiles"
     (testing "specifying a profile"
       (is (match? {:kaocha/reporter 'kaocha.report.progress/report}

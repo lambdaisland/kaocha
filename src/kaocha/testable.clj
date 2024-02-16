@@ -10,7 +10,10 @@
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.specs :refer [assert-spec]]
-            [kaocha.util :as util]))
+            [kaocha.util :as util]
+            [kaocha.hierarchy :as hierarchy])
+  (:import [clojure.lang Compiler$CompilerException]
+           [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -26,13 +29,16 @@
   and `:line`."
   nil)
 
+(def REQUIRE_LOCK (Object.))
+
 (defn add-desc [testable description]
   (assoc testable ::desc
          (str (name (::id testable)) " (" description ")")))
 
 (defn- try-require [n]
   (try
-    (require n)
+    (locking REQUIRE_LOCK
+      (require n))
     true
     (catch java.io.FileNotFoundException e
       false)))
@@ -55,7 +61,10 @@
   (assert-spec :kaocha/testable testable)
   (let [type (::type testable)]
     (try-load-third-party-lib type)
-    (assert-spec type testable)))
+    (try
+      (assert-spec type testable)
+      (catch Exception e
+        (output/warn  (format "Could not load %s. This is a known bug in parallelization.\n%s" type e))))))
 
 (defmulti -load
   "Given a testable, load the specified tests, producing a test-plan."
@@ -137,9 +146,9 @@
         result))))
 
 (spec/fdef run
-        :args (spec/cat :testable :kaocha.test-plan/testable
-                     :test-plan :kaocha/test-plan)
-        :ret :kaocha.result/testable)
+  :args (spec/cat :testable :kaocha.test-plan/testable
+                  :test-plan :kaocha/test-plan)
+  :ret :kaocha.result/testable)
 
 (defn load-testables
   "Load a collection of testables, returning a test-plan collection"
@@ -163,6 +172,7 @@
             [file line] (util/compiler-exception-file-and-line error)
             file (::load-error-file test file)
             line (::load-error-line test line)
+            thread (.getName (Thread/currentThread))
             m (if-let [message (::load-error-message test)]
                 {:type :error
                  :message message
@@ -174,7 +184,8 @@
                  :kaocha/testable test})
             m (cond-> m
                 file (assoc :file file)
-                line (assoc :line line))]
+                line (assoc :line line)
+                thread (assoc :thread thread))]
         (t/do-report (assoc m :type :kaocha/begin-suite))
         (binding [*fail-fast?* false]
           (t/do-report m))
@@ -211,11 +222,19 @@
         (run % test-plan)
         (plugin/run-hook :kaocha.hooks/post-test % test-plan)))))
 
-(defn run-testables
+(defn try-run-testable [test test-plan n]
+  (let [result (try (run-testable test test-plan) (catch Exception _e false))]
+    (if (or result (> n 1))
+      ;; success or last try, return
+      result
+      ;; otherwise retry
+      (try-run-testable test test-plan (dec n)))))
+
+(defn run-testables-serial
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
   (let [load-error? (some ::load-error testables)]
-    (loop [result []
+    (loop [result  []
            [test & testables] testables]
       (if test
         (let [test (cond-> test
@@ -223,9 +242,47 @@
                      (assoc ::skip true))
               r (run-testable test test-plan)]
           (if (or (and *fail-fast?* (result/failed? r)) (::skip-remaining? r))
-            (reduce into result [[r] testables])
+            (into (conj result r) testables)
             (recur (conj result r) testables)))
         result))))
+
+(defn current-thread-info []
+  (let [thread (Thread/currentThread)]
+    {:name (.getName thread)
+     :id (.getId thread)
+     :group-name (.getName (.getThreadGroup thread))}))
+
+(defn run-testables-parallel
+  "Run a collection of testables in parallel, returning a result collection."
+  [testables test-plan]
+  (let [load-error? (some ::load-error testables)
+        futures (doall
+                 (map (fn [t]
+                        (future
+                          (run-testable (assoc t ::thread-info (current-thread-info)) test-plan)))
+                      testables))]
+    (doall (map deref futures))))
+
+(defn run-testables
+  "Original run-testables, left for backwards compatibility, and still usable for
+  test types that don't want to opt-in to parallelization. Generally
+  implementations should move to [[run-testables-parent]]."
+  [testables test-plan]
+  (run-testables-serial testables test-plan))
+
+(defn run-testables-parent
+  "Test type implementations should call this in their [[-run]] method, rather
+  than [[run-testables]], so we can inspect the parent and parent metadata to
+  decide if the children should get parallelized."
+  [parent test-plan]
+  (let [testables (:kaocha.test-plan/tests parent)]
+    (if (or (true? (:kaocha/parallelize? (::meta parent)))               ; explicit opt-in via metadata
+            (and (:kaocha/parallelize? test-plan)                        ; enable parallelization in top-level config
+                 (or (::parallelizable? parent)                          ; test type has opted in, children are considered parallelizable
+                     (:kaocha/parallelize? parent))                      ; or we're at the top level, suites are parallelizable. Can also be used as an explicit override/opt-in
+                 (not (false? (:kaocha/parallelize? (::meta parent)))))) ; explicit opt-out via metadata
+      (run-testables-parallel testables test-plan)
+      (run-testables-serial testables test-plan))))
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
@@ -238,12 +295,12 @@
 
 (defn test-seq-with-skipped
   [testable]
- "Create a seq of all tests, including any skipped tests.
+  "Create a seq of all tests, including any skipped tests.
 
  Typically you want to look at `test-seq` instead."
   (cond->> (mapcat test-seq (or (:kaocha/tests testable)
-                                               (:kaocha.test-plan/tests testable)
-                                               (:kaocha.result/tests testable)))
+                                (:kaocha.test-plan/tests testable)
+                                (:kaocha.result/tests testable)))
     ;; When calling test-seq on the top level test-plan/result, don't include
     ;; the outer map. When running on an actual testable, do include it.
     (:kaocha.testable/id testable)

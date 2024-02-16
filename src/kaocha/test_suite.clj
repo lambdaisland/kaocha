@@ -4,7 +4,7 @@
 
 (defn run [testable test-plan]
   (t/do-report {:type :begin-test-suite})
-  (let [results (testable/run-testables (:kaocha.test-plan/tests testable) test-plan)
+  (let [results (testable/run-testables-parent testable test-plan)
         testable (-> testable
                      (dissoc :kaocha.test-plan/tests)
                      (assoc :kaocha.result/tests results))]
