@@ -4,6 +4,9 @@
 
 ## Fixed
 
+- Track all results when `:once` fixtures call `f` multiple times.
+  (thanks [@NoahTheDuke](https://github.com/NoahTheDuke))
+
 ## Changed
 
 # 1.87.1366 (2023-09-27 / f514905)
