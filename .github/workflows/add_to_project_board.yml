@@ -1,7 +1,6 @@
 name: Add new pr or issue to project board 
 
-on:
-#on: [issues]    
+on: [issues, pull_requests]
 
 jobs:
   add-to-project:
