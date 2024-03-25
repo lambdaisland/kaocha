@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.87.1366</version>
+  <version>1.88.1376</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -25,18 +25,18 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>17970292cc99710818f01ac63b61b62dbd3afa23</tag>
+    <tag>2c61e0571778cbf44181fcf711d7ba75d88cbbb0</tag>
   </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.11.1</version>
+      <version>1.11.2</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>deep-diff2</artifactId>
-      <version>2.10.211</version>
+      <version>2.11.216</version>
     </dependency>
     <dependency>
       <groupId>expound</groupId>
@@ -46,12 +46,12 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>spec.alpha</artifactId>
-      <version>0.3.218</version>
+      <version>0.4.233</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
-      <version>1.0.219</version>
+      <version>1.1.230</version>
     </dependency>
     <dependency>
       <groupId>slingshot</groupId>
@@ -157,7 +157,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>17970292cc99710818f01ac63b61b62dbd3afa23</git-revision>
+              <git-revision>2c61e0571778cbf44181fcf711d7ba75d88cbbb0</git-revision>
             </manifestEntries>
           </archive>
         </configuration>
