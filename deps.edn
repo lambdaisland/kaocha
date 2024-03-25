@@ -1,11 +1,11 @@
 {:paths ["src" "resources"]
 
  :deps
- {org.clojure/clojure          {:mvn/version "1.11.1"}
-  org.clojure/spec.alpha       {:mvn/version "0.3.218"}
-  org.clojure/tools.cli        {:mvn/version "1.0.219"}
+ {org.clojure/clojure          {:mvn/version "1.11.2"}
+  org.clojure/spec.alpha       {:mvn/version "0.4.233"}
+  org.clojure/tools.cli        {:mvn/version "1.1.230"}
   lambdaisland/tools.namespace {:mvn/version "0.3.256"}
-  lambdaisland/deep-diff2      {:mvn/version "2.10.211"}
+  lambdaisland/deep-diff2      {:mvn/version "2.11.216"}
   org.tcrawley/dynapath        {:mvn/version "1.1.0"}
   slingshot/slingshot          {:mvn/version "0.12.2"}
   hawk/hawk                    {:mvn/version "0.2.11"}
@@ -29,7 +29,7 @@
   {:extra-deps
    {lambdaisland/kaocha-cucumber {:mvn/version "0.11.100" :exclusions [lambdaisland/kaocha]}
     lambdaisland/open-source     {:git/url "https://github.com/lambdaisland/open-source"
-                                  :git/sha "2dc2a8ef9978a3fc45e8f524b0e46253caa40fe2"
+                                  :git/sha "a6d39720fe8948d79b822384de054ee6e1912599"
                                   #_#_:local/root "../open-source"}}}
 
   :dev
@@ -37,4 +37,4 @@
    :extra-deps  {djblue/portal {:mvn/version "RELEASE"}}}
 
   :bb
-  {:extra-deps {nubank/matcher-combinators {:mvn/version "3.8.5"}}}}}
+  {:extra-deps {nubank/matcher-combinators {:mvn/version "3.9.1"}}}}}
