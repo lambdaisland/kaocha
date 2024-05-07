@@ -1,10 +1,10 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- We no longer depend on clojure or spec.alpha, as it is assumed your app
+  declares its own Clojure dependency, which will pull in the matching
+  spec.alpha version.
 
 # 1.88.1376 (2024-03-25 / 8308e16)
 
