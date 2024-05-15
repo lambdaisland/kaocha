@@ -172,7 +172,7 @@
                (::notifications? config true)))))
 
   (post-run [result]
-    (when (::notifications? result)
+    (when (and (::notifications? result) (not (= (System/getenv "CI") "true")))
       (if-let [command (::command result)]
         (run-command command result)
         (send-tray-notification result)))

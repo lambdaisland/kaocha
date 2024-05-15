@@ -1,10 +1,8 @@
 # Unreleased
 
-## Added
-
-## Fixed
-
 ## Changed
+
+- Always make the notifier plugin a no-op in CI environments, so when `(= "true" (getenv "CI"))`
 
 # 1.89.1380 (2024-05-07 / d10b0de)
 
