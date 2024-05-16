@@ -238,15 +238,24 @@
                    :actual '~form})
     (t/assert-predicate msg form)))
 
+(defmulti get-actual
+  (fn [m] (first (:actual m))))
+
+;; e.g. (not= ...)
+(defmethod get-actual 'not= [m]
+  (-> m :actual))
+
+;; e.g. (not (= ...))
+(defmethod get-actual :default [m]
+  (-> m :actual second))
+
 (defn print-expression [m]
   (let [printer (output/printer)]
-    ;; :actual is of the form (not (= ...))
-
     (if (and (not= (:type m) ::one-arg-eql)
-             (seq? (second (:actual m)))
-             (> (count (second (:actual m))) 2))
+             (seq? (get-actual m))
+             (> (count (get-actual m)) 2))
 
-      (let [[_ expected & actuals] (-> m :actual second)]
+      (let [[_ expected & actuals] (get-actual m)]
         (output/print-doc
          [:span
           "Expected:" :line
@@ -421,7 +430,6 @@
 (defn debug [m]
   (t/with-test-out
     (prn (util/minimal-test-event m))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

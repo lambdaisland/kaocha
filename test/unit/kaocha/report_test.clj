@@ -157,6 +157,15 @@
            (report/print-expr {:expected '(= 1 (+ 1 1))
                           :actual '(not (= 1 2))})))))
 
+(deftest print-expression-test
+  (is (= "Expected:\n  [36m1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n"
+         (with-out-str
+           (report/print-expression {:expected '(= 1 (+ 1 1))
+                                     :actual '(not (= 1 2))}))))
+  (is (= "Expected:\n  [36m1[0m\nActual:\n  [31m-1[0m [32m+2[0m\n"
+         (with-out-str
+           (report/print-expression {:expected '(= 1 (+ 1 1))
+                                     :actual '(not= 1 2)})))))
 (deftest fail-summary-test
   (is (= (str   "\n"
                 "[31mFAIL[m in foo/bar-test (foo.clj:42)\n"
