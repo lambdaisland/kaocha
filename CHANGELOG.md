@@ -1,5 +1,7 @@
 # Unreleased
 
+- deep-diff `:actual (not=` output format.
+
 ## Added
 
 ## Fixed
