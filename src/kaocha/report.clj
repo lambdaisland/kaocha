@@ -238,24 +238,24 @@
                    :actual '~form})
     (t/assert-predicate msg form)))
 
-(defmulti get-actual
+(defmulti sexpr-for-diff
   (fn [m] (first (:actual m))))
 
 ;; e.g. (not= ...)
-(defmethod get-actual 'not= [m]
+(defmethod sexpr-for-diff 'not= [m]
   (-> m :actual))
 
 ;; e.g. (not (= ...))
-(defmethod get-actual :default [m]
+(defmethod sexpr-for-diff :default [m]
   (-> m :actual second))
 
 (defn print-expression [m]
   (let [printer (output/printer)]
     (if (and (not= (:type m) ::one-arg-eql)
-             (seq? (get-actual m))
-             (> (count (get-actual m)) 2))
+             (seq? (sexpr-for-diff m))
+             (> (count (sexpr-for-diff m)) 2))
 
-      (let [[_ expected & actuals] (get-actual m)]
+      (let [[_ expected & actuals] (sexpr-for-diff m)]
         (output/print-doc
          [:span
           "Expected:" :line
