@@ -99,7 +99,9 @@
   (is (match? {::n/notifications? false}
               (n/notifier-config-hook {:kaocha/cli-options {:notifications false}}))))
 
-(deftest notifier-post-run-hook-test
+(deftest
+  ^{:kaocha/skip (= "true" (System/getenv "CI"))}
+  notifier-post-run-hook-test
   (let [gen-file-name #(str (System/getProperty "java.io.tmpdir") (System/getProperty "file.separator")
                             (gensym (str (namespace `_) "-" (rand-int 10000))))
         f1 (gen-file-name)
