@@ -1,12 +1,9 @@
 # Unreleased
 
-- deep-diff `:actual (not=` output format.
-
-## Added
-
 ## Fixed
 
-## Changed
+- Handle assertions using `:actual (not= ,,,)` output format, this fixed
+  deep-diff when using the Expectations library.
 
 # 1.90.1383 (2024-05-15 / 165bd62)
 
