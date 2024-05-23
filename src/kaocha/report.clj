@@ -238,15 +238,24 @@
                    :actual '~form})
     (t/assert-predicate msg form)))
 
+(defmulti sexpr-for-diff
+  (fn [m] (first (:actual m))))
+
+;; e.g. (not= ...)
+(defmethod sexpr-for-diff 'not= [m]
+  (-> m :actual))
+
+;; e.g. (not (= ...))
+(defmethod sexpr-for-diff :default [m]
+  (-> m :actual second))
+
 (defn print-expression [m]
   (let [printer (output/printer)]
-    ;; :actual is of the form (not (= ...))
-
     (if (and (not= (:type m) ::one-arg-eql)
-             (seq? (second (:actual m)))
-             (> (count (second (:actual m))) 2))
+             (seq? (sexpr-for-diff m))
+             (> (count (sexpr-for-diff m)) 2))
 
-      (let [[_ expected & actuals] (-> m :actual second)]
+      (let [[_ expected & actuals] (sexpr-for-diff m)]
         (output/print-doc
          [:span
           "Expected:" :line
@@ -421,7 +430,6 @@
 (defn debug [m]
   (t/with-test-out
     (prn (util/minimal-test-event m))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
