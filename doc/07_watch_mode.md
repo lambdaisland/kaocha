@@ -34,7 +34,9 @@ interface, the provided links describes how they work in detail.
 
 ``` clojure
 #kaocha/v1
-{:kaocha.watch/ignore ["*.tmp"]}
+{:kaocha.watch/ignore ["**.tmp"]}
+; this will match all files ending in .tmp in the current directory and
+; any subdirectory 
 ```
 
 When running in watch mode you can press the Enter (Return) key to manually

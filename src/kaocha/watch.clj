@@ -22,7 +22,7 @@
             [lambdaisland.tools.namespace.track :as ctn-track]
             [slingshot.slingshot :refer [try+]]
             [nextjournal.beholder :as beholder])
-  (:import (java.nio.file FileSystems)
+  (:import (java.nio.file FileSystems Path)
            (java.util.concurrent ArrayBlockingQueue BlockingQueue)))
 
 (defn make-queue []
@@ -93,6 +93,7 @@
   for a description of the patterns, these are similar but not the same as
   typical shell glob patterns."
   [path patterns]
+  (assert (instance? Path path))
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
     (some #(.matches % path) patterns)))
@@ -295,8 +296,9 @@ errors as test errors."
 (defmethod watch! :beholder [{:keys [q watch-paths]}]
   (apply beholder/watch
          (fn [{:keys [type path]}]
+           (assert (instance? Path path))
            (when (contains? #{:modify :create} type)
-             (qput q path)))
+             (qput q (.toFile path))))
          (map str watch-paths)))
 
 (defn run* [config finish? q]
