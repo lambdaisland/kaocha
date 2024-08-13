@@ -22,7 +22,8 @@
             [lambdaisland.tools.namespace.track :as ctn-track]
             [slingshot.slingshot :refer [try+]]
             [nextjournal.beholder :as beholder])
-  (:import (java.nio.file FileSystems Path)
+  (:import (java.io File)
+           (java.nio.file FileSystems Path PathMatcher)
            (java.util.concurrent ArrayBlockingQueue BlockingQueue)))
 
 (defn make-queue []
@@ -96,7 +97,7 @@
   (assert (instance? Path path))
   (let [fs (FileSystems/getDefault)
         patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
-    (some #(.matches % path) patterns)))
+    (some #(.matches ^PathMatcher % path) patterns)))
 
 (defn convert
   "Converts a Git-style ignore pattern into the equivalent pattern that Java PathMatcher uses."
@@ -154,7 +155,7 @@
   "Finds ignore files in the local directory and the system."
   [dir]
   (let [absolute-files [(io/file (str (System/getProperty "user.home") "/.config/git/ignore"))]
-        relative-files (filter #(glob? (.toPath %) ["**.gitignore" "**.ignore"]) (file-seq (io/file dir)))]
+        relative-files (filter #(glob? (.toPath ^File %) ["**.gitignore" "**.ignore"]) (file-seq (io/file dir)))]
     (into absolute-files relative-files)))
 
 (defn merge-ignore-files
@@ -170,7 +171,7 @@
 (defn wait-and-rescan! [q tracker watch-paths ignore]
   (let [f (qtake q)]
     (cond
-      (and (file? f) (glob? (.toPath f) ignore))
+      (and (file? f) (glob? (.toPath ^File f) ignore))
       (recur q tracker watch-paths ignore)
 
       (directory? f)
@@ -282,7 +283,7 @@ errors as test errors."
                    (map io/file))
              (:kaocha/tests config))
        ;; Without this, if any path doesn't exist the watching doesn't work.
-       (filter (fn [x] (.exists ^java.io.File x)))))
+       (filter (fn [x] (.exists ^File x)))))
 
 (defmulti watch! :type)
 
@@ -298,7 +299,7 @@ errors as test errors."
          (fn [{:keys [type path]}]
            (assert (instance? Path path))
            (when (contains? #{:modify :create} type)
-             (qput q (.toFile path))))
+             (qput q (.toFile ^Path path))))
          (map str watch-paths)))
 
 (defn run* [config finish? q]
@@ -309,7 +310,7 @@ errors as test errors."
                        {})
         watch-paths (if (:kaocha.watch/use-ignore-file config)
                       (set/union (watch-paths config)
-                                 (set (map #(.getParentFile (.getCanonicalFile %)) (find-ignore-files "."))))
+                                 (set (map #(.getParentFile (.getCanonicalFile ^File %)) (find-ignore-files "."))))
                       (watch-paths config))
         tracker (ctn-track/tracker)
         ;; if t.n fails due to circular dependencies, do not track-reload.
