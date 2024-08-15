@@ -4,6 +4,8 @@
 
 ## Fixed
 
+- Fix beholder watch functionality that would cause a NullPointerException earlier.
+
 ## Changed
 
 # 1.91.1392 (2024-05-23 / c2d7e1f)
