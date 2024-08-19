@@ -5,6 +5,7 @@
 ## Fixed
 
 - Fix beholder watch functionality that would cause a NullPointerException earlier.
+- `*.<ext>` will now match files with `.ext` extensions in any directory.
 
 ## Changed
 
