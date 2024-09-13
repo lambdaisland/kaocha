@@ -13,6 +13,8 @@
 
 (def ^:dynamic *test-buffer* nil)
 
+(def ^:dynamic *previous-writers* nil)
+
 (def active-buffers (atom #{}))
 
 (defn make-buffer []
@@ -24,11 +26,11 @@
 
 (defmacro with-test-buffer [buffer & body]
   `(try
-    (swap! active-buffers conj ~buffer)
-    (binding [*test-buffer* ~buffer]
-      ~@body)
-    (finally
-      (swap! active-buffers disj ~buffer))))
+     (swap! active-buffers conj ~buffer)
+     (binding [*test-buffer* ~buffer]
+       ~@body)
+     (finally
+       (swap! active-buffers disj ~buffer))))
 
 (defn- doto-capture-buffer [f]
   (if *test-buffer*
@@ -54,6 +56,7 @@
     (System/setOut new-stream)
     (System/setErr new-stream)
     {:captured-writer new-writer
+     :previous-writers {:out *out*, :err *err*}
      :old-system-out  old-out
      :old-system-err  old-err}))
 
@@ -65,7 +68,9 @@
   `(let [context# (init-capture)
          writer#  (:captured-writer context#)]
      (try
-       (binding [*out* writer#, *err* writer#]
+       (binding [*out* writer#
+                 *err* writer#
+                 *previous-writers* (:previous-writers context#)]
          (with-redefs [*out* writer#, *err* writer#]
            ~@body))
        (finally
@@ -110,6 +115,7 @@
      "Bypass output-capturing within this code block, so any print statements go to
   the process out/err streams without being captured."
      [& body]
-     `(binding [*out* (io/writer (PrintStream. (FileOutputStream. java.io.FileDescriptor/out)))
-                *err* (io/writer (PrintStream. (FileOutputStream. java.io.FileDescriptor/err)))]
-        ~@body)))
+     `(let [{out# :out, err# :err} (or *previous-writers* {:out *out*, :err *err*})]
+        (binding [*out* out#
+                  *err* err#]
+          ~@body))))
