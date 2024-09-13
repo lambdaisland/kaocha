@@ -1,13 +1,13 @@
 (ns kaocha.plugin.capture-output
   (:require
-    [clojure.java.io :as io]
-    [kaocha.hierarchy :as hierarchy]
-            [kaocha.plugin :as plugin :refer [defplugin]])
-  (:import (java.io ByteArrayOutputStream
-                    FileOutputStream ;; false positive
-                    OutputStream
-                    PrintStream
-                    PrintWriter)))
+   [kaocha.hierarchy :as hierarchy]
+   [kaocha.plugin :as plugin :refer [defplugin]])
+  (:import
+   (java.io
+    ByteArrayOutputStream
+    OutputStream
+    PrintStream
+    PrintWriter)))
 
 ;; Many props to eftest for much of this code
 
@@ -70,7 +70,7 @@
      (try
        (binding [*out* writer#
                  *err* writer#
-                 *previous-writers* (:previous-writers context#)]
+                 *previous-writers* (or *previous-writers* (:previous-writers context#))]
          (with-redefs [*out* writer#, *err* writer#]
            ~@body))
        (finally
