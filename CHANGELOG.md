@@ -5,6 +5,7 @@
 ## Fixed
 
 - Fix beholder watch functionality that would cause a NullPointerException earlier.
+- Resolve reflective calls in profiling plugin.
 
 ## Changed
 
