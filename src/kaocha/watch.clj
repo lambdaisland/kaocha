@@ -87,6 +87,17 @@
            (assoc tracker ::tracker-error e)
            (throw e)))))
 
+(defn- fix-pattern
+  "beholder, the file change watcher, will always produce fully qualified paths.
+  A '*.<ext>' pattern will never match anything.
+  Such a pattern will be prefixed with '*'.
+  This will cause the pattern to match all files ending in '.<ext>' in any directory."
+  [pattern]
+  (assert (string? pattern))
+  (if (str/starts-with? pattern "*.")
+    (str "*" pattern)
+    pattern))
+
 (defn glob?
   "Does path match any of the glob patterns.
 
@@ -96,7 +107,7 @@
   [path patterns]
   (assert (instance? Path path))
   (let [fs (FileSystems/getDefault)
-        patterns (map #(.getPathMatcher fs (str "glob:" %)) patterns)]
+        patterns (map #(.getPathMatcher fs (str "glob:" (fix-pattern %))) patterns)]
     (some #(.matches ^PathMatcher % path) patterns)))
 
 (defn convert
