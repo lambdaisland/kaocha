@@ -7,6 +7,8 @@
   (:import java.time.Instant
            java.time.temporal.ChronoUnit))
 
+(set! *warn-on-reflection* true)
+
 (spec/def ::start #(instance? Instant %))
 (spec/def ::duration nat-int?)
 (spec/def ::profiling? boolean?)
@@ -18,7 +20,7 @@
 (defn stop [testable]
   (cond-> testable
     (::start testable)
-    (assoc ::duration (.until (::start testable)
+    (assoc ::duration (.until ^Instant (::start testable)
                               (Instant/now)
                               ChronoUnit/NANOS))))
 
