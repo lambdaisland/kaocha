@@ -5,6 +5,7 @@
 ## Fixed
 
 - Fix beholder watch functionality that would cause a NullPointerException earlier.
+- Make `kaocha.jit/jit` thread-safe in Clojure 1.10+. For lower versions, best effort with printed warning.
 
 ## Changed
 
