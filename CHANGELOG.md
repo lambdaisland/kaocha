@@ -5,6 +5,7 @@
 ## Fixed
 
 - Fix beholder watch functionality that would cause a NullPointerException earlier.
+- Don't warn if side-effecting `main` hook returns nil.
 
 ## Changed
 
