@@ -24,7 +24,7 @@ Jump to [Quick start](#quick-start) | [Docs](#docs)
 - to observe and study
 - on-the-spot investigation
 
-See the [Line Dict entry](https://dict.naver.com/linedict/zhendict/dict.html#/cnen/entry/89b3f694bb3a4fd49e3241c6bd1cb79f) for an audio sample.
+See the [Hanzii entry](https://hanzii.net/search/word/%E8%80%83%E5%AF%9F) for an audio sample.
 
 
 ## Need help?
