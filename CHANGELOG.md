@@ -6,6 +6,8 @@
 
 - Fix beholder watch functionality that would cause a NullPointerException earlier.
 - Resolve reflective calls in profiling plugin.
+- Fix `kaocha.testable/test-seq` not respecting `:kaocha.testable/skip` on root testable
+- Fix `kaocha.testable/test-seq-with-skipped` omitting skipped tests on nested testables
 
 ## Changed
 
