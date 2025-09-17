@@ -1,23 +1,24 @@
 #kaocha/v1
-{:plugins [:kaocha.plugin.alpha/info
-           :profiling
-           :print-invocations
-           :hooks
-           :notifier
-           :kaocha.plugin/version-filter]
+ {:plugins [:kaocha.plugin.alpha/info
+            :profiling
+            :print-invocations
+            :hooks
+            :notifier
+            :kaocha.plugin/version-filter]
 
- :tests [{:id         :unit
-          :test-paths ["test/shared"
-                       "test/unit"]}
-         {:id                  :integration
-          :type                :kaocha.type/cucumber
-          :test-paths          ["test/shared"
-                                "test/features"]
-          :cucumber/glue-paths ["test/step_definitions"]}]
+  :tests [{:id         :unit
+           :test-paths ["test/shared"
+                        "test/unit"]}
+          {:id                  :integration
+           :type                :kaocha.type/cucumber
+           :test-paths          ["test/shared"
+                                 "test/features"]
+           :cucumber/glue-paths ["test/step_definitions"]
+           :kaocha.filter/skip [plugins.notifier-plugin/enabling-desktop-notifications]}]
 
- :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
+  :kaocha.hooks/pre-load [kaocha.assertions/load-assertions]
 
- :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []
-                   kaocha.stacktrace/*stacktrace-stop-list* []}
+  :kaocha/bindings {kaocha.stacktrace/*stacktrace-filters* []
+                    kaocha.stacktrace/*stacktrace-stop-list* []}
 
- :reporter kaocha.report/documentation}
+  :reporter kaocha.report/documentation}

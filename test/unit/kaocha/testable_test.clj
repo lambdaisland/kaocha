@@ -34,14 +34,80 @@
                                        :kaocha.testable/desc "foo"}
                           (f/test-plan {})))))
 
-
 (deftest test-seq-test
-  (is (= (testable/test-seq
-          {:kaocha.testable/id :x/_1
-           :kaocha/tests [{:kaocha.testable/id :y/_1}
-                          {:kaocha.testable/id :z/_1}]})
-         [{:kaocha.testable/id :x/_1,
-           :kaocha/tests [#:kaocha.testable{:id :y/_1}
-                          #:kaocha.testable{:id :z/_1}]}
-          #:kaocha.testable{:id :y/_1}
-          #:kaocha.testable{:id :z/_1}])))
+  (testing "no skipped tests"
+    (is (= (testable/test-seq
+             {:kaocha.testable/id :x/_1
+              :kaocha/tests [{:kaocha.testable/id :y/_1}
+                             {:kaocha.testable/id :z/_1}]})
+           [{:kaocha.testable/id :x/_1,
+             :kaocha/tests [#:kaocha.testable{:id :y/_1}
+                            #:kaocha.testable{:id :z/_1}]}
+            #:kaocha.testable{:id :y/_1}
+            #:kaocha.testable{:id :z/_1}])))
+  (testing "top level test-plan/result is ignored"
+    (is (= (testable/test-seq
+             {:kaocha/tests [{:kaocha.testable/id :y/_1}
+                             {:kaocha.testable/id :z/_1}]})
+           [#:kaocha.testable{:id :y/_1}
+            #:kaocha.testable{:id :z/_1}])))
+  (testing "skipped root testable"
+    (is (= (testable/test-seq
+             {:kaocha.testable/id :x/_1
+              :kaocha.testable/skip true
+              :kaocha/tests [{:kaocha.testable/id :y/_1}
+                             {:kaocha.testable/id :z/_1}]})
+           [])))
+  (testing "skipped nested testable"
+    (is (= (testable/test-seq
+             {:kaocha.testable/id :x/_1
+              :kaocha/tests [{:kaocha.testable/id :y/_1
+                              :kaocha.testable/skip true}
+                             {:kaocha.testable/id :z/_1}]})
+           [{:kaocha.testable/id :x/_1,
+             :kaocha/tests [#:kaocha.testable{:id :y/_1
+                                              :skip true}
+                            #:kaocha.testable{:id :z/_1}]}
+            #:kaocha.testable{:id :z/_1}]))))
+
+(deftest test-seq-with-skipped-test
+  (testing "no skipped tests"
+    (is (= (testable/test-seq-with-skipped
+             {:kaocha.testable/id :x/_1
+              :kaocha/tests [{:kaocha.testable/id :y/_1}
+                             {:kaocha.testable/id :z/_1}]})
+           [{:kaocha.testable/id :x/_1,
+             :kaocha/tests [#:kaocha.testable{:id :y/_1}
+                            #:kaocha.testable{:id :z/_1}]}
+            #:kaocha.testable{:id :y/_1}
+            #:kaocha.testable{:id :z/_1}])))
+  (testing "top level test-plan/result is ignored"
+    (is (= (testable/test-seq-with-skipped
+             {:kaocha/tests [{:kaocha.testable/id :y/_1}
+                             {:kaocha.testable/id :z/_1}]})
+           [#:kaocha.testable{:id :y/_1}
+            #:kaocha.testable{:id :z/_1}])))
+  (testing "skipped outer testable"
+    (is (= (testable/test-seq-with-skipped
+             {:kaocha.testable/id :x/_1
+              :kaocha.testable/skip true
+              :kaocha/tests [{:kaocha.testable/id :y/_1}
+                             {:kaocha.testable/id :z/_1}]})
+           [{:kaocha.testable/id :x/_1,
+             :kaocha.testable/skip true
+             :kaocha/tests [#:kaocha.testable{:id :y/_1}
+                            #:kaocha.testable{:id :z/_1}]}
+            #:kaocha.testable{:id :y/_1}
+            #:kaocha.testable{:id :z/_1}])))
+  (testing "skipped nested testable"
+    (is (= (testable/test-seq-with-skipped
+             {:kaocha.testable/id :x/_1
+              :kaocha/tests [{:kaocha.testable/id :y/_1
+                              :kaocha.testable/skip true}
+                             {:kaocha.testable/id :z/_1}]})
+           [{:kaocha.testable/id :x/_1,
+             :kaocha/tests
+             [#:kaocha.testable{:id :y/_1, :skip true}
+              #:kaocha.testable{:id :z/_1}]}
+            #:kaocha.testable{:id :y/_1, :skip true}
+            #:kaocha.testable{:id :z/_1}]))))
