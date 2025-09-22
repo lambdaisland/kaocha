@@ -111,7 +111,6 @@
                    (assoc-in [:kaocha/cli-options :config-file] (str config-file))
                    (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
                    (assoc-in [:kaocha/tests 0 :kaocha/test-paths] [(str test-dir)]))
-        ;; _ (println config)
         prefix (str (gensym "foo"))
         finish? (atom false)
         q       (w/make-queue)
