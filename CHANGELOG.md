@@ -8,6 +8,7 @@
 - Resolve reflective calls in profiling plugin.
 - Fix `kaocha.testable/test-seq` not respecting `:kaocha.testable/skip` on root testable
 - Fix `kaocha.testable/test-seq-with-skipped` omitting skipped tests on nested testables
+- `*.<ext>` will now match files with `.ext` extensions in any directory.
 
 ## Changed
 
