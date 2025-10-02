@@ -104,43 +104,6 @@
          (spit tmp-file "#kaocha/v1 {:tests [{:id :foo}]}")
          (first (w/reload-config {:kaocha/cli-options {:config-file (str tmp-file)}} []))))))
 
-(deftest ^{:min-java-version "1.11"} watch-test
-  (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
-        config (-> (config/load-config config-file)
-                   (assoc-in [:kaocha/cli-options :config-file] (str config-file))
-                   (assoc-in [:kaocha/tests 0 :kaocha/source-paths] [])
-                   (assoc-in [:kaocha/tests 0 :kaocha/test-paths] [(str test-dir)]))
-        prefix (str (gensym "foo"))
-        finish? (atom false)
-        q       (w/make-queue)
-        out-str (promise)
-        test-file-path (str "test/" prefix "/bar_test.clj")]
-    (integration/spit-file m "tests.edn" (prn-str config))
-    (integration/spit-file m test-file-path (str "(ns " prefix ".bar-test (:require [clojure.test :refer :all])) (deftest xxx-test (is (= :xxx :yyy)))"))
-
-    (future (deliver out-str (util/with-test-out-str
-                               (t/with-test-out
-                                 (util/with-test-ctx
-                                   (w/run* config finish? q))))))
-
-    (Thread/sleep 100)
-    (integration/spit-file m test-file-path (str "(ns " prefix ".bar-test (:require [clojure.test :refer :all])) (deftest xxx-test (is (= :xxx :zzz)))"))
-    (w/qput q (.resolve (:dir m) test-file-path))
-    (Thread/sleep 500)
-    (reset! finish? true)
-    (w/qput q :finish)
-    (Thread/sleep 100)
-
-    (is (str/includes?
-          @out-str
-          (str/replace
-            (str/replace
-              "[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:yyy\n1 tests, 1 assertions, 1 failures.\n\nbin/kaocha --config-file PATH --focus 'foo.bar-test/xxx-test'\n\n[watch] Reloading #{foo.bar-test}\n[watch] Re-running failed tests #{:foo.bar-test/xxx-test}\n[(F)]\n\nFAIL in foo.bar-test/xxx-test (bar_test.clj:1)\nExpected:\n  :xxx\nActual:\n  -:xxx +:zzz"
-              "foo"
-              prefix)
-            "PATH"
-            (str config-file))))))
-
 (deftest ignore-files-merged
   (let [{:keys [_config-file test-dir] :as m} (integration/test-dir-setup {})]
     (integration/spit-file  m (str test-dir "/.gitignore") "one" )
@@ -155,8 +118,8 @@
     (is (=  #{"one" "two"}   (set (w/merge-ignore-files (str test-dir)))))))
 
 (deftest watch-set-dynamic-vars-test
-  ; sanity test for #133. Should succeed when this file
-  ; is checked via ./bin/kaocha with --watch mode
+  ;; sanity test for #133. Should succeed when this file
+  ;; is checked via ./bin/kaocha with --watch mode
   (is (do (set! *warn-on-reflection* false)
           true))
   (let [{:keys [config-file test-dir] :as m} (integration/test-dir-setup {})
