@@ -40,7 +40,7 @@
                     sym
                     (symbol "kaocha.report" s))))
     :assoc-fn accumulate]
-   [nil "--diff-style STYLE"    "The style of diff to print on failing tests, either :none or :deep"
+   [nil "--diff-style STYLE"    "The style of diff to print on failing tests, either :none or :minimal"
     :parse-fn parse-kw
     ]
    [nil "--plugin KEYWORD"      "Load the given plugin."
