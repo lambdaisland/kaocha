@@ -89,8 +89,9 @@
   (reduce (fn [value plugin]
             (if-let [step-fn (get plugin step)]
               (let [value (apply step-fn value extra-args)]
-                (when (nil? value)
-                  (output/warn "Plugin " (:kaocha.plugin/id plugin) " hook " step " returned nil."))
+                (when-not (= :kaocha.hooks/main step) ;; side-effects only
+                  (when (nil? value)
+                    (output/warn "Plugin " (:kaocha.plugin/id plugin) " hook " step " returned nil.")))
                 value)
               value))
           value

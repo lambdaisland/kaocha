@@ -191,13 +191,11 @@ The [hooks chapter](10_hooks.md) has more information about most of these hooks.
   ;; Runs right before kaocha.runner calls kaocha.api/run. This is for plugins
   ;; that optionally do something else besides running tests, like printing
   ;; informational messages and then exiting. For this throw+ a
-  ;; {:kaocha/early-exit}.
+  ;; {:kaocha/early-exit}. Ignores return value.
   (main [config]
-    (if (:do-other-thing (:kaocha/cli-options config))
-      (do
-        (... do other thing ...)
-        (throw+ {:kaocha/early-exit 0}))
-      config))
+    (when (:do-other-thing (:kaocha/cli-options config))
+      (... do other thing ...)
+      (throw+ {:kaocha/early-exit 0})))
 
   ;; Gets called after the run is finished and the summary has been printed/reported.
   ;; Gets passed the test result map (test plan with results).
